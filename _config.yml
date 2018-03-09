@@ -1,1 +1,86 @@
-theme: jekyll-theme-slate
+# External gems
+# See http://ixti.net/software/2013/01/28/using-jekyll-plugins-on-github-pages.html for making `jekyll archives` work.
+gems:
+  - jekyll-archives # Sorry, not GitHub pages friendly!
+  - jekyll-sitemap
+  - jekyll-paginate
+
+exclude:
+  - "/vendor/"
+
+# Site settings
+title: AnyStor-E TECH
+subtitle: "A simple yet classy theme for your Jekyll website or blog"
+email: dev3@gluesys.com
+name: gluesys
+description: >
+  A simple yet classy theme for your Jekyll website or blog.
+# Base URL of site (i.e. /blog). It should always start with a slash,
+# and never end with a slash. Set it to a blank value if hosting at the
+# root of your server.
+baseurl: "/" # the subpath of your site, e.g. /blog/
+url: "http://gluesys.github.io" # the base hostname & protocol for your site
+cover: "/assets/img_main01.jpg"
+logo: "/assets/logo_header.png"
+
+# Build settings
+markdown: kramdown
+paginate: 10
+paginate_path: "/page:num/"
+inter_post_navigation: false
+highlightjs_theme: "monokai-sublime"
+
+# Archive settings (see https://github.com/jekyll/jekyll-archives/)
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layout: 'archive'
+  permalinks:
+    category: '/category/:name/'
+    tag: '/tag/:name/'
+
+# Disqus comments
+disqus_shortname: gluesys-github-io
+
+# Google analytics
+# ga_tracking_id: "UA-XXXX-1"
+
+# Category descriptions (for archive pages)
+descriptions:
+  - cat: shares
+    desc: "shares list"
+
+  - cat: trends
+    desc: "trends list"
+    
+
+# Social icons and sharing options
+#
+# Social settings are used in two places:
+# * In the footer, as links to your personal profiles
+# * After each blog post for sharing widgets
+#
+# Example:
+#
+# social:
+#   - name: Twitter                         # Name of the service
+#     icon: twitter                         # Font Awesome icon to use (minus fa- prefix)
+#     username: "@TheBenCentra"             # (User) Name to display in the footer link
+#     url: https://twitter.com/TheBenCentra # URL of your profile (leave blank to not display in footer)
+#     desc: Follow me on Twitter            # Description to display as link title, etc
+#     share: true                           # Include in the "Share" section of posts
+# Social sharing protocols
+# These are for automatically generating sharing metadata for FB and Twitter
+# OS Protocol is for sharing the source of your site, if you're interested. For more, see osprotocol.com
+protocols:
+    fb_image: "/assets/logo.png"
+    fb_image_width: 612
+    fb_image_height: 605
+    fb_image_type: "image/png"
+
+    twitter_image: "/assets/logo.png"
+
+    os_repo: "https://github.com/gluesys/gluesys.github.io"
+    os_rcs_type: "git"
+    os_src: "git@github.com:gluesys/gluesys.github.io.git"
