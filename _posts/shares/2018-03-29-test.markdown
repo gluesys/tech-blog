@@ -1,9 +1,0 @@
----
-layout: post
-title:  "Share Post"
-date:   2015-04-18 08:43:59
-author: pumm
-categories: shares
----
-
-테스트 share.....

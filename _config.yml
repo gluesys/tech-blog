@@ -9,8 +9,8 @@ exclude:
   - "/vendor/"
 
 # Site settings
-title: AnyStor-E TECH
-subtitle: "A simple yet classy theme for your Jekyll website or blog"
+title: 글루시스 기술 블로그
+subtitle: "스토리지 전문 기업 글루시스의 기술 블로그입니다."
 email: dev3@gluesys.com
 name: gluesys
 description: >
@@ -19,7 +19,7 @@ description: >
 # and never end with a slash. Set it to a blank value if hosting at the
 # root of your server.
 baseurl: "/" # the subpath of your site, e.g. /blog/
-url: "http://gluesys.github.io" # the base hostname & protocol for your site
+url: "https://tech.gluesys.com" # the base hostname & protocol for your site
 cover: "/assets/img_main01.jpg"
 logo: "/assets/logo_header.png"
 
@@ -48,12 +48,11 @@ disqus_shortname: gluesys-github-io
 
 # Category descriptions (for archive pages)
 descriptions:
-  - cat: shares
-    desc: "shares list"
+  - cat: blog
+    desc: "블로그 포스팅"
 
   - cat: trends
-    desc: "trends list"
-    
+    desc: "시장 동향"
 
 # Social icons and sharing options
 #
@@ -81,6 +80,6 @@ protocols:
 
     twitter_image: "/assets/logo.png"
 
-    os_repo: "https://github.com/gluesys/gluesys.github.io"
+    os_repo: "https://github.com/gluesys/anystor-blog"
     os_rcs_type: "git"
-    os_src: "git@github.com:gluesys/gluesys.github.io.git"
+    os_src: "git@github.com:gluesys/anystor-blog.git"
