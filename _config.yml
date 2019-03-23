@@ -49,10 +49,7 @@ disqus_shortname: gluesys-github-io
 # Category descriptions (for archive pages)
 descriptions:
   - cat: blog
-    desc: "블로그 포스팅"
-
-  - cat: trends
-    desc: "시장 동향"
+    desc: "블로그"
 
 # Social icons and sharing options
 #
