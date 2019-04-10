@@ -19,7 +19,7 @@ LVM은 크게 PV(Physical Volume), VG(Volume Group), LV(Logical Volume) 파트�
 
 ### 1. PV (Physical Volume)
 
-![Alt text](/assets/PV_layout.png){: witdh="350"}
+![Alt text](/assets/PV_layout.png){: width="350"}
 
 PV는 실제 물리 디스크를 LVM 용도로 초기화된 물리 디스크 또는 파티션입니다. 예를 들면 /dev/sda, /dev/sda1 이나 KVM 환경에서 /dev/vda 등이 PV입니다. 또한 PV는 PE (Physical Extent)라는 단위로 나누어져 있습니다. PE의 기본값은 4MB이고 PE의 값은 볼륨 그룹을 생성할 때 지정할 수 있습니다. 
 데이터의 크기가 큰 파일을 자주 사용하는 경우에는 큰 사이즈의 extent가 적합하지만 반대의 경우에는 작은 사이즈의 extent로 설정하는 것이 좋습니다.
@@ -36,7 +36,7 @@ LVM Meatadata는 LVM 볼륨 그룹에 대한 구성 정보를 포함합니다. M
 
 ### 2. VG (Volume Group)
 
-![Alt text](/assets/volume_arc.png){: witdh="350"}
+![Alt text](/assets/volume_arc.png){: width="350"}
 
 VG는 하나 이상의 PV를 가지고 만든 물리적 볼륨의 집합입니다. PV는 단 하나의 VG에만 포함될 수 있습니다.
 VG를 만든다는 건 논리적 볼륨을 할당할 수 있는 디스크 공간 풀 생성하는 것입니다.
@@ -56,22 +56,22 @@ Raid Volume은 Raid 0,1,4,5,6,10 을 지원하고 MD 커널 드라이버를 활�
 
 #### striped volume [raid0]
 
-![Alt text](/assets/stripe_lv.png){: witdh="350"}
+![Alt text](/assets/stripe_lv.png){: width="350"}
 
 striped 논리 볼륨은 데이터를 기록할 때 라운드-라운드 방식으로 지정된 물리 볼륨에 데이터를 작성하여 성능을 향상시킵니다.
 I/O를 병렬로 실행할 수 있는 장점이 있고 상황에 따라 Linear volume에 가까운 성능 향상을 기대할 수 있습니다.
 단, striped 방식의 특성상 최소 2개 이상의 물리 볼륨이 필요합니다.
 
-#### mirror volume [raid1]    
+#### mirror volume [raid1]
 
-![Alt text](/assets/mirror_lv_extent.png){: witdh="700"}
+![Alt text](/assets/mirror_lv_extent.png){: width="700"}
 
 Mirror 논리 볼륨은 데이터의 안정성을 위하여 데이터를 다른 장치에 복사본을 저장합니다. 만약 한쪽의 장치에 장애가 발생할 경우 논리 볼륨은 다른 한쪽으로 선형 볼륨이 되어 액세스가 가능합니다. 
 
 #### thin volume
 
-![Alt text](/assets/thin_compare_linear.png){: witdh="350"}
-![Alt text](/assets/thin_compare_thin.png){: witdh="700"}
+![Alt text](/assets/thin_compare_linear.png){: width="350"}
+![Alt text](/assets/thin_compare_thin.png){: width="700"}
 
 Thin volume은 Thin porivisioning 기술을 이용한 볼륨입니다. Thin provision을 사용하면 가상 풀을 사용하여 효율적인 스토리지 공간 할당을 하기 때문에 사용 가능한 범위 보다 더 큰 논리 볼륨을 생성할 수 있습니다. 
 기존의 다른 LV들은 PV를 VG로 묶고 VG에 LV를 만들면 LE가 각각의 PE에 맵핑되어 실제로 사용하지 않고 있더라도 다른 LV로 생성할 수 없습니다.
