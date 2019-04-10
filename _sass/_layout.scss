@@ -1,8 +1,8 @@
 // Primary site layout for Centrarium Theme
 
 /*
-*	Variables
-*/
+ * Variables
+ */
 $b3: 480px;
 $mobile: $b3;
 $b2: 768px;
@@ -11,8 +11,8 @@ $b1: 960px;
 $desktop: $b1;
 
 /*
-*	Globals
-*/
+ * Globals
+ */
 html, body {
 	margin: 0;
 	padding: 0;
@@ -20,7 +20,7 @@ html, body {
 }
 
 ol.default {
-  @extend %default-ol;
+	@extend %default-ol;
 }
 
 ul.default {
@@ -40,33 +40,33 @@ pre code.hljs {
 
 .page-divider {
 	$divider-color: $light-gray;
-  display: block;
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  border-top: 1px solid $divider-color;
-  .one {
-    position: relative;
-    top: -9px;
-    display: block;
-    background: $divider-color;
-    width: 18px;
-    height: 18px;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 50%;
-  }
-  .two {
-    position: relative;
-    top: -26px;
-    display: block;
-    background: $white;
-    width: 16px;
-    height: 16px;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 50%;
-  }
+	display: block;
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	border-top: 1px solid $divider-color;
+	.one {
+		position: relative;
+		top: -9px;
+		display: block;
+		background: $divider-color;
+		width: 18px;
+		height: 18px;
+		margin-left: auto;
+		margin-right: auto;
+		border-radius: 50%;
+	}
+	.two {
+		position: relative;
+		top: -26px;
+		display: block;
+		background: $white;
+		width: 16px;
+		height: 16px;
+		margin-left: auto;
+		margin-right: auto;
+		border-radius: 50%;
+	}
 }
 
 .site-header-container, .post-header-container {
@@ -97,113 +97,113 @@ pre code.hljs {
 }
 
 /*
-*	Header
-*/
+ * Header
+ */
 .navigation {
 	box-shadow: 0 2px $highlight-color;
 	padding: 0 1em;
 	margin: 0;
 	background: #282828;
 	/*
-	*	Navigation Menu - http://refills.bourbon.io/unstyled/ (see "Navigation")
-	*/
-  // Mobile view
-  .navigation-menu-button {
-    display: block;
-    float: right;
-    margin: 0;
-    font-size: 1.5em;
-    padding-top: 0.5em;
-    @include media ($tablet) {
-      display: none;
-    }
-  }
-  // Nav menu
-  .navigation-wrapper {
-  	@include outer-container(950px);
-    @include clearfix;
-    position: relative;
-  }
-  .logo {
-    float: left;
-    height: 4em;
-    padding-top: 8px;
-    @include media ($tablet) {
-    	padding-left: $em-base;
-    }
-    img {
-      max-height: 2.5em;
-      margin-top: 0.75em;
-      padding-right: 1em;
-    }
-    span {
-    	font-size: 1.25em;
-    }
-  }
-  nav {
-    float: none;
-    padding: 1.25em 0;
-    @include media ($tablet) {
-      float: right;
-      line-height: 1.5em;
-    }
-  }
-  ul.navigation-menu {
-    clear: both;
-    display: none;
-    margin: 0 auto;
-    overflow: visible;
-    padding: 0;
-    width: 100%;
-    @include media ($tablet) {
-      display: block;
-      margin: 0;
-      padding: 0;
-    }
-    &.show {
-      display: block;
-    }
-  }
-  // Nav items
-  ul li.nav-link {
-    display: block;
-    text-align: right;
-    width: 100%;
-    padding: 0.25em 0;
-    @include media ($tablet) {
-      background: transparent;
-      display: inline;
-      text-decoration: none;
-      width: auto;
-    }
-  }
-  li.nav-link {
-  	a {
-	    display: inline-block;
-	    color: #FFFFFF;
-	    @include media ($tablet) {
-	      padding-right: 1.5em;
-	    }
-	  }
-	  &:last-child a {
-	  	@include media ($tablet) {
-    		padding-right: 1em;
-    	}
-    }
-  }
+	 * Navigation Menu - http://refills.bourbon.io/unstyled/ (see "Navigation")
+	 */
+	// Mobile view
+	.navigation-menu-button {
+		display: block;
+		float: right;
+		margin: 0;
+		font-size: 1.5em;
+		padding-top: 0.5em;
+		@include media ($tablet) {
+			display: none;
+		}
+	}
+	// Nav menu
+	.navigation-wrapper {
+		@include outer-container(950px);
+		@include clearfix;
+		position: relative;
+	}
+	.logo {
+		float: left;
+		height: 4em;
+		padding-top: 8px;
+		@include media ($tablet) {
+			padding-left: $em-base;
+		}
+		img {
+			max-height: 2.5em;
+			margin-top: 0.75em;
+			padding-right: 1em;
+		}
+		span {
+			font-size: 1.25em;
+		}
+	}
+	nav {
+		float: none;
+		padding: 1.25em 0;
+		@include media ($tablet) {
+			float: right;
+			line-height: 1.5em;
+		}
+	}
+	ul.navigation-menu {
+		clear: both;
+		display: none;
+		margin: 0 auto;
+		overflow: visible;
+		padding: 0;
+		width: 100%;
+		@include media ($tablet) {
+			display: block;
+			margin: 0;
+			padding: 0;
+		}
+		&.show {
+			display: block;
+		}
+	}
+	// Nav items
+	ul li.nav-link {
+		display: block;
+		text-align: right;
+		width: 100%;
+		padding: 0.25em 0;
+		@include media ($tablet) {
+			background: transparent;
+			display: inline;
+			text-decoration: none;
+			width: auto;
+		}
+	}
+	li.nav-link {
+		a {
+			display: inline-block;
+			color: #FFFFFF;
+			@include media ($tablet) {
+				padding-right: 1.5em;
+			}
+		}
+		&:last-child a {
+			@include media ($tablet) {
+				padding-right: 1em;
+			}
+		}
+	}
 }
 
 /*
-*	Body
-*/
+ * Body
+ */
 .page-content {
 	.wrapper {
 		@include outer-container(950px);
 		padding: 1em;
 	}
 	/*
-	*	index.html
-	*/
+	 * index.html
+	 */
 	.post-list {
 		padding-top: 1em !important;
 		@extend %default-ul;
@@ -231,9 +231,9 @@ pre code.hljs {
 		.page-number {
 			padding: 0 1em;
 		}
-    a.newer-posts {
-      text-decoration: none;
-    }
+		a.newer-posts {
+			text-decoration: none;
+		}
 	}
 	.site-header-container {
 		color: $white;
@@ -252,11 +252,11 @@ pre code.hljs {
 	img {
 		display: block;
 		margin: auto;
-		width: 90%;
+		//width: 90%;
 	}
 	/*
-	*	Posts
-	*/
+	 * Posts
+	 */
 	.post {
 		ul {
 			margin-bottom: 1em;
@@ -321,8 +321,8 @@ pre code.hljs {
 		}
 	}
 	/*
-	*	Pages
-	*/
+	 * Pages
+	 */
 	.page {
 		.post-header {
 			padding: 0.5em 1em 1em 1em;
@@ -350,34 +350,33 @@ pre code.hljs {
 }
 
 /*
-*	Footer
-*/
+ * Footer
+ */
 .site-footer {
 	$link-color: $white;
 	padding: 30px 1em 40px 1em;
 	background-color: #32465B;
 	color: $white;
 	a {
-	  color: $link-color;
-	  &:active,
-	  &:focus,
-	  &:hover {
-	    color: darken($link-color, 10%);
-	  }
-	  &:active,
-	  &:focus {
-	    outline: none;
-	  }
+		color: $link-color;
+		&:active,
+		&:focus,
+		&:hover {
+			color: darken($link-color, 10%);
+		}
+		&:active,
+		&:focus {
+			outline: none;
+		}
 	}
 	.wrapper {
 		@include outer-container(950px);
 	}
 	.footer-heading {
-
 	}
 	/*
-	*	Site Navigation (left)
-	*/
+	 * Site Navigation (left)
+	 */
 	.site-navigation {
 		@include span-columns(12);
 		font-size: 11px;
@@ -386,8 +385,8 @@ pre code.hljs {
 		}
 	}
 	/*
-	*	Contact Info (center)
-	*/
+	 * Contact Info (center)
+	 */
 	.site-contact {
 		margin-top: 1em;
 		@include span-columns(12);
@@ -410,8 +409,8 @@ pre code.hljs {
 		}
 	}
 	/*
-	*	Site Description/Signature (right)
-	*/
+	 * Site Description/Signature (right)
+	 */
 	.site-signature {
 		margin-top: 1em;
 		@include span-columns(12);
