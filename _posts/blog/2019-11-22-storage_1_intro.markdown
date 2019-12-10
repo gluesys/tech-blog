@@ -6,6 +6,7 @@ author:     박 주형 (jhpark@gluesys.com)
 categories: blog
 tags:       DAS, SAN, NAS, storage
 cover:      "/assets/server-farm-shot.jpg"
+main:       "/assets/server-farm-shot.jpg"
 ---
 
 ## 목차
