@@ -1,3 +1,5 @@
+@import url(//fonts.googleapis.com/css?family=Noto+Sans:400,700);
+
 // Primary site layout for Centrarium Theme
 
 /*
@@ -120,7 +122,7 @@ pre code.hljs {
 	}
 	// Nav menu
 	.navigation-wrapper {
-		@include outer-container(950px);
+		@include outer-container(1200px);
 		@include clearfix;
 		position: relative;
 	}
@@ -185,6 +187,10 @@ pre code.hljs {
 				padding-right: 1.5em;
 			}
 		}
+
+		a:hover {
+		  text-decoration: none;
+		}
 		&:last-child a {
 			@include media ($tablet) {
 				padding-right: 1em;
@@ -197,15 +203,17 @@ pre code.hljs {
  * Body
  */
 .page-content {
+	font-family : "Noto Sans", "Open Sans", "맑은 고딕", "Malgun Gothic","돋움", "Arial", dotum, sans-serif;
 	.wrapper {
-		@include outer-container(950px);
-		padding: 1em;
+		@include outer-container(1200px);
+		/*padding: 1em;*/
 	}
 	/*
 	 * index.html
 	 */
 	.post-list {
 		padding-top: 1em !important;
+		padding-bottom: 30px;
 		@extend %default-ul;
 	}
 	.post-meta {
@@ -370,7 +378,8 @@ pre code.hljs {
 		}
 	}
 	.wrapper {
-		@include outer-container(950px);
+		@include outer-container(1200px);
+		line-height: 30px;
 	}
 	.footer-heading {
 	}

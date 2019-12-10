@@ -1,12 +1,13 @@
 <footer class="site-footer">
   <div class="wrapper">
-    <h3 class="footer-heading">{{ site.title }}</h3>
+    <img src="/assets/logo_footer.png">
     <div class="site-navigation">
       <ul class="pages">
           <li class="nav-link">
-              <a href="http://gluesys.com/" target="_blank">웹 사이트</a> |
-              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">개인 정보 취급 방침</a> |
-              <a href="http://gluesys.com/company/location-4/" target="_blank">연락처 및 오시는 길</a>
+              <a href="http://gluesys.com/" target="_blank">GLUESYS Web</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">GLUESYS Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">PRIVACY</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">CONTACT</a>
           </li>
           <li class="nav-link">Copyright &copy; Gluesys Co., Ltd. All rights reserved.
       </ul>
@@ -16,11 +17,21 @@
 
 <!-- Scripts -->
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
   // Default syntax highlighting
   hljs.initHighlightingOnLoad();
 

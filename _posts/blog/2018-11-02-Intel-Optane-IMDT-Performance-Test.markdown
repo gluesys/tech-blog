@@ -6,6 +6,7 @@ author:     김 경표 (hgichon@gmail.com)
 categories: blog
 tags:       Intel Optane Media Performance AnyStor SSD NVMe
 cover:      "/assets/IntelOptaneIMDT.png"
+main:      "/assets/IntelOptaneIMDT_main.jpg"
 ---
 
 위 이미지는 인텔 사이트에서 발췌한 것임을 밝혀 둔다.

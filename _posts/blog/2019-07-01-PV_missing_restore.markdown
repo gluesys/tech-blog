@@ -6,6 +6,7 @@ author:     권 진영 (gc757489@gmail.com)
 categories: blog
 tags:       PV, VG, LVM, Trouble shooting
 cover:      "/assets/missing.PNG"
+main:      "/assets/missing_main.jpg"
 ---
 
 ## 특수한 상황에서 발생한 PV missing 복구

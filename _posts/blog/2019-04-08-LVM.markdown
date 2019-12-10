@@ -6,6 +6,7 @@ author:     권 진영 (gc757489@gmail.com)
 categories: blog
 tags:       LVM
 cover:      "/assets/whole.png"
+main:      "/assets/whole_main.jpg"
 ---
 
 ## LVM 기본 구조 정리

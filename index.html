@@ -1,86 +1,164 @@
 ---
-layout: default
+layout: main
 ---
-<div class="home">
 
-<div class="site-header-container {% if site.cover %}has-cover{% endif %}" {% if site.cover %}style="background-image: url({{ site.cover | prepend: site.baseurl }});"{% endif %}>
-  <div class="scrim {% if site.cover %}has-cover{% endif %}">
-    <header class="site-header">
-      <!--<h1 class="title">{{ site.title }}</h1>
-      {% if site.subtitle %}<p class="subtitle">{{ site.subtitle }}</p>{% endif %}-->
-    </header>
-  </div>
-</div>
+<!-- flexslider -->
+<link rel="stylesheet" href="/public/flexslider.css" type="text/css">
+<style>
+	@font-face {
+		font-family: 'flexslider-icon';
+		src: url(/public/fonts/flexslider-icon.eot);
+		src: url(/public/fonts/flexslider-icon.woff) format('woff'),
+			url(/public/fonts/flexslider-icon.ttf) format('truetype');
+	}
+</style>
 
-<div class="wrapper">
-<ul class="post-list">
-  {% for post in paginator.posts %}
-  <li>
-    <h2>
-      <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-    </h2>
-    <section class="post-excerpt" itemprop="description">
-      <p>{{ post.content | strip_html | truncatewords: 50 }}</p>
-    </section>
-    <section class="post-meta">
-      <div class="post-date">{{ post.date | date: "%B %-d, %Y" }}</div>
-      <div class="post-categories">
-      {% if post.categories.size > 0 %}in {% for cat in post.categories %}
-        {% if site.jekyll-archives %}
-        <a href="{{ site.baseurl }}/{{ cat }}">{{ cat | capitalize }}</a>{% if forloop.last == false %}, {% endif %}
-        {% else %}
-        <a href="{{ site.baseurl }}/posts/#{{ cat }}">{{ cat | capitalize }}</a>{% if forloop.last == false %}, {% endif %}
-        {% endif %}
-      {% endfor %}{% endif %}
-      </div>
-    </section>
-  </li>
-  {% if forloop.last == false %}
-  <hr>
-  {% endif %}
-  {% endfor %}
-</ul>
+<div class="home" style="background-color: #F1F1F1;position:relative">
+	<div class="navigation" role="banner" style="position: absolute;z-index: 9999;width: 100%;box-shadow: none;background: none;">
+		<div class="navigation-wrapper">
+			<a href="{{ site.baseurl }}/" class="logo">
+			{% if site.logo %}
+			<img src="{{ site.logo | prepend: site.baseurl }}" alt="{{ site.title }}">
+			{% else %}
+			<span>{{ site.title }}</span>
+			{% endif %}
+			</a>
+			<a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+			<i class="fa fa-bars"></i>
+			</a>
+			<nav role="navigation">
+			<ul id="js-navigation-menu" class="navigation-menu show">
+				{% assign sorted_pages = site.pages | sort:"order" %}
+				{% for page in sorted_pages %}
+				{% if page.title and page.main_nav != false %}
+				<li class="nav-link"><a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
+				{% endif %}
+				{% endfor %}
+			</ul>
+			</nav>
+		</div>
+	</div>
+	<div class="flexslider">
+		<ul class="slides">
+			<li>
+				<img src="/public/slide01.jpg" />
+			</li>
+		</ul>
+	</div>
+	<div class="sub-title-out">
+		<div class="sub-title-in">
+			<div style="display: inline-block;width:380px;text-align: center;">
+				<div><img src="/assets/img_info.png"></div>
+				<div class="sub-title-menu-conetnt">
+					<div class="sub-title">지식 공유</div>
+					<div>스토리지에 대한 기본 개념,</div>
+					<div>기술에 대한 다양한 정보와 지식을</div>
+					<div>공유합니다.</div>
+				</div>
+				<div>
+					<div class="sub-title-menu-button" onclick="location.href='/blog'">바로가기</div>
+				</div>
+			</div>
+			<div style="display: inline-block;width:380px;text-align: center;">
+				<div><img src="/assets/img_issue.png"></div>
+				<div class="sub-title-menu-conetnt">
+					<div class="sub-title">이슈 사례</div>
+					<div>스토리지 기술 개발 및 구축 사례,</div>
+					<div>트러블 슈팅 과정에서 얻은 기술과</div>
+					<div>노하우를 아낌없이 공유합니다.</div>
+				</div>
+				<div>
+					<div class="sub-title-menu-button" onclick="location.href='/blog'">바로가기</div>
+				</div>			
+			</div>
+			<div style="display: inline-block;width:380px;text-align: center;">
+				<div><img src="/assets/img_test.png"></div>
+				<div class="sub-title-menu-conetnt">
+					<div class="sub-title">테스트 자료</div>
+					<div>사내, 실 업무 환경, 공인 테스트 등</div>
+					<div>다양한 환경에서 진행된</div>
+					<div>테스트 결과를 공유합니다.</div>
+				</div>
+				<div>
+					<div class="sub-title-menu-button" onclick="location.href='/blog'">바로가기</div>
+				</div>			
+			</div>	
 
-<nav class="pagination" role="navigation">
-  <p>
-    {% if paginator.previous_page %}
-      {% if paginator.page == 2 %}
-        <a class="newer-posts" href="{% if site.baseurl %}{{ site.baseurl }}{% endif %}/">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-square fa-stack-2x"></i>
-            <i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
-          </span>
-        </a>
-      {% else %}
-        <a class="newer-posts" href="{{ site.baseurl }}/page{{paginator.previous_page}}">
-          <span class="fa-stack fa-lg">
-            <i class="fa fa-square fa-stack-2x"></i>
-            <i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
-          </span>
-        </a>
-      {% endif %}
-    {% else %}
-      <span class="fa-stack fa-lg">
-        <i class="fa fa-square fa-stack-2x"></i>
-        <i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
-      </span>
-    {% endif %}
-    <span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
-    {% if paginator.next_page %}
-      <a class="newer-posts" href="{{ site.baseurl }}/page{{paginator.next_page}}">
-        <span class="fa-stack fa-lg">
-          <i class="fa fa-square fa-stack-2x"></i>
-          <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
-        </span>
-      </a>
-    {% else %}
-      <span class="fa-stack fa-lg">
-        <i class="fa fa-square fa-stack-2x"></i>
-        <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
-      </span>
-    {% endif %}
-  </p>
-</nav>
-
-</div>
+		</div>
+	</div>
+	<div class="wrapper">
+		<div style="text-align: center;height:138px;padding-top:50px;">
+			<div class="main-content-title">최근 게시물</div></div>
+		<div class="post-list">
+		  {% for post in paginator.posts limit:3 %}
+				<div style="padding-bottom: 30px;height: 270px;">		  
+					<div style="float: left; width: 240px;background-color: #fff;">
+						<img src="{{ post.main }}" style="width:240px; height:240px">
+					</div>
+					<div style="float: left; width: 960px; height:180px">
+						<div class="main-conetnt">
+							<div class="main-conetnt-list-title"><a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></div>
+							<section class="post-excerpt" itemprop="description">
+							<p>{{ post.content | strip_html | truncatewords: 40 }}</p>
+							</section>
+							<section class="post-meta">
+							<div class="post-date">{{ post.date | date: "%B %-d, %Y" }}</div>
+							<div class="post-categories">
+							{% if post.categories.size > 0 %}in {% for cat in post.categories %}
+								{% if site.jekyll-archives %}
+								<a href="{{ site.baseurl }}/{{ cat }}">{{ cat | capitalize }}</a>{% if forloop.last == false %}, {% endif %}
+								{% else %}
+								<a href="{{ site.baseurl }}/posts/#{{ cat }}">{{ cat | capitalize }}</a>{% if forloop.last == false %}, {% endif %}
+								{% endif %}
+							{% endfor %}{% endif %}
+							</div>
+							</section>
+						</div>
+					</div>
+				</div>
+		  {% endfor %}
+		</div>
+		<!--
+		<nav class="pagination" role="navigation">
+		  <p>
+			{% if paginator.previous_page %}
+			  {% if paginator.page == 2 %}
+				<a class="newer-posts" href="{% if site.baseurl %}{{ site.baseurl }}{% endif %}/">
+				  <span class="fa-stack fa-lg">
+					<i class="fa fa-square fa-stack-2x"></i>
+					<i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
+				  </span>
+				</a>
+			  {% else %}
+				<a class="newer-posts" href="{{ site.baseurl }}/page{{paginator.previous_page}}">
+				  <span class="fa-stack fa-lg">
+					<i class="fa fa-square fa-stack-2x"></i>
+					<i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
+				  </span>
+				</a>
+			  {% endif %}
+			{% else %}
+			  <span class="fa-stack fa-lg">
+				<i class="fa fa-square fa-stack-2x"></i>
+				<i class="fa fa-angle-double-left fa-stack-1x fa-inverse"></i>
+			  </span>
+			{% endif %}
+			<span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+			{% if paginator.next_page %}
+			  <a class="newer-posts" href="{{ site.baseurl }}/page{{paginator.next_page}}">
+				<span class="fa-stack fa-lg">
+				  <i class="fa fa-square fa-stack-2x"></i>
+				  <i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
+				</span>
+			  </a>
+			{% else %}
+			  <span class="fa-stack fa-lg">
+				<i class="fa fa-square fa-stack-2x"></i>
+				<i class="fa fa-angle-double-right fa-stack-1x fa-inverse"></i>
+			  </span>
+			{% endif %}
+		  </p>
+		</nav>
+		-->
+	</div>
 </div>
