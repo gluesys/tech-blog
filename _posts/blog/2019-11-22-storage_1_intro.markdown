@@ -27,7 +27,7 @@ cover:      "/assets/server-farm-shot.jpg"
 
 &nbsp;
 
-![Alt text](/assets/storage_past_n_present.png){:width="900"}
+![Alt text](/assets/storage_past_n_present.png){: width="900"}
 
 <center>&#60;기업용 디스크 스토리지의 과거와 현재&#62;</center>
 
@@ -37,7 +37,7 @@ cover:      "/assets/server-farm-shot.jpg"
 
 &nbsp;
 
-![Alt text](/assets/ibm350_hdd.jpg){:width="900"}
+![Alt text](/assets/ibm350_hdd.jpg){: width="900"}
 
 <center>&#60;최초의 하드디스크인 IBM 350 디스크 스토리지&#62;</center>
 
@@ -55,7 +55,7 @@ SAN 방식은 여러 스토리지를 하나의 네트워크에 연결시키고, 
 
 &nbsp;
 
-![Alt text](/assets/basic_san_env.png){:width="900"}
+![Alt text](/assets/basic_san_env.png){: width="900"}
 
 <center>&#60;SAN 환경 기본 개념도&#62;</center>
 
@@ -104,7 +104,7 @@ NAS도 마찬가지로 네트워크를 통해 서버나 클라이언트가 스�
 
 &nbsp;
 
-![Alt text](/assets/basic_nas_env.png){:width="900"}
+![Alt text](/assets/basic_nas_env.png){: width="900"}
 
 <center>&#60;NAS 기본 개념도&#62;</center>
 
