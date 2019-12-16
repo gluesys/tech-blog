@@ -28,7 +28,7 @@ main:       "/assets/server-farm-shot.jpg"
 
 &nbsp;
 
-![Alt text](/assets/storage_past_n_present.png){: width="900"}
+![Alt text](/assets/storage_past_n_present.png){: width="700"}
 
 <center>&#60;기업용 디스크 스토리지의 과거와 현재&#62;</center>
 
@@ -38,7 +38,7 @@ main:       "/assets/server-farm-shot.jpg"
 
 &nbsp;
 
-![Alt text](/assets/ibm350_hdd.jpg){: width="900"}
+![Alt text](/assets/ibm350_hdd.jpg){: width="700"}
 
 <center>&#60;최초의 하드디스크인 IBM 350 디스크 스토리지&#62;</center>
 
@@ -56,7 +56,7 @@ SAN 방식은 여러 스토리지를 하나의 네트워크에 연결시키고, 
 
 &nbsp;
 
-![Alt text](/assets/basic_san_env.png){: width="900"}
+![Alt text](/assets/basic_san_env.png){: width="700"}
 
 <center>&#60;SAN 환경 기본 개념도&#62;</center>
 
@@ -87,9 +87,9 @@ SAN 환경에서는 파일을 저장하는 방식으로 블록 스토리지(bloc
 | 장점 | 단점 |
 | :--- | :--- |
 | {::nomarkdown}<ul><li>광케이블을 사용하기 때문에 데이터 접근이 빠름</ul></li>{:/} | {::nomarkdown}<ul><li>상대적으로 비쌈</ul></li>{:/} |
-| {::nomarkdown}<ul><li>필요에 따라서 성능과 용량을 확장하기가 용이함</ul></li>{:/} | {::nomarkdown}<ul><li>이더넷 네트워크[^3]와 광 케이블 네트워크[^4]를 동시에 운영하기에 관리에 손이 많이 감</ul></li>{:/} |
+| {::nomarkdown}<ul><li>필요에 따라서 성능과 용량을 확장하기가 용이함</ul></li>{:/} | {::nomarkdown}<ul><li>{:/}이더넷 네트워크[^3]와 광 케이블 네트워크[^4]를 동시에 운영하기에 관리에 손이 많이 감{::nomarkdown}</ul></li>{:/} |
 | {::nomarkdown}<ul><li>LAN을 사용하지 않아 네트워크 부하를 최소화할 수 있음</ul></li>{:/} | {::nomarkdown}<ul><li>관리하는데 전문적인 인력이 필요함</ul></li>{:/} |
-| {::nomarkdown}<ul><li>가상화[^2] 환경을 구축하기 적합함</ul></li>{:/} | {::nomarkdown}<ul><li>블록 백업에 스토리지 공간이 더 요구됨</ul></li>{:/} |
+| {::nomarkdown}<ul><li>{:/}가상화[^2] 환경을 구축하기 적합함{::nomarkdown}</ul></li>{:/} | {::nomarkdown}<ul><li>블록 백업에 스토리지 공간이 더 요구됨</ul></li>{:/} |
 
 &nbsp;
 
@@ -105,7 +105,7 @@ NAS도 마찬가지로 네트워크를 통해 서버나 클라이언트가 스�
 
 &nbsp;
 
-![Alt text](/assets/basic_nas_env.png){: width="900"}
+![Alt text](/assets/basic_nas_env.png){: width="700"}
 
 <center>&#60;NAS 기본 개념도&#62;</center>
 
@@ -136,8 +136,8 @@ NAS는 스토리지 시스템이 포함된 어플라이언스 형태와 스토�
 | 장점 | 단점 |
 | :--- | :--- |
 | {::nomarkdown}<ul><li>기본적으로 구축되어 있는 이더넷 네트워크에 스토리지를 연결하면 되기 때문에 인프라 구축 비용이 따로 없음</ul></li>{:/} | {::nomarkdown}<ul><li>이더넷 케이블을 사용하기 때문에 광케이블에 비해 전송 속도가 느림</ul></li>{:/} |
-| {::nomarkdown}<ul><li>단순한 시스템 아키텍처 구조로 유지 관리가 비교적 편함</ul></li>{:/} | {::nomarkdown}<ul><li>공유 네트워크를 사용해 대역폭에 제한이 있고, 데이터를 IP 패킷으로 캡슐화[^7]하는 부가적인 과정으로 속도 지연이 발생함에 따라 네트워크 병목에 취약함</ul></li>{:/} |
-| {::nomarkdown}<ul><li>스케일 아웃 방식[^6]의 NAS는 클러스터 구성이 가능해 성능과 용량을 동시에 높일 수 있음</ul></li>{:/} | {::nomarkdown}<ul><li>스케일 업 방식[^8]의 NAS는 성능과 용량 확장에 한계가 있음</ul></li>{:/} |
+| {::nomarkdown}<ul><li>단순한 시스템 아키텍처 구조로 유지 관리가 비교적 편함</ul></li>{:/} | {::nomarkdown}<ul><li>{:/}공유 네트워크를 사용해 대역폭에 제한이 있고, 데이터를 IP 패킷으로 캡슐화[^7]하는 부가적인 과정으로 속도 지연이 발생함에 따라 네트워크 병목에 취약함{::nomarkdown}</ul></li>{:/} |
+| {::nomarkdown}<ul><li>{:/}스케일 아웃 방식[^6]의 NAS는 클러스터 구성이 가능해 성능과 용량을 동시에 높일 수 있음{::nomarkdown}</ul></li>{:/} | {::nomarkdown}<ul><li>{:/}스케일 업 방식[^8]의 NAS는 성능과 용량 확장에 한계가 있음{::nomarkdown}</ul></li>{:/} |
 
 &nbsp;
 
