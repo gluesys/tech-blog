@@ -4,18 +4,11 @@ title:      "스토리지 기초 지식 2편: 스토리지 프로토콜"
 date:       2019-12-17
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       Fibre Channel, iSCSI, NFS, SMB, CIFS, RDMA, RoCE, iWARP, iSER
-cover:      "/assets/server-farm-shot.jpg"
-main:       "/assets/server-farm-shot.jpg"
+tags:       Fibre Channel, iSCSI, NFS, SMB, CIFS, RDMA, RoCE, iWARP, iSER, NVMe oF
+cover:      "/assets/jbo_cables.jpg"
+main:       "/assets/jbo_cables.jpg"
 ---
 
-## 목차
-
- * 파이버 채널
- * iSCSI
- * 분산 파일 시스템
- * RDMA
- 
 &nbsp;
 
 앞선 시간에서는 전반적인 스토리지의 종류와 그 쓰임새를 알아봤는데요, 이번에는 스토리지 데이터를 공유하는 데 있어서 어떤 프로토콜들이 있는지 소개해 보고자 합니다.
@@ -24,14 +17,22 @@ main:       "/assets/server-farm-shot.jpg"
 
 ## 파이버 채널
 
-파이버 채널(Fibre Channel, FC)은 기가비트 급의 전송 속도를 가진 네트워크 기술입니다. 처음 나왔을 당시에는 높은 트래픽을 처리하는데 TCP/IP보다 빠르고, 스토리지 전용 네트워크로 대역폭을 확보할 수 있어 주목받은 기술입니다. 기존의 SCSI(Small Computer System Interface) 프로토콜 기술이 응용되었으며, SAN 환경에서 iSCSI와 함께 블록 데이터를 전송할 때 가장 일반적으로 쓰입니다. 
+&nbsp;
+
+![Alt text](/assets/fc_cable.jpg){: width="700"}
+
+<center>&#60;파이버 채널 케이블&#62;</center>
+
+&nbsp;
+
+파이버 채널(Fibre Channel, FC)은 기가비트 급의 전송 속도를 가진 네트워크 기술입니다. 처음 나왔을 당시에는 높은 트래픽을 처리하는데 TCP/IP보다 빠르고, 스토리지 전용 네트워크로 대역폭을 확보할 수 있어 주목을 받았던 기술입니다. 무엇보다 TCP/IP에 비해 구조가 단순해 높은 안정성을 가지고 있습니다. 기존의 SCSI(Small Computer System Interface) 프로토콜 기술이 응용되었으며, SAN 환경에서 iSCSI와 함께 블록 데이터를 전송할 때 가장 일반적으로 쓰입니다. 파이버 채널의 전송 속도는 8 Gbps, 16 Gbps, 32 Gbps 정도이며, 32 Gbps 선을 4개 묶어서 128 Gbps 속도까지 올릴 수 있습니다.
 
 &nbsp;
 
 ### 구성
 
-파이버 채널 케이블에는 말 그대로 광학 섬유가 사용되지만, 구리를 사용하는 경우도 있습니다. 해당 케이블을 통해 장비끼리 데이터를 주고받기 위해서는 HBA(Host Bus Adapter)라는 인터페이스 카드가 필요합니다. 해당 카드가 장착된 스토리지를 파이버 채널 케이블로 파이버 채널 스위치와 연결하면 SAN 환경을 구성할 수가 있습니다.
-파이버 채널의 가장 큰 특징은 파이버 채널의 데이터 단위인 프레임을 여러 개 엮어 시퀀스로 전송하고, 이러한 처리가 하드웨어 레벨에서 이루어져 CPU의 오버헤드를 줄일 수 있다는 점입니다. 또한 이더넷과는 달리 하드웨어 단에서 전송한 프레임의 무결성을 감지해 문제가 있으면 시퀀스를 재전송할 수 있습니다. 
+파이버 채널 케이블에는 말 그대로 광학 섬유가 사용되지만, 구리를 사용하는 경우도 있습니다. 파이버 채널 케이블을 통해 장비 사이에 데이터를 주고받기 위해서는 HBA(Host Bus Adapter)라는 인터페이스 카드가 필요합니다. HBA 카드가 장착된 스토리지를 파이버 채널 케이블로 파이버 채널 스위치와 연결하면 SAN 환경을 구성할 수가 있습니다. 추가로 NVMe(Non-Volatile Memory Memory Express over PCI Express) 프로토콜 또한 같은 하드웨어를 사용하기 때문에 기존에 FC SAN을 구축한 기업들이 NVMe 기반 시스템을 도입하고자 할 경우 간단한 소프트웨어 업그레이드만 하면 됩니다.
+파이버 채널의 가장 큰 특징은 파이버 채널의 데이터 전송 단위인 프레임을 여러 개 엮어 시퀀스로 전송하고, 프레임 처리가 하드웨어 레벨에서 이루어져 CPU의 오버헤드를 줄일 수 있다는 점입니다. 또한 이더넷과는 달리 하드웨어 단에서 전송한 프레임의 무결성을 감지해 문제가 있으면 시퀀스를 재전송할 수 있습니다. 
 
 &nbsp;
 
@@ -50,14 +51,22 @@ iSCSI(Internet Small Computer Systems Interface)는 기존 SAN 환경에서 파�
 
 ### 구성
 
-iSCSI는 기존의 이더넷 케이블이나 파이버 채널 케이블을 둘 다 사용할 수 있습니다. 또한, 필요에 따라 기존의 이더넷 NIC(Network Interface Card)나 iSCSI용 네트워크 카드(TCP Offload Engine과 iSCSI HBA)를 탑재해 서버 간에 블록 데이터를 공유할 수 있게 합니다. iSCSI는 파이버 채널과 달리 별도의 스위치가 필요 없이 이미 가지고 있는 이더넷 스위치로 SAN 환경을 구축할 수 있습니다. 
-이처럼 기존 이더넷 인프라에서도 구축이 가능해 비용 및 전문인력이 부족한 중소기업에서 파이버 채널 SAN의 대안으로 사용되어 왔습니다. 현재 iSCSI는 성능과 안정성 면에 있어서 파이버 채널을 따라잡고 있으며, 요즘 스토리지 회사들은 블록 스토리지의 기본 프로토콜로서 파이버 채널과 함께 iSCSI를 제공하고 있습니다.
+iSCSI는 기존의 이더넷 케이블이나 파이버 채널 케이블을 둘 다 사용할 수 있습니다. 또한, 필요에 따라 기존의 이더넷 NIC(Network Interface Card)나 iSCSI용 네트워크 카드(TCP Offload Engine과 iSCSI HBA)를 탑재해 서버 간에 블록 데이터를 공유할 수 있게 합니다. iSCSI는 파이버 채널과 달리 별도의 스위치가 필요 없이 이미 가지고 있는 이더넷 스위치로 SAN 환경을 구축할 수 있습니다. 이처럼 기존 이더넷 인프라에서도 구축이 가능해 비용과 전문인력이 부족한 중소기업에서는 파이버 채널 SAN의 대안으로 사용되어 왔습니다. 
+구조가 비교적 단순한 파이버 채널과는 달리 iSCSI는 TCP/IP를 통해 SCSI 패킷을 전송하기 때문에 파이버 채널처럼 데이터 무결성이 보장되지는 않습니다. 또한, 현재 iSCSI의 데이터 전송 속도는 최대 100 Gbps 까지 이를 수 있으나, 전용 네트워크가 아닌 공유 네트워크를 사용하기 때문에 네트워크 리소스를 100% 사용 못하는 경우가 있습니다. 이처럼 iSCSI는 안정성과 성능 면에서는 아직 파이버 채널보다 부족하지만 비용과 호환성 면에서 분명 장점을 가지고 있어, 근래의 스토리지 회사들은 블록 스토리지의 기본 프로토콜로서 파이버 채널과 iSCSI를 함께 제공하고 있습니다.  
 
 &nbsp;
 
 ## 분산 파일 시스템
 
-파일 시스템은 저번 시간(링크)에서도 설명했듯이 블록보다 큰 단위로서 계층적 구조로 되어 있습니다. 파일은 기본적으로 데이터와 그 데이터에 관한 데이터, 즉 메타데이터로 구성되는데요, 이 메타데이터를 통해 해당 파일의 유형, 위치, 접근 권한 등을 알 수 있습니다. 블록 스토리지의 경우는 위치정보 이외의 정보는 OS가 별도로 관리하게 되어 있어 이 부분이 주요 차이점이라 할 수 있습니다.
+&nbsp;
+
+![Alt text](/assets/ethernet_cable.jpg){: width="700"}
+
+<center>&#60;이더넷 케이블&#62;</center>
+
+&nbsp;
+
+파일 시스템은 저번 포스트에서도 설명했듯이 블록보다 큰 단위로서 계층적 구조로 되어 있습니다. 파일은 기본적으로 실제 데이터가 저장되는 블록 데이터와 파일 시스템의 정보가 저장되는 메타 데이터로 구성되는데요, 이 메타데이터를 통해 해당 파일의 유형, 위치, 접근 권한 등을 알 수 있습니다. 
 분산 파일 시스템(Distributed File System, DFS)은 네트워크를 통해 다수 서버의 파일에 접근하여 공유하는 파일 시스템을 말합니다. 분산 파일 시스템에서는 네트워크에 연결된 여러 클라이언트 장비가 접근 권한을 통해 중앙 서버의 파일에 접근하는 방식을 취합니다. 원격의 스토리지를 케이블로 직접 연결해 사용한다는 느낌의 블록 스토리지 방식과는 달리, 분산 파일 시스템에서는 접근한 파일을 복사해 클라이언트의 캐시에 임시로 저장해 사용합니다. 
 분산 파일 시스템에는 여러 종류가 있으며, 스토리지에 자주 사용되는 종류를 다음과 같이 소개해 보고자 합니다.
 
@@ -91,13 +100,19 @@ RDMA는 iSCSI나 이더넷의 데이터 경로를 보완해 네트워크와 스�
 
 ### RoCE와 iWARP
 
-RoCE(RDMA Over Converged Ethernet)는 이더넷에서 UDP를 통해 RDMA 통신을 제공하는 표준 네트워크 프로토콜입니다. iWARP(Internet Wide-area RDMA Protocol)는 RoCE와는 달리 RDMA 통신을 TCP를 통해 제공합니다. 이 두 프로토콜은 RDMA의 장점을 가짐과 동시에 기존 이더넷 환경에서 구축이 가능해 유연성과 비용면에서 장점이 있습니다. 하지만 iWARP의 경우 특유의 복잡한 구조로 RoCE와 같은 성능을 기대하기 힘들고 지원하는 벤더가 적어 많이 사용되지 않습니다. 
+RoCE(RDMA Over Converged Ethernet)는 이더넷에서 UDP/IP를 통해 RDMA 통신을 제공하는 표준 네트워크 프로토콜입니다. iWARP(Internet Wide-area RDMA Protocol)는 RoCE와는 달리 RDMA 통신을 TCP를 통해 제공합니다. 이 두 프로토콜은 RDMA의 장점을 가짐과 동시에 기존 이더넷 환경에서 구축이 가능해 유연성과 비용면에서 장점이 있습니다. 하지만 iWARP의 경우 특유의 복잡한 구조로 RoCE와 같은 성능을 기대하기 힘들고 지원하는 벤더가 적어 많이 사용되지 않습니다.
 
 &nbsp;
 
 ### iSER
 
 iSER(iSCSI Extensions for RDMA)는 iSCSI 프로토콜을 RDMA에 사용하기 위한 스토리지 프로토콜입니다. iSER는 인피니밴드, RoCE, iWARP과 같은 RDMA 프로토콜의 지원을 통해 기존 iSCSI에서 확장된 개념으로 매우 낮은 지연과 CPU 점유율 감소 등의 이점을 제공합니다. 기존의 iSCSI에 비해 성능 및 관리 측면에서 이점을 가지면서 iSCSI의 보안과 고가용성을 가지고 있습니다. 
+
+&nbsp;
+
+### NVMe-oF using RDMA
+
+NVMe-oF(NVM Express over Fabrics)는 네트워크 상에서 데이터 전송을 위해 NVMe 프로토콜을 사용하는 것을 말하며, 위에서도 언급된 파이버 채널이나 이더넷 상에서 활용됩니다. 이더넷에서 NVMe-oF를 사용할 경우 대체로 RDMA 기술인 인피니밴드, RoCE, iWARP이 사용되며, 데이터 전송 시 RDMA 특성상 CPU 부하를 없애므로 스토리지 성능을 어느정도 확보할 수 있다는 이점을 가집니다.
 
 &nbsp;
 
@@ -110,6 +125,7 @@ https://www.theregister.co.uk/2015/05/26/fcoe_is_dead_for_real_bro/
 iSCSI:
 https://searchstorage.techtarget.com/definition/iSCSI
 https://www.kovarus.com/blog/servers-storage/lets-talk-iscsi/
+https://searchstorage.techtarget.com/tip/iSCSI-vs-Fibre-Channel-What-is-best-choice-for-your-SAN
 
 File System:
 https://en.wikipedia.org/wiki/Clustered_file_system#Distributed_file_systems
@@ -118,6 +134,7 @@ https://searchwindowsserver.techtarget.com/definition/distributed-file-system-DF
 RDMA
 https://en.wikipedia.org/wiki/Remote_direct_memory_access
 https://www.mellanox.com/related-docs/whitepapers/WP_Nueralytix_iSER.pdf
+https://blog.westerndigital.com/nvme-of-explained/
 
 Infiniband
 https://en.wikipedia.org/wiki/InfiniBand
