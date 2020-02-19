@@ -9,11 +9,17 @@ cover:      "/assets/jbo_cables.jpg"
 main:       "/assets/jbo_cables.jpg"
 ---
 
+
 앞선 시간에서는 전반적인 스토리지의 종류와 그 쓰임새를 알아봤는데요, 이번에는 스토리지 데이터를 공유하는 데 있어서 어떤 프로토콜들이 있는지 소개해 보고자 합니다.
 
 &nbsp;
 
 ## 파이버 채널
+
+&nbsp;
+
+![Alt text](/assets/fc_cable.jpg){: width="500"}
+
 
 &nbsp;
 
@@ -146,4 +152,6 @@ https://www.mellanox.com/related-docs/whitepapers/WP_RoCE_vs_iWARP.pdf
 iSER
 https://en.wikipedia.org/wiki/ISCSI_Extensions_for_RDMA
 https://www.linkedin.com/pulse/iser-iscsi-extensions-rdma-changing-landscape-ethernet-piyush-gupta/
+
 https://mymellanox.force.com/mellanoxcommunity/s/article/what-is-iser-x
+
