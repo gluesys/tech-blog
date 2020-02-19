@@ -9,7 +9,6 @@ cover:      "/assets/jbo_cables.jpg"
 main:       "/assets/jbo_cables.jpg"
 ---
 
- <div style = "padding: 1px 200px 1px 200px;">  
 
 &nbsp;
 
@@ -152,4 +151,3 @@ https://en.wikipedia.org/wiki/ISCSI_Extensions_for_RDMA
 https://www.linkedin.com/pulse/iser-iscsi-extensions-rdma-changing-landscape-ethernet-piyush-gupta/
 https://mymellanox.force.com/mellanoxcommunity/s/article/what-is-iser-x
 
-</div>
