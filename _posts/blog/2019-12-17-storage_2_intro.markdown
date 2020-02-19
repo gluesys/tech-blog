@@ -9,6 +9,8 @@ cover:      "/assets/jbo_cables.jpg"
 main:       "/assets/jbo_cables.jpg"
 ---
 
+ <div style = "padding: 1px 200px 1px 200px;">  
+
 &nbsp;
 
 앞선 시간에서는 전반적인 스토리지의 종류와 그 쓰임새를 알아봤는데요, 이번에는 스토리지 데이터를 공유하는 데 있어서 어떤 프로토콜들이 있는지 소개해 보고자 합니다.
@@ -19,19 +21,19 @@ main:       "/assets/jbo_cables.jpg"
 
 &nbsp;
 
-![Alt text](/assets/fc_cable.jpg){: width="700"}
+![Alt text](/assets/fc_cable.jpg){: width="500"}
 
 <center>&#60;파이버 채널 케이블&#62;</center>
 
 &nbsp;
 
-파이버 채널(Fibre Channel, FC)은 기가비트 급의 전송 속도를 가진 네트워크 기술입니다. 처음 나왔을 당시에는 높은 트래픽을 처리하는데 TCP/IP보다 빠르고, 스토리지 전용 네트워크로 대역폭을 확보할 수 있어 주목을 받았던 기술입니다. 무엇보다 TCP/IP에 비해 구조가 단순해 높은 안정성을 가지고 있습니다. 기존의 SCSI(Small Computer System Interface) 프로토콜 기술이 응용되었으며, SAN 환경에서 iSCSI와 함께 블록 데이터를 전송할 때 가장 일반적으로 쓰입니다. 파이버 채널의 전송 속도는 8 Gbps, 16 Gbps, 32 Gbps 정도이며, 32 Gbps 선을 4개 묶어서 128 Gbps 속도까지 올릴 수 있습니다.
+파이버 채널(Fibre Channel, FC)은 기가비트 급의 전송 속도를 가진 네트워크 기술입니다. 처음 나왔을 당시에는 높은 트래픽을 처리하는데 TCP/IP보다 빠르고, 스토리지 전용 네트워크로 대역폭을 확보할 수 있어 주목을 받았던 기술입니다. 무엇보다 TCP/IP보다 구조가 단순해 높은 안정성을 가지고 있습니다. 기존의 SCSI(Small Computer System Interface) 프로토콜 기술이 응용되었으며, SAN 환경에서 iSCSI와 함께 블록 데이터를 전송할 때 가장 일반적으로 쓰입니다. 파이버 채널의 전송 속도는 8Gbps, 16Gbps, 32Gbps 정도이며, 32Gbps 선을 4개 묶어서 128Gbps 속도까지 올릴 수 있습니다.
 
 &nbsp;
 
 ### 구성
 
-파이버 채널 케이블에는 말 그대로 광학 섬유가 사용되지만, 구리를 사용하는 경우도 있습니다. 파이버 채널 케이블을 통해 장비 사이에 데이터를 주고받기 위해서는 HBA(Host Bus Adapter)라는 인터페이스 카드가 필요합니다. HBA 카드가 장착된 스토리지를 파이버 채널 케이블로 파이버 채널 스위치와 연결하면 SAN 환경을 구성할 수가 있습니다. 추가로 NVMe(Non-Volatile Memory Memory Express over PCI Express) 프로토콜 또한 같은 하드웨어를 사용하기 때문에 기존에 FC SAN을 구축한 기업들이 NVMe 기반 시스템을 도입하고자 할 경우 간단한 소프트웨어 업그레이드만 하면 됩니다.
+파이버 채널 케이블에는 말 그대로 광학 섬유가 사용되지만, 구리를 사용하는 경우도 있습니다. 파이버 채널 케이블을 통해 장비 사이에 데이터를 주고받기 위해서는 HBA(Host Bus Adapter)라는 인터페이스 카드가 필요합니다. HBA 카드가 장착된 스토리지를 파이버 채널 케이블로 파이버 채널 스위치와 연결하면 SAN 환경을 구성할 수가 있습니다. 추가로 NVMe(Non-Volatile Memory Express over PCI Express) 프로토콜 또한 같은 하드웨어를 사용하기 때문에 기존에 FC SAN을 구축한 기업들이 NVMe 기반 시스템을 도입하고자 할 경우 간단한 소프트웨어 업그레이드만 하면 됩니다.
 파이버 채널의 가장 큰 특징은 파이버 채널의 데이터 전송 단위인 프레임을 여러 개 엮어 시퀀스로 전송하고, 프레임 처리가 하드웨어 레벨에서 이루어져 CPU의 오버헤드를 줄일 수 있다는 점입니다. 또한 이더넷과는 달리 하드웨어 단에서 전송한 프레임의 무결성을 감지해 문제가 있으면 시퀀스를 재전송할 수 있습니다. 
 
 &nbsp;
@@ -52,7 +54,7 @@ iSCSI(Internet Small Computer Systems Interface)는 기존 SAN 환경에서 파�
 ### 구성
 
 iSCSI는 기존의 이더넷 케이블이나 파이버 채널 케이블을 둘 다 사용할 수 있습니다. 또한, 필요에 따라 기존의 이더넷 NIC(Network Interface Card)나 iSCSI용 네트워크 카드(TCP Offload Engine과 iSCSI HBA)를 탑재해 서버 간에 블록 데이터를 공유할 수 있게 합니다. iSCSI는 파이버 채널과 달리 별도의 스위치가 필요 없이 이미 가지고 있는 이더넷 스위치로 SAN 환경을 구축할 수 있습니다. 이처럼 기존 이더넷 인프라에서도 구축이 가능해 비용과 전문인력이 부족한 중소기업에서는 파이버 채널 SAN의 대안으로 사용되어 왔습니다. 
-구조가 비교적 단순한 파이버 채널과는 달리 iSCSI는 TCP/IP를 통해 SCSI 패킷을 전송하기 때문에 파이버 채널처럼 데이터 무결성이 보장되지는 않습니다. 또한, 현재 iSCSI의 데이터 전송 속도는 최대 100 Gbps 까지 이를 수 있으나, 전용 네트워크가 아닌 공유 네트워크를 사용하기 때문에 네트워크 리소스를 100% 사용 못하는 경우가 있습니다. 이처럼 iSCSI는 안정성과 성능 면에서는 아직 파이버 채널보다 부족하지만 비용과 호환성 면에서 분명 장점을 가지고 있어, 근래의 스토리지 회사들은 블록 스토리지의 기본 프로토콜로서 파이버 채널과 iSCSI를 함께 제공하고 있습니다.  
+구조가 비교적 단순한 파이버 채널과는 달리 iSCSI는 TCP/IP를 통해 SCSI 패킷을 전송하기 때문에 파이버 채널처럼 데이터 무결성이 보장되지는 않습니다. 또한, 현재 iSCSI의 데이터 전송 속도는 최대 100Gbps 까지 이를 수 있으나, 전용 네트워크가 아닌 공유 네트워크를 사용하기 때문에 네트워크 리소스를 100% 사용 못 하는 경우가 있습니다. 이처럼 iSCSI는 안정성과 성능 면에서는 아직 파이버 채널보다 부족하지만, 비용과 호환성 면에서 분명 장점이 있어, 근래의 스토리지 회사들은 블록 스토리지의 기본 프로토콜로서 파이버 채널과 iSCSI를 함께 제공하고 있습니다.  
 
 &nbsp;
 
@@ -60,7 +62,7 @@ iSCSI는 기존의 이더넷 케이블이나 파이버 채널 케이블을 둘 �
 
 &nbsp;
 
-![Alt text](/assets/ethernet_cable.jpg){: width="700"}
+![Alt text](/assets/ethernet_cable.jpg){: width="500"}
 
 <center>&#60;이더넷 케이블&#62;</center>
 
@@ -81,13 +83,13 @@ NFS(Network File System)는 네트워크를 통해 원격 서버와 파일을 �
 ### SMB/CIFS
 
 SMB(Server Message Block)는 NFS와 같이 사용자에게 원격 서버의 파일에 접근하게 하는 파일 공유 프로토콜입니다. IBM에서 개발한 이 프로토콜은 윈도우 OS 계열을 지원해 NFS와는 달리 윈도우에서 사용자 인증을 요구해 기본적으로 로그인이 필요하다는 차이점이 있습니다. SMB를 CIFS(Common Internet File System)와 병행해서 표기하는 경우가 있는데요, CIFS는 마이크로소프트가 SMB를 응용해 만든 프로토콜로 기본적으로 거의 같은 프로토콜이라고 할 수 있습니다. 하지만 요새 CIFS를 사용하는 스토리지 시스템은 거의 없다고 합니다. 
-SMB/CIFS는 이처럼 윈도우 계열 OS간의 파일 공유에 특화되어 있는데요, 기존의 UNIX 서버와 파일 및 프린터를 공유하기 위해서는 Samba라는 소프트웨어가 필요합니다. Samba는 UNIX 계열 서버에 탑재되며, 윈도우 및 맥과 같은 이기종 클라이언트와 SMB/CIFS 프로토콜을 통해 파일을 공유하고, 윈도우 서버를 대신해 도메인 컨트롤러 역할을 제공합니다. 
+SMB/CIFS는 이처럼 윈도우 계열 OS 간의 파일 공유에 특화되어 있는데요, 기존의 UNIX 서버와 파일 및 프린터를 공유하기 위해서는 Samba라는 소프트웨어가 필요합니다. Samba는 UNIX 계열 서버에 탑재되며, 윈도우 및 맥과 같은 이기종 클라이언트와 SMB/CIFS 프로토콜을 통해 파일을 공유하고, 윈도우 서버를 대신해 도메인 컨트롤러 역할을 제공합니다. 
 
 &nbsp;
 
 ## RDMA
 
-RDMA(Remote Direct Memory Access)란 컴퓨터 간에 CPU를 거치지 않고 메모리끼리 직접 데이터를 주고받을 수 있게 하는 네트워크 기술을 말합니다. 전송 주체(initiator)에서 대상(target)으로 데이터를 전송할 시, 데이터의 임시복사 과정(NIC에서 애플리케이션 버퍼까지의 복사 과정)없이 바로 전송을 할 수 있습니다. 이로써 빠른 데이터 처리 속도와 낮은 네트워크 지연시간을 구현할 수 있어, 데이터 센터나 고성능 컴퓨터와 같이 대규모 데이터를 동시에 전송하는 환경에서 활용됩니다. 
+RDMA(Remote Direct Memory Access)란 컴퓨터 간에 CPU를 거치지 않고 메모리끼리 직접 데이터를 주고받을 수 있게 하는 네트워크 기술을 말합니다. 전송 주체(initiator)에서 대상(target)으로 데이터를 전송할 시, 데이터의 임시복사 과정(NIC에서 애플리케이션 버퍼까지의 복사 과정) 없이 바로 전송을 할 수 있습니다. 이로써 빠른 데이터 처리 속도와 낮은 네트워크 지연시간을 구현할 수 있어, 데이터 센터나 고성능 컴퓨터와 같이 대규모 데이터를 동시에 전송하는 환경에서 활용됩니다. 
 RDMA는 iSCSI나 이더넷의 데이터 경로를 보완해 네트워크와 스토리지의 활용성을 높이기도 합니다. 이와 관련된 기술을 아래와 같이 소개해 보고자 합니다.
 
 &nbsp;
@@ -112,7 +114,7 @@ iSER(iSCSI Extensions for RDMA)는 iSCSI 프로토콜을 RDMA에 사용하기 �
 
 ### NVMe-oF using RDMA
 
-NVMe-oF(NVM Express over Fabrics)는 네트워크 상에서 데이터 전송을 위해 NVMe 프로토콜을 사용하는 것을 말하며, 위에서도 언급된 파이버 채널이나 이더넷 상에서 활용됩니다. 이더넷에서 NVMe-oF를 사용할 경우 대체로 RDMA 기술인 인피니밴드, RoCE, iWARP이 사용되며, 데이터 전송 시 RDMA 특성상 CPU 부하를 없애므로 스토리지 성능을 어느정도 확보할 수 있다는 이점을 가집니다.
+NVMe-oF(NVM Express over Fabrics)는 네트워크상에서 데이터 전송을 위해 NVMe 프로토콜을 사용하는 것을 말하며, 위에서도 언급된 파이버 채널이나 이더넷 상에서 활용됩니다. 이더넷에서 NVMe-oF를 사용할 경우 대체로 RDMA 기술인 인피니밴드, RoCE, iWARP이 사용되며, 데이터 전송 시 RDMA 특성상 CPU 부하를 없애므로 스토리지 성능을 어느 정도 확보할 수 있다는 이점을 가집니다.
 
 &nbsp;
 
@@ -149,3 +151,5 @@ iSER
 https://en.wikipedia.org/wiki/ISCSI_Extensions_for_RDMA
 https://www.linkedin.com/pulse/iser-iscsi-extensions-rdma-changing-landscape-ethernet-piyush-gupta/
 https://mymellanox.force.com/mellanoxcommunity/s/article/what-is-iser-x
+
+</div>
