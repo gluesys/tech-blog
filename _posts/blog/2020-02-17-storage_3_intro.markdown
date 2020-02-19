@@ -5,8 +5,8 @@ date:       2020-02-17
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
 tags:       scale-up, scale-out, NAS, IT administrator
-cover:      "/assets/server-farm-shot.jpg"
-main:       "/assets/server-farm-shot.jpg"
+cover:      "/assets/server_exchange.jpg"
+main:       "/assets/server_exchange.jpg"
 ---
 
 얼마 전 한국감정원에서 주택청약 관련 서비스를 제공하기 위해 개설한 ‘청약홈’ 웹사이트가 오픈 첫날에 서버 과부하로 다운되었다고 합니다. 해당 기관 관계자에 의하면, 7만 명 동시접속이 가능하게 서버를 증축했음에도 예상치 못한 특정 서버 과부하가 있었다고 하는데요, 이처럼 기업 IT 인프라에 있어서 네트워크 대역폭, 스토리지, 애플리케이션의 증가율은 예측하기가 어려워 IT 관리자분들은 항상 이러한 확장성 문제와 직면하게 됩니다. 단순히 사업 확대나 사용자증가뿐만 아니라, 데이터 레이크의 형성과 빅데이터 활용의 확대로 기업의 데이터가 예상보다 빠르게 증가해 IT 관리자들은 스토리지 인프라를 확장하는 데 있어서 자사 특성에 적합하고 비용 효율이 높은 방식을 찾는 것이 불가결해졌습니다.
@@ -18,7 +18,7 @@ main:       "/assets/server-farm-shot.jpg"
 
 &nbsp;
 
-![Alt text](/assets/scaleup_scaleout_intro.png){: width="700"}
+![Alt text](/assets/scaleup_scaleout_intro.png){: width="500"}
 
 <center>&#60;스케일업과 스케일아웃&#62;</center>
 
@@ -33,7 +33,7 @@ main:       "/assets/server-farm-shot.jpg"
 
 &nbsp;
 
-![Alt text](/assets/scaleup_scaleout_comparison.png){: width="700"}
+![Alt text](/assets/scaleup_scaleout_comparison.png){: width="500"}
 
 <center>&#60;스케일업과 스케일아웃 비교&#62;</center>
 
