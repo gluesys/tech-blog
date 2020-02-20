@@ -19,7 +19,7 @@ main:       "/assets/server_exchange.jpg"
 
 &nbsp;
 
-![Alt text](/assets/scaleup_scaleout_intro.png){: width="700"}
+![Alt text](/assets/scaleup_scaleout_intro1.png){: width="800"}
 
 <center>&#60;스케일업과 스케일아웃&#62;</center>
 
@@ -35,7 +35,7 @@ main:       "/assets/server_exchange.jpg"
 
 &nbsp;
 
-![Alt text](/assets/scaleup_scaleout_comparison.png){: width="700"}
+![Alt text](/assets/scaleup_scaleout_comparison1.png){: width="800"}
 
 <center>&#60;스케일업과 스케일아웃 비교&#62;</center>
 
