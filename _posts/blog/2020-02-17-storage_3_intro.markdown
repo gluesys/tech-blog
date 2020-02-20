@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 3편: 스케일업과 스케일아웃"
 date:       2020-02-17
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       scale-up, scale-out, NAS, IT administrator
+tags:       scale-up scale-out NAS
 cover:      "/assets/server_exchange.jpg"
 main:       "/assets/server_exchange.jpg"
 ---
@@ -79,14 +79,14 @@ main:       "/assets/server_exchange.jpg"
 
 ## 참고
 
-청약홈 뉴스: 
-https://www.yna.co.kr/view/AKR20200203050352003
+청약홈 뉴스:  
+ * https://www.yna.co.kr/view/AKR20200203050352003
 
-IT 투자비용회수 기간 관련:
-박성식 & 이석준(2011), 비용관점으로 본 정보시스템 최적경제수명 도출에 대한 실증적 사례연구, Journal of Information Technology and Architecture
+IT 투자비용회수 기간 관련:  
+ * 박성식 & 이석준(2011), 비용관점으로 본 정보시스템 최적경제수명 도출에 대한 실증적 사례연구, Journal of Information Technology and Architecture
 
-스케일업과 스케일아웃:
-https://whatis.techtarget.com/definition/scale-out-storage
-https://www.itprotoday.com/storage/scale-vs-scale-out-storage-why-choose
-https://exagrid.com/scale-up-vs-scale-out-whitepaper/
-https://searchstorage.techtarget.com/tip/Choosing-between-scale-up-and-scale-out-all-flash-arrays
+스케일업과 스케일아웃:  
+ * https://whatis.techtarget.com/definition/scale-out-storage
+ * https://www.itprotoday.com/storage/scale-vs-scale-out-storage-why-choose
+ * https://exagrid.com/scale-up-vs-scale-out-whitepaper/
+ * https://searchstorage.techtarget.com/tip/Choosing-between-scale-up-and-scale-out-all-flash-arrays

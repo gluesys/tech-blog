@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 2편: 스토리지 프로토콜"
 date:       2019-12-17
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       Fibre Channel, iSCSI, NFS, SMB, CIFS, RDMA, RoCE, iWARP, iSER, NVMe oF
+tags:       Fibre-Channel iSCSI NFS SMB CIFS RDMA RoCE iWARP iSER NVMe-oF
 cover:      "/assets/jbo_cables.jpg"
 main:       "/assets/jbo_cables.jpg"
 ---
@@ -119,35 +119,35 @@ NVMe-oF(NVM Express over Fabrics)는 네트워크상에서 데이터 전송을 �
 
 ## 참고
 
-FCoE: 
-https://searchstorage.techtarget.com/definition/FCoE-Fibre-Channel-over-Ethernet
-https://www.theregister.co.uk/2015/05/26/fcoe_is_dead_for_real_bro/
+FCoE:  
+ * https://searchstorage.techtarget.com/definition/FCoE-Fibre-Channel-over-Ethernet
+ * https://www.theregister.co.uk/2015/05/26/fcoe_is_dead_for_real_bro/
 
-iSCSI:
-https://searchstorage.techtarget.com/definition/iSCSI
-https://www.kovarus.com/blog/servers-storage/lets-talk-iscsi/
-https://searchstorage.techtarget.com/tip/iSCSI-vs-Fibre-Channel-What-is-best-choice-for-your-SAN
+iSCSI:  
+ * https://searchstorage.techtarget.com/definition/iSCSI
+ * https://www.kovarus.com/blog/servers-storage/lets-talk-iscsi/
+ * https://searchstorage.techtarget.com/tip/iSCSI-vs-Fibre-Channel-What-is-best-choice-for-your-SAN
 
-File System:
-https://en.wikipedia.org/wiki/Clustered_file_system#Distributed_file_systems
-https://searchwindowsserver.techtarget.com/definition/distributed-file-system-DFS
+File System:  
+ * https://en.wikipedia.org/wiki/Clustered_file_system#Distributed_file_systems
+ * https://searchwindowsserver.techtarget.com/definition/distributed-file-system-DFS
 
-RDMA
-https://en.wikipedia.org/wiki/Remote_direct_memory_access
-https://www.mellanox.com/related-docs/whitepapers/WP_Nueralytix_iSER.pdf
-https://blog.westerndigital.com/nvme-of-explained/
+RDMA:  
+ * https://en.wikipedia.org/wiki/Remote_direct_memory_access
+ * https://www.mellanox.com/related-docs/whitepapers/WP_Nueralytix_iSER.pdf
+ * https://blog.westerndigital.com/nvme-of-explained/
 
-Infiniband
-https://en.wikipedia.org/wiki/InfiniBand
-https://edgeoptic.com/storage-protocols-comparison-fibre-channel-fcoe-infiniband-iscsi/
+Infiniband:  
+ * https://en.wikipedia.org/wiki/InfiniBand
+ * https://edgeoptic.com/storage-protocols-comparison-fibre-channel-fcoe-infiniband-iscsi/
 
-RoCE와 iWARP
-https://www.mellanox.com/page/products_dyn?product_family=79&mtag=roce
-https://www.theregister.co.uk/2016/04/11/nvme_fabric_speed_messaging/
-https://www.mellanox.com/related-docs/whitepapers/WP_RoCE_vs_iWARP.pdf
+RoCE와 iWARP:  
+ * https://www.mellanox.com/page/products_dyn?product_family=79&mtag=roce
+ * https://www.theregister.co.uk/2016/04/11/nvme_fabric_speed_messaging/
+ * https://www.mellanox.com/related-docs/whitepapers/WP_RoCE_vs_iWARP.pdf
 
-iSER
-https://en.wikipedia.org/wiki/ISCSI_Extensions_for_RDMA
-https://www.linkedin.com/pulse/iser-iscsi-extensions-rdma-changing-landscape-ethernet-piyush-gupta/
-https://mymellanox.force.com/mellanoxcommunity/s/article/what-is-iser-x
+iSER:  
+ * https://en.wikipedia.org/wiki/ISCSI_Extensions_for_RDMA
+ * https://www.linkedin.com/pulse/iser-iscsi-extensions-rdma-changing-landscape-ethernet-piyush-gupta/
+ * https://mymellanox.force.com/mellanoxcommunity/s/article/what-is-iser-x
 

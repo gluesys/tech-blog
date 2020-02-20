@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 1편: DAS, SAN, 그리고 NAS"
 date:       2019-12-02
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       DAS, SAN, NAS, storage
+tags:       DAS SAN NAS
 cover:      "/assets/server-farm-shot.jpg"
 main:       "/assets/server-farm-shot.jpg"
 ---
@@ -179,14 +179,22 @@ NAS는 스토리지 시스템이 포함된 어플라이언스 형태와 스토�
 
 ### 참고
 
- * 넷플릭스 통계: https://expandedramblings.com/index.php/netflix_statistics-facts/
- * 현재와 과거 이미지: https://expandedramblings.com/index.php/netflix_statistics-facts/
- * IBM 350: https://www.ibm.com/ibm/history/exhibits/storage/storage_350.html
- * 가상화: https://ko.wikipedia.org/wiki/%EA%B0%80%EC%83%81%ED%99%94
- * 이더넷: https://ko.wikipedia.org/wiki/%EC%9D%B4%EB%8D%94%EB%84%B7
- * 파일: https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%93%A8%ED%84%B0_%ED%8C%8C%EC%9D%BC
- * 캡슐화: https://en.wikipedia.org/wiki/Encapsulation_(networking)
- * 데이터베이스: https://ko.wikipedia.org/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4
+넷플릭스 통계:  
+ * https://expandedramblings.com/index.php/netflix_statistics-facts/
+현재와 과거 이미지:  
+ * https://expandedramblings.com/index.php/netflix_statistics-facts/
+IBM 350:  
+ * https://www.ibm.com/ibm/history/exhibits/storage/storage_350.html
+가상화:  
+ * https://ko.wikipedia.org/wiki/%EA%B0%80%EC%83%81%ED%99%94
+이더넷:  
+ * https://ko.wikipedia.org/wiki/%EC%9D%B4%EB%8D%94%EB%84%B7
+파일:  
+ * https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%93%A8%ED%84%B0_%ED%8C%8C%EC%9D%BC
+캡슐화:  
+ * https://en.wikipedia.org/wiki/Encapsulation_(networking)
+데이터베이스:  
+ * https://ko.wikipedia.org/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4
 
 &nbsp;
 
