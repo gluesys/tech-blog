@@ -4,7 +4,7 @@ title:      "특수한 전원 장애 상황에서 PV missing 복구"
 date:       2019-07-01 14:01:00
 author:     권 진영 (gc757489@gmail.com)
 categories: blog
-tags:       PV, VG, LVM, Trouble shooting
+tags:       PV VG LVM Trouble-shooting
 cover:      "/assets/missing.PNG"
 main:      "/assets/missing_main.jpg"
 ---
