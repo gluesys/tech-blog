@@ -43,6 +43,12 @@ VDO는 스토리지에서 데이터의 중복을 제거하는 기술인데 데�
 &nbsp;  
 드디어 제 차례가 와버려서 3번째 세션에 앞서 말씀드린 VDO에 대해서 소개하는 발표를 진행하였습니다.
 아래 첨부한 PPT와 사용법 영상을 활용해서 발표를 진행했습니다.
+![Alt text](/assets/after_seminar_vdo/session3_1.png){: width="700"}
+<center>&#60; 권진영 - 중복제거 리눅스 커널 모듈인 dm-vdo의 소개와 기본 구조&#62;</center>  
+&nbsp;  
+![Alt text](/assets/after_seminar_vdo/session3_2.png){: width="700"}
+<center>&#60; 김지현 책임연구원님 - 중복제거 리눅스 커널 모듈인 dm-vdo의 소개와 기본 구조&#62;</center>  
+&nbsp;  
 <center><iframe src="//www.slideshare.net/slideshow/embed_code/key/2MPGSylcAnoGZz" width="700" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/secret/2MPGSylcAnoGZz" title="2019 klug vdo_deduplication" target="_blank">2019 klug vdo_deduplication</a> </strong> from <strong><a href="https://www.slideshare.net/ssuser8b4040" target="_blank">ssuser8b4040</a></strong> </div></center>
 <center>&#60;VDO PPT&#62;</center>  
 <center><script id="asciicast-sscQMnUKOYZFR8wJDQZEJ3l2E" src="https://asciinema.org/a/sscQMnUKOYZFR8wJDQZEJ3l2E.js" async data-size="small" data-cols="95" data-rows="20" ></script></center>
