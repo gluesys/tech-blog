@@ -83,16 +83,16 @@ SAN vs NAS vs 오브젝트/클라우드의 논쟁은 적용 분야 전반에 걸
 ## 참고
 
 후반작업 워크로드
-*	https://www.careersinfilm.com/post-production/
-*	https://www.netapp.com/us/media/wp-7301.pdf
+ * https://www.careersinfilm.com/post-production/
+ * https://www.netapp.com/us/media/wp-7301.pdf
   
 후반작업용 스토리지의 과제
-*	https://www.snia.org/sites/default/files/SSSI/SNIA_Trends%20in%20Media%20and%20Entertainment-Coughlin-Beck-McDonald%20FINAL.pdf
-*	http://landing.quantum.com/rs/561-AAR-658/images/Quantum_Research_4kUHD_researchreport.pdf
+ * https://www.snia.org/sites/default/files/SSSI/SNIA_Trends%20in%20Media%20and%20Entertainment-Coughlin-Beck-McDonald%20FINAL.pdf
+ * http://landing.quantum.com/rs/561-AAR-658/images/Quantum_Research_4kUHD_researchreport.pdf
   
 스토리지 인프라 구성
-*	http://www.bikorea.net/news/articleView.html?idxno=20635
-*	https://postperspective.com/storage-trends-for-me/
-*	http://www.ciokorea.com/t/21998/%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80/38762
-*	http://www.ciokorea.com/news/148768
+ * http://www.bikorea.net/news/articleView.html?idxno=20635
+ * https://postperspective.com/storage-trends-for-me/
+ * http://www.ciokorea.com/t/21998/%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80/38762
+ * http://www.ciokorea.com/news/148768
   
