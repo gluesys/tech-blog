@@ -5,8 +5,8 @@ date:       2020-07-22
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
 tags:       RAID 이레이저-코딩 데이터-보호 스토리지 HDD SSD 
-cover:      "data_protection_raid_erasure_coding.jpg"
-main:       "data_protection_raid_erasure_coding.jpg"
+cover:      "/assets/data_protection_raid_erasure_coding.jpg"
+main:       "/assets/data_protection_raid_erasure_coding.jpg"
 ---
 
 스토리지 시스템에 있어서 데이터 보호(data protection)는 기업 정보 자산을 보호하는 데 의의를 두고 있습니다. 그 자산은 운용 중인 핵심 어플리케이션이나 서비스에 등록된 고객 정보일 수도 있기 때문에, IT 관리자들은 스토리지 시스템을 구축하기에 앞서 자사의 인프라와 사용 목적을 파악하고 그에 따른 데이터 보호 방법을 강구해야 합니다. 스토리지의 데이터 손실을 복구할 수 있는 가장 확실한 방법은 데이터의 복제본을 만들어두고 문제 발생 시 복사본으로 복구하는 것입니다. 스냅샷(snapshot)처럼 시스템 데이터 및 설정을 복제해서 로컬 또는 원격의 다른 스토리지로 백업하는 방법이 있는가 하면, 시스템 범위 내에서 데이터 보호가 이루어 지는 방법이 있습니다. 이번에 소개할 **RAID**와 **이레이저 코딩**이 바로 그것입니다.  
@@ -21,7 +21,7 @@ main:       "data_protection_raid_erasure_coding.jpg"
   
 &nbsp;  
 
-![Alt text](/assets/RAID_0.png){: width="500"}
+![Alt text](/assets/RAID_0.png){: width="400"}
 <center>&#60;RAID 0&#62;</center>
 
 &nbsp;
@@ -30,7 +30,7 @@ main:       "data_protection_raid_erasure_coding.jpg"
 
 &nbsp;  
 
-![Alt text](/assets/RAID_1.png){: width="500"}
+![Alt text](/assets/RAID_1.png){: width="400"}
 <center>&#60;RAID 1&#62;</center>
 
 &nbsp;
@@ -39,12 +39,12 @@ main:       "data_protection_raid_erasure_coding.jpg"
 
 &nbsp;  
 
-![Alt text](/assets/RAID_5.png){: width="500"}
+![Alt text](/assets/RAID_5.png){: width="600"}
 <center>&#60;RAID 5&#62;</center>
 
 &nbsp;
 
-![Alt text](/assets/RAID_6.png){: width="500"}
+![Alt text](/assets/RAID_6.png){: width="600"}
 <center>&#60;RAID 6&#62;</center>
 
 &nbsp;
