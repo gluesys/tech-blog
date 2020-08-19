@@ -5,8 +5,8 @@ date:       2020-08-22
 author:     김 태훈 (thkim@gluesys.com)
 categories: blog
 tags:       HA-Pacemaker-이중화-NAS-스토리지-HDD-SSD.
-cover:      "/assets/data_protection_raid_erasure_coding.jpg"
-main:       "/assets/data_protection_raid_erasure_coding.jpg"
+cover:      "/assets/HA1_maincover.jpg"
+main:       "/assets/HA1_maincover.jpg"
 ---
 
  기업은 사내 전산 시스템이나 IT 서비스를 안정적으로 운영하기 위해 많은 시간과 비용을 투자하고 있습니다. 특히 서비스가 중단되는 시간을 뜻하는 **다운타임(Downtime)** 을 최소화 하기위해 모든 시스템을 **이중화**로 구성하고 장비의 상태를 지속적으로 확인하면서 정상적인 서비스를 유지하기위해 노력합니다. 이렇게 서비스를 안정적인 상태로 오래 기간 운영하는 성질을 **고가용성(HA: High Availability)** 이라고 표현합니다. 고가용성은 단어 그대로 **높은 가용성을 보장한다** 라는 뜻을 나타내며, 99%, 99.9%와 같은 퍼센티지로 서비스 품질 수준을 표현합니다[^1].
