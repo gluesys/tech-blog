@@ -19,7 +19,7 @@ main:       "/assets/HA1_maincover.jpg"
 
 &nbsp;  
 
-![Alt text](/assets/HA1_SPOF.jpg){: width="400"}
+![Alt text](/assets/HA1_SPOF.jpg){: width="500"}
 <center>&#60;단일 장애점&#62;</center>
 
 &nbsp;
@@ -101,6 +101,12 @@ main:       "/assets/HA1_maincover.jpg"
 
 &nbsp;
 
+## 참고
+
+ * http://egloos.zum.com/gunsystems/v/6782436
+ * https://www.sharedit.co.kr/posts/53
+ * https://zdnet.co.kr/view/?no=20101220174657
+
 ## 각주
 
 [^1]: https://en.wikipedia.org/wiki/High_availability
@@ -113,8 +119,4 @@ main:       "/assets/HA1_maincover.jpg"
 [^8]: https://en.wikipedia.org/wiki/InfiniBand
 [^9]: https://en.wikipedia.org/wiki/Link_aggregation
 
-## 참고
 
- * http://egloos.zum.com/gunsystems/v/6782436
- * https://www.sharedit.co.kr/posts/53
- * https://zdnet.co.kr/view/?no=20101220174657
