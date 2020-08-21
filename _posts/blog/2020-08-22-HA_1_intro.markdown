@@ -56,7 +56,7 @@ main:       "/assets/HA1_maincover.jpg"
 
 &nbsp;
 
-![Alt text](/assets/HA1_Networks.jpg){: width="600"}
+![Alt text](/assets/HA1_Networks.jpg){: width="800"}
 <center>&#60;이더넷(좌), 파이버 채널(중), 인피니밴드(우) 네트워크 장치&#62;</center>
 
 &nbsp;
@@ -73,7 +73,7 @@ main:       "/assets/HA1_maincover.jpg"
 
 &nbsp;
 
-![Alt text](/assets/HA1_DiskShare.jpg){: width="600"}
+![Alt text](/assets/HA1_DiskShare.jpg){: width="400"}
 <center>&#60;디스크 공유 방식의  클러스터링 방법&#62;</center>
 
 &nbsp;
@@ -82,7 +82,7 @@ main:       "/assets/HA1_maincover.jpg"
 
 &nbsp;
 
-![Alt text](/assets/HA1_DiskMirror.jpg){: width="600"}
+![Alt text](/assets/HA1_DiskMirror.jpg){: width="400"}
 <center>&#60;디스크 동기화 방식의  클러스터링 방법&#62;</center>
 
 &nbsp;
@@ -103,15 +103,15 @@ main:       "/assets/HA1_maincover.jpg"
 
 ## 각주
 
-[^1] https://en.wikipedia.org/wiki/High_availability
-[^2] https://en.wikipedia.org/wiki/Single_point_of_failure
-[^3] https://en.wikipedia.org/wiki/Fault_tolerance#Terminology
-[^4] https://en.wikipedia.org/wiki/Failover
-[^5] https://en.wikipedia.org/wiki/High-availability_cluster#Node_configurations
-[^6] https://en.wikipedia.org/wiki/Heartbeat_(computing)
-[^7] https://en.wikipedia.org/wiki/Fibre_Channel
-[^8] https://en.wikipedia.org/wiki/InfiniBand
-[^9] https://en.wikipedia.org/wiki/Link_aggregation
+[^1]: https://en.wikipedia.org/wiki/High_availability
+[^2]: https://en.wikipedia.org/wiki/Single_point_of_failure
+[^3]: https://en.wikipedia.org/wiki/Fault_tolerance#Terminology
+[^4]: https://en.wikipedia.org/wiki/Failover
+[^5]: https://en.wikipedia.org/wiki/High-availability_cluster#Node_configurations
+[^6]: https://en.wikipedia.org/wiki/Heartbeat_(computing)
+[^7]: https://en.wikipedia.org/wiki/Fibre_Channel
+[^8]: https://en.wikipedia.org/wiki/InfiniBand
+[^9]: https://en.wikipedia.org/wiki/Link_aggregation
 
 ## 참고
 
