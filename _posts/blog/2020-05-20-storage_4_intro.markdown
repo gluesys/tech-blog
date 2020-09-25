@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 4편: 중복제거"
 date:       2020-05-20
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       deduplication data-reduction
+tags:       스토리지 데이터 중복제거 압축율 해시 백업 아카이브 deduplication data-reduction
 cover:      "/assets/storage_rack.jpg"
 main:       "/assets/storage_rack.jpg"
 ---

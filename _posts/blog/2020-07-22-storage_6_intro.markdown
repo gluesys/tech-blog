@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 6편: 데이터 보호_RAID와 이레이
 date:       2020-07-22
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       RAID 이레이저-코딩 데이터-보호 스토리지 HDD SSD 
+tags:       RAID 레이드 스트라이핑 미러링 패리티 이레이저-코딩 데이터-보호 스토리지 HDD SSD 
 cover:      "/assets/data_protection_raid_erasure_coding.jpg"
 main:       "/assets/data_protection_raid_erasure_coding.jpg"
 ---
