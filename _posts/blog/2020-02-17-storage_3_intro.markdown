@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 3편: 스케일업과 스케일아웃"
 date:       2020-02-17
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       scale-up scale-out NAS
+tags:       스케일업 스케일아웃 scale-up scale-out NAS 나스 고확장
 cover:      "/assets/server_exchange.jpg"
 main:       "/assets/server_exchange.jpg"
 ---
