@@ -35,14 +35,15 @@ Swordfish는 오늘날 스토리지 아키텍처와 워크로드에 적합한 �
 
 ## 참고
   
-SMI-S: 
-*	https://www.enterprisestorageforum.com/storage-management/storage-management-and-standards.html
-Swordfish:
-*	https://www.techrepublic.com/article/how-to-get-started-with-the-swordfish-storage-management-standard/
-*	https://sniasmiblog.org/2019/06/storage-management-standards-matter/
-*	https://vinfrastructure.it/2018/04/what-is-swordfish/
-*	https://vinfrastructure.it/2018/04/what-is-redfish/
-*	https://sciencelogic.com/blog/swordfish-part-1
-*	https://searchstorage.techtarget.com/tip/Choose-the-right-storage-management-interface-for-you
-*	https://www.snia.org/sites/default/files/technical_work/Swordfish/Swordfish_v1.2.1c_Specification.pdf
+SMI-S:  
+ * https://www.enterprisestorageforum.com/storage-management/storage-management-and-standards.html
+  
+Swordfish:  
+ * https://www.techrepublic.com/article/how-to-get-started-with-the-swordfish-storage-management-standard/
+ * https://sniasmiblog.org/2019/06/storage-management-standards-matter/
+ * https://vinfrastructure.it/2018/04/what-is-swordfish/
+ * https://vinfrastructure.it/2018/04/what-is-redfish/
+ * https://sciencelogic.com/blog/swordfish-part-1
+ * https://searchstorage.techtarget.com/tip/Choose-the-right-storage-management-interface-for-you
+ * https://www.snia.org/sites/default/files/technical_work/Swordfish/Swordfish_v1.2.1c_Specification.pdf
   
