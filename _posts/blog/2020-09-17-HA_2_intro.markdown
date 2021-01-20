@@ -31,7 +31,7 @@ NAS(Network Attached Storage)는 네트워크 기반의 파일 공유 서비스�
 
 &nbsp;
 
-![Alt text](/assets/HA2_FIG1.jpg){: width="500"}
+![Alt text](/assets/HA2_FIG1.jpg){: width="700"}
 <center>&#60;VDI 환경을 위한 NAS 이중화 시스템 구성도&#62;</center>
 
 &nbsp;
@@ -56,7 +56,7 @@ NAS(Network Attached Storage)는 네트워크 기반의 파일 공유 서비스�
 
 &nbsp;
 
-![Alt text](/assets/HA2_FIG4.jpg){: width="500"}
+![Alt text](/assets/HA2_FIG4.jpg){: width="700"}
 <center>&#60;(좌)VDI 환경의 입출력 패턴 그래프 / (우)평균 IOPS 기준에 따른 성능 체감 기준&#62;</center>
 
 &nbsp;
@@ -135,7 +135,7 @@ LVM은 리눅스의 LVM(Logical Volume Manager)[^11]으로 생성된 VG(Volume G
 
 &nbsp;
 
-![Alt text](/assets/HA2_FIG5.jpg){: width="500"}
+![Alt text](/assets/HA2_FIG5.jpg){: width="700"}
 <center>&#60;잘못된 아키텍처 설계 예시&#62;</center>
 
 &nbsp;
