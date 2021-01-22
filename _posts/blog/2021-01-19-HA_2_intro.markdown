@@ -56,7 +56,7 @@ NAS(Network Attached Storage)는 네트워크 기반의 파일 공유 서비스�
 
 &nbsp;
 
-![Alt text](/assets/HA2_FIG4.jpg){: width="700"}
+![Alt text](/assets/HA2_FIG4.jpg){: width="900"}
 <center>&#60;(좌)VDI 환경의 입출력 패턴 그래프 / (우)평균 IOPS 기준에 따른 성능 체감 기준&#62;</center>
 
 &nbsp;
@@ -119,7 +119,7 @@ Ethernet Interface는 NIC(Network Interface Controller) 상태를 모니터링�
 
 ### 파일 공유, 인증 모니터링 그룹
 
-AD Connector는 접속하는 사용자의 권한을 확인하기 위해, ㅎ사의 전 직원 계정이 통합된 AD 시스템에 연결하는 기능입니다. 정상 사유로 스토리지의 재시작이 필요하거나, failover가 발생하여 CIFS 서비스가 standby에서 재시작할 경우 수동으로 AD와 재연결을 수행하는데, 이를 자동화하여 엔지니어 개입을 줄여줍니다. AD Connector는 CLI 명령을 자동화해주는 기능을 새로 개발하여 제공한 것으로, 기존의 pacemaker에서는 제공하지 않습니다. (곧 글루시스 깃허브에 공개할게요~ :wink:)
+AD Connector는 접속하는 사용자의 권한을 확인하기 위해, ㅎ사의 전 직원 계정이 통합된 AD 시스템에 연결하는 기능입니다. 정상 사유로 스토리지의 재시작이 필요하거나, failover가 발생하여 CIFS 서비스가 standby에서 재시작할 경우 수동으로 AD와 재연결을 수행하는데, 이를 자동화하여 엔지니어 개입을 줄여줍니다. AD Connector는 CLI 명령을 자동화해주는 기능을 새로 개발하여 제공한 것으로, 기존의 pacemaker에서는 제공하지 않습니다. (곧 글루시스 깃허브에 공개할게요~ 😘)
 
 NFS, SMB는 파일 공유 서비스를 수행하는 데몬을 모니터링합니다. 시스템 데몬에 문제가 발생할 때 재시작을 지원합니다. systemctl 명령으로 제공하는 리눅스 시스템 데몬들을 모니터링할 수 있습니다.
 
@@ -135,7 +135,7 @@ LVM은 리눅스의 LVM(Logical Volume Manager)[^11]으로 생성된 VG(Volume G
 
 &nbsp;
 
-![Alt text](/assets/HA2_FIG5.jpg){: width="700"}
+![Alt text](/assets/HA2_FIG5.jpg){: width="900"}
 <center>&#60;잘못된 아키텍처 설계 예시&#62;</center>
 
 &nbsp;
@@ -154,7 +154,7 @@ LVM은 리눅스의 LVM(Logical Volume Manager)[^11]으로 생성된 VG(Volume G
 마치며
 -----
 
-이번 포스트에서는 고객 사례를 예시로 NAS 이중화 아키텍처에 대해서 설명했습니다. 다음 포스트는 미디어 환경에서 active/active 방식의 NAS 이중화 구성 사례를 설명해드리도록 하겠습니다. 또 봐요 ~ :wave:
+이번 포스트에서는 고객 사례를 예시로 NAS 이중화 아키텍처에 대해서 설명했습니다. 다음 포스트는 미디어 환경에서 active/active 방식의 NAS 이중화 구성 사례를 설명해드리도록 하겠습니다. 또 봐요 ~ 👋
 
 &nbsp;
 
