@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "스토리지 이중화 2편: NAS 이중화 아키텍처 설계"
-date:       2021-01-19
+title:      "NVMe"
+date:       2021-02-
 author:     김 성은(plumno1@gluesys.com)
 categories: blog
 tags:       
@@ -9,8 +9,7 @@ cover:      "/assets/HA2_maincover.jpg"
 main:       "/assets/HA2_maincover.jpg"
 ---
 
-안녕하세요. 지난번 포스팅 [고가용성과 이중화](https://tech.gluesys.com/blog/2020/08/22/HA_1_intro.html)에 이어서 이번 포스트에서는 클라이언트 환경에 따른 스토리지 이중화 아키텍처 설계 방법과 실 구축 사례를 소개하겠습니다.
-
+요즘 어떤 저장장치를 사용하고계시나요? 이에대한 답으로 SSD만, 혹은 두개 다! 라고 하시는 분들이 매우 많을것이라는 생각이 드네요. 예전과 달리 높은 용량 대비 싼 가격이라는 HDD의 강점이 SSD와 거의 차이가 없게 되면서 나타나는 현상인것 같습니다. 심지어 SSD는 HDD에 비해 약 5~10배 가량 빠르다는 장점까지 있죠! 
 &nbsp;
 
 ## NAS 이중화 아키텍처
