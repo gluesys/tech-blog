@@ -1,0 +1,241 @@
+---
+layout:     post
+title:      "owncloud 란 무엇인가?"
+date:       2021-03-22
+author:     고 경훈 (khko@gluesys.com)
+categories: blog
+tags:       [owncloud,오픈소스,클라우드,기능리뷰,스토리지,파일스토리지]
+cover:      "/assets/owncloud_photo/Cloud-Main-Page.jpg"
+main:       "/assets/owncloud_photo/Cloud-Main-Page.jpg"
+---
+
+&nbsp;
+
+### 1. owncloud란 무엇인가?
+
+![owncloudimg](/assets/owncloud_photo/owncloud-logo.png)
+
+
+
+**owncloud**[^1]는 NAS(Network Attached Storage) 형식의 파일 호스팅 서비스를 사용하기 위한 클라이언트-서버 소프트웨어입니다.  
+2010년 1월 KDE개발자인 Frank Karlitschek가 상용 클라우드 스토리지 업체를 대체할 수 있는 무료 대체품을 만들면서 시작되었습니다.  
+그리고 **owncloud**는 상용되는 클라우드 제품과 다르게 개인 서버에 비용 없이 설치가 가능하며 서비스를 제공하는 업체의 상용 서비스도 받을 수 있습니다.
+**owncloud**에서 데이터를 저장할 때는 **파일 스토리지** 형식을 사용하며, 권한에 따라 사용자에게 장치의 모든 파일과 **액세스**, **보안**, **제어**, **통합**을 제공합니다.
+**owncloud**는 **PHP**와 **SQLite**, **MySQL**이나 **PostgreSQL** 데이터베이스를 사용 가능하며 이로 인해 지원되는 모든 시스템에 설치할 수 있습니다.
+또한 WebDAV(Web-based Distributed Authoring and Versioning)[^2]에 기반을 두고 있어 서버 시스템의 운영 체제에 묶여있지 않으나, 파일 매니저나 그룹웨어 같은 네이티브 프로그램과의 상호작용을 통해 로컬 인터페이스와 더불어 파일과 데이터를 사용할 수 있습니다.
+
+
+&nbsp;
+
+### 2. owncloud의 특징
+
+* 인터넷 웹을 통한 서비스 접근성 용이
+* OpenID[^3] 또는 LDAP[^4]를 이용한 사용자 및 그룹 관리
+* 사용자들에 대한 저장소 할당
+* 공유 공개 링크 (생성사용자, 그룹)
+* 스마트폰 / 태블릿 애플리케이션 (iOS/Android 지원)
+* 서버 측 스토리지 데이터 암호화
+* 로컬 저장소 동기화 (Mac/Windows/Linux 지원)
+* 저장소 내 파일 댓글 작성
+* WebDAV(Web-based Distributed Authoring and Versioning)를 통한 파일 생성, 수정, 삭제 
+* 연결된 브라우저 및 장치 관리
+* 외부 저장소 연결 (NFS, SMB/CIFS, SFTP, WebDAV)
+
+
+&nbsp;
+
+### 3. owncloud의 설치 과정
+
+* 설치 환경
+  * OS: CentOS 7
+  * owncloud : 10.6.0
+  * Apache: 2.4.6
+  * PHP: 5.6
+  * MySQL: 5.5.68
+
+1. MySQL, Apache 패키지 설치  
+ `[root@localhost ~]# yum -y install mysql-community-server wget mariadb-server mariadb httpd`
+2. PHP 패키지 설치  
+ `[root@localhost ~]# yum -y install php56w php56w-opcache php56w-mysql php56w-gd php56w-mbstring php56w-xml php56w-intl`
+3. 방화벽 데몬 비활성화 및 영구 비활성화 설정  
+ `[root@localhost ~]# systemctl disable --now firewalld`
+4. owncloud 압축 파일 다운로드  
+ `[root@localhost ~]# wget https://download.owncloud.org/community/owncloud-complete-20201216.zip`
+5. owncloud 압축 파일 해제  
+ `[root@localhost ~]# unzip 20201216.zip`
+6. MySQL 설정 추가, MySQL 기본 인코딩을 UTF-8로 설정  
+ `vi /etc/my.cnf`
+
+	```
+	[client]
+	default-character-set = utf8
+
+	[mysqld]
+	init_connect="SET NAMES utf8"
+	character-set-server = utf8
+	collation-server = utf8_general_ci
+	character-set-client-handshake=FALSE
+	init_connect="SET collation_connection = utf8_general_ci"
+
+	[mysqldump]
+	default-character-set = utf8
+
+	[mysql]
+	default-character-set = utf8
+	```
+
+7. MySQL 서비스 활성화  
+ `[root@localhost ~]# systemctl enable --now mysqld`
+
+8. owncloud 데이터베이스와 계정 생성 및 권한 설정
+	```
+	[root@localhost ~]# mysql -u root 
+	(MySQL 서비스 root 접속)
+
+	mysql> update user set password=password('새 비밀번호') WHERE user='root';
+	(MySQL 서비스 root 비밀번호 설정) [선택 사항]
+
+	mysql> create database <DB이름> default character set utf8;
+	(owncloud에서 사용할 데이터베이스 생성)
+
+	mysql> create user '<계정명>'@'%' identified by '<password>' 
+	(외부 접속 가능한 계정 생성)
+
+	mysql> create user '<계정명>'@'localhost' identified by '<password>' 
+	(로컬 접속만 가능한 계정 생성) [선택 사항]
+
+	mysql> grant all privileges on <데이터베이스 이름>.* to '아이디'@'%'; 
+	(owncloud 데이터베이스에 새로 생성한 계정 권한 부여)
+
+	mysql> grant all privileges on <데이터베이스 이름>.* to '아이디'@'localhost'; 
+	(owncloud 데이터베이스에 새로 생성한 계정 권한 부여)
+
+	mysql> flush privileges; 
+	(MySQL 사용자 권한 reload)
+	```
+
+8. Apache 설정  
+ `vi /etc/httpd/conf.d/owncloud.conf`
+
+	```
+	Alias /owncloud "/var/www/html/owncloud/"
+
+	<Directory "/var/www/html/owncloud">
+		Options +FollowSymLinks
+		AllowOverride All
+
+		<IfModule mod_dav.c>
+			Dav off
+		</IfModule>
+
+		SetEnv HOME /var/www/html/owncloud
+		SetEnv HTTP_HOME /var/www/html/owncloud
+	</Directory>
+
+	<Directory "/var/www/html/owncloud/data/">
+		# just in case if .htaccess gets disabled
+		Require all denied
+	</Directory>
+	```
+9. owncloud 디렉터리의 소유권을 Apache 실행 사용자로 설정  
+ `[root@localhost ~]# chown -R apache.apache /root/owncloud`
+10. owncloud 디렉터리의 접근 권한을 설정  
+ `[root@localhost ~]# chmod -R 770 /root/owncloud`
+11. owncloud 폴더 옮기기  
+ `[root@localhost ~]# mv /root/owncloud /var/www/html/`
+12. Apache 서비스 재시작  
+ `[root@localhost ~]# systemctl restart httpd`
+
+&nbsp;
+
+### 4. owncloud의 공통 기능
+
+* 여러 가지 기능이 있지만, 이 글에선 가장 많이 사용하는 기능들만 소개해 드리도록 하겠습니다.
+
+---
+
+&nbsp;
+
+#### 파일 업로드
+
+![fileupload](/assets/owncloud_photo/fileupload.PNG){: width="700"}
+
+
+탐색기와 같이 끌어서 놓기 또는 업로드를 이용한 파일 올리기가 가능합니다.
+네트워크 기반의 클라우드 저장소 기능 중 가장 기본적이고도 핵심 기술이라고 할 수 있겠습니다.
+**owncloud**를 이용하는 사용자끼리 공유를 하거나 파일을 저장하기 위해 사용합니다.
+
+---
+
+&nbsp;
+
+#### 파일 공유
+
+![Linkupload](/assets/owncloud_photo/Linkupload.PNG)
+
+**링크 공유** 기능을 통해 링크를 만들고 사용자들 간에 공유할 수 있습니다.
+또한 링크를 올릴 때 **owncloud** 사용자들 간에 공유 관련 권한 설정이 가능합니다.
+이어서 권한에 따른 다운로드 혹은 파일 수정, 삭제가 가능합니다.
+* Download / View : 다운로드, 보기 만 허용
+* Download / View / Upload : 다운로드, 보기, 업로드만 허용
+* Download / View / Edit : 다운로드, 보기, 업로드, 수정, 삭제만 허용
+* File Drop : 업로드만 허용
+##### **암호**   
+링크 공유에 암호를 설정하여 보안을 강화할 수 있습니다.
+
+##### **만료**  
+해당 링크에 접속하여 사용할 수 있는 만료 기간을 뜻합니다.
+
+---
+
+&nbsp;
+
+#### 활동 기록
+
+![activelog.PNG](/assets/owncloud_photo/activelog.PNG){: width="700"}
+
+
+파일 업로드 및 수정, 삭제와 같이 파일에 대해 수행된 작업 기록을 확인하실 수 있습니다.  
+예를 들어, 파일이 추가/변경된 시각 등에 대한 정보도 이 기능을 통해 확인이 가능합니다.
+
+---
+
+&nbsp;
+
+#### 파일 댓글
+
+![Alt text](/assets/owncloud_photo/comment.PNG)
+
+
+파일에 대해 댓글을 작성하여 파일을 공유하는 사용자들끼리 정보를 교환할 수 있습니다.
+
+---
+
+&nbsp;
+
+#### 사용자 관리
+
+<img src="/assets/owncloud_photo/user.PNG" width="100%" height="100%" title="px(픽셀) 크기 설정" >
+
+
+권한 또는 보안에서 중요하다고 볼 수 있는 사용자를 관리하는 기능입니다. 
+`admin`이라는 그룹에 속해있는 사용자는 **owncloud**에서 사용자들을 관리할 수 있는 관리자가 됩니다. 
+일반 그룹을 생성하여 여러 사용자를 나누어 관리할 수 있습니다. 그리고 그 그룹에 대한 관리자 권한을 부여하여 그룹을 관리 할 수 있도록 설정할 수 있습니다.  
+
+
+&nbsp;
+
+여기까지 **owncloud**에 관련된 구축과 간단한 기능 설명에 대해 소개를 해보았습니다.
+**owncloud**를 구축하고 간단하게 사용해본 결과 다른 공간, 위치 등등 물리적으로
+떨어져 있는 상태에서 업무의 효율성을 극대화할 수 있을 것 같다고 생각이 들었습니다.  
+개인적으로 외근을 많이 나가는 입장으로써 외근을 나가는경우 사내에 있는 문서 또는 파일들을 사용하고 싶을때 이용한다면 유용하게 쓰일 수 있는 오픈소스라고 생각이 많이 드네요.  
+다음에 작성할 기술 블로그에도 유용하고 좋은 정보로 찾아뵙겠습니다!
+
+
+각주
+---
+
+[^1]: https://ko.wikipedia.org/wiki/owncloud
+[^2]: https://ko.wikipedia.org/wiki/WebDAV
+[^3]: https://en.wikipedia.org/wiki/OpenID
+[^4]: https://ko.wikipedia.org/wiki/LDAP
