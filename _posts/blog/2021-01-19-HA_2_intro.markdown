@@ -4,7 +4,7 @@ title:      "스토리지 이중화 2편: NAS 이중화 아키텍처 설계"
 date:       2021-01-19
 author:     김 태훈 (thkim@gluesys.com)
 categories: blog
-tags:       HA-Pacemaker-이중화-NAS-스토리지-HDD-SSD-DRBD
+tags:       [HA, High-Availability, Pacemaker, 이중화, Failover, 네트워크 결합 스토리지, NAS, 스토리지, Storage, DRBD, 복제, Replication, 블록 복제, Block-level Replication]
 cover:      "/assets/HA2_maincover.jpg"
 main:       "/assets/HA2_maincover.jpg"
 ---

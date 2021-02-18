@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      "스토리지 기초 지식 1편: DAS, SAN, 그리고 NAS"
+title:      "스토리지 기초 지식 1편: DAS, SAN 그리고 NAS"
 date:       2019-12-02
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       DAS SAN NAS 스토리지 샌 나스 다스 유니파이드
+tags:       [스토리지, Storage, 스토리지 에어리어 네트워크, SAN, 네트워크 결합 스토리지, NAS, 직접 연결 스토리지, DAS, 유니파이드, Unified Storage]
 cover:      "/assets/server-farm-shot.jpg"
 main:       "/assets/server-farm-shot.jpg"
 ---

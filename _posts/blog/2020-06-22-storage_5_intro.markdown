@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 5편: 데이터 티어링"
 date:       2020-06-22
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       티어링 최적화 SSD-캐싱 핫-티어 콜드-티어 스토리지-정책 tiering optimization 데이터 스토리지
+tags:       [스토리지, Storage, 티어링, Tiering]
 cover:      "/assets/HDD_SSD.jpg"
 main:       "/assets/HDD_SSD.jpg"
 ---

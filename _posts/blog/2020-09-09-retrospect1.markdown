@@ -4,7 +4,7 @@ title:      "19개월 차 스토리지 개발자로서의 회고 - 권진영"
 date:       2020-09-09
 categories: blog
 author:     권 진영 (gc757489@gmail.com)
-tags:       retrospect
+tags:       [회고, Retrospect, 개발자]
 cover:      "/assets/retrospective/contribute.png"
 main:       "/assets/retrospective/contribute.png"
 ---

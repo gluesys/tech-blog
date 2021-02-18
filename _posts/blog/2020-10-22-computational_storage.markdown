@@ -4,7 +4,7 @@ title:      "엣지 컴퓨팅 환경과 연산 스토리지"
 date:       2020-10-22
 categories: blog
 author:     박주형 (jhpark@gluesys.com)
-tags:       edge-computing, computational-storage, in-situ-processing, 연산-스토리지, 컴퓨테이셔널, 엣지-컴퓨팅, 엣지, 스토리지
+tags:       [스토리지, Storage, 엣지 컴퓨팅, Edge Computing, 연산 스토리지, Computational Storage, 인-시튜 프로세싱, In-situ-processing, 인-스토리지 프로세싱]
 cover:      "/assets/brain_circuit.jpg"
 main:       "/assets/brain_circuit.jpg"
 ---

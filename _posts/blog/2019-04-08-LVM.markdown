@@ -4,7 +4,7 @@ title:      "LVM Basic Architecture"
 date:       2019-04-08 14:01:00
 author:     권 진영 (gc757489@gmail.com)
 categories: blog
-tags:       LVM
+tags:       [논리 볼륨 관리자, Logical Volume Manager, LVM]
 cover:      "/assets/whole.png"
 main:      "/assets/whole_main.jpg"
 ---

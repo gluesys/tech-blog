@@ -4,7 +4,7 @@ title:      "스토리지 이중화 1편: 고가용성과 이중화"
 date:       2020-08-22
 author:     김 태훈 (thkim@gluesys.com)
 categories: blog
-tags:       HA-Pacemaker-이중화-NAS-스토리지-HDD-SSD.
+tags:       [HA, High-Availability, 이중화, Failover, Pacemaker, 네트워크 결합 스토리지, NAS, 스토리지, Storage]
 cover:      "/assets/HA1_maincover.jpg"
 main:       "/assets/HA1_maincover.jpg"
 ---

@@ -13,8 +13,8 @@ layout: main
 	}
 </style>
 
-<div class="home" style="background-color: #F1F1F1;position:relative">
-	<div class="navigation" role="banner" style="position: absolute;z-index: 9999;width: 100%;box-shadow: none;background: none;">
+<div class="home" style="background-color: #F1F1F1; position: relative">
+	<div class="navigation" role="banner" style="position: absolute; z-index: 9999; width: 100%; box-shadow: none; background: none;">
 		<div class="navigation-wrapper">
 			<a href="{{ site.baseurl }}/" class="logo">
 			{% if site.logo %}
@@ -47,7 +47,7 @@ layout: main
 	</div>
 	<div class="sub-title-out">
 		<div class="sub-title-in">
-			<div style="display: inline-block;width:380px;text-align: center;">
+			<div style="display: inline-block; width: 380px; text-align: center;">
 				<div><img src="/assets/img_info.png"></div>
 				<div class="sub-title-menu-conetnt">
 					<div class="sub-title">지식 공유</div>
@@ -59,7 +59,7 @@ layout: main
 					<div class="sub-title-menu-button" onclick="location.href='/blog'">바로가기</div>
 				</div>
 			</div>
-			<div style="display: inline-block;width:380px;text-align: center;">
+			<div style="display: inline-block; width: 380px; text-align: center;">
 				<div><img src="/assets/img_issue.png"></div>
 				<div class="sub-title-menu-conetnt">
 					<div class="sub-title">이슈 사례</div>
@@ -69,9 +69,9 @@ layout: main
 				</div>
 				<div>
 					<div class="sub-title-menu-button" onclick="location.href='/blog'">바로가기</div>
-				</div>			
+				</div>
 			</div>
-			<div style="display: inline-block;width:380px;text-align: center;">
+			<div style="display: inline-block; width: 380px; text-align: center;">
 				<div><img src="/assets/img_test.png"></div>
 				<div class="sub-title-menu-conetnt">
 					<div class="sub-title">테스트 자료</div>
@@ -81,21 +81,21 @@ layout: main
 				</div>
 				<div>
 					<div class="sub-title-menu-button" onclick="location.href='/blog'">바로가기</div>
-				</div>			
+				</div>
 			</div>	
 
 		</div>
 	</div>
 	<div class="wrapper-index">
-		<div style="text-align: center;height:138px;padding-top:50px;">
+		<div style="text-align: center; height: 138px; padding-top: 50px;">
 			<div class="main-content-title">최근 게시물</div></div>
 		<div class="post-list">
 		  {% for post in paginator.posts limit:3 %}
-				<div style="padding-bottom: 30px;height: 270px;">		  
-					<div style="float: left; width: 240px;background-color: #fff;">
-						<img src="{{ post.main }}" style="width:240px; height:240px">
+				<div style="padding-bottom: 30px; height: 270px;">
+					<div style="float: left; width: 240px; background-color: #fff;">
+						<img src="{{ post.main }}" style="width: 240px; height: 240px">
 					</div>
-					<div style="float: left; width: 960px; height:180px">
+					<div style="float: left; width: 960px; height: 180px">
 						<div class="main-conetnt">
 							<div class="main-conetnt-list-title"><a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></div>
 							<section class="post-excerpt" itemprop="description">

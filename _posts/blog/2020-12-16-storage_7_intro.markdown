@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      "스토리지 기초 지식 7편: 데이터 보호_스냅샷"
+title:      "스토리지 기초 지식 7편: 데이터 보호 - 스냅샷"
 date:       2020-12-16
 categories: blog
 author:     박주형 (jhpark@gluesys.com)
-tags:       스토리지 데이터_보호 스냅샷 스토리지_관리 백업 복구 storage management snapshot backup data_protection recovery RPO RTO
+tags:       [스토리지, Storage, 데이터 보호, Data Protection, 스냅샷, Snapshot, 스토리지 관리, Storage Management, 백업, Backup, RPO, RTO]
 cover:      "/assets/snapshot.jpg"
 main:       "/assets/snapshot.jpg"
 ---

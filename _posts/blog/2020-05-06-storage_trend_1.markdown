@@ -4,7 +4,7 @@ title:      "후반 작업 스튜디오에서 활용되는 스토리지"
 date:       2020-05-06
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       후반작업 스튜디오 스토리지 영상편집 NLE 영상변환 렌더링
+tags:       [후반 작업, 스튜디오, 스토리지, Storage, 영상 편집, NLE, 영상 변환, 렌더링, Rendering]
 cover:      "/assets/video_editing.jpg"
 main:       "/assets/video_editing.jpg"
 ---

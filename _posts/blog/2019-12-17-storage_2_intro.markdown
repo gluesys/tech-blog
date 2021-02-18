@@ -4,7 +4,7 @@ title:      "스토리지 기초 지식 2편: 스토리지 프로토콜"
 date:       2019-12-17
 author:     박 주형 (jhpark@gluesys.com)
 categories: blog
-tags:       스토리지 프로토콜 파일시스템 파이버채널 iSCSI NFS SMB CIFS RDMA RoCE iWARP iSER NVMe-oF 인피니밴드
+tags:       [스토리지, Storage, 프로토콜, Protocol, 파일시스템, Filesystem, 파이버 채널, Fibre channel, iSCSI, NFS, SMB, CIFS, RDMA, RoCE, iWARP, iSER, NVMe-oF, 인피니밴드, InfiniBand]
 cover:      "/assets/jbo_cables.jpg"
 main:       "/assets/jbo_cables.jpg"
 ---
