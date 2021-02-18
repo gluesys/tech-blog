@@ -4,174 +4,227 @@ title:      "OwnCloud 란 무엇인가?"
 date:       2021-02-17
 author:     고 경훈 (khko@gluesys.com)
 categories: blog
-tags:       Cloud-오픈소스-클라우드-기능리뷰-스토리지-파일스토리지
+tags:       OwnCloud,오픈소스,클라우드,기능리뷰,스토리지,파일스토리지
 cover:      "/assets/owncloud_photo/Cloud-Main-Page.jpg"
 main:       "/assets/owncloud_photo/Cloud-Main-Page.jpg"
 ---
 
-![Cloudimg](/assets/owncloud_photo/Cloud.png)  
+&nbsp;
+
+### 클라우드(Cloud)란 무엇인가?
+
+![Cloudimg](/assets/owncloud_photo/Cloud.png){: width="700"}
+
 [그림 출처](https://velog.io/@minidoo/%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9CCloud%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%BC%EA%B9%8C)
 
-#Cloud 란 무엇인가?
-===
- - **Cloud** 는 대부분의 사람들이 누구나 써봤을 **인터넷** 을 뜻합니다.
- - 이러한 **Cloud(인터넷)** 를 통해 제공받는 서비스를 **Cloud 서비스** 라고 합니다.
- - **Cloud 서비스** 는 흔히 다른 장소에 있는 물리적, 소프트웨어적 자원을 이용하여   
- 서비스를 제공 받습니다.
+네트워크가 발전하여 기술적으로 인터넷을 통한 소프트웨어를 사용하기 원활해졌습니다.
+관련하여 **클라우드**는 사용자의 눈앞에 보이지 않는 가상 혹은 다른 장소에 있는 물리/소프트웨어 자원을 이용하여 서비스를 제공합니다.
+이러한 **클라우드**를 통해 제공 받는 서비스를 **클라우드 서비스**라고 합니다.
 
+&nbsp;
 
-#1. OwnCloud 란 무엇인가?
-===
+### 1. OwnCloud란 무엇인가?
 
 ![OwnCloudimg](/assets/owncloud_photo/ownCloud-logo.png)
- - **OwnCloud** 란 인터넷을 통한 NAS 형태의 오픈소스 파일 호스팅 서비스를 만들고 사용하기 위한  
- 클라이언트-서버 소프트웨어 입니다.
- - 데이터를 저장할때는 **파일 스토리지** 형식을 사용하며, **OwnCloud**의 사용자에게 권한에 따라  
- 장치에서의 모든 파일 `액세스`, `보안`, `제어`, `통합`을 제공합니다.  
 
-#2. OwnCloud 의 설치 과정
-===
- - 설치 환경 : CentOS7
+**OwnCloud**란 인터넷을 통한 NAS(Network Attached Storage) 형식의 파일 호스팅 서비스를 사용하기 위한 클라이언트-서버 소프트웨어입니다. 
+**OwnCloud**는 데이터를 저장할 때는 **파일 스토리지** 형식을 사용하며, 권한에 따라 사용자에게 장치의 모든 파일과 `액세스`, `보안`, `제어`, `통합`을 제공합니다.
 
- * 2-1. DB, http 패키지 설치  
+
+
+&nbsp;
+
+### 2. OwnCloud의 특징
+
+* 인터넷 웹을 통한 서비스 접근성 용이
+* OpenID 또는 LDAP를 이용한 사용자 및 그룹 관리
+* 사용자들에 대한 저장소 할당
+* 사용자, 그룹 또는 공유, 공개 링크 생성
+* 스마트폰 / 태블릿 애플리케이션 (iOS/Android 지원)
+* 서버측 스토리지 데이터 암호화
+* 로컬 저장소 동기화 (Mac/Windows/Linux지원)
+* 저장소내 파일 댓글 작성
+* WebDAV를 통한 파일 생성, 수정, 삭제 
+* 연결된 브라우저 및 장치 관리
+* 외부 저장소 연결 (NFS, SMB/CIFS, SFTP, WebDAV)
+
+
+&nbsp;
+
+### 3. OwnCloud의 설치 과정
+
+* 설치 환경
+  * OS: CentOS 7
+  * OwnCloud : 10.6.0
+  * Apache: 2.4.6
+  * PHP: 5.6
+  * MySQL: 5.5.68
+
+1. MySQL, Apache 패키지 설치  
  `yum -y install mysql-community-server wget mariadb-server mariadb httpd`
- * 2-2. 필요한 php 패키지 설치  
- `yum -y install php56w php56w-opcache php56w-mysql php56w-gd php56w-mbstring php56w-xml php56w-intl` 
- * 2-3. 방화벽 데몬 disable 및 영구 disable 설정  
- `systemctl disable --now firewalld` 
- * 2-4. 압축 파일 다운로드  
+2. PHP 패키지 설치  
+ `yum -y install php56w php56w-opcache php56w-mysql php56w-gd php56w-mbstring php56w-xml php56w-intl`
+3. 방화벽 데몬 비활성화 및 영구 비활성화 설정  
+ `systemctl disable --now firewalld`
+4. OwnCloud 압축 파일 다운로드  
  `wget https://download.owncloud.org/community/owncloud-complete-20201216.zip`
- * 2-5. 서비스 할 서버에서 압축파일 해제  
+5. OwnCloud 압축 파일 해제  
  `unzip 20201216.zip`
- * 2-6. mysql config 추가, mysql 기본 인코딩 UTF-8 설정  
+6. MySQL 설정 추가, MySQL 기본 인코딩을 UTF-8로 설정  
  `vi /etc/my.cnf`
 
-```
-[client]
-default-character-set = utf8
+	```
+	[client]
+	default-character-set = utf8
 
-[mysqld]
-init_connect="SET NAMES utf8"
-character-set-server = utf8
-collation-server = utf8_general_ci
-character-set-client-handshake=FALSE
-init_connect="SET collation_connection = utf8_general_ci"
+	[mysqld]
+	init_connect="SET NAMES utf8"
+	character-set-server = utf8
+	collation-server = utf8_general_ci
+	character-set-client-handshake=FALSE
+	init_connect="SET collation_connection = utf8_general_ci"
 
-[mysqldump]
-default-character-set = utf8
+	[mysqldump]
+	default-character-set = utf8
 
-[mysql]
-default-character-set = utf8
-```
+	[mysql]
+	default-character-set = utf8
+	```
 
- * 2-7. mysql 서비스 enable 설정  
+7. MySQL 서비스 활성화  
  `systemctl enable --now mysqld`
 
-```
- + mysql -u root 
-  - (mysql 서비스 root 접속)
+8. OwnCloud 데이터베이스와 계정 생성 및 권한 설정
+	```
+	mysql -u root 
+	(MySQL 서비스 root 접속)
 
- + mysql> update user set password=password('새비밀번호') WHERE user='root';
-  - (mysql 서비스 root PW 설정) [option]
+	mysql> update user set password=password('새 비밀번호') WHERE user='root';
+	(MySQL 서비스 root 비밀번호 설정) [선택 사항]
 
- + mysql> create database <DB이름> default character set utf8;
-  - (owncloud에서 사용할 DB 생성)
+	mysql> create database <DB이름> default character set utf8;
+	(OwnCloud에서 사용할 데이터베이스 생성)
 
- + mysql> create user '<계정명>'@'%' identified by '<password>' 
-  - (외부접속 가능한 계정 생성)
+	mysql> create user '<계정명>'@'%' identified by '<password>' 
+	(외부 접속 가능한 계정 생성)
 
- + mysql> create user '<계정명>'@'localhost' identified by '<password>' 
-  - (로컬접속만 가능한 계정 생성) [option]
+	mysql> create user '<계정명>'@'localhost' identified by '<password>' 
+	(로컬 접속만 가능한 계정 생성) [선택 사항]
 
- + mysql> grant all privileges on <DB이름>.* to '아이디'@'%'; 
-  - (owncloud DB에 새로 생성한 계정 권한 부여)
+	mysql> grant all privileges on <데이터베이스 이름>.* to '아이디'@'%'; 
+	(OwnCloud 데이터베이스에 새로 생성한 계정 권한 부여)
 
- + mysql> grant all privileges on <DB이름>.* to '아이디'@'localhost'; 
-  - (owncloud DB에 새로 생성한 계정 권한 부여)
+	mysql> grant all privileges on <데이터베이스 이름>.* to '아이디'@'localhost'; 
+	(OwnCloud 데이터베이스에 새로 생성한 계정 권한 부여)
 
- + mysql> flush privileges; 
-  - (mysql 설정 저장)
-```
+	mysql> flush privileges; 
+	(MySQL 사용자 권한 reload)
+	```
 
- * 2-8. owncloud config 종속 옵션 및  설정  
+8. Apache 설정  
  `vi /etc/httpd/conf.d/owncloud.conf`
 
-```
-Alias /owncloud "/var/www/html/owncloud/"
+	```
+	Alias /owncloud "/var/www/html/owncloud/"
 
-<Directory "/var/www/html/owncloud">
+	<Directory "/var/www/html/owncloud">
+		Options +FollowSymLinks
+		AllowOverride All
 
-    Options +FollowSymLinks
+		<IfModule mod_dav.c>
+			Dav off
+		</IfModule>
 
-    AllowOverride All
+		SetEnv HOME /var/www/html/owncloud
+		SetEnv HTTP_HOME /var/www/html/owncloud
+	</Directory>
 
-
-
-    <IfModule mod_dav.c>
-
-      Dav off
-
-    </IfModule>
-
-
-
-    SetEnv HOME /var/www/html/owncloud
-
-    SetEnv HTTP_HOME /var/www/html/owncloud
-
-</Directory>
-
-
-
-<Directory "/var/www/html/owncloud/data/">
-
-  # just in case if .htaccess gets disabled
-
-  Require all denied
-
-</Directory>
-```
-
- * 2-9. apache 계정 owncloud 디렉토리 소유권 설정  
- `chown -R apache:apache owncloud`
- * 2-10. apache 계정 owncloud 디렉토리 권한 설정  
- `chmod -R 770 owncloud`
- * 2-11. http 서비스 재시작  
+	<Directory "/var/www/html/owncloud/data/">
+		# just in case if .htaccess gets disabled
+		Require all denied
+	</Directory>
+	```
+9. OwnCloud 디렉터리의 소유권을 Apache 실행 사용자로 설정  
+ `chown -R apache.apache /root/owncloud`
+10. OwnCloud 디렉터리의 접근 권한을 설정  
+ `chmod -R 770 /root/owncloud`
+11. OwnCloud 폴더 옮기기  
+ `mv /root/owncloud /var/www/html/`
+12. Apache 서비스 재시작  
  `systemctl restart httpd`
 
+&nbsp;
 
-#3. OwnCloud 의 공통기능
-===
-기능이 여러가지 있기에 제일 많이 사용하는 기능들에 대해서만 소개하도록 하겠습니다.
+### 4. OwnCloud의 공통 기능
+
+* 여러 가지 기능이 있지만, 이 글에선 가장 많이 사용하는 기능들만 소개드리도록 하겠습니다.
+
+---
+
+&nbsp;
+
+#### 파일 업로드
+
+![fileupload](/assets/owncloud_photo/fileupload.PNG){: width="700"}
 
 
-+ 파일 업로드 
-  - 기본적인 NAS와 같은 형태로 Drag and Drop 또는 Upload 이용한 파일 업로드가 가능합니다.
-  - 네트워크 기반의 클라우드 저장소 기능중 가장 기본적이고도 핵심 기술이라고 할 수 있겠는데요.
-  - **OwnCloud**를 이용하는 사용자끼리 공유를 하거나 파일을 저장하기 위해 사용합니다.
-![fileupload](/assets/owncloud_photo/fileupload.png)
+탐색기와 같이 끌어서 놓기 또는 업로드를 이용한 파일 올리기가 가능합니다.
+네트워크 기반의 클라우드 저장소 기능 중 가장 기본적이고도 핵심 기술이라고 할 수 있겠는데요.
+**OwnCloud**를 이용하는 사용자끼리 공유를 하거나 파일을 저장하기 위해 사용합니다.
 
-+ 파일 공유
-  - 업로드한 파일에 대해 **OwnCloud**를 사용하는 특정 User들에게 파일을 공유하여 권한에 따라 다운로드 혹은 파일 삭제, 수정 이 가능합니다.
-  - 또한 "공유 링크" 라는 추가적인 기능을 통해서 URL을 만들어 공유하거나 암호를 설정하여 보안에 한층 더할수 있습니다.
+---
+
+&nbsp;
+
+#### 파일 공유
+
 ![Linkupload](/assets/owncloud_photo/Linkupload.PNG)
 
-+ 활동 Log
-  - 파일 업로드를 통해 파일을 올렸을 경우에 언제 올렸는지에 대한 히스토리도 확인하실  
-  수 있습니다.  
-![activelog.PNG](/assets/owncloud_photo/activelog.PNG)
 
-+ 파일 댓글
-  - 업로드한 파일에 대해 댓글을 작성하고 간단한 내용들을 적어서 히스토리를 남길 수 있습니다.
-![comment](/assets/owncloud_photo/comment.PNG)
+저장소에 올린 파일들을 **OwnCloud** 사용자들 간에 공유하여 권한에 따라 다운로드 혹은 파일 수정, 삭제가 가능합니다.
+또한 **공유 링크** 기능을 통해서 링크를 만들어 사용자들 간에 공유할 수 있습니다.
+* Download / View = 다운로드, 보기 만 허용
+* Download / View / Upload = 다운로드, 보기, 업로드 만 허용
+* Download / View / Edit = 다운로드, 보기, 업로드, 수정, 삭제 만 허용
+* File Drop = 업로드 만 허용
+##### **암호**   
+공유 링크에 암호를 설정하여 보안을 강화할 수 있습니다.
+
+##### **만료**  
+해당 링크에 접속하여 사용할 수 있는 만료 기간을 뜻합니다.
+
+---
+
+&nbsp;
+
+#### 활동 기록
+
+![activelog.PNG](/assets/owncloud_photo/activelog.PNG){: width="700"}
 
 
-+ 사용자관리
-  - 권한 또는 보안에서 중요하다고 볼 수 있는 사용자를 관리하는 기능입니다.
-  - admin이라는 그룹에 속해있는 사용자는 **OwnCloud**에서 사용자들을 관리할 수 있는 SuperUser(root)가 됩니다.
-  - 일반그룹을 생성하여 여러 사용자들을 나누어 관리할 수 있습니다.
-  - 그리고 그 일반그룹에 대한 admin 권한을 부여하여 그룹에 대한 관리를 할 수 있도록   
-  설정할 수 있습니다.  
+파일 업로드 및 수정, 삭제와 같이 파일에 대해 수행된 작업 기록을 확인하실 수 있습니다.  
+예를 들어, 파일이 추가/변경된 시각 등에 대한 정보도 이 기능을 통해 확인이 가능합니다.
+
+---
+
+&nbsp;
+
+#### 파일 댓글
+
+![Alt text](/assets/owncloud_photo/comment.PNG)
+
+
+파일에 대해 댓글을 작성하여 파일을 공유하는 사용자들끼리 정보를 교환할 수 있습니다.
+
+---
+
+&nbsp;
+
+#### 사용자 관리
+
 <img src="/assets/owncloud_photo/user.PNG" width="100%" height="100%" title="px(픽셀) 크기 설정" >
 
 
+권한 또는 보안에서 중요하다고 볼 수 있는 사용자를 관리하는 기능입니다. 
+`admin`이라는 그룹에 속해있는 사용자는 **OwnCloud**에서 사용자들을 관리할 수 있는 관리자가 됩니다. 
+일반 그룹을 생성하여 여러 사용자들을 나누어 관리할 수 있습니다. 그리고 그 그룹에 대한 관리자 권한을 부여하여 그룹을 관리 할 수 있도록 설정할 수 있습니다.  
