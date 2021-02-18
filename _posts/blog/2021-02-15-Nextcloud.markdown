@@ -25,7 +25,7 @@ main:      "/assets/IntelOptaneIMDT_main.jpg"
 
 5. 모바일 기기에서 촬영한 사진을 자동으로 업로드, WebDav 프로토콜과 채팅의 기능도 제공한다.
 
-![Nextcloud](/image/1.JPG)
+![Nextcloud](/assets/1.JPG)
 
 2.NAS와Cloud의 조합
 ----
@@ -39,7 +39,7 @@ main:      "/assets/IntelOptaneIMDT_main.jpg"
 **NAS는 하드디스크에 의존하고, Raid구성으로 비용도 많이 드는데, 클라우드 서비스는 휴지통이나 , 파일 히스토리 기능을 지원하여
 복구가 수월하다고 생각되어 안정성이 보장된다고 생각이 된다.**
 
-![NextCloud](/image/2.JPG)
+![NextCloud](/assets/2.JPG)
 
 3.NextCloud 설치과정
 ----
@@ -185,14 +185,14 @@ $CONFIG = array (
 </pre>
 * URL 을 통해 접근하면 관리자 웹 화면이 나타난다.
 
-<img src="/image/3.png" width="70%" height="400px" alt="NextCloud">
-<img src="/image/s1.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/3.png" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s1.JPG" width="70%" height="400px" alt="NextCloud">
 * NextCloud 메인화면 입니다.
 
 4.NextCloud 공통기능
 ----
 #### 4.1 파일
-<img src="/image/s2.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s2.JPG" width="70%" height="400px" alt="NextCloud">
 1. 사용자마다 개인 파일 관리와 다른 장치간 파일 공유를 하여 외부 저장소를 사용하여 파일 시스템 단위로 사용 및 관리한다.
 2. NAS와 같은 기능으로 Up&Download 파일 이동이 가능합니다.
 3. 네트워크 기반의 클라우드 서비스로 관리자 및 사용자 간 파일을 공유하거나 저장하여 사용 가능합니다.
@@ -200,32 +200,32 @@ $CONFIG = array (
 5. 활동 항목에서 파일에 대한 접근 및 작업을 하면 태스크 정보도 확인할 수 있습니다.
 
 #### 4.2 사진
-<img src="/image/s3.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s3.JPG" width="70%" height="400px" alt="NextCloud">
 1. 파일 항목에서 Photos 라는 디렉터리에 이미지를 업로드 하면 그림 기능에서 업로드 된 이미지 파일을 확인할 수 있습니다.
 2. Cloud에서 많이 사용되는 사진 및 동영상 관리 시스템을 필수로 개인 이미지 또는 다른 사용자 간 공유하여 활용합니다.
 3. 스프레드시트 , 프레젠테이션 제공하는 편집기를 통해 작업 가능하며 문서 작성을 위한 많은 Plugin기능을 제공합니다.
 
 #### 4.3 활동
-<img src="/image/s4.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s4.JPG" width="70%" height="400px" alt="NextCloud">
 1. 사용자마다 어느 항목에서 동작을 했거나, 파일을 수정 및 생성, 삭제 하였거나 캘린더 설정 및 채팅 이용시 태스크 정보를 기록해 줍니다.
 2. 태스크 정보가 있으므로 누군가 임의로 변동 시 그 정보를 확인하기에 보안성이 있습니다.
 3. 개인 및 다른 공유 형태로 통합적 사용으로 인해 추적할 수 있으며, 기본으로 제공하는 Plugin 입니다.
 
 #### 4.4 토크
-<img src="/image/s5.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s5.JPG" width="70%" height="400px" alt="NextCloud">
 1. NextCloud에서 제공하는 좋은 점은 파일 관리, 채팅, 캘린더 등 조직에서 사용하는 기능을 통합적으로 제공합니다.
 2. 관리자에 권한에 의해서 사용자 간 채팅하여 MatterMost와 같은 기능을 제공합니다.
 3. Nextcloud Talk는 Microsoft Teams 또는 Slack과 같은 다른 팀 공동 작업 플랫폼보다 커뮤니케이션을 더 잘 보호하여 데이터가 서버에 유지됩니다.
 4. NextCloud Talk는 메타 데이터가 유출되는 것을 방지하여 다른 암호화 된 통신 기술보다 한층 더 나아갑니다.
 
 #### 4.5 연락처
-<img src="/image/s6.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s6.JPG" width="70%" height="400px" alt="NextCloud">
 1. 연락처 기능은 관리자와 사용자들의 연락처를 그룹화 하여 정보를 관리할 수 있다.
 2. 전화번호, 이메일을 검색 기능을 통해 조회 가능하며, 개인 사용자마다 각각의 연락처를 관리할 수 있다.
 3. 외부 저장소(External Storage)에서 등록한 다른 장치의 공유 파일에서도 연락처 정보를 가져올 수 있고, 개인 로컬에서도 가져올 수 있습니다.
 
 #### 4.6 달력
-<img src="/image/s7.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/s7.JPG" width="70%" height="400px" alt="NextCloud">
 1. Google Calendar 기능과 유사하여 개인 캘린더, 다른 공유 캘린더를 사용 가능합니다.
 2. 사용자 간 일정을 관리하고 공유하여 기업에서 업무 효율을 빠르게 처리할 수 있습니다.
 3. 로컬 및 다른 장치간 공유 파일에서도 달력 정보에 대한 정보를 업로드 하여 가져올 수 있습니다.
@@ -235,7 +235,7 @@ $CONFIG = array (
 #### 5.1 외부 저장소
 NextCloud 에서 제공하는 기능으로 외부 저장소(External Storage)에서 외부 저장소나 서비스 장치를 NextCloud 장치로 마운트할 수 있으며, 사용자가
 개별 외부 저장소 서비스를 마운트할 수 있도록 허용 가능합니다.
-<img src="/image/ex.JPG" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/ex.JPG" width="70%" height="400px" alt="NextCloud">
 
 |저장소|내용|
 |:-----------:|:---------|
@@ -249,7 +249,7 @@ NextCloud 에서 제공하는 기능으로 외부 저장소(External Storage)에
 |OpenStack|가상 리소스를 사용한다. Private 및 |
 
 #### 5.2 인증
-<img src="/image/ex1.png" width="70%" height="400px" alt="NextCloud">
+<img src="/assets/ex1.png" width="70%" height="400px" alt="NextCloud">
 
 |인증|내용|
 |:----------:|:-----------|
