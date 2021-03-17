@@ -9,7 +9,7 @@ cover:      "/assets/provisioning_title.jpg"
 main:       "/assets/provisioning_title.jpg"
 ---
 
-스마트폰을 사용하는 현대인이라면 한 번쯤은 용량 부족으로 고민한 적이 있을 것입니다. 일일이 관리하기 번거로우니 필연적으로 사진 등을 클라우드로 자동 업로드하는 기능을 활용하는 경우가 발생합니다. 아이폰의 경우 주로 iCloud를 사용하게 되는데, iCloud는 기본적으로 5GB를 무료로 제공합니다. 네이버 MYBOX(무려 30GB)나 구글 드라이브에 비하면 적은 편이지만 무료로 잠시 사용하기에는 적절한 용량입니다. 이처럼 몇몇 대형 클라우드 벤더들은 무료 클라우드 스토리지 서비스를 제공하곤 하는데, 개개인 기준으로 적은 용량이라 하더라도 모이면 매우 큽니다. 2018년 기준으로 iCloud 무료 서비스 사용자가 무려 6억 8천만 명인데, 이러면 애플은 3.4EB(엑사바이트)의 스토리지 공간을 무료로 제공하는 꼴이 됩니다. 하지만 자본주의에 충실한 애플은 당연히 6억 8천만 명의 무료 사용자에게 5GB를 전부 제공하지 않습니다. 대신 **씬 프로비저닝**이라는 스토리지 공간 관리 기능을 통해 5GB로 보이게만 하고 실제로는 사용하는 만큼만의 용량을 제공합니다. 이번 포스트에서는 전통적인 스토리지 공간 할당 방식인 씩 프로비저닝과 스토리지 공간 효율을 최적화하는 씬 프로비저닝의 개념을 소개해 보고자 합니다.  
+스마트폰을 사용하는 현대인이라면 한 번쯤은 용량 부족으로 고민한 적이 있을 것입니다. 일일이 관리하기 번거로우니 필연적으로 사진 등을 클라우드로 자동 업로드하는 기능을 활용하는 경우가 발생합니다. 아이폰의 경우 주로 iCloud를 사용하게 되는데, iCloud는 기본적으로 5GB를 무료로 제공합니다. 네이버 MYBOX(무려 30GB)나 구글 드라이브에 비하면 적은 편이지만 무료로 잠시 사용하기에는 적절한 용량입니다. 이처럼 몇몇 대형 클라우드 벤더들은 무료 클라우드 스토리지 서비스를 제공하곤 하는데, 개개인 기준으로 적은 용량이라 하더라도 모이면 매우 큽니다. 2018년 기준으로 iCloud 무료 서비스 사용자가 무려 6억 8천만 명인데[^1], 이러면 애플은 3.4EB(엑사바이트)의 스토리지 공간을 무료로 제공하는 꼴이 됩니다. 하지만 자본주의에 충실한 애플은 당연히 6억 8천만 명의 무료 사용자에게 5GB를 전부 제공하지 않습니다. 대신 **씬 프로비저닝**이라는 스토리지 공간 관리 기능을 통해 5GB로 보이게만 하고 실제로는 사용하는 만큼만의 용량을 제공합니다. 이번 포스트에서는 전통적인 스토리지 공간 할당 방식인 씩 프로비저닝과 스토리지 공간 효율을 최적화하는 씬 프로비저닝의 개념을 소개해 보고자 합니다.  
 
 &nbsp;
 
@@ -59,19 +59,23 @@ SAN 환경에서의 씬 프로비저닝은 가상 LUN(virtual LUN)을 활용합�
   
 ## 마치며
   
-최근 들어 기업들은 기업 내의 데이터센터 규모를 줄이고 퍼블릭 클라우드를 활용하거나 코로케이션 방식으로 비중을 늘리고 있습니다. 이러한 현상은 데이터센터가 단순히 구축 비용을 넘어서 유지비용의 부담이 크기 때문에 발생하고 있습니다. 2020년 기준으로 전 세계 전력 소비의 3%가 데이터센터에서 발생하는데 그중 스토리지의 비중은 약 17%입니다. 게다가, 데이터센터 내 하드웨어 도입비의 90%가 스토리지에서 발생하는 것을 생각하면 데이터센터 운영에 있어서 스토리지 비용을 최소화하는 것은 매우 중요하다고 할 수 있습니다. 데이터가 늘어날 수밖에 없는 데이터센터 환경에서 스토리지 공간을 최적화하기 위해서는 앞선 시간에 소개해 드렸던 중복제거 기술이나 압축과 같은 데이터 축소 기술, 그리고 씬 프로비저닝과 같은 공간 효율화 기술을 잘 활용할 수 있어야 합니다.  
+최근 들어 기업들은 기업 내의 데이터센터 규모를 줄이고 퍼블릭 클라우드를 활용하거나 코로케이션 방식으로 비중을 늘리고 있습니다. 이러한 현상은 데이터센터가 단순히 구축 비용을 넘어서 유지비용의 부담이 크기 때문에 발생하고 있습니다. 2020년 기준으로 전 세계 전력 소비의 3%가 데이터센터에서 발생하는데[^2] 그중 스토리지의 비중은 약 17%입니다[^3]. 게다가, 데이터센터 내 하드웨어 도입비의 90%가 스토리지에서 발생[^4]하는 것을 생각하면 데이터센터 운영에 있어서 스토리지 비용을 최소화하는 것은 매우 중요하다고 할 수 있습니다. 데이터가 늘어날 수밖에 없는 데이터센터 환경에서 스토리지 공간을 최적화하기 위해서는 앞선 시간에 소개해 드렸던 중복제거 기술이나 압축과 같은 데이터 축소 기술, 그리고 씬 프로비저닝과 같은 공간 효율화 기술을 잘 활용할 수 있어야 합니다.  
   
 &nbsp;
+  
+각주
+---
+  
+[^1]: https://www.cnbc.com/2018/02/11/apple-could-sell-icloud-for-the-enterprise-barclays-says.html
+[^2]: https://www.dxc.technology/cr/insights/145852-data_centers_play_key_role_in_reducing_ghg_emissions#:~:text=Producing%20electricity%20consumed%20by%20data,the%20Natural%20Resources%20Defense%20Council.&text=In%20fact%2C%20the%20Berkeley%20Lab,hours%20of%20electricity%20by%202020
+[^3]: https://davidmytton.blog/how-much-energy-do-data-centers-use/
+[^4]: https://www.backblaze.com/blog/cost-of-cloud-storage/
   
 ## 참고
   
  * https://en.wikipedia.org/wiki/Thin_provisioning
  * https://www.solarwindsmsp.com/blog/thin-provision-vs-thick-provision
  * https://www.mycloudwiki.com/san/thick-vs-thin-provisioning/#:~:text=It%20is%20also%20known%20as,a%20set%2C%20called%20RAID%20set.
- * https://www.cnbc.com/2018/02/11/apple-could-sell-icloud-for-the-enterprise-barclays-says.html
- * https://www.dxc.technology/cr/insights/145852-data_centers_play_key_role_in_reducing_ghg_emissions#:~:text=Producing%20electricity%20consumed%20by%20data,the%20Natural%20Resources%20Defense%20Council.&text=In%20fact%2C%20the%20Berkeley%20Lab,hours%20of%20electricity%20by%202020.
- * https://davidmytton.blog/how-much-energy-do-data-centers-use/
- * https://www.backblaze.com/blog/cost-of-cloud-storage/
  * https://www.nakivo.com/blog/thick-and-thin-provisioning-difference/
   
   
