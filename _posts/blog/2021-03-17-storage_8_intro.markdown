@@ -65,18 +65,20 @@ SAN 환경에서의 씬 프로비저닝은 가상 LUN(virtual LUN)을 활용합�
   
 &nbsp;
   
-## 각주
-  
-[^1]: https://www.cnbc.com/2018/02/11/apple-could-sell-icloud-for-the-enterprise-barclays-says.html
-[^2]: https://www.dxc.technology/cr/insights/145852-data_centers_play_key_role_in_reducing_ghg_emissions#:~:text=Producing%20electricity%20consumed%20by%20data,the%20Natural%20Resources%20Defense%20Council.&text=In%20fact%2C%20the%20Berkeley%20Lab,hours%20of%20electricity%20by%202020
-[^3]: https://davidmytton.blog/how-much-energy-do-data-centers-use/
-[^4]: https://www.backblaze.com/blog/cost-of-cloud-storage/
-  
 ## 참고
   
  * https://en.wikipedia.org/wiki/Thin_provisioning
  * https://www.solarwindsmsp.com/blog/thin-provision-vs-thick-provision
  * https://www.mycloudwiki.com/san/thick-vs-thin-provisioning/#:~:text=It%20is%20also%20known%20as,a%20set%2C%20called%20RAID%20set.
  * https://www.nakivo.com/blog/thick-and-thin-provisioning-difference/
+  
+&nbsp;
+  
+## 각주
+  
+[^1]: https://www.cnbc.com/2018/02/11/apple-could-sell-icloud-for-the-enterprise-barclays-says.html
+[^2]: https://www.dxc.technology/cr/insights/145852-data_centers_play_key_role_in_reducing_ghg_emissions#:~:text=Producing%20electricity%20consumed%20by%20data,the%20Natural%20Resources%20Defense%20Council.&text=In%20fact%2C%20the%20Berkeley%20Lab,hours%20of%20electricity%20by%202020
+[^3]: https://davidmytton.blog/how-much-energy-do-data-centers-use/
+[^4]: https://www.backblaze.com/blog/cost-of-cloud-storage/
   
   
