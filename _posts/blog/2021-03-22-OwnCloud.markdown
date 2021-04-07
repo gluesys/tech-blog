@@ -5,8 +5,8 @@ date:       2021-03-22
 author:     고 경훈 (khko@gluesys.com)
 categories: blog
 tags:       [ownCloud,오픈소스,클라우드,기능 리뷰,스토리지,파일 스토리지]
-cover:      "/assets/owncloud_photo/cloud-Main-Page.jpg"
-main:       "/assets/owncloud_photo/cloud-Main-Page.jpg"
+cover:      "/assets/owncloud_photo/Cloud-Main-Page.jpg"
+main:       "/assets/owncloud_photo/Cloud-Main-Page.jpg"
 ---
 
 &nbsp;
