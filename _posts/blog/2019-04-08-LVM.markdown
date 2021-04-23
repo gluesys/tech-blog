@@ -27,7 +27,7 @@ PV는 실제 물리 디스크를 LVM 용도로 초기화된 물리 디스크 또
 
 PV에서는 LVM Label과 LVM Metadata를 포함합니다.
 LVM Label은 물리 장치를 식별하고 순서대로 나열할 수 있도록 해줍니다. 또한 물리 볼륨의 UUID를 포함하고 블록 장치의 크기를 바이트 단위로 저장하며 LVM Metadata가 장치에 저장될 위치를 기록합니다.
-LVM Meatadata는 LVM 볼륨 그룹에 대한 구성 정보를 포함합니다. Metadata는 ASCII로 저장됩니다.
+LVM Metadata는 LVM 볼륨 그룹에 대한 구성 정보를 포함합니다. Metadata는 ASCII로 저장됩니다.
 
 * PV command
   * pvscan : PV에 대한 디스크를 확인 후 이를 출력
