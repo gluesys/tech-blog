@@ -220,6 +220,6 @@ Zone Management Receive 명령어는 Zone에 대한 정보(Zone Type, Zone State
 
 ## 출처
 
-[Zoned Namespace PDF](https://nvmexpress.org/wp-content/uploads/NVM-Express-Zoned-Namespace-Command-Set-Specification-1.1-2021.06.02-Ratified-1.pdf)  
-[Zonedstorage Document](https://zonedstorage.io/introduction/zns/)  
-[SNIA: NVMe2.0 preview PDF](https://snia.org/sites/default/files/SDC/2020/154-Martin-Hands-NVMe-2.0-Specification-Preview.pdf)
+* [Zoned Namespace PDF](https://nvmexpress.org/wp-content/uploads/NVM-Express-Zoned-Namespace-Command-Set-Specification-1.1-2021.06.02-Ratified-1.pdf)  
+* [Zonedstorage Document](https://zonedstorage.io/introduction/zns/)  
+* [SNIA: NVMe2.0 preview PDF](https://snia.org/sites/default/files/SDC/2020/154-Martin-Hands-NVMe-2.0-Specification-Preview.pdf)
