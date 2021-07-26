@@ -40,9 +40,9 @@ ZNS는 Zoned Namespace의 약자로 연관성 있는 데이터 그룹을 Zone이
 
 덮어쓰기가 불가능한 SSD는 가용 공간이 적을 때 특정 셀에 데이터의 쓰기가 집중될 수 있습니다. 오버 프로비저닝은 이러한 현상을 방지하기 위해, SSD에 용량의 일정 부분을 여분 공간으로 할당하는 기술입니다.
 
-&nbsp;
-
 ZNS가 어떻게 기존 SSD의 단점을 보완할 수 있는지에 대해 ZNS 세부 스펙을 통해 알아볼까요?
+
+&nbsp;
 
 ## Zone Specification
 
@@ -94,8 +94,7 @@ Zone Attributes는 Zone 명령어 집합 필드에 사용되는 속성들입니�
 
 &nbsp;
 
-ZNS 명령어는 위의 속성들을 사용하여 Zone을 핸들링합니다. 그렇다면 어떤 ZNS 명령어가 있는지 알아보겠습니다.  
-ZNS 명령어의 종류는 **Zone Append, Zone Management Send, Zone Management Receive**의 총 3가지가 있습니다.
+ZNS 명령어는 위의 속성들을 사용하여 Zone을 핸들링합니다. 그렇다면 어떤 ZNS 명령어가 있는지 알아보겠습니다. ZNS 명령어의 종류는 **Zone Append, Zone Management Send, Zone Management Receive**의 총 3가지가 있습니다.
 
 &nbsp;
 
@@ -126,7 +125,9 @@ ZNS 명령어의 종류는 **Zone Append, Zone Management Send, Zone Management 
 
 `Zone Management Send` 명령어는 여러 Zone의 action 수행에 대한 제어를 요청하는 작업을 정의합니다. 여기서 action 수행은 **Zone Send Action** 필드가 담당합니다. 여기서 action 수행을 통해 Zone 상태가 변환되는데요, 그렇다면 `Zone 상태 기계`에 대해 먼저 알아보도록 하겠습니다.
 
-##### Zone 상태 기계
+&nbsp;
+
+#### Zone 상태 기계
 
 아래 그림은 데이터가 Zone에 쓰일 때, 시스템에 의해 변화하는 각 Zone의 상태들을 나타냅니다.
 ![Alt text](/assets/ZNS_FIG3.png){: width="1000"}  
@@ -136,36 +137,40 @@ ZNS 명령어의 종류는 **Zone Append, Zone Management Send, Zone Management 
 
 Zone의 상태를 크게 활성 Zone, 비활성 Zone의 2가지 상태 집합으로 분류하여 정리해봤습니다.
 
+&nbsp;
+
 1. 비활성 Zone 상태들  
 
    모든 Zone의 초기 상태는 `ZSE:Empty`이며, 나머지는 Zone의 활동에 따라 변하는 고유 상태입니다.
 
- * `ZSE:Empty`  
-   Zone에 데이터가 비어있음을 의미하고 WP(Write Pointer)는 해당 Zone의 첫 번째 LBA입니다.
- * `ZSF:Full`  
-   Zone에 데이터가 가득 찼음을 의미하고, WP(Write Pointer)는 해당 Zone의 마지막 LBA입니다.
- * `ZSRO:ReadOnly`  
-   수명이 다한 상태로, Zone 용량 중 일부가 작동을 중지한 후에도 호스트가 해당 Zone에 대한 이름 공간을 계속 사용할 수 있습니다  
-   (ex: copy, `ZSO:Offline`로의 상태 전환)
- * `ZSO:Offline`  
-   수명이 다한 상태로, 더 이상의 상태 전환이 발생할 수 없습니다.
+   * `ZSE:Empty`  
+     Zone에 데이터가 비어있음을 의미하고 WP(Write Pointer)는 해당 Zone의 첫 번째 LBA입니다.
+   * `ZSF:Full`  
+     Zone에 데이터가 가득 찼음을 의미하고, WP(Write Pointer)는 해당 Zone의 마지막 LBA입니다.
+   * `ZSRO:ReadOnly`  
+     수명이 다한 상태로, Zone 용량 중 일부가 작동을 중지한 후에도 호스트가 해당 Zone에 대한 이름 공간을 계속 사용할 수 있습니다  
+     (ex: copy, `ZSO:Offline`로의 상태 전환)
+   * `ZSO:Offline`  
+     수명이 다한 상태로, 더 이상의 상태 전환이 발생할 수 없습니다.
 
 2. 활성 Zone 상태들  
 
    최대 활성화될 수 있는 리소스는 제한되며, 다음과 같은 상태가 있습니다.
 
- * `ZSIO:Implicitly Opened`  
-   `Write` 명령어를 실행하여 암시적으로 오픈된 상태이며, 오픈 할 수 있는 리소스가 포화 상태일 경우, 호스트의 `Open Zone` 명령어에 의해 우선순위가 밀려 닫힐 수 있습니다.
- * `ZSEO:Explicitly Opened`  
-   open 명령어를 명시적으로 실행하여 오픈된 상태이며, 호스트 소프트웨어에 의한 Close 명령어를 통해서만 닫힐 수 있습니다.
- * `ZSC:Closed`  
-   암시적 오픈을 통한 해당 Zone의 쓰기 용량이 모두 채워졌거나, Close 명령어를 통한 리소스 해제되었음을 의미합니다. 
+   * `ZSIO:Implicitly Opened`  
+     `Write` 명령어를 실행하여 암시적으로 오픈된 상태이며, 오픈 할 수 있는 리소스가 포화 상태일 경우, 호스트의 `Open Zone` 명령어에 의해 우선순위가 밀려 닫힐 수 있습니다.
+   * `ZSEO:Explicitly Opened`  
+     open 명령어를 명시적으로 실행하여 오픈된 상태이며, 호스트 소프트웨어에 의한 Close 명령어를 통해서만 닫힐 수 있습니다.
+   * `ZSC:Closed`  
+     암시적 오픈을 통한 해당 Zone의 쓰기 용량이 모두 채워졌거나, Close 명령어를 통한 리소스 해제되었음을 의미합니다. 
 
 &nbsp;
 
 Zone은 `Zone 상태 기계`를 기반으로 상태가 변환되는데요, Zone의 action 수행을 통해 Zone의 상태를 변환시키는 명령어에 대해 분석해보겠습니다.
 
-##### ZSA(Zone Send Action)  
+&nbsp;
+
+#### ZSA(Zone Send Action)  
 
 Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을 위해 직접적으로 사용되는 Byte 필드입니다. ZSA는 Zone의 상태를 어떻게 변환시킬까요? ZSA가 수행하는 Zone의 첫 번째 논리 블록 주소(SLBA - Start Logical Block Address)이 명시된 경우만 한 번 살펴보겠습니다.  
   * `Close Zone`  
@@ -185,7 +190,9 @@ Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을
 
 그렇다면, 위의 상태도에 따라 실제로 드라이브에 데이터가 쓰여질 때 Zone의 상태는 어떻게 변할까요?
 
-##### 상태 전환 사이클 예시
+&nbsp;
+
+#### 상태 전환 사이클 예시
 
  1. 일반적으로 새 드라이브의 초기 상태는 `ZSE:Empty` 상태입니다.
  2. `ZSE:Empty` 상태에서 `Write` 명령어와 같은 쓰기 명령어를 통해 Zone이 `Open`되는 경우, 자동으로 `ZSIO:Implicitly Opened` 상태로 전환됩니다.  
@@ -200,7 +207,7 @@ Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을
 
 Zone Management Receive 명령어는 Zone에 대한 정보(Zone Type, Zone State, Zone Attributes 등)가 포함된 데이터 버퍼를 반환합니다. 반환된 데이터를 통해 해당 Zone에 대한 정보를 알 수 있습니다. 주로 호스트가 Zone의 상태 전환을 결정하기 위해 이 명령어를 사용합니다. 또한, **Zone Receive Action** 필드를 통해 Zone의 어떤 정보를 불러올지에 대해 선택할 수 있습니다.
 
-##### ZRA(Zone Receive Action)
+#### ZRA(Zone Receive Action)
   해당 필드는 위에 설명한 **Zone Descriptor Attributes** 데이터 구조를 포함한 모든 Zone 대한 **Descriptor**에 접근할 수 있도록 설정할 수 있습니다.
 
 &nbsp;
@@ -213,10 +220,6 @@ Zone Management Receive 명령어는 Zone에 대한 정보(Zone Type, Zone State
 
 ## 출처
 
-* <a href=https://nvmexpress.org/wp-content/uploads/NVM-Express-Zoned-Namespace-Command-Set-Specification-1.1-2021.06.02-Ratified-1.pdf>Zoned Namespace PDF</a>
-* <a href=https://zonedstorage.io/introduction/zns/>Zonedstorage Document</a>
-* <a href=https://snia.org/sites/default/files/SDC/2020/154-Martin-Hands-NVMe-2.0-Specification-Preview.pdf >SNIA: NVMe2.0 preview PDF</a>
-
-[Zoned Namespace PDF]: https://nvmexpress.org/wp-content/uploads/NVM-Express-Zoned-Namespace-Command-Set-Specification-1.1-2021.06.02-Ratified-1.pdf
-[Zonedstorage Document]: https://zonedstorage.io/introduction/zns/
-[SNIA: NVMe2.0 preview PDF]: https://snia.org/sites/default/files/SDC/2020/154-Martin-Hands-NVMe-2.0-Specification-Preview.pdf 
+[Zoned Namespace PDF](https://nvmexpress.org/wp-content/uploads/NVM-Express-Zoned-Namespace-Command-Set-Specification-1.1-2021.06.02-Ratified-1.pdf)  
+[Zonedstorage Document](https://zonedstorage.io/introduction/zns/)  
+[SNIA: NVMe2.0 preview PDF](https://snia.org/sites/default/files/SDC/2020/154-Martin-Hands-NVMe-2.0-Specification-Preview.pdf)
