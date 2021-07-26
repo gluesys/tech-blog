@@ -24,7 +24,10 @@ main:       "/assets/Flash_memory_NVMe.jpg"
 ![Alt text](/assets/hash.png)
 <center>&#60; 연관 배열 &#62;</center>
 
+&nbsp;
+
 키-값 데이터베이스는 연관 배열(Hash), 사전(Dictionary)과 같은 자료 구조처럼 어떤 `키`를 사용하여 데이터베이스에 저장된 `값`을 찾아내는 방식의 데이터베이스입니다. 이때 `키`는 테이블별로 고유한 값을 지니고 있습니다. 예전에는 관계형 데이터베이스에 밀려 잘 쓰이지 않았다고 합니다. 하지만 정형 데이터밖에 넣을 수 없는 관계형 데이터베이스보다 비정형 데이터를 저장할 수 있는 특징 덕분에 근래에는 많이 사용되고 있다고 합니다.
+
 &nbsp;
 
 ### 배경
@@ -84,7 +87,7 @@ main:       "/assets/Flash_memory_NVMe.jpg"
 ### 장점
 
 ![Alt text](/assets/KV_bench.png)
-<center>&#60; 키-값 SSD 임의 쓰기 성능 그래프 &#62;</center> [^1]
+<center>&#60; 키-값 SSD 임의 쓰기 성능 그래프[^1] &#62;</center>
 
 &nbsp;
 
