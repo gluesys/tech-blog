@@ -127,7 +127,7 @@ ZNS 명령어는 위의 속성들을 사용하여 Zone을 핸들링합니다. �
 
 &nbsp;
 
-#### Zone 상태 기계
+##### Zone 상태 기계
 
 아래 그림은 데이터가 Zone에 쓰일 때, 시스템에 의해 변화하는 각 Zone의 상태들을 나타냅니다.
 ![Alt text](/assets/ZNS_FIG3.png){: width="1000"}  
@@ -170,7 +170,7 @@ Zone은 `Zone 상태 기계`를 기반으로 상태가 변환되는데요, Zone�
 
 &nbsp;
 
-#### ZSA(Zone Send Action)  
+##### ZSA(Zone Send Action)  
 
 Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을 위해 직접적으로 사용되는 Byte 필드입니다. ZSA는 Zone의 상태를 어떻게 변환시킬까요? ZSA가 수행하는 Zone의 첫 번째 논리 블록 주소(SLBA - Start Logical Block Address)이 명시된 경우만 한 번 살펴보겠습니다.  
   * `Close Zone`  
@@ -192,7 +192,7 @@ Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을
 
 &nbsp;
 
-#### 상태 전환 사이클 예시
+##### 상태 전환 사이클 예시
 
  1. 일반적으로 새 드라이브의 초기 상태는 `ZSE:Empty` 상태입니다.
  2. `ZSE:Empty` 상태에서 `Write` 명령어와 같은 쓰기 명령어를 통해 Zone이 `Open`되는 경우, 자동으로 `ZSIO:Implicitly Opened` 상태로 전환됩니다.  
@@ -207,8 +207,9 @@ Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을
 
 Zone Management Receive 명령어는 Zone에 대한 정보(Zone Type, Zone State, Zone Attributes 등)가 포함된 데이터 버퍼를 반환합니다. 반환된 데이터를 통해 해당 Zone에 대한 정보를 알 수 있습니다. 주로 호스트가 Zone의 상태 전환을 결정하기 위해 이 명령어를 사용합니다. 또한, **Zone Receive Action** 필드를 통해 Zone의 어떤 정보를 불러올지에 대해 선택할 수 있습니다.
 
-#### ZRA(Zone Receive Action)
-  해당 필드는 위에 설명한 **Zone Descriptor Attributes** 데이터 구조를 포함한 모든 Zone 대한 **Descriptor**에 접근할 수 있도록 설정할 수 있습니다.
+##### ZRA(Zone Receive Action)
+
+해당 필드는 위에 설명한 **Zone Descriptor Attributes** 데이터 구조를 포함한 모든 Zone 대한 **Descriptor**에 접근할 수 있도록 설정할 수 있습니다.
 
 &nbsp;
 
