@@ -1,0 +1,96 @@
+---
+layout:     post
+title:      "PCIe를 대체할 인터커넥트 표준 기술, CXL"
+date:       2021-11-15
+categories: blog
+author:     박주형 (jhpark@gluesys.com)
+tags:       [CXL, PCIe, 인터커넥트, 오픈소스, Open Source, 캐시 일관성, Cache Coherence, 옵테인, Optane]
+cover:      "/assets/cxl_main.jpg"
+main:       "/assets/cxl_main.jpg"
+---
+
+지난 포스트에서는 컴포저블 인프라에 대해 소개하면서 인터커넥트 기술인 **CXL(Compute Express Link)**과 Gen-Z에 대해 간단히 다루어 보았습니다. 이번 포스트에서는 CXL에 대해 조금 더 소개해 보고자 합니다.  
+  
+연초에 메모리 및 저장장치 제조사인 마이크론(Micron Technology)에서 기존 인텔과 공동개발 중이던 3D XPoint 옵테인(Optane Persistent Memory) 사업을 중단하고 CXL 제품 개발에 집중하기로 했다는 뉴스가 있었습니다. 비록 기존 인텔과의 계약 기간에 따라 옵테인 제품의 생산을 계속하겠다고는 했지만, 마이크론 입장에서는 옵테인이 특정 CPU만 호환해 개발 유연성이 떨어진다는 점과 옵테인 시장의 부진 때문에 이와 같은 결정을 하게 되었다고 볼 수 있습니다.  
+  
+CXL 등장 이전의 프로세서들은 메모리 공유 수단이 한정되어 있었습니다. 같은 PCI 익스프레스 (이하 PCIe) 기반 표준인 NVMe의 경우에는 SSD 제품에 따라 벤더 간 호환성 문제가 있었습니다. 그 예로서, 인텔의 옵테인은 같은 인텔의 Xeon CPU만 지원해 벤더 종속성 문제를 가지고 있었습니다.  
+  
+3D XPoint 기술과는 달리 CXL 기술은 산업 표준을 따릅니다. 해당 표준을 정의하는 CXL 컨소시엄에는 인텔을 중심으로 삼성전자, Dell EMC, IBM, HPE, 화웨이, 구글 등을 포함한 130개 이상의 글로벌 서버 및 스토리지 벤더와 연구기관들이 참여하고 있어 PCIe를 잇는 차세대 인터커넥트로 주목받고 있습니다.  
+  
+&nbsp;
+  
+## CXL 소개  
+  
+CXL은 오픈형 메모리 인터커넥트 표준으로, 주목적은 호스트 프로세서와 CXL 디바이스 간에 저 지연 고대역폭 메모리 접근 환경을 구성하는 것입니다. 주로 AI/머신러닝 등 워크로드 집약적인 고성능 컴퓨팅 환경에서 프로세서와 가속기 간 메모리 공유를 통해 초저지연 컴퓨팅을 구현하고, 서버 내 메모리 리소스의 범용성과 확장성을 제공하는 기술에 대한 표준 사양 및 적용 방안을 제시합니다. 또한, CXL은 PCIe 5.0 인터페이스를 기반으로 하는 기술입니다. 덕분에 CXL 표준을 따르는 디바이스는 PCIe 5.0을 지원하는 모든 시스템에서 Flex Bus라는 고속 포트를 통해 PCIe나 CXL 기능들을 제공할 수 있습니다.  
+  
+&nbsp;
+  
+## CXL 트랜잭션 계층  
+  
+CXL은 PCIe 물리 인터페이스를 기반으로 다음과 같이 3가지 프로토콜을 제공합니다.  
+  
+&nbsp;
+  
+![Alt text](/assets/cxl_protocol.png){: width="700"}
+<center>&#60; CXL 프로토콜 구성 &#62;</center>[^1]
+  
+&nbsp;
+  
+ * CXL.io는 초기 설정, 가상화, 장치 검색 및 연결, 레지스터 접근 등에 사용되기 때문에 모든 CXL 디바이스에서 가장 기본적으로 지원해야 하는 프로토콜입니다. 전반적인 특징은 PCIe 5.0 프로토콜과 유사하며, 캐시와는 비일관적(non-coherent)인 입출력 프로토콜을 제공합니다.  
+  
+ * CXL.cache는 가속기(CXL 디바이스) 측에서 호스트 프로세서에 접근해 호스트 메모리와의 캐시 일관성을 구현하기 위해 사용되는 프로토콜입니다.  
+  
+ * CXL.memory는 CXL.cache 프로토콜과는 반대로 호스트 프로세서 측에서 가속기의 메모리에 접근할 때 사용되는 프로토콜입니다. 호스트 측에서는 가속기의 메모리를 추가 메모리 공간으로 인식하며, 기존 휘발성 메모리뿐만 아니라 인텔의 옵테인과 같은 퍼시스턴트 메모리(persistent memory)도 지원합니다.  
+  
+&nbsp;
+  
+## CXL 유스 케이스
+  
+CXL 디바이스에서 가장 기본적으로 지원해야 하는 CXL.io 프로토콜과 옵션인 CXL.cache와 CXL.memory 프로토콜을 활용한 디바이스의 유형을 아래와 같이 3가지로 정리하고 있습니다.  
+  
+&nbsp;
+  
+![Alt text](/assets/cxl_usecase.png){: width="700"}
+<center>&#60; CXL 유스 케이스 &#62;</center>[^2]
+  
+&nbsp;
+  
+Type 1 디바이스는 별도의 메모리를 보유하고 있지 않은 CXL 디바이스와 호스트 프로세서가 연결된 형태입니다. CXL 디바이스의 캐시에서 호스트 프로세서의 메모리와 일관성을 구현하는 형태로, 장치 검색 및 구성을 위한 CXL.io와 호스트 메모리 캐싱을 위한 CXL.cache 프로토콜을 활용합니다. 자체 메모리가 없는 스마트 NIC와 호스트 간의 구성이 예시라고 할 수 있습니다.  
+  
+Type 2 디바이스는 메모리와 연결된 CXL 디바이스와 호스트 프로세서가 연결된 형태입니다. 검색 및 구성을 위한 CXL.io를 포함해, CXL 디바이스와 호스트가 서로 메모리에 접근하기 위해 CXL.cache와 CXL.memory 프로토콜을 사용합니다. 주로 GPU나 FPGA와 같은 가속기를 활용한 고성능 컴퓨팅이 요구되는 구성을 예시로 보고 있습니다.  
+  
+Type 3 디바이스는 호스트 프로세서가 메모리 풀에 접근하는 형태입니다. 기존의 가속기와 연결된 형태가 아니기 때문에 CXL.cache를 통한 요청은 없고, CPU에서 메모리 풀에 접근하기 위해 CXL.memory 프로토콜을 사용합니다. 주로 호스트의 메모리 버퍼나 SCM과 연결된 구성을 예시로 볼 수 있습니다.  
+  
+## CXL 2.0 신규 기능
+  
+2020년 11월, CXL 컨소시엄에서 CXL 2.0 버전의 사양을 발표했습니다. 업데이트된 사양은 크게 3가지로, 스위치를 통한 팬아웃(fan-out) 기능으로 다수의 디바이스 연결을 지원하는 것과 퍼시스턴트 메모리 지원, 암호화를 통한 보안 기능이 있습니다.  
+  
+ * CXL Switch: CXL 2.0의 신규기능 중 CXL 스위치를 통해 여러 디바이스에 팬아웃을 지원하는 것이 있습니다. CXL 스위치는 Type 3 구성의 다수의 논리 디바이스(multiple logical device) 내에 최대 16개까지 파티션 된 리소스들을 리소스 매니저를 통해 호스트들에게 필요한 만큼 할당하고 해제할 수 있게 합니다. 단순히 여러 디바이스를 CXL 기반의 플랫폼으로 전환이 가능한 것뿐만 아니라, CXL의 구버전(1.0과 1.1)도 지원해 폭넓은 확장성과 호환성을 제공합니다.  
+  
+ * 퍼시스턴트 메모리: CXL 2.0 버전부터 퍼시스턴트 메모리를 지원하게 되었습니다. 기존 퍼시스턴트 메모리가 컨트롤러 기반으로 운영되었다면, CXL을 통해 직접 메모리 연결 기반으로 구성할 수 있게 되었습니다.  
+  
+ * 보안: CXL Integrity and Data Encryption(CXL IDE)는 CXL 링크 송수신 시 데이터 암호화에 대해 정의하고 있으며, 제조사의 필요에 따라 탑재 여부를 결정할 수 있습니다.  
+  
+&nbsp;
+  
+## 마치며
+  
+지금까지 인터커넥트 표준 중 하나인 CXL에 대해 간단히 다루어 보았습니다. 다음 포스트에서는 다른 인터커넥트 표준인 Gen-Z에 대해 소개해 보고자 합니다.  
+  
+&nbsp;
+  
+## 참고
+  
+ * CXL 2.0: https://b373eaf2-67af-4a29-b28c-3aae9e644f30.filesusr.com/ugd/0c1418_14c5283e7f3e40f9b2955c7d0f60bebe.pdf
+ * CXL 스펙: https://b373eaf2-67af-4a29-b28c-3aae9e644f30.filesusr.com/ugd/0c1418_764cbe0ec41a43d7969d34c81e837c2c.pdf
+ * https://www.nextplatform.com/2021/09/07/the-cxl-roadmap-opens-up-the-memory-hierarchy/
+ * https://www.hpcwire.com/off-the-wire/cxl-consortium-releases-compute-express-link-2-0-specification/
+ * https://www.edn.com/cxl-initiative-aims-at-memory-challenges-in-heterogeneous-computing/
+ * https://www.flashmemorysummit.com/Proceedings2019/08-07-Wednesday/20190807_CTRL-202A-1_Lender.pdf
+  
+&nbsp;
+
+### 출처
+  
+[^1]: Compute Express Link (CXL) a Coherent Interface for Ultra High Speed Transfers, Kurt Lender, CXL Marketing Work Group Intel Corporation, Flash Memory Summit 2019 Santa Clara, p.8.
+[^2]: Compute Express Link (CXL) a Coherent Interface for Ultra High Speed Transfers, Kurt Lender, CXL Marketing Work Group Intel Corporation, Flash Memory Summit 2019 Santa Clara, p.15.
