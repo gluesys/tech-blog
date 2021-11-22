@@ -9,19 +9,19 @@ cover:      "/assets/cxl_main.jpg"
 main:       "/assets/cxl_main.jpg"
 ---
 
-지난 포스트에서는 컴포저블 인프라에 대해 소개하면서 인터커넥트 기술인 **CXL(Compute Express Link)**과 Gen-Z에 대해 간단히 다루어 보았습니다. 이번 포스트에서는 CXL에 대해 조금 더 소개해 보고자 합니다.  
-  
-연초에 메모리 및 저장장치 제조사인 마이크론(Micron Technology)에서 기존 인텔과 공동개발 중이던 3D XPoint 옵테인(Optane Persistent Memory) 사업을 중단하고 CXL 제품 개발에 집중하기로 했다는 뉴스가 있었습니다. 비록 기존 인텔과의 계약 기간에 따라 옵테인 제품의 생산을 계속하겠다고는 했지만, 마이크론 입장에서는 옵테인이 특정 CPU만 호환해 개발 유연성이 떨어진다는 점과 옵테인 시장의 부진 때문에 이와 같은 결정을 하게 되었다고 볼 수 있습니다.  
-  
-CXL 등장 이전의 프로세서들은 메모리 공유 수단이 한정되어 있었습니다. 같은 PCI 익스프레스 (이하 PCIe) 기반 표준인 NVMe의 경우에는 SSD 제품에 따라 벤더 간 호환성 문제가 있었습니다. 그 예로서, 인텔의 옵테인은 같은 인텔의 Xeon CPU만 지원해 벤더 종속성 문제를 가지고 있었습니다.  
-  
-3D XPoint 기술과는 달리 CXL 기술은 산업 표준을 따릅니다. 해당 표준을 정의하는 CXL 컨소시엄에는 인텔을 중심으로 삼성전자, Dell EMC, IBM, HPE, 화웨이, 구글 등을 포함한 130개 이상의 글로벌 서버 및 스토리지 벤더와 연구기관들이 참여하고 있어 PCIe를 잇는 차세대 인터커넥트로 주목받고 있습니다.  
+지난 번 포스트 [컴포저블 인프라란?: 개념과 구성](https://tech.gluesys.com/blog/2021/10/22/composableinfra.html) 에서는 컴포저블 인프라에 대해 소개하면서 인터커넥트 기술인 **CXL(Compute Express Link)**과 Gen-Z에 대해 간단히 다루어 보았습니다. 이번 포스트에서는 CXL에 대해 조금 더 소개해 보고자 합니다.  
   
 &nbsp;
   
 ## CXL 소개  
   
-CXL은 오픈형 메모리 인터커넥트 표준으로, 주목적은 호스트 프로세서와 CXL 디바이스 간에 저 지연 고대역폭 메모리 접근 환경을 구성하는 것입니다. 주로 AI/머신러닝 등 워크로드 집약적인 고성능 컴퓨팅 환경에서 프로세서와 가속기 간 메모리 공유를 통해 초저지연 컴퓨팅을 구현하고, 서버 내 메모리 리소스의 범용성과 확장성을 제공하는 기술에 대한 표준 사양 및 적용 방안을 제시합니다. 또한, CXL은 PCIe 5.0 인터페이스를 기반으로 하는 기술입니다. 덕분에 CXL 표준을 따르는 디바이스는 PCIe 5.0을 지원하는 모든 시스템에서 Flex Bus라는 고속 포트를 통해 PCIe나 CXL 기능들을 제공할 수 있습니다.  
+CXL은 오픈형 메모리 인터커넥트[^1] 표준으로, 주목적은 호스트 프로세서와 CXL 디바이스 간에 저 지연 고대역폭 메모리 접근 환경을 구성하는 것입니다. 이전 포스트에서도 다룬 바와 같이, 최근 데이터센터에서는 빅데이터 및 머신러닝 등에서 발생하는 고집적 워크로드의 연산을 보조하기 위해 인프라 내에 GPU나 FPGA와 같은 가속기의 도입을 확대하는 경향을 보이고 있습니다. CXL은 이러한 워크로드 집약적인 고성능 컴퓨팅 환경에서 프로세서와 가속기 간 메모리 공유를 통해 초저지연 컴퓨팅을 구현하고, 서버 내 메모리 리소스의 범용성과 확장성을 제공하는 기술에 대한 표준 사양 및 적용 방안을 제시합니다. 또한, CXL은 PCIe 5.0 인터페이스를 기반으로 하는 기술입니다. 덕분에 CXL 표준을 따르는 디바이스는 PCIe 5.0을 지원하는 모든 시스템에서 Flex Bus[^2]라는 고속 포트를 통해 PCIe나 CXL 기능들을 제공할 수 있습니다.  
+  
+연초에 메모리 및 저장장치 제조사인 마이크론(Micron Technology)에서 기존 인텔과 공동개발 중이던 3D XPoint 옵테인 메모리(Optane Persistent Memory) 사업을 중단하고 CXL 제품 개발에 집중하기로 했다는 뉴스가 있었습니다. 비록 기존 인텔과의 계약 기간에 따라 옵테인 메모리 제품의 생산을 계속하겠다고는 했지만, 마이크론 입장에서는 옵테인 메모리가 특정 CPU만 호환해 개발 유연성이 떨어진다는 점과 옵테인 메모리 시장의 부진 때문에 이와 같은 결정을 하게 되었다고 볼 수 있습니다.  
+  
+CXL 등장 이전의 프로세서들은 메모리 공유 수단이 한정되어 있었습니다. 같은 PCI 익스프레스 (이하 PCIe) 기반 표준인 NVMe의 경우에는 SSD 제품에 따라 벤더 간 호환성 문제가 있었습니다. 그 예로서, 인텔의 옵테인 메모리는 같은 인텔의 Xeon CPU만 지원해 벤더 종속성 문제를 가지고 있었습니다.  
+  
+3D XPoint 기술과는 달리 CXL 기술은 산업 표준을 따릅니다. 해당 표준을 정의하는 CXL 컨소시엄에는 인텔을 중심으로 삼성전자, Dell EMC, IBM, HPE, 화웨이, 구글 등을 포함한 130개 이상의 글로벌 서버 및 스토리지 벤더와 연구기관들이 참여하고 있어 PCIe를 잇는 차세대 인터커넥트로 주목받고 있습니다.  
   
 &nbsp;
   
@@ -32,7 +32,7 @@ CXL은 PCIe 물리 인터페이스를 기반으로 다음과 같이 3가지 프�
 &nbsp;
   
 ![Alt text](/assets/cxl_protocol.png){: width="700"}
-<center>&#60; CXL 프로토콜 구성 &#62;</center>[^1]
+<center>&#60; CXL 프로토콜 구성 &#62;</center>[^3]
   
 &nbsp;
   
@@ -40,7 +40,7 @@ CXL은 PCIe 물리 인터페이스를 기반으로 다음과 같이 3가지 프�
   
  * CXL.cache는 가속기(CXL 디바이스) 측에서 호스트 프로세서에 접근해 호스트 메모리와의 캐시 일관성을 구현하기 위해 사용되는 프로토콜입니다.  
   
- * CXL.memory는 CXL.cache 프로토콜과는 반대로 호스트 프로세서 측에서 가속기의 메모리에 접근할 때 사용되는 프로토콜입니다. 호스트 측에서는 가속기의 메모리를 추가 메모리 공간으로 인식하며, 기존 휘발성 메모리뿐만 아니라 인텔의 옵테인과 같은 퍼시스턴트 메모리(persistent memory)도 지원합니다.  
+ * CXL.memory는 CXL.cache 프로토콜과는 반대로 호스트 프로세서 측에서 가속기의 메모리에 접근할 때 사용되는 프로토콜입니다. 호스트 측에서는 가속기의 메모리를 추가 메모리 공간으로 인식하며, 기존 휘발성 메모리뿐만 아니라 인텔의 옵테인 메모리와 같은 퍼시스턴트 메모리(persistent memory)[^4]도 지원합니다.  
   
 &nbsp;
   
@@ -51,7 +51,7 @@ CXL 디바이스에서 가장 기본적으로 지원해야 하는 CXL.io 프로�
 &nbsp;
   
 ![Alt text](/assets/cxl_usecase.png){: width="700"}
-<center>&#60; CXL 유스 케이스 &#62;</center>[^2]
+<center>&#60; CXL 유스 케이스 &#62;</center>[^5]
   
 &nbsp;
   
@@ -90,7 +90,10 @@ Type 3 디바이스는 호스트 프로세서가 메모리 풀에 접근하는 �
   
 &nbsp;
 
-### 출처
+### 각주
   
-[^1]: Compute Express Link (CXL) a Coherent Interface for Ultra High Speed Transfers, Kurt Lender, CXL Marketing Work Group Intel Corporation, Flash Memory Summit 2019 Santa Clara, p.8.
-[^2]: Compute Express Link (CXL) a Coherent Interface for Ultra High Speed Transfers, Kurt Lender, CXL Marketing Work Group Intel Corporation, Flash Memory Summit 2019 Santa Clara, p.15.
+[^1]: 메모리 인터커넥트: 프로세서의 메모리 간 연결을 말함.
+[^2]: Flex Bus: 기존 PCIe 포트를 기반으로 CXL에서 제시한 고속 포트임. 기존 PCIe 슬롯을 활용해 CXL 및 PCIe 디바이스와 호스트 프로세서 간 연결을 제공하며, 추가로 메인보드 내장형 가속기와도 연결을 제공함.
+[^3]: 출처: Compute Express Link (CXL) a Coherent Interface for Ultra High Speed Transfers, Kurt Lender, CXL Marketing Work Group Intel Corporation, Flash Memory Summit 2019 Santa Clara, p.8.
+[^4]: 퍼시스턴트 메모리(persistent memory): DRAM급 속도를 가진 비휘발성 메모리의 일종으로, 메모리 계층에서 DRAM과 NAND SSD 사이에 위치함.
+[^5]: 출처: Compute Express Link (CXL) a Coherent Interface for Ultra High Speed Transfers, Kurt Lender, CXL Marketing Work Group Intel Corporation, Flash Memory Summit 2019 Santa Clara, p.15.
