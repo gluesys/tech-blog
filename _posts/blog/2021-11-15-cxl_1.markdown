@@ -33,6 +33,7 @@ CXL은 PCIe 물리 인터페이스를 기반으로 다음과 같이 3가지 프�
   
 ![Alt text](/assets/cxl_protocol.png){: width="700"}
 <center>&#60; CXL 프로토콜 구성 &#62;</center>  
+  
 [^3]
   
 &nbsp;
@@ -53,6 +54,7 @@ CXL 디바이스에서 가장 기본적으로 지원해야 하는 CXL.io 프로�
   
 ![Alt text](/assets/cxl_usecase.png){: width="700"}
 <center>&#60; CXL 유스 케이스 &#62;</center>  
+  
 [^5]
   
 &nbsp;
