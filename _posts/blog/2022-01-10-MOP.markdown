@@ -1,0 +1,312 @@
+---
+layout:     post
+title:      "메타 객체 프로토콜(Meta Object Protocol)에 대하여"
+date:       2022-01-10
+categories: blog
+author:     권 진영 (gc757489@gmail.com)
+tags:       MOP 
+cover:      "/assets/MOP/MOP_cover.png"
+main:       "/assets/MOP/MOP_cover.png"
+---
+
+### 메타 객체 프로토콜 (Meta Object Protocol)
+
+오늘은 메타 객체 프로토콜(Meta Object Protocol, 이하 MOP)에 대해서 공유해보려고 합니다.
+
+#### MOP란?
+
+객체에서 객체 자체를 참조해야 할 필요성 때문에 나타난 개념입니다.
+우리는 일반적으로 클래스에 의해 생성된 것을 객체로 알고 있는데요.
+MOP 개념에서는 클래스나 메서드, 속성 모두 다 메타 클래스에 의해 생성된 객체입니다.
+(다른 관점에서 보면 클래스가 객체가 되기 때문에 클래스라는 객체의 클래스라고 볼 수 있습니다.)
+
+![Alt text](/assets/MOP/instanceof.png){: width="700"}
+
+그림으로 표현하면 위와 같은 형태로 볼 수 있습니다.
+
+```perl
+package Sample;					----> metaclass
+
+has 'test' => (					----> metaclass
+    is      => 'ro',
+    isa     => 'Str',
+    default => sub { []; }
+);
+
+sub method					----> metaclass
+{
+    my $self = shift;
+    my %args = @_;
+    ...
+}
+
+__PACKAGE__->meta->make_immutable();
+1;
+
+```
+위 샘플 코드에서 `package`는 클래스, `has`는 속성, `sub`는 메서드입니다. Java로 따지면 각각 클래스, 필드, 메서드가 되겠네요.
+그리고 `package`는 `Mouse::Meta::Class`, `has`는 `Mouse::Meta::Attribute`, `sub`는 `Mouse::Meta::Method`가 각각의 메타 클래스입니다.
+
+* 클래스 (`package Sample`) : `Mouse::Meta::Class`
+* 속성 (`has 'test'`) : `Mouse::Meta::Attribute`
+* 메서드 (`sub method`) : `Mouse::Meta::Method`
+
+위의 메타클래스는 `lib/Mouse/Meta/` 경로 아래에 있습니다.
+
+| 메타 클래스 | 경로 |
+| ----------- | --- |
+|`Mouse::Meta::Class`|`lib/Mouse/Meta/Class.pm`|
+|`Mouse::Meta::Atttribute`|`lib/Mouse/Meta/Attribute.pm`|
+|`Mouse::Meta::Method`|`lib/Mouse/Meta/Method.pm`|
+
+그러면 메타 클래스들은 어떤 역할을 할까요?  
+메타 클래스는 클래스, 속성, 메서드의 구조나 동작을 변경하기도 하고 새로운 클래스를 만들거나 삭제하기도 합니다.
+
+MOP에 관련된 내용을 Perl의 객체 지향 프로그래밍(Object-Oriented Programming)을 지원하기 위한 객체 시스템 중 경량화 버전인 [Mouse](https://metacpan.org/pod/Mouse)를 사용해서 설명해보려고 합니다.
+이 글의 MOP 예시는 p5-Mouse version v2.5.10을 기준으로 작성하였습니다.
+
+많은 키워드가 있겠지만 속성과 메서드를 예시로 보면서 MOP에 대해서 알아보려고 합니다.
+
+속성을 선언하거나 혹은 메서드를 수정할 때 `has`, `around`, `override` 같은 예약어를 사용합니다.
+이 예약어들도 자세히 보면 각각의 하나의 메서드로 작성되어 있습니다.
+
+```perl
+has 'test' => (
+    is      => 'ro',
+    isa     => 'Str',
+    default => sub { []; }
+);
+```
+
+Mouse를 사용하여 클래스의 속성을 선언할 때에는 `has` 키워드를 사용합니다.
+
+* `has`     : 속성을 선언하기 위한 예약어
+* `is`      : 속성의 Read, Write, ReadOnly 등을 설정하기 위한 키워드
+* `isa`     : 속성의 타입 지정
+* `default` : 속성의 기본값 지정
+
+위에서 `has`라는 예약어가 하나의 메서드로 작성되어 있다고 했는데 관련 내용은 어디에 있을까요?  
+일반적으로 `has`는 예약어라고 생각할 것 같습니다.
+하지만 위에서 설명했듯이 `has`는 단순히 예약어가 아니라 `has`라는 이름의 메서드입니다.
+
+그러면 이 `has`를 예약어처럼 사용할 수 있게 해주는 부분은 어떤 것일까요?  
+아래는 `lib/Mouse.pm`의 코드입니다. 그중 일부를 보면 `setup_import_methods`라는 함수가 있습니다.
+
+```perl
+Mouse::Exporter->setup_import_methods(
+    as_is => [qw(
+        extends with
+        has
+        before after around
+        override super
+        augment  inner
+    ),
+        \&Scalar::Util::blessed,
+        \&Carp::confess,
+   ],
+);
+```
+위 코드는 `lib/Mouse.pm` 코드인데 [Exporter](https://metacpan.org/pod/Exporter) 패키지의 `setup_import_methods` 함수를 사용하여 사용자가 지정한 `import` 메서드나 `unimport` 메서드를 빌드합니다.
+위에서는 Mouse 내부적으로 작성되었지만 같은 함수를 사용하면 각자의 시스템에서도 필요한 키워드를 예약어처럼 사용할 수 있습니다.
+
+다시 돌아와서 `has`라는 예약어는 `setup_import_methods`를 사용하여 만들어졌다는 것은 알게 되었습니다.
+그럼 `has`라는 메서드는 어떻게 작성되어 있는지 확인해봅시다.
+
+```perl
+sub has {
+    my $meta = Mouse::Meta::Class->initialize(scalar caller);
+    my $name = shift;
+    $meta->throw_error(q{Usage: has 'name' => ( key => value, ... )})
+        if @_ % 2; # odd number of arguments
+
+    for my $n(ref($name) ? @{$name} : $name){
+        $meta->add_attribute($n => @_);
+    }
+    return;
+}
+```
+위처럼 `has` 예약어는 실제로 메서드로 작성이 되어 있습니다.
+`has` 메서드를 보면 `Meta::Class`의 `initialize` 함수를 호출하는 것을 알 수 있습니다. 순서대로 의미 있는 부분을 추적해보면,
+
+1. `Meta::Class->initialize`
+```perl
+sub initialize {
+    my($class, $package_name, @args) = @_;
+
+    ($package_name && !ref($package_name))
+        || $class->throw_error("You must pass a package name and it cannot be blessed");
+
+    return $METAS{$package_name}
+        ||= $class->_construct_meta(package => $package_name, @args);
+}
+```
+`initialize`에서 패키지 이름을 체크한 이후에 `_construct_meta`를 호출합니다.
+2. `class->_construct_meta`
+```perl
+sub _construct_meta {
+    my($class, %args) = @_;
+
+    $args{attributes} = {};
+    $args{methods}    = {};
+    $args{roles}      = [];
+
+    $args{superclasses} = do {
+        no strict 'refs';
+        \@{ $args{package} . '::ISA' };
+    };
+
+    my $self = bless \%args, ref($class) || $class;
+    if(ref($self) ne __PACKAGE__){
+        $self->meta->_initialize_object($self, \%args);
+    }
+    return $self;
+}
+```
+`_construct_meta`에서는 `do` 코드 블록에 있는 내용을 꾸며서 변수에 넣어 주고 `_initialize_object`를 호출합니다.
+3. `_initialize_object`
+```perl
+sub _initialize_object {
+    my($self, $object, $args, $is_cloning) = @_;
+    # The initializer, which is used everywhere, must be clear
+    # when an attribute is added. See Mouse::Meta::Class::add_attribute.
+    my $initializer = $self->{_mouse_cache}{_initialize_object} ||=
+        Mouse::Util::load_class($self->constructor_class)
+            ->_generate_initialize_object($self);
+    goto &{$initializer};
+}
+```
+`_initialize_object`에서는 `_generate_initialize_object`를 호출합니다.
+4. `_generate_initialize_object`
+```perl
+...중략
+            if ($attr->has_trigger) {
+...중략
+        if ($attr->has_default || $attr->has_builder) {
+            unless ($attr->is_lazy) {
+...중략
+        elsif ($attr->is_required) {
+...중략
+    my $source = sprintf <<'EOT', __FILE__, $metaclass->name, join "\n", @res;
+#line 1 "%s"
+    package %s;
+    sub {
+        my($meta, $instance, $args, $is_cloning) = @_;
+        %s;
+        return $instance;
+    }
+EOT
+    warn $source if _MOUSE_DEBUG;
+    my $body;
+    my $e = do {
+        local $@;
+        $body = eval $source;
+        $@;
+    };
+    die $e if $e;
+    return $body;
+}
+```
+마지막 `_generate_initialize_object` 함수에서는 객체를 생성합니다.
+코드 일부를 보면 `has`로 속성을 선언하면서 사용한 옵션들(`has_default`, `is_lazy` 등)을 체크하고 코드를 변경합니다.
+그리고 `eval $source` 부분을 통해 코드를 생성해 반환합니다.
+이런 형태로 클래스, 속성, 메서드 모두 필요한 정보를 체크하여 코드를 반환합니다.
+
+코드를 반환한다고 했을 때 인라인에 대해 떠오르시는 분이 많을 것 같습니다.
+Mouse에서 클래스 마지막에 `__PACKAGE__->meta->make_immutable` 또는 `__PACKAGE__->meta->make_immutable(inline_constructor => 0)`을 작성하는데요.
+여기서도 `inline_constuctor`라는 키워드를 사용합니다.
+그럼 Mouse에서는 인라인 생성자는 어떻게 동작할까요?  
+인라인 생성자가 동작하는 형태를 간단히 도식화하면 아래 그림처럼 될 것 같습니다.
+![class_diagram](https://plantuml.io/plantuml/png/SoWkIImgAStDuSfDp4wDpypDBIr9JCf9LT2rKuXFJyrBBKeiIOrFpiyhBYagJIx9B-B2AeggF3ClioGpCIUpAZK-FoahDRc42u-SWYukgnIi5Dwqx7YzhU7DWiOtStSelDaxvVNaEGfl5cvuis0gTdU03KFpYPN2wvLJthJC0UfzCts2mklbyrvtJO4Pzdh3ZBSpPs3nV69AIdnkQaP9Veg25LJLwmsptynjWEfylNGFchcJDxvUE9VB8JKl1HYS0000)
+시작점이 조금 다르긴 하지만 위의 `has` 메서드가 동작하는 것과 크게 다르지 않네요.
+
+
+#### MOP의 활용
+
+```perl
+Mouse::Exporter->setup_import_methods(
+    also  => 'Mouse',
+    as_is => [
+        qw/
+            etcd_root
+            etcd_keygen
+            api_status
+            get_gms_message
+            upgrade_attrs
+            /
+    ],
+);
+
+sub etcd_root
+{
+	my $meta = caller->meta;
+	...중략
+}
+
+sub init_meta
+{
+    my $self = shift;
+    my %args = @_;
+
+    my $for_class = $args{for_class};
+    my $meta      = find_meta($for_class);
+
+    if (!$meta)
+    {
+        $meta = Mouse->init_meta($for_class);
+    }
+
+    $meta = Mouse::Util::MetaRole::apply_metaroles(
+        for             => $for_class,
+        class_metaroles => {
+            class       => ['GMS::Model::Meta::Class'],
+            attribute   => ['GMS::Model::Meta::Attribute'],
+            constructor => ['GMS::Model::Meta::Method::Constructor'],
+            destructor  => ['GMS::Model::Meta::Method::Destructor'],
+        },
+    );
+
+    return $meta;
+}
+
+```
+위의 예제는 사내 제품의 코드 중 일부입니다.
+`lib/Mouse.pm`에서 예약어를 빌드한 것처럼 필요한 키워드를 `setup_import_methods`를 사용하여 빌드하였습니다.
+```perl
+etcd_root sub {'/test'};
+etcd_keygen sub { test => shift; };
+```
+이렇게 빌드한 예약어는 해당 메서드 사용 방식에 맞춰서 사용할 수 있습니다.
+
+그리고 아랫부분의 `init_meta` 메서드를 보면 `apply_metaroles`를 사용하여 기존의 메타 클래스의 역할을 변경할 수 있습니다.
+내부적으로는 객체가 생성될 때 관련 속성값들이 etcd랑 연동이 되도록 변경하여 사용하고 있습니다.
+
+![class_diagram](https://www.plantuml.com/plantuml/png/fLDBQiCm4Dth55wscFW08fYKjdGLACa1pCGQ71DzZ3IYBKdlNds2IOq8XQwIqRmtxyt76qTWoIl9UWdELM_RFUTR8r1MPyRgKO_KAIHuU6JVZ4tGds302gaNrNhz0WG7SDYs0Rn8Tmx9JvqrdaQD0Rp3da0FCgENQk472JZV6OcSFn7PyU0fygAwDP5sPdMgVC8llYUxi9TprXWAmGmSKCVGJuC5WHqGMPTxkU_WEMKBwadXAk-GeaOK6EQ_nTBlQ9tHLQYXGM6Yro24HUToC1sDpkypVskym-pgjv-KZePOhU24tQYK3ukGcDGBxEKyRoje_4YqGFp3DYvDKwwChD3kl-6fQrOOHDDSslkxO_StkrgrwKmNuthzd8mbj74o-O175LxIaHsDk9xE0inv2PeaRatCnygAhmbV-79ubMAsGIsyaZy0)
+
+`Mouse::Exporter->setup_import_methods()`에서 `GMS::Model->init_meta()`를 호출하면서 각 클래스들이 모델을 통해 etcd를 핸들링할 수 있도록 설정합니다.
+`GMS::Model::Person`이라는 클래스는 `Mouse::Meta::Class`와 `Mouse::Meta::Attribute`에 의해 생성될 텐데 `apply_metaroles`를 사용해서 역할을 변경했기 때문에 각각 `GMS::Model::Meta::Role::Class`와 `GMS::Model::Meta::Role::Attribute`를 호출합니다. 그 중 `GMS::Model::Meta::Role::Class`를 통해서 클래스의 속성을 `set_key`메서드나 `get_key` 메서드를 통해서 실제 etcd에 접근합니다.
+
+여기서 `Role`(이하 역할)이라는 개념이 새로 등장했는데요, 역할은 클래스 간에 공유할 수 있는 동작이나 상태를 캡슐화하는 개념입니다.
+역할은 클래스가 아니라 상속하거나 인스턴스화를 할 수 없고 Java의 인터페이스와 비슷한 개념이라고 생각하시면 될 것 같습니다.
+
+역할도 마찬가지로 메타 역할이 있기 때문에 내부 코드에서는 메타 역할을 수정하는 방식을 사용하였습니다.
+
+#### 마치며
+
+이번 포스트는 MOP에 대한 개념만 알고 있다가 코드 레벨에서 분석할 기회가 생겨서 공유하면 좋을 것 같아 작성하였습니다.
+MOP가 사용되는 언어는 [Java(Javassist)](https://github.com/jboss-javassist/javassist), [JS(Joose)](http://joose.it), [Perl(Moose)](https://metacpan.org/pod/Moose), [오픈 C++](https://chibash.github.io/public/opencxx/), [오픈 Java](https://en.wikipedia.org/wiki/OJ_(programming_tool)) 등이 있습니다.
+Perl을 기준으로 설명해 드렸지만 각자 자신이 사용하고 있는 언어에서 MOP를 사용할 수 있다면 메타 클래스를 상황에 맞게 변경하여 사용해 보시길 바랍니다.
+조금 두서없는 글일 수 있지만, MOP에 대해서 모르시던 분들에 대한 소개 및 간단한 가이드라인이 됐으면 합니다.  
+차후에는 Mouse에서 메타 클래스의 기본 정의가 어떻게 이루어지는지, 어떻게 동작하는지 등에 대해서 좀 더 자세히 다루어 보고 단계적으로 메타 클래스를 활용하는 방법에 대해서 좀 더 세부적으로 공유해 드리도록 하겠습니다. 시간이 되시는 분들은 [`Class::MOP`](https://metacpan.org/pod/Class::MOP)나 [`perlxs`](https://perldoc.perl.org/perlxs)를 미리 읽어보시면 좋을 것 같습니다.  
+감사합니다.
+
+- - -
+
+## 참고
+
+ * https://wiki.tcl-lang.org/page/Meta-object+Protocol  
+ * https://www.gnu.org/software/guile/manual/html_node/The-Metaobject-Protocol.html  
+ * https://en.wikipedia.org/wiki/Metaobject  
+ * https://metacpan.org/pod/Class::MOP  
+ * https://metacpan.org/pod/Mouse::Meta  
+ * https://metacpan.org/pod/Mouse::Util::MetaRole  
+ * https://perldoc.perl.org/perlxs
