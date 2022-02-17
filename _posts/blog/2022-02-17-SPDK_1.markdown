@@ -1,0 +1,617 @@
+---
+layout:     post
+title:      "자 따라해봐요 이렇게~ 그래 한번 해보자 SPDK 실습"
+date:       2022-02-17
+author:     김 태훈 (thkim@gluesys.com)
+categories: blog
+tags:       [SPDK, NVMe, SSD, Flash, Memory, RDMA, Storage]
+cover:      "/assets/SPDK_maincover.jpg"
+main:       "/assets/SPDK_maincover.jpg"
+---
+
+인사말 (Hello~ boy chu~)
+
+&nbsp;
+
+## SPDK 간단한 설명
+
+  블라 블라
+
+  &nbsp;
+
+## SPDK 설치
+
+  * 코드 설치
+  ```
+  [root@localhost ~]# git clone https://github.com/spdk/spdk
+  [root@localhost ~]# cd spdk
+  ```
+  * 코드 의존성 패키지 설치
+  ```
+  [root@localhost spdk]# scripts/pkgdep.sh --all
+  ```
+  * 빌드
+  ```
+  [root@localhost spdk]# ./configure
+  [root@localhost spdk]# make -j 666
+  ```
+  * 환경 실행 및 예제 프로그램 구동
+  ```
+  [root@localhost spdk]# scripts/setup.sh
+  [root@localhost spdk]# build/examples/hello_world
+  [2022-01-13 20:09:33.794947] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
+  [2022-01-13 20:09:33.795161] [ DPDK EAL parameters: [2022-01-13 20:09:33.795189] hello_world [2022-01-13 20:09:33.795205] -c 0x1 [2022-01-13 20:09:33.795219] --log-level=lib.eal:6 [2022-01-13 20:09:33.795235] --log-level=lib.cryptodev:5 [2022-01-13 20:09:33.795251] --log-level=user1:6 [2022-01-13 20:09:33.795266] --iova-mode=pa [2022-01-13 20:09:33.795281] --base-virtaddr=0x200000000000 [2022-01-13 20:09:33.795296] --match-allocations [2022-01-13 20:09:33.795311] --file-prefix=spdk0 [2022-01-13 20:09:33.795326] --proc-type=auto [2022-01-13 20:09:33.795340] ]
+  EAL: No available 1048576 kB hugepages reported
+  EAL: No free 2048 kB hugepages reported on node 1
+  TELEMETRY: No legacy callbacks, legacy socket not created
+  Initializing NVMe Controllers
+  Attaching to 0000:3b:00.0
+  [2022-01-13 20:09:33.946011] pci.c:1020:spdk_pci_device_claim: *ERROR*: Cannot create lock on device /var/tmp/spdk_pci_lock_0000:3b:00.0, probably process 186775 has claimed it
+  [2022-01-13 20:09:33.946052] nvme_pcie.c: 918:nvme_pcie_ctrlr_construct: *ERROR*: could not claim device 0000:3b:00.0 (Permission denied)
+  [2022-01-13 20:09:33.946069] nvme.c: 705:nvme_ctrlr_probe: *ERROR*: Failed to construct NVMe controller for SSD: 0000:3b:00.0
+  EAL: Requested device 0000:3b:00.0 cannot be used
+  no NVMe controllers found
+  ```
+  * 참고
+    - https://spdk.io/doc/getting_started.html
+
+&nbsp;
+
+## SPDK 실습
+
+  * 소켓 통신을 위한 spdk 소켓 활성화 [참고](https://github.com/spdk/spdk/issues/295)
+    - spdk 는 기본적으로 Unix Domain Socket을 이용하여 SPDK 드라이버와 어플리케이션이 통신을 수행한다.
+    - 따라서 spdk 소켓 없이 [예제](https://spdk.io/doc/bdev.html)를 따라할 수 없다.
+    - 소켓 활성화를 위해서는 아래 명령을 수행한다.
+  ```
+  [root@localhost spdk]# ./build/bin/spdk_tgt
+  [2022-01-13 20:19:21.865303] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
+  [2022-01-13 20:19:21.865473] [ DPDK EAL parameters: [2022-01-13 20:19:21.865532] spdk_tgt [2022-01-13 20:19:21.865558] --no-shconf [2022-01-13 20:19:21.865579] -c 0x1 [2022-01-13 20:19:21.865601] --log-level=lib.eal:6 [2022-01-13 20:19:21.865626] --log-level=lib.cryptodev:5 [2022-01-13 20:19:21.865649] --log-level=user1:6 [2022-01-13 20:19:21.865673] --iova-mode=pa [2022-01-13 20:19:21.865694] --base-virtaddr=0x200000000000 [2022-01-13 20:19:21.865716] --match-allocations [2022-01-13 20:19:21.865742] --file-prefix=spdk_pid96537 [2022-01-13 20:19:21.865765] ]
+  EAL: No available 1048576 kB hugepages reported
+  EAL: No free 2048 kB hugepages reported on node 1
+  TELEMETRY: No legacy callbacks, legacy socket not created
+  [2022-01-13 20:19:21.948642] app.c: 543:spdk_app_start: *NOTICE*: Total cores available: 1
+  [2022-01-13 20:19:22.087803] reactor.c: 943:reactor_run: *NOTICE*: Reactor started on core 0
+  [2022-01-13 20:19:22.087888] accel_engine.c:1012:spdk_accel_engine_initialize: *NOTICE*: Accel engine initialized to use software engine.
+  ```
+    - 위 명령을 수행하면 spdk 소켓이 활성화되고 포그라운드에서 소켓 로그가 출력된다. 다른 터미널을 이용하여 소켓이 생성되었는지 확인한다.
+  ```
+  [root@localhost spdk]# ls /var/tmp/spdk.sock
+  /var/tmp/spdk.sock
+  [root@localhost spdk]# 
+  ```
+  * 참고
+    - https://spdk.io/doc/bdev.html
+    - https://github.com/spdk/spdk/issues/295
+
+## NVMe 컨트롤러 등록
+
+  * spdk는 기본적으로 유저 레벨의 드라이버로 리눅스 커널 계층을 타지 않는다.
+  * '그러면 장치가 안보이는데.. I/O는 어떻게 수행하는가..?' 또는 '파일 시스템 포멧 등, userspace의 프로그램이 커널에 등록된 디바이스를 사용했었던 기존 방식들은 지원하지 않는가?'라고 생각할 수 있다.
+  * 다행히도 spdk에서 NVMe 컨트롤러를 문자 드라이버로 등록해서 사용할 수 있다.
+  * 이를 위해서는 앞서 `scripts/setup.sh` 수행으로 해제되었던 NVMe 컨트롤러를 spdk를 통해 다시 등록하는 작업이 필요하다.
+  * 컨트롤러를 등록하는 방법은 로컬의 PCIe 드라이브를 검색하는 것과 NVMe-oF를 통해 장치를 찾는 방법으로 나뉜다.
+  * 아래 작업은 로컬 PCIe 드라이브를 검색해서 수행하는 방법이다.
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_nvme_attach_controller -b NVMe0 -t PCIe -a 0000:3b:00.0
+  NVMe0n1
+  [root@localhost spdk]# scripts/rpc.py bdev_nvme_get_controllers
+  [
+    {
+      "name": "NVMe0",
+      "trid": {
+        "trtype": "PCIe",
+        "traddr": "0000:3b:00.0"
+      },
+      "host": {
+        "nqn": "nqn.2014-08.org.nvmexpress:uuid:2b4d86b5-b34a-4983-9830-2978727acb4a",
+        "addr": "",
+        "svcid": ""
+      }
+    }
+  ]
+  ```
+  * 연결한 컨트롤러를 해제하는 방법은 아래와 같다.
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_nvme_detach_controller NVMe0
+  ```
+  * 또는 앞서 `spdk_tgt` 수행한 터미널에서 Ctrl+C로 타겟 프로그램을 중단하면.. 싹다 날라간다..
+
+### 문자 드라이버 등록
+
+  * 다음으로 연결한 NVMe 컨트롤러에 namespace를 문자 드라이버로 등록하는 방법이다.
+  * 문자 드라이버는 cuse라는 라이브러리를 통해 사용한다.
+  * 따라서 앞서 spdk 환경을 구성할 때 `./configure` 명령에 `--with-nvme-cuse` 옵션을 붙이고 다시 빌드(`make`)를 수행한다. `spdk_tgt`도 내리고 수행한다.
+  ```
+  [root@localhost spdk]# ./configure --with-nvme-cuse
+  [root@localhost spdk]# make
+  [root@localhost spdk]# scripts/setup.sh
+  [root@localhost spdk]# modprobe cuse
+  [root@localhost spdk]# lsmod | grep cuse
+  cuse                   13274  0
+  fuse                  100350  4 cuse
+  [root@localhost spdk]# build/bin/spdk_tgt
+  ...
+  (다른 터미널)
+  [root@localhost spdk]# scripts/rpc.py bdev_nvme_attach_controller -b NVMe0 -t PCIe -a 0000:3b:00.0
+  NVMe0n1
+  ```
+  * 소켓까지 다시 올렸으면 spdk와 연결된 컨트롤러를 문자 드라이버로 등록한다.
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_nvme_cuse_register -n NVMe0
+  [root@localhost spdk]# ls /dev/spdk/
+  nvme0  nvme0n1
+  [root@localhost spdk]# nvme id-ctrl /dev/spdk/nvme0 -H
+  NVME Identify Controller:
+  vid       : 0x8086
+  ssvid     : 0x8086
+  sn        : PHMB7435004J280CGN
+  mn        : INTEL SSDPED1D280GA
+  fr        : E2010325
+  rab       : 0
+  ieee      : 5cd2e4
+  cmic      : 0
+  [2:2] : 0     PCI
+  [1:1] : 0     Single Controller
+  [0:0] : 0     Single Port
+  ...
+  [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
+  [
+    {
+    "name": "NVMe0n1",
+      "aliases": [],
+      "product_name": "NVMe disk",
+      "block_size": 512,
+      "num_blocks": 547002288,
+      "uuid": "0b1f1ff5-4bb6-4fea-b436-0359ad12f7ee",
+      "assigned_rate_limits": {
+        "rw_ios_per_sec": 0,
+        "rw_mbytes_per_sec": 0,
+        "r_mbytes_per_sec": 0,
+        "w_mbytes_per_sec": 0
+      },
+      "claimed": true,
+      "zoned": false,
+      "supported_io_types": {
+        "read": true,
+        "write": true,
+        "unmap": true,
+        "write_zeroes": true,
+        "flush": true,
+        "reset": true,
+        "nvme_admin": true,
+        "nvme_io": true
+      },
+      "driver_specific": {
+        "nvme": {
+          "pci_address": "0000:3b:00.0",
+          "trid": {
+            "trtype": "PCIe",
+            "traddr": "0000:3b:00.0"
+          },
+          "cuse_device": "spdk/nvme0n1",
+          "ctrlr_data": {
+            "vendor_id": "0x8086",
+            "model_number": "INTEL SSDPED1D280GA",
+            "serial_number": "PHMB7435004J280CGN",
+            "firmware_revision": "E2010325",
+            "oacs": {
+              "security": 1,
+              "format": 1,
+              "firmware": 1,
+              "ns_manage": 0
+            }
+          },
+          "vs": {
+            "nvme_version": "1.0"
+          },
+          "ns_data": {
+            "id": 1
+          },
+          "security": {
+            "opal": false
+          }
+        }
+      }
+    }
+  ]
+  ```
+  * NVMe 컨트롤러 해제와 마찬가지로 문자 드라이버 등록을 해제하려면 아래와 같다.
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_nvme_cuse_unregister -n NVMe0
+  ```
+  * 참고
+    - https://spdk.io/doc/bdev.html
+    - https://spdk.io/doc/nvme.html
+
+### lvol 생성
+
+  * spdk는 lvol이라고 불리는 논리 볼륨을 제공한다.
+  * 이를 위해서는 연결된 NVMe 컨트롤러에 lvol을 생성할 논리 볼륨 저장소를 지정해야한다. 뭐랄까.. VG라고 할까?
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs
+  1818d45a-3a05-42c9-bbb2-9229cc25ac49
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
+  [
+    {
+      "uuid": "1818d45a-3a05-42c9-bbb2-9229cc25ac49",
+        "name": "lvs",
+        "base_bdev": "NVMe0n1",
+        "total_data_clusters": 66706,
+        "free_clusters": 66706,
+        "block_size": 512,
+        "cluster_size": 4194304
+    }
+  ]
+  ```
+  * 마찬가지로 삭제는 아래와 같다.
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete_lvstore -l lvs
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
+  []
+  ```
+  * 로컬 볼륨 저장소를 생성했으면 로컬 볼륨(lvol)를 생성해보자.
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_create lvol1 25 -l lvs
+  8eaafae0-80cb-45f8-beb6-65ae4f73e73a
+  [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
+  [
+    {...},
+    {
+      "name": "8eaafae0-80cb-45f8-beb6-65ae4f73e73a",
+      "aliases": [
+        "lvs/lvol1"
+      ],
+      "product_name": "Logical Volume",
+      "block_size": 512,
+      "num_blocks": 57344,
+      "uuid": "8eaafae0-80cb-45f8-beb6-65ae4f73e73a",
+      "assigned_rate_limits": {
+        "rw_ios_per_sec": 0,
+        "rw_mbytes_per_sec": 0,
+        "r_mbytes_per_sec": 0,
+        "w_mbytes_per_sec": 0
+      },
+      "claimed": false,
+      "zoned": false,
+      "supported_io_types": {
+        "read": true,
+        "write": true,
+        "unmap": true,
+        "write_zeroes": true,
+        "flush": false,
+        "reset": true,
+        "nvme_admin": false,
+        "nvme_io": false
+      },
+      "driver_specific": {
+        "lvol": {
+          "lvol_store_uuid": "a65efd50-07df-415e-852f-7f9725d269cd",
+          "base_bdev": "NVMe0n1",
+          "thin_provision": false,
+          "snapshot": false,
+          "clone": false
+        }
+      }
+    }
+  ]
+  ```
+  * 삭제도 마찬가지로 아래와 같다.
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete lvs/lvol1
+  ```
+  * 이외에도 다양한 기능들을 지원한다.
+    - bdev_lvol_snapshot
+    - bdev_lvol_clone
+    - bdev_lvol_rename
+    - bdev_lvol_resize
+    - bdev_lvol_set_read_only
+    - bdev_lvol_inflate
+    - bdev_lvol_decouple_parent
+  * 참고
+    - https://spdk.io/doc/bdev.html
+    - https://spdk.io/doc/logical_volumes.html
+
+### RAID 0 생성
+
+  * ...
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid0 -z 64 -r 0 -b "lvol1 lvol2 lvol3 lvol4"
+  [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
+  raid0
+  ```
+
+### RAID 5 생성
+
+  * ...
+  ```
+  [root@localhost spdk]# ./configure --with-raid5
+  [root@localhost spdk]# make
+  [root@localhost spdk]# ./build/bin/spdk_tgt &
+  [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid5 -z 64 -r 5 -b "lvol1 lvol2 lvol3 lvol4"
+  [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
+  raid5
+  [root@localhost spdk]# cd module/bdev/raid
+  [root@localhost raid]# ls -lh
+  [root@EdgeHA-1 raid]# ls -lh
+  total 464K
+  -rw-r--r-- 1 root root  42K Nov  1 06:27 bdev_raid.c
+  -rw-r--r-- 1 root root 1.5K Jan 21 01:34 bdev_raid.d
+  -rw-r--r-- 1 root root 9.9K Nov  1 06:27 bdev_raid.h
+  -rw-r--r-- 1 root root 153K Jan 21 01:34 bdev_raid.o
+  -rw-r--r-- 1 root root  13K Nov  1 06:27 bdev_raid_rpc.c
+  -rw-r--r-- 1 root root 1.7K Jan 21 01:34 bdev_raid_rpc.d
+  -rw-r--r-- 1 root root  75K Jan 21 01:34 bdev_raid_rpc.o
+  -rw-r--r-- 1 root root 2.0K Nov  1 06:27 Makefile
+  -rw-r--r-- 1 root root  13K Nov  1 06:27 raid0.c
+  -rw-r--r-- 1 root root 1.5K Jan 21 01:34 raid0.d
+  -rw-r--r-- 1 root root  72K Jan 21 01:34 raid0.o
+  -rw-r--r-- 1 root root 3.6K Nov  1 06:27 raid5.c
+  -rw-r--r-- 1 root root 1.5K Jan 21 01:34 raid5.d
+  -rw-r--r-- 1 root root  45K Jan 21 01:34 raid5.o
+  ```
+
+&nbsp;
+
+## SPDK 성능 측정
+
+### 테스트 환경
+
+### bdevperf 테스트
+
+  * spdk에서는 자체적으로 `bdevperf`와 `fio` 성능 테스트 툴을 제공한다. (당연한것이 호환되는게 없음..)
+
+### bdevperf
+
+  * `bdevperf`는 `<path to spdk repo>/test/bdev/bdevperf` 디렉토리에 존재하며 간단하게 `test_config.sh`를 수행하여 테스트를 수행해볼 수 있다.
+  ```
+  [root@localhost spdk]# cd test/bdev/bdevperf`
+  [root@localhost bdevperf]# ls -l
+  -rwxr-xr-x 1 root root 7740256 Jan 13 05:22 bdevperf
+  -rw-r--r-- 1 root root   56826 Nov  1 06:27 bdevperf.c
+  -rw-r--r-- 1 root root    1840 Jan 13 05:22 bdevperf.d
+  -rw-r--r-- 1 root root  227480 Jan 13 05:22 bdevperf.o
+  -rwxr-xr-x 1 root root    2910 Nov  1 06:27 bdevperf.py
+  -rw-r--r-- 1 root root     587 Nov  1 06:27 common.sh
+  -rw-r--r-- 1 root root     473 Nov  1 06:27 conf.json
+  -rw-r--r-- 1 root root    2017 Nov  1 06:27 Makefile
+  -rwxr-xr-x 1 root root    1257 Nov  1 06:27 test_config.sh
+  [root@localhost bdevperf]# ./test_config.sh
+  ...
+  =============================================================
+  Total                       : 2228736.00 IOPS    2176.50 MiB/s'
+  22:44:02      -- bdevperf/common.sh@28 -- # grep -oE '[0-9]+'
+  22:44:02       -- ./test_config.sh@39 -- # [[ 4 == \4 ]]
+  22:44:02       -- ./test_config.sh@40 -- # cleanup
+  22:44:02       -- bdevperf/common.sh@32 -- # rm -f /root/spdk/test/bdev/bdevperf/test.conf
+  22:44:02       -- ./test_config.sh@41 -- # trap - SIGINT SIGTERM EXIT
+  ```
+  * 아 이렇게 동작하구나~ 그러면 원하는데로 돌려보자, 옵션은 `./bdevperf --help`로 찾아볼 수 있다.
+  * 그 전에, 일반적으로 벤치마킹 툴을 사용해봤으면 알겠지만, 성능을 측정할 대상(경로 또는 장치)을 지정해야하는데 spdk는 경로가 존재하지 않기 때문에 테스트할 대상을 지정할 설정 파일이 필요하다.
+  * 샘플로 `conf.json`을 보면 json 타입으로 어떤 장치인지 지정되어 있는것을 확인할 수 있다.
+  ```
+  [root@localhost bdevperf]# cat conf.json
+  {
+    "subsystems": [
+    {
+      "subsystem": "bdev",
+      "config": [
+      {
+        "method": "bdev_malloc_create",
+        "params": {
+          "name": "Malloc0",
+          "num_blocks": 102400,
+          "block_size": 512
+        }
+      },
+      {
+        "method": "bdev_malloc_create",
+        "params": {
+          "name": "Malloc1",
+          "num_blocks": 102400,
+          "block_size": 512
+        }
+      }
+      ]
+    }
+    ]
+  }
+```
+    - 위 내용을 확인해보면 각각 50MiB(512 * 102400) 용량을 갖는 Malloc1과 Malloc2를 메모리에 생성하겠다는 것이다.  * 그렇다면 128 iodepth를 가지며, 4KiB 블록 크기로 읽기 테스트를 300초 동안 수행해보자
+    ```
+    [root@localhost bdevperf]# ./bdevperf -t 300 -c ./conf.json -q 128 -o 4096 -w read
+    [2022-01-13 22:47:33.489389] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
+    [2022-01-13 22:47:33.489561] [ DPDK EAL parameters: [2022-01-13 22:47:33.489591] bdevperf [2022-01-13 22:47:33.489612] --no-shconf [2022-01-13 22:47:33.489635] -c 0x1 [2022-01-13 22:47:33.489656] --log-level=lib.eal:6 [2022-01-13 22:47:33.489676] --log-level=lib.cryptodev:5 [2022-01-13 22:47:33.489697] --log-level=user1:6 [2022-01-13 22:47:33.489718] --iova-mode=pa [2022-01-13 22:47:33.489739] --base-virtaddr=0x200000000000 [2022-01-13 22:47:33.489761] --match-allocations [2022-01-13 22:47:33.489781] --file-prefix=spdk_pid174830 [2022-01-13 22:47:33.489804] ]
+    EAL: No available 1048576 kB hugepages reported
+    EAL: No free 2048 kB hugepages reported on node 1
+    TELEMETRY: No legacy callbacks, legacy socket not created
+    [2022-01-13 22:47:33.593973] app.c: 543:spdk_app_start: *NOTICE*: Total cores available: 1
+    [2022-01-13 22:47:33.880832] reactor.c: 943:reactor_run: *NOTICE*: Reactor started on core 0
+    [2022-01-13 22:47:33.881331] accel_engine.c:1012:spdk_accel_engine_initialize: *NOTICE*: Accel engine initialized to use software engine.
+    Running I/O for 300 seconds...
+    Job: Malloc0 (Core Mask 0x1)
+    Malloc0             :  407177.81 IOPS    1590.54 MiB/s
+    Job: Malloc1 (Core Mask 0x1)
+    Malloc1             :  407177.81 IOPS    1590.54 MiB/s
+    =============================================================
+    Total                       :  814355.63 IOPS    3181.08 MiB/s
+    ```
+    - 결과처럼 Malloc0과 Malloc1에 테스트를 수행한 것을 알 수 있다.
+  * 다음으로 메모리로 생성한 장치가 아닌 실제 NVMe SSD의 spdk 드라이버 성능을 측정해보자
+  * 마찬가지로 conf 파일을 설정해야하는데, 이는 `scripts/get_nvme.sh` 스크립트를 이용하여 NVMe 설정 파일을 생성할 수 있다.
+  ```
+  [root@localhost bdevperf]# /root/spdk/scripts/gen_nvme.sh --json-with-subsystems | jq . > nvme.json
+  [root@localhost bdevperf]# cat nvme.json
+  {
+    "subsystems": [
+    {
+      "subsystem": "bdev",
+      "config": [
+      {
+        "method": "bdev_nvme_attach_controller",
+        "params": {
+          "trtype": "PCIe",
+          "name": "Nvme0",
+          "traddr": "0000:3b:00.0"
+        }
+      }
+      ]
+    }
+    ]
+  }
+  ```
+  * NVMe 장치에 bdevperf를 수행해보자, 옵션은 MallocX와 동일하지만 설정 파일이 변경되었으니 -c 옵션에 설정 경로만 다르게 해준다.
+  ```
+  [root@localhost bdevperf]# ./bdevperf -t 300 -c ./nvme.json -q 128 -o 4096 -w read
+  [2022-01-13 23:15:52.588048] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
+  [2022-01-13 23:15:52.588245] [ DPDK EAL parameters: [2022-01-13 23:15:52.588276] bdevperf [2022-01-13 23:15:52.588297] --no-shconf [2022-01-13 23:15:52.588319] -c 0x1 [2022-01-13 23:15:52.588354] --log-level=lib.eal:6 [2022-01-13 23:15:52.588375] --log-level=lib.cryptodev:5 [2022-01-13 23:15:52.588396] --log-level=user1:6 [2022-01-13 23:15:52.588417] --iova-mode=pa [2022-01-13 23:15:52.588439] --base-virtaddr=0x200000000000 [2022-01-13 23:15:52.588460] --match-allocations [2022-01-13 23:15:52.588481] --file-prefix=spdk_pid241533 [2022-01-13 23:15:52.588503] ]
+  EAL: No available 1048576 kB hugepages reported
+  EAL: No free 2048 kB hugepages reported on node 1
+  TELEMETRY: No legacy callbacks, legacy socket not created
+  [2022-01-13 23:15:52.683909] app.c: 543:spdk_app_start: *NOTICE*: Total cores available: 1
+  [2022-01-13 23:15:52.951868] reactor.c: 943:reactor_run: *NOTICE*: Reactor started on core 0
+  [2022-01-13 23:15:52.952347] accel_engine.c:1012:spdk_accel_engine_initialize: *NOTICE*: Accel engine initialized to use software engine.
+  Running I/O for 300 seconds...
+  Job: Nvme0n1 (Core Mask 0x1)
+  Nvme0n1             :  334248.13 IOPS    1305.66 MiB/s
+  =============================================================
+  Total                       :  334248.13 IOPS    1305.66 MiB/s
+  ```
+
+### FIO 테스트
+
+  * 'fio에 대한 간단한 설명 추가'
+  * fio 테스트를 위해서는 fio 소스 코드를 빌드해야 한다. 관련 내용은 [여기](https://github.com/spdk/spdk/tree/master/examples/nvme/fio_plugin)를 참고해서 설치하면 된다.
+  ```
+  [root@localhost ~]# git clone https://github.com/axboe/fio
+  [root@localhost ~]# cd fio
+  [root@localhost fio]# make
+  [error]
+  ```
+    - gcc 버전이 낮다.. [여기](https://m.blog.naver.com/alice_k106/221019680668)를 참고해서 올리자..
+  * 다시 시작.. 성공!
+  ```
+  LINK t/read-to-pipe-async
+  LINK t/fio-btrace2fio
+  LINK t/io_uring
+  [root@localhost fio]# ls -l fio
+  -rwxr-xr-x 1 root root 6400472 Jan 13 23:45 fio
+  [root@localhost fio]# cd ~/spdk
+  [root@EdgeHA-1 spdk]# ./configure --with-fio=/root/fio
+  Notice: ISA-L, compression & crypto require NASM version 2.14 or newer. Turning off default ISA-L and crypto features.
+  Using default SPDK env in /root/spdk/lib/env_dpdk
+  Using default DPDK in /root/spdk/dpdk/build
+  Creating mk/config.mk...done.
+  Creating mk/cc.flags.mk...done.
+  [root@localhost spdk]# make 
+  ...
+  CXX test/cpp_headers/string.o
+  CXX test/cpp_headers/gpt_spec.o
+  CXX test/cpp_headers/nvme_ocssd.o
+  LINK dif_ut
+  LINK ftl_wptr_ut
+  LINK ftl_io_ut
+  [root@localhost spdk]# ls build/fio
+  total 12852
+  -rwxr-xr-x 1 root root 8665272 Jan 13 23:49 spdk_bdev
+  -rwxr-xr-x 1 root root 4490272 Jan 13 23:49 spdk_nvme
+  ```
+  * fio 를 실행할 때에는 spdk의 플러그인을 사용하려면 `LD_PRELOAD` 매개변수를 통해 spdk의 경로를 입력해야한다.
+  * 그렇다면 한번 실행해보자, 먼저 bdevperf와 동일하게 NVMe 장치 설정을 가져온다.
+  ```
+  [root@localhost spdk]# cd examples/bdev/fio_plugin
+  [root@localhost fio_plugin]# /root/spdk/scripts/gen_nvme.sh --json-with-subsystems | jq . > nvme.json
+  [root@localhost fio_plugin]# cat nvme.json
+  {
+    "subsystems": [
+    {
+      "subsystem": "bdev",
+        "config": [
+        {
+          "method": "bdev_nvme_attach_controller",
+          "params": {
+            "trtype": "PCIe",
+            "name": "Nvme0",
+            "traddr": "0000:3b:00.0"
+          }
+        }
+        ]
+    }
+    ]
+  }
+  ```
+  * 이 떄, fio config에 `nvme.json`을 설정하면 성능 측정 전에 자동으로 SPDK에 NVMe 컨트롤러를 연결한다. 따라서 기존에 SPDK에 attach한 NVMe 컨트롤러가 있다면 해제해야한다.
+  ```
+  [root@localhost fio_plugin]# scripts/rpc.py bdev_nvme_detach_controller NVMe0
+  [root@localhost fio_plugin]# scripts/rpc.py bdev_nvme_get_controllers
+  []
+  ```
+  * fio 테스트 옵션은 [spdk performance report](https://ci.spdk.io/download/performance-reports/SPDK_nvme_bdev_perf_report_2110.pdf)의 'Test Case 1'의 설정을 참고했다.
+  ```
+  [root@localhost fio_plugin]# cat run_fio.fio
+  [global]
+  ioengine=/root/spdk/build/fio/spdk_bdev
+  spdk_json_conf=/root/spdk/examples/bdev/fio_plugin/nvme.json
+
+  gtod_reduce=1
+  direct=1
+  thread=1
+  norandommap=1
+  time_based=1
+  ramp_time=60s
+  runtime=300s
+  rw=read
+  bs=4k
+  numjobs=1
+
+  [filename0]
+  filename=Nvme0n1
+  iodepth=128
+
+  [root@localhost fio_plugin]# /root/fio/fio ./run_fio.fio
+  filename0: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=spdk_bdev, iodepth=128
+  fio-3.29-7-g01686
+  Starting 1 thread
+  [2022-01-20 22:49:33.573673] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
+  [2022-01-20 22:49:33.573890] [ DPDK EAL parameters: [2022-01-20 22:49:33.573922] fio [2022-01-20 22:49:33.573944] --no-shconf [2022-01-20 22:49:33.573965] -c 0x1 [2022-01-20 22:49:33.573986] --log-level=lib.eal:6 [2022-01-20 22:49:33.574007] --log-level=lib.cryptodev:5 [2022-01-20 22:49:33.574027] --log-level=user1:6 [2022-01-20 22:49:33.574062] --iova-mode=pa [2022-01-20 22:49:33.574082] --base-virtaddr=0x200000000000 [2022-01-20 22:49:33.574103] --match-allocations [2022-01-20 22:49:33.574124] --file-prefix=spdk_pid269971 [2022-01-20 22:49:33.574145] ]
+  EAL: No available 1048576 kB hugepages reported
+  EAL: No free 2048 kB hugepages reported on node 1
+  TELEMETRY: No legacy callbacks, legacy socket not created
+  [2022-01-20 22:49:33.707015] accel_engine.c:1012:spdk_accel_engine_initialize: *NOTICE*: Accel engine initialized to use software engine.
+  Jobs: 1 (f=1): [R(1)][100.0%][r=2602MiB/s][r=666k IOPS][eta 00m:00s]
+  filename0: (groupid=0, jobs=1): err= 0: pid=270034: Thu Jan 20 22:55:33 2022
+    read: IOPS=666k, BW=2603MiB/s (2730MB/s)(763GiB/300001msec)
+      bw (  MiB/s): min= 2567, max= 2614, per=100.00%, avg=2604.31, stdev= 7.14, samples=600
+      iops        : min=657376, max=669316, avg=666702.32, stdev=1828.62, samples=600
+    cpu          : usr=100.00%, sys=0.00%, ctx=724, majf=0, minf=139
+    IO depths    : 1=0.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=100.0%
+      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+      complete  : 0=0.0%, 4=100.0%, 8=0.1%, 16=0.1%, 32=0.1%, 64=0.1%, >=64=0.1%
+      issued rwts: total=199938792,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+      latency   : target=0, window=0, percentile=100.00%, depth=128
+
+  Run status group 0 (all jobs):
+    READ: bw=2603MiB/s (2730MB/s), 2603MiB/s-2603MiB/s (2730MB/s-2730MB/s), io=763GiB (819GB), run=300001-300001msec
+  ```
+  * 참고
+    - https://www.intel.com/content/www/us/en/developer/articles/technical/evaluate-performance-for-storage-performance-development-kit-spdk-based-nvme-ssd.html
+    - https://github.com/spdk/spdk/issues/1104
+
+### 실시간 모니터링 방법
+
+&nbsp;
+
+마치며
+-----
+
+끝내는 말(You Died)
+
+&nbsp;
+
+각주
+---
+
+[^1]: 예시 1
+[^2]: 예시 2
+[^3]: 예시 3
