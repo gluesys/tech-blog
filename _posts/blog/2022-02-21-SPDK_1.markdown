@@ -1,0 +1,70 @@
+---
+layout:     post
+title:      "SPDK에 대해: 개요 및 특징"
+date:       2022-02-21
+categories: blog
+author:     박주형 (jhpark@gluesys.com)
+tags:       [SPDK, DPDK, 스토리지, 유저 스페이스, Userspace, 오픈소스, Open Source]
+cover:      "/assets/SPDK1_main.jpg"
+main:       "/assets/SPDK1_main.jpg"
+---
+   
+최신 NVMe 기술을 적용한 고성능 저 지연 스토리지 미디어의 사용이 보편화되면서, 스토리지 소프트웨어 계층에서의 오버헤드가 주목받게 되었습니다. 지금까지 CPU, 메모리, 그리고 스토리지를 잇는 구조에서 입출력 성능을 좌지우지하는 것은 항상 스토리지 하드웨어였습니다. 하드디스크를 위시한 전통적인 스토리지 미디어는 CPU나 메모리에 비해 현저히 느리고, 그 원인의 비중이 하드웨어가 더 컸기 때문에 소프트웨어 부분은 비교적 덜 주목받아 왔습니다. 하지만 NVMe SSD나 인텔의 옵테인 메모리와 같이 RAM의 초당 지연시간에 근접하는 스토리지 미디어가 등장하면서, 스토리지 소프트웨어에서 발생하는 오버헤드에도 시선이 모이고 있습니다.  
+  
+스토리지 소프트웨어의 오버헤드는 주로 커널 스택에서 발생하는 것으로 보고 있습니다. NVMe 기술 기반의 스토리지 미디어가 고속의 입출력을 구현하게 되면서 스토리지 드라이브나 컨트롤러 측에서 발생하는 지연시간은 획기적으로 줄어든 것에 비해, 커널 측에서의 지연은 거의 그대로이다 보니, 전체 지연시간에서의 비중은 상대적으로 높아졌습니다. 입출력 시 커널에서 발생하는 오버헤드의 유형은 다음과 같습니다:  
+  
+ * 고성능 스토리지 미디어의 고속 입출력 성능으로 인해 완료 인터럽트가 포화되어 CPU 오버헤드가 발생함.  
+ * 유저 스페이스와 커널 스페이스 간 반복적인 데이터 복제 및 시스템콜 요청에 따른 문맥 교환(context switching)으로 CPU 오버헤드가 발생함.  
+ * 고성능 입출력이 발생하는 환경에서 여러 스레드에서 동기화를 위한 락(lock)이 빈번하게 발생함.  
+  
+이처럼 입출력 시 발생하는 오버헤드를 줄이고 최신 CPU와 스토리지 미디어의 요구사항에 부합하는 스토리지 소프트웨어를 개발하기 위해 **SPDK(Storage Performance Development Kit)**가 등장합니다.
+  
+&nbsp;
+  
+## SPDK 소개
+  
+**SPDK**는 고성능 스토리지 애플리케이션을 개발하기 위해 드라이버, 라이브러리, 애플리케이션을 모아 놓은 오픈소스 개발 키트입니다. 최신 저 지연 플래시 스토리지 미디어, 특히 NVMe SSD의 본 성능을 최대한 뽑아내기 위해 디자인되었습니다. SPDK 프로젝트는 인텔의 주도로 2013년에 시작되었으며, 2015년에 BSD 라이선스 기반으로 깃허브(https://github.com/spdk/spdk/releases) 에 공개되었습니다. 프로젝트를 주도하는 인텔을 포함해 NetApp, Hitachi, IBM, Nutanix 등 NVMe 기반 응용기술을 도입하는 글로벌 벤더들에서 상용화를 진행 중이고, 삼성전자에서도 ZNS 기반 SSD 연동을 목적으로 SPDK 커뮤티니에 참여하고 있습니다.  
+  
+SPDK는 기본적으로 스토리지 드라이버를 유저 스페이스로 가져오는 것에 초점을 맞추고 있습니다. 이는 유저 스페이스에서 네트워크 드라이브를 구현하는 DPDK(Data Plane Development Kit)와 매우 비슷합니다만, DPDK는 실제로 SPDK의 선행 프로젝트입니다. 드라이브를 유저 스페이스로 가져오는 것과 폴링 방식을 사용하는 것이 비슷하고, 일부 라이브러리도 공유하고 있습니다.  
+  
+&nbsp;
+  
+## 주요 특징
+  
+SPDK의 주요 특징은 다음과 같습니다:  
+  
+ * Userspace 기반: 기존에는 스토리지 드라이버가 커널에서 구동되었으나, SPDK는 드라이버가 전부 유저 스페이스에서 구동되게 합니다. 이로써, 유저 스페이스와 커널 스페이스 간 syscall 요청을 최소화해 문맥 교환에 따른 CPU 부하를 줄일 수 있고, zero-copy 접근을 지원해 입출력 발생 시 데이터 복제 작업을 생략하고 입출력 명령을 위한 데이터 버퍼가 필요 없게 되어 CPU 리소스를 절약할 수 있습니다.  
+  
+ * Polled-mode: 기존 인터럽트 기반의 입출력 모델이 고성능 저 지연 스토리지 미디어가 탑재된 환경에서는 적합하지 않은 관계로, SPDK는 폴링(polling) 방식을 사용합니다. 스토리지 장치가 CPU에 작업 수행 신호를 보내는 인터럽트 방식과는 달리, 폴링 방식은 역으로 CPU가 장치의 입출력 작업의 완료 여부를 주기적으로 모니터링 하는 방식입니다. 하드디스크에서 풀링 방식을 채용하는 경우, 하드디스크의 느린 입출력 성능으로 인해 CPU 사이클이 낭비되는 경우가 많아 비효율적입니다. 반면, 수십만 IOPS의 성능을 낼 수 있는 NVMe SSD를 활용하는 경우, 반복적인 모니터링으로 인한 리소스 낭비 없이 즉각적으로 완료가 되기 때문에 기존 인터럽트 방식에 비해 획기적으로 저지연을 구현할 수 있게 됩니다.  
+  
+ * Lockless architecture: SPDK의 주 목표 중 하나는 하드웨어의 확장에 따라 성능도 병행해 확장하는 것입니다. SSD를 확장하는 만큼 초당 입출력도 확장이 되어야 하고, CPU 코어를 늘린 만큼 연산 처리 속도도 향상되어야 한다는 것입니다. 이를 위해서는 각 스레드가 최대한 서로 독립적으로 수행되는 것이 필요합니다. 애플리케이션에서 발생한 입출력 요청은 기본적으로 커널을 통해 단일 큐에 배치되어 디스크에 접근합니다. 이는 과거 하드디스크의 특징이 반영된 구조입니다. 커널은 단일 큐에 여러 스레드가 동시에 접근하는 것을 방지하기 위해 큐에 대한 락을 생성합니다. 하지만 과도한 락 생성은 리소스 낭비로 이어질 수 있습니다. NVMe의 등장으로 여러 큐를 병렬로 수행할 수 있게 되면서, SPDK의 유저스페이스 드라이버는 애플리케이션을 통해 생성되는 스레드 수를 파악하고, 큐를 각각 스레드에 할당함으로써 다른 스레드를 신경 쓸 필요 없이(락 없이) 입출력 요청을 할 수 있게 됩니다. 대신 스레드 간 리소스 공유는 메시지 패싱을 통해 다른 스레드로 공유합니다. 이로써 락으로 인해 다른 스레드가 대기할 필요가 없어 입출력 성능을 크게 높일 수 있게 됩니다.  
+  
+&nbsp;
+  
+## 기본 구성
+  
+SPDK는 각종 드라이브와 헤더파일 등을 모아 놓은 라이브러리와 해당 라이브러리를 기반으로 구성된 애플리케이션 들의 집합입니다. SPDK 라이브러리는 기본적으로 C로 구성된 코드들이 담겨 있으며, 하위 디렉토리로 lib와 module이 있습니다. lib 디렉토리는 SPDK를 구성하는 기본 라이브러리가 있으며, 이를 응용한 플러그인들이 module 디렉토리에 담겨 있습니다. 주요 라이브러리는 핵심이 되는 NVMe Driver와, Virtio 디바이스와 통신을 위한 Virtio Driver 등이 있습니다. SPDK 애플리케이션은 본래 라이브러리 테스트가 목적이나, 그 자체만으로도 완전한 기능을 제공하는 애플리케이션들이 담겨 있습니다. 주요 애플리케이션은 iSCSI Target, NVMe-oF Target, vhost Target이 있습니다.  
+  
+SPDK 오픈소스 프로젝트는 기여 활동이 활발한 만큼 풍부한 성능 테스트 자료를 제공하고 있습니다. SPDK에서는 버전 업데이트에 따른 변화를 시각화 하기 위해 버전 별로 성능 회귀 [테스트 보고서](https://spdk.io/doc/performance_reports.html) 를 제공합니다. 테스트는 2시간 마다 마스터 브랜치에 올라온 가장 최신 SPDK 버전으로 수행되며, 이에 대한 결과 값(초당 입출력, 대역폭, 지연시간)을 [Grafana 대시보드](https://performance.spdk.io/) 를 통해 공개하고 있습니다.  
+  
+&nbsp;
+  
+## 마치며
+  
+이번 포스트에서는 SPDK가 등장하게 된 배경과 개요 및 기본 특징에 대해 간단히 다루어 보았습니다. SPDK를 소개하는 자료가 국내외로 많이 부족한 관계로 SPDK 공식 홈페이지를 중심으로 알아보게 되었습니다. 보다 자세한 내용은 SPDK 공식 홈페이지를 참고 부탁드립니다.  
+  
+&nbsp;
+  
+## 참고
+  
+ * https://spdk.io/doc/
+ * https://www.openfabrics.org/images/2018workshop/presentations/309_PLuse_StoragePerformanceDevKit.pdf
+ * https://www.dpdk.org/wp-content/uploads/sites/35/2018/06/Accelerate-storage-service-via-SPDK.pdf
+ * https://www.snia.org/sites/default/files/SDC/2018/presentations/NVMe/Harris_Jim_SPDK_NVMe_In-depth_Look_at_its_Architecture_and_Design.pdf
+ * https://blocksandfiles.com/2021/06/02/into-the-zone-samsung-launches-its-first-zoned-ssd-with-up-to-4x-longer-endurance/
+ * https://blocksandfiles.com/2021/09/21/virtual-private-clouds-arrive-with-flow-networking-at-silo-busting-nutanix-as-part-of-mega-release/
+ * https://www.usenix.org/system/files/conference/fast12/yang.pdf
+ * Yang, Z., Harris, J. R., Walker, B., Verkamp, D., Liu, C., Chang, C., ... & Paul, L. E. (2017, December). SPDK: A development kit to build high performance storage applications. In 2017 IEEE International Conference on Cloud Computing Technology and Science (CloudCom) (pp. 154-161). IEEE.
+  
+&nbsp;
+  
