@@ -23,7 +23,7 @@ main:       "/assets/SPDK1_main.jpg"
   
 ## SPDK 소개
   
-**SPDK**는 고성능 스토리지 애플리케이션을 개발하기 위해 드라이버, 라이브러리, 애플리케이션을 모아 놓은 오픈소스 개발 키트입니다. 최신 저 지연 플래시 스토리지 미디어, 특히 NVMe SSD의 본 성능을 최대한 뽑아내기 위해 디자인되었습니다. SPDK 프로젝트는 인텔의 주도로 2013년에 시작되었으며, 2015년에 BSD 라이선스 기반으로 깃허브(https://github.com/spdk/spdk/releases) 에 공개되었습니다.  
+**SPDK**는 고성능 스토리지 애플리케이션을 개발하기 위해 드라이버, 라이브러리, 애플리케이션을 모아 놓은 오픈소스 개발 키트입니다. 최신 저 지연 플래시 스토리지 미디어, 특히 NVMe SSD의 본 성능을 최대한 뽑아내기 위해 디자인되었습니다. SPDK 프로젝트는 인텔의 주도로 2013년에 시작되었으며, 2015년에 BSD 라이선스 기반으로 깃허브(https://github.com/spdk/spdk/releases) 에 공개되었습니다. 프로젝트를 주도하는 인텔을 포함해 NetApp, Hitachi, IBM, Nutanix 등 NVMe 기반 응용기술을 도입하는 글로벌 벤더들에서 상용화를 진행 중이고, 삼성전자에서도 ZNS 기반 SSD 연동을 목적으로 SPDK 커뮤티니에 참여하고 있습니다.  
   
 SPDK는 기본적으로 스토리지 드라이버를 유저 스페이스로 가져오는 것에 초점을 맞추고 있습니다. 이는 유저 스페이스에서 네트워크 드라이브를 구현하는 DPDK(Data Plane Development Kit)와 매우 비슷합니다만, DPDK는 실제로 SPDK의 선행 프로젝트입니다. 드라이브를 유저 스페이스로 가져오는 것과 폴링 방식을 사용하는 것이 비슷하고, 일부 라이브러리도 공유하고 있습니다.  
   
@@ -61,6 +61,8 @@ SPDK 오픈소스 프로젝트는 기여 활동이 활발한 만큼 풍부한 �
  * https://www.openfabrics.org/images/2018workshop/presentations/309_PLuse_StoragePerformanceDevKit.pdf
  * https://www.dpdk.org/wp-content/uploads/sites/35/2018/06/Accelerate-storage-service-via-SPDK.pdf
  * https://www.snia.org/sites/default/files/SDC/2018/presentations/NVMe/Harris_Jim_SPDK_NVMe_In-depth_Look_at_its_Architecture_and_Design.pdf
+ * https://blocksandfiles.com/2021/06/02/into-the-zone-samsung-launches-its-first-zoned-ssd-with-up-to-4x-longer-endurance/
+ * https://blocksandfiles.com/2021/09/21/virtual-private-clouds-arrive-with-flow-networking-at-silo-busting-nutanix-as-part-of-mega-release/
  * https://www.usenix.org/system/files/conference/fast12/yang.pdf
  * Yang, Z., Harris, J. R., Walker, B., Verkamp, D., Liu, C., Chang, C., ... & Paul, L. E. (2017, December). SPDK: A development kit to build high performance storage applications. In 2017 IEEE International Conference on Cloud Computing Technology and Science (CloudCom) (pp. 154-161). IEEE.
   
