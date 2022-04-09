@@ -124,7 +124,7 @@ SPDK의 bdev는 기존 커널의 장치 드라이버보다 상위 계층에서 �
   nvme0n1 259:0    0 260.9G  0 disk
   ```
 
-소유권이 커널로 넘어갔네요. 간단한 예제를 수행해 보겠습니다.`build/exmpales/hello_world`를 수행합니다.
+오너쉽이 커널로 넘어갔네요. 간단한 예제를 수행해 보겠습니다.`build/exmpales/hello_world`를 수행합니다.
 
   ```
   [root@localhost spdk]# build/examples/hello_world
@@ -274,28 +274,56 @@ OK 좋습니다. 그런데 최적화 같은 제조사가 제공하는 컨트롤�
 
 ### 문자 드라이버 등록
 
-리눅스에서는 모든 것을 파일로 관리합니다. 우리가 컴퓨터에 장치를 연결하면 리눅스 커널은 장치를 인식해서 알맞은 드라이버를 호출하고 `/dev` 하위에 파일을 생성합니다. 우리가 사용하는 하드디스크도 ATA 인터페이스 기반의 SCSI 또는 SATA 드라이버로 연결되어 `/dev` 하위에 `hda, hdb, sda, sdb`등으로 보여지는 것입니다. NVMe SSD도 같습니다. 커널은 NVMe SSD가 인식되면 NVMe 드라이버를 커널에서 불러와 `/dev` 하위에 `nvme0, nvme1`과 같이 보여줍니다. `nvme0`뒤에 `n1, n2`와 같은 것은 namespace로 NVMe SSD에서 논리적인 분리된 저장 공간의 번호를 뜻합니다. 파티션 또는 논리 볼륨과 비슷한 개념입니다.
+우리가 컴퓨터에 장치를 연결하면 리눅스 커널은 장치를 인식해서 알맞은 드라이버를 호출합니다. 리눅스에서 관리하는 디바이스 드라이버는 문자, 블록, 네트워크 종류로 구분됩니다. 이중에서 문자 드라이버는 장치를 파일로 추상화하여 쉽게 접근할 수 있으며, 스트림 방식의 데이터 전송을 수행합니다.(문자 드라이버 외에 블록과 네트워크 드라이버에 대한 자세한 설명은 [여기](https://pages.cs.wisc.edu/~kadav/study/study.pdf)를 참고하시면 좋겠습니다.) 대표적으로 시스템-콜 ioctl은 스트림 방식으로 장치를 제어할 수 있는 기능입니다. `nvme` 명령도 내부적으로 대부분의 제어를 ioctl를 통해 수행합니다. 하지만, SPDK에서 등록한 장치의 오너쉽은 커널이 아니기 때문에 일반적인 방법으로 다룰 수 없습니다. SPDK는 cuse[^4] 라이브러리를 이용하여 SPDK의 유저 공간의 기능을 문자 드라이버로 제공합니다.
+이를 위해서는 테스트 서버에 cuse 패키지를 설치해야 합니다. 따라서 초기에 SPDK 환경 구성을 위해 ./configure 명령을 수행할 때, `--with-nvme-cuse` 옵션을 추가하고 리빌드를 수행해야 합니다. 먼저 `spdk_tgt`를 Ctrl+C로 종료합니다.
 
-  * 다음으로 연결한 NVMe 컨트롤러에 namespace를 문자 드라이버로 등록하는 방법이다.
-  * 문자 드라이버는 cuse라는 라이브러리를 통해 사용한다.
-  * 따라서 앞서 spdk 환경을 구성할 때 `./configure` 명령에 `--with-nvme-cuse` 옵션을 붙이고 다시 빌드(`make`)를 수행한다. `spdk_tgt`도 내리고 수행한다.
   ```
+  [2022-04-08 20:11:48.864407] bdev_nvme_rpc.c: 400:rpc_bdev_nvme_attach_controller: *ERROR*: The multipath parameter was not specified to bdev_nvme_attach_controller but it was used to add a failover path. This behavior will default to rejecting the request in the future. Specify the 'multipath' parameter to control the behavior[2022-04-08 20:27:33.714712] bdev_nvme.c:3620:bdev_nvme_delete: *ERROR*: Failed to find NVMe bdev controller
+  ^C
+  [root@localhost spdk]# 
   [root@localhost spdk]# ./configure --with-nvme-cuse
-  [root@localhost spdk]# make
-  [root@localhost spdk]# scripts/setup.sh
+  Notice: ISA-L, compression & crypto require NASM version 2.14 or newer. Turning off default ISA-L and crypto features.
+  Using default SPDK env in /root/spdk/lib/env_dpdk
+  Using default DPDK in /root/spdk/dpdk/build
+  Creating mk/config.mk...done.
+  Creating mk/cc.flags.mk...done.
+  Type 'make' to build.
+  [root@localhost spdk]# make -j 40
+  ... <Done>
   [root@localhost spdk]# modprobe cuse
   [root@localhost spdk]# lsmod | grep cuse
   cuse                   13274  0
   fuse                  100350  4 cuse
-  [root@localhost spdk]# build/bin/spdk_tgt
-  ...
-  (다른 터미널)
+  [root@localhost spdk]# ./build/bin/spdk_tgt
+  [2022-04-08 22:41:44.436670] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
+  [2022-04-08 22:41:44.436857] [ DPDK EAL parameters: [2022-04-08 22:41:44.436891] spdk_tgt [2022-04-08 22:41:44.436919] --no-shconf [2022-04-08 22:41:44.436945] -c 0x1 [2022-04-08 22:41:44.436969] --log-level=lib.eal:6 [2022-04-08 22:41:44.436995] --log-level=lib.cryptodev:5 [2022-04-08 22:41:44.437019] --log-level=user1:6 [2022-04-08 22:41:44.437072] --iova-mode=pa [2022-04-08 22:41:44.437098] --base-virtaddr=0x200000000000 [2022-04-08 22:41:44.437121] --match-allocations [2022-04-08 22:41:44.437145] --file-prefix=spdk_pid66198 [2022-04-08 22:41:44.437168] ]
+  EAL: No available 1048576 kB hugepages reported
+  EAL: No free 2048 kB hugepages reported on node 1
+  TELEMETRY: No legacy callbacks, legacy socket not created
+  [2022-04-08 22:41:44.519003] app.c: 543:spdk_app_start: *NOTICE*: Total cores available: 1
+  [2022-04-08 22:41:44.648331] reactor.c: 943:reactor_run: *NOTICE*: Reactor started on core 0
+  [2022-04-08 22:41:44.648394] accel_engine.c:1012:spdk_accel_engine_initialize: *NOTICE*: Accel engine initialized to use software engine.
+  ```
+
+리빌드 및 `spdk_tgt`이 정상적으로 수행되었으면 다른 터미널에서 문자 드라이버로 등록하는 과정을 수행합니다.
+
+  ```
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_attach_controller -b NVMe0 -t PCIe -a 0000:3b:00.0
   NVMe0n1
-  ```
-  * 소켓까지 다시 올렸으면 spdk와 연결된 컨트롤러를 문자 드라이버로 등록한다.
-  ```
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_cuse_register -n NVMe0
+  ```
+
+이때 `spdk_tgt`를 수행한 터미널에서 정상적으로 생성되었음을 암시하는 로그가 출력됩니다.
+jjj
+  ```
+  [2022-04-08 22:45:37.183893] nvme_cuse.c: 972:nvme_cuse_start: *NOTICE*: Creating cuse device for controller
+  [2022-04-08 22:45:37.184053] nvme_cuse.c: 763:cuse_session_create: *NOTICE*: fuse session for device spdk/nvme0 created
+  [2022-04-08 22:45:37.184117] nvme_cuse.c: 763:cuse_session_create: *NOTICE*: fuse session for device spdk/nvme0n1 created
+  ```
+
+다른 터미널에서 문자 드라이버가 생성되었는지 확인해보겠습니다.
+
+  ```
   [root@localhost spdk]# ls /dev/spdk/
   nvme0  nvme0n1
   [root@localhost spdk]# nvme id-ctrl /dev/spdk/nvme0 -H
@@ -388,7 +416,6 @@ OK 좋습니다. 그런데 최적화 같은 제조사가 제공하는 컨트롤�
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs
   1818d45a-3a05-42c9-bbb2-9229cc25ac49
-  ```
   [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
   [
@@ -404,6 +431,7 @@ OK 좋습니다. 그런데 최적화 같은 제조사가 제공하는 컨트롤�
   ]
   ```
   * 마찬가지로 삭제는 아래와 같다.
+  ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete_lvstore -l lvs
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
   []
@@ -772,3 +800,4 @@ OK 좋습니다. 그런데 최적화 같은 제조사가 제공하는 컨트롤�
 [^1]: vfio
 [^2]: uio
 [^3]: rpc
+[^4]: cuse
