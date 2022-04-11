@@ -59,7 +59,7 @@ SPDK의 bdev는 기존 커널의 장치 드라이버보다 상위 계층에서 �
 
   ```
   [root@localhost spdk]# ./configure
-  [root@localhost spdk]# make -j 8
+  [root@localhost spdk]# make -j 40
   ```
 
 빌드가 완료되면 SPDK 드라이버를 사용할 수 있도록 커널에서 소유하고있는 NVMe 장치를 연결 해제해야 합니다. 커널은 운영체제가 부팅되면서 하드웨어 장치들을 인식하고 관련된 드라이버를 실행하여 장치를 사용할 수 있도록 준비합니다. 이때 로드된 드라이버에서 장치에 대한 오너쉽을 해제해야 SPDK에서 장치의 오너쉽을 가져올 수 있습니다.
@@ -314,18 +314,23 @@ OK 좋습니다. 그런데 최적화 같은 제조사가 제공하는 컨트롤�
   ```
 
 이때 `spdk_tgt`를 수행한 터미널에서 정상적으로 생성되었음을 암시하는 로그가 출력됩니다.
-jjj
+
   ```
   [2022-04-08 22:45:37.183893] nvme_cuse.c: 972:nvme_cuse_start: *NOTICE*: Creating cuse device for controller
   [2022-04-08 22:45:37.184053] nvme_cuse.c: 763:cuse_session_create: *NOTICE*: fuse session for device spdk/nvme0 created
   [2022-04-08 22:45:37.184117] nvme_cuse.c: 763:cuse_session_create: *NOTICE*: fuse session for device spdk/nvme0n1 created
   ```
 
-다른 터미널에서 문자 드라이버가 생성되었는지 확인해보겠습니다.
+다른 터미널에서 문자 드라이버가 생성되었는지 확인해보겠습니다. 경로는 `/dev/spdk` 하위에 있습니다.
 
   ```
   [root@localhost spdk]# ls /dev/spdk/
   nvme0  nvme0n1
+  ```
+
+SPDK에 등록한 NVMe SSD의 문자 드라이버가 확인되면 `nvme` 명령을 사용해서 컨트롤러 정보를 확인해봅니다. `nvme` 명령에 `-H` 옵션을 추가하면 [그림 2]에서 보여준 NVMe controller register format을 보기 쉽게 변환해서 출력합니다.  (`-H` : `--human-readable`)
+
+  ```
   [root@localhost spdk]# nvme id-ctrl /dev/spdk/nvme0 -H
   NVME Identify Controller:
   vid       : 0x8086
@@ -401,22 +406,34 @@ jjj
     }
   ]
   ```
-  * NVMe 컨트롤러 해제와 마찬가지로 문자 드라이버 등록을 해제하려면 아래와 같다.
+
+`nvme id-ctrl`로 확인한 NVMe SSD 정보와 `bdev_get_bdevs`가 동일한 것을 확인할 수 있습니다. 반대로 NVMe 컨트롤러 해제와 마찬가지로 문자 드라이버 등록을 해제하려면 `bdev_nvme_cuse_unregister` 기능을 사용하면 됩니다.
+
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_cuse_unregister -n NVMe0
+  [root@localhost spdk]# ls /dev/spdk/nvme0
+  ls: cannot access /dev/spdk/nvme0: No such file or directory
   ```
+
+이처럼 SPDK에서 제공하는 문자 드라이버 기능을 통해 어플리케이션에서도 NVMe SSD를 제어할 수 있습니다. 
+
   * 참고
     - https://spdk.io/doc/bdev.html
     - https://spdk.io/doc/nvme.html
 
 ### lvol 생성
 
-  * spdk는 lvol이라고 불리는 논리 볼륨을 제공한다.
-  * 이를 위해서는 연결된 NVMe 컨트롤러에 lvol을 생성할 논리 볼륨 저장소를 지정해야한다. 뭐랄까.. VG라고 할까?
+TODO: 논리 볼륨에 대한 기본 설명과 blobstore 아키텍처를 따른다는 간단한 설명..추가..?
+다음으로 논리 볼륨을 생성해보겠습니다. SPDK에서는 논리 볼륨 기능을 lvol 모듈에서 제공합니다. lvol은 리눅스 커널에서 제공하는 LVM(Logical Volume Manager)의 LV(Logical Volume)과 유사한 기능입니다. lvol을 생성하기 위해서 SPDK에 등록한 NVMe SSD를 논리 볼륨 저장소에 등록하는 작업이 선행되어야 합니다. 이는 LVM에서 물리 장치인 PV(Phisical Volume)를 VG(Volume Group)에 등록하는 작업과 유사합니다. SPDK에서 논리 볼륨 저장소는 lvstore로 불립니다. lvstore는 `bdev_lvol_create_lvstore` 기능으로 수행할 수 있습니다. `bdev_lvol_create_lvstore`의 첫번째 인자는 `bdev_get_bdevs` 기능으로 출력된 장치의 이름이 입력되며, 두번째 인자는 등록할 신규 논리 볼륨 저장소의 이름입니다.
+
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs
   1818d45a-3a05-42c9-bbb2-9229cc25ac49
-  [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
+  ```
+
+NVMe SSD가 논리 볼륨 저장소에 정상적으로 등록되면 생성된 lvstore의 uuid를 출력합니다. 현재 SPDK에서 생성된 논리 볼륨 저장소는 `bdev_lvol_get_lvstores` 기능으로 확인할 수 있으며, 등록된 장치 정보를 출력하는 `bdev_get_bdevs` 기능으로는 확인할 수 없습니다.
+
+  ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
   [
     {
@@ -430,111 +447,125 @@ jjj
     }
   ]
   ```
-  * 마찬가지로 삭제는 아래와 같다.
+
+논리 볼륨 저장소 삭제는 `bdev_lvol_delete_lvstore` 기능을 사용합니다.
+
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete_lvstore -l lvs
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
   []
   ```
-  * 로컬 볼륨 저장소를 생성했으면 로컬 볼륨(lvol)를 생성해보자.
+
+다음으로 논리 볼륨 저장소를 생성했으면 논리 볼륨을 생성해보겠습니다. 논리 볼륨 생성은 `bdev_lvol_create` 기능을 사용합니다. `bdev_lvol_create`의 첫번째 인자는 생성할 논리 볼륨의 이름이며, 두번째 이자는 논리 볼륨의 크기이며 기본 단위는 MiB 입니다. 마지막으로 `-l` 옵션으로 논리 볼륨 저장소의 이름 또는 uuid를 입력합니다. 예제로 1GB 용량의 논리 볼륨을 생성해보겠습니다.
+
   ```
-  [root@localhost spdk]# scripts/rpc.py bdev_lvol_create lvol1 25 -l lvs
-  8eaafae0-80cb-45f8-beb6-65ae4f73e73a
+  [root@localhost spdk]# scripts/rpc.py bdev_lvol_create lvol1 1024 -l lvs
+  68ba7bbc-d26b-464b-ae12-f48a62512b0d
+  ```
+
+논리 볼륨이 정상적으로 생성되면 마찬가지로 lvol의 uuid를 출력합니다. SPDK에서 생성된 논리 볼륨은 장치로 분류되기 때문에 `bdev_get_bdevs` 기능으로 확인할 수 있으며, `bdev_get_lvstores`와 같이 논리 볼륨 리스트만 출력 가능한 명령은 제공하지 않습니다.
+
+  ```
   [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
   [
     {...},
     {
-      "name": "8eaafae0-80cb-45f8-beb6-65ae4f73e73a",
-      "aliases": [
-        "lvs/lvol1"
-      ],
-      "product_name": "Logical Volume",
-      "block_size": 512,
-      "num_blocks": 57344,
-      "uuid": "8eaafae0-80cb-45f8-beb6-65ae4f73e73a",
-      "assigned_rate_limits": {
-        "rw_ios_per_sec": 0,
-        "rw_mbytes_per_sec": 0,
-        "r_mbytes_per_sec": 0,
-        "w_mbytes_per_sec": 0
-      },
-      "claimed": false,
-      "zoned": false,
-      "supported_io_types": {
-        "read": true,
-        "write": true,
-        "unmap": true,
-        "write_zeroes": true,
-        "flush": false,
-        "reset": true,
-        "nvme_admin": false,
-        "nvme_io": false
-      },
-      "driver_specific": {
-        "lvol": {
-          "lvol_store_uuid": "a65efd50-07df-415e-852f-7f9725d269cd",
-          "base_bdev": "NVMe0n1",
-          "thin_provision": false,
-          "snapshot": false,
-          "clone": false
+        "name": "68ba7bbc-d26b-464b-ae12-f48a62512b0d",
+        "aliases": [
+            "lvs/lvol1"
+        ],
+        "product_name": "Logical Volume",
+        "block_size": 512,
+        "num_blocks": 2097152,
+        "uuid": "68ba7bbc-d26b-464b-ae12-f48a62512b0d",
+        "assigned_rate_limits": {
+            "rw_ios_per_sec": 0,
+            "rw_mbytes_per_sec": 0,
+            "r_mbytes_per_sec": 0,
+            "w_mbytes_per_sec": 0
+        },
+        "claimed": false,
+        "zoned": false,
+        "supported_io_types": {
+            "read": true,
+            "write": true,
+            "unmap": true,
+            "write_zeroes": true,
+            "flush": false,
+            "reset": true,
+            "nvme_admin": false,
+            "nvme_io": false
+        },
+        "driver_specific": {
+            "lvol": {
+                "lvol_store_uuid": "6579330a-4748-472c-a249-adce070ec15e",
+                "base_bdev": "NVMe0n1",
+                "thin_provision": false,
+                "snapshot": false,
+                "clone": false
+            }
         }
-      }
     }
   ]
   ```
-  * 삭제도 마찬가지로 아래와 같다.
+
+`bdev_get_bdevs` 수행 결과, 논리 볼륨 저장소 lvs에서 1GB 용량을 갖는 논리 볼륨 lovl1이 생성된 것을 확인할 수 있습니다. 이때 볼륨의 용량은 `block_size`와 `num_blocks` 값으로 계산할 수 있습니다. 위 예시에서는 512 byte 크기를 갖는 블록이 2,097,152개 생성되어 전체 1,073,741,824 byte(=1GB) 용량이 할당되었음을 확인할 수 있습니다.
+
+생성된 논리 볼륨 삭제는 `bdev_lvol_delete` 기능을 통해 수행할 수 있습니다.
+
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete lvs/lvol1
   ```
-  * 이외에도 다양한 기능들을 지원한다.
-    - bdev_lvol_snapshot
-    - bdev_lvol_clone
-    - bdev_lvol_rename
-    - bdev_lvol_resize
-    - bdev_lvol_set_read_only
-    - bdev_lvol_inflate
-    - bdev_lvol_decouple_parent
+
+이외에도 논리 볼륨은 스냅샷, 클론, 크기 변경 등, 다양한 기능들 제공합니다. 추가 기능에 대한 설명은 [logical volumes document](https://spdk.io/doc/logical_volumes.html)에서 확인할 수 있습니다.
+
   * 참고
     - https://spdk.io/doc/bdev.html
     - https://spdk.io/doc/logical_volumes.html
 
-### RAID 0 생성
+### RAID 생성
 
-  * ...
+SPDK는 소프트웨어 기반의 RAID 볼륨을 지원합니다. 다만 현재까지 공식적으로 제공하는 기능은 RAID-0 뿐입니다. RAID-0은 RAID 볼륨에 참여된 장치들에 분산되는 구조로 성능은 뛰어나지만 하나의 장치에 이상이 생길 경우 데이터의 무결성이 깨질 수 있습니다. 대부분의 소프트웨어 RAID는 RAID 구성 정보를 참여한 장치에 직접 기록해서 관리하지만, SPDK에서 제공하는 RAID-0은 장치에 정보를 기록하지 않아, SPDK 프레임워크를 재시작 할 경우 구성했던 RAID 정보를 불러올 수 없습니다. (※RAID와 반대로 논리 볼륨은 재시작을 하더라도 구성 정보를 불러옵니다.)
+
+RAID-0 생성은 `bdev_raid_create` 기능을 통해 수행할 수 있습니다. 이때 생성할 RAID 이름(`-n`)과 스트라이프 크기(`-z`), RAID 번호(`-r`), 등록할 장치(`-b`)를 입력해야 합니다.
+
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid0 -z 64 -r 0 -b "lvol1 lvol2 lvol3 lvol4"
+  ```
+
+아무런 결과가 출력되지 않았다면 정상적으로 생성되었다는 뜻입니다. RAID 장치 정보는 `bdev_raid_get_bdevs` 기능을 통해 확인할 수 있는데, 이때 인자값으로 RAID의 상태 카테고리를 입력해야 합니다. 카테고리는 `all`, `online`, `configuring`, `offline`이 있습니다.
+
+  ```
   [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
   raid0
   ```
 
-### RAID 5 생성
+아쉽게도 RAID에 대한 정보를 확인하는 명령은 제공되지 않습니다. 현재 구현된 RAID 관련된 기능은 생성, 리스트 출력, 삭제 기능뿐입니다. `bdev_get_bdevs` 결과에서도 구성한 RAID 정보는 확인할 수 없습니다. 삭제는 `bdev_raid_delete` 기능을 통해 수행합니다.
 
-  * ...
+  ```
+  [root@localhost spdk]# scripts/rpc.py bdev_raid_delete raid0
+  ```
+
+RAID 생성과 마찬가지로 정상적으로 삭제된 경우 아무 결과를 출력하지 않습니다. SPDK의 경우 아직까지 다양한 기능을 지원하지 않으며, 현재까지 구현된 기능만으로 사용할 수 있는 환경으로는 안정성은 낮지만 높은 성능이 제공되어야 하는 캐시 역할로 적합해 보입니다.
+
+하지만 SPDK에서 RAID 기능 구현 계획이 없는것은 아닌것 같습니다. 커뮤니티에는 RAID-5 구현에 대한 필요성이 언급되었으며([링크](https://lists.01.org/hyperkitty/list/spdk@lists.01.org/thread/DBSZDNBGNWV6PD7MOF7V5M7EOQP4EVTJ/)), RAID-1의 경우 일부 코드가 [yupeng0921 github](https://github.com/yupeng0921/spdk/tree/raid1/module/bdev/raid1)에 공개되어 있습니다.
+
+또한 현재 SPDK github에는 RAID-5와 관련된 [코드](https://github.com/spdk/spdk/blob/master/module/bdev/raid/raid5.c)를 일부 확인할 수 있습니다.  그렇다면 가까운 미래에 RAID-5를 사용할 수 있을 것으로 생각하고 현재 SPDK에서 RAID-5 볼륨을 생성하는 방법을 실습해보겠습니다.
+
+먼저 `./configure`에서 `--with-raid5` 옵션을 추가하고 리빌드를 수행해야 합니다. 
+
   ```
   [root@localhost spdk]# ./configure --with-raid5
-  [root@localhost spdk]# make
-  [root@localhost spdk]# ./build/bin/spdk_tgt &
+  [root@localhost spdk]# make -j 40
+  [root@localhost spdk]# ./build/bin/spdk_tgt
+  ```
+
+리빌드 및 `spdk_tgt` 시작을 완료하고 `bdev_raid_create` 기능에서 RAID 레벨(`-r`)을 5로 입력하면 현재 코드에서 구현된 RAID-5 볼륨을 생성할 수 있습니다. 하지만 RAID-0과 마찬가지로 재시작 시 구성했던 볼륨 정보는 사라집니다.
+
+  ```
   [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid5 -z 64 -r 5 -b "lvol1 lvol2 lvol3 lvol4"
   [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
   raid5
-  [root@localhost spdk]# cd module/bdev/raid
-  [root@localhost raid]# ls -lh
-  [root@localhost raid]# ls -lh
-  total 464K
-  -rw-r--r-- 1 root root  42K Nov  1 06:27 bdev_raid.c
-  -rw-r--r-- 1 root root 1.5K Jan 21 01:34 bdev_raid.d
-  -rw-r--r-- 1 root root 9.9K Nov  1 06:27 bdev_raid.h
-  -rw-r--r-- 1 root root 153K Jan 21 01:34 bdev_raid.o
-  -rw-r--r-- 1 root root  13K Nov  1 06:27 bdev_raid_rpc.c
-  -rw-r--r-- 1 root root 1.7K Jan 21 01:34 bdev_raid_rpc.d
-  -rw-r--r-- 1 root root  75K Jan 21 01:34 bdev_raid_rpc.o
-  -rw-r--r-- 1 root root 2.0K Nov  1 06:27 Makefile
-  -rw-r--r-- 1 root root  13K Nov  1 06:27 raid0.c
-  -rw-r--r-- 1 root root 1.5K Jan 21 01:34 raid0.d
-  -rw-r--r-- 1 root root  72K Jan 21 01:34 raid0.o
-  -rw-r--r-- 1 root root 3.6K Nov  1 06:27 raid5.c
-  -rw-r--r-- 1 root root 1.5K Jan 21 01:34 raid5.d
-  -rw-r--r-- 1 root root  45K Jan 21 01:34 raid5.o
   ```
 
 &nbsp;
