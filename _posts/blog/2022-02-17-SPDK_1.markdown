@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "SPDK 실습 1 : 어서와 SPDK 실습은 처음이지?"
+title:      "SPDK 시리즈 1 : SPDK 실습 어디까지 해봤니?"
 date:       2022-04-19
 author:     김 태훈 (thkim@gluesys.com)
 categories: blog
@@ -9,15 +9,29 @@ cover:      "/assets/SPDK_maincover.jpg"
 main:       "/assets/SPDK_maincover.jpg"
 ---
 
-안녕하세요. 이번 포스트에서는 NVMe SSD와 SPDK의 최신 코드를 이용해서 테스트 환경을 구축해 보고 SPDK에서 제공하는 스토리지 기능들을 실습해 보겠습니다.
-지난 [포스팅](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)에서 소개한 바와 같이 SPDK는 사용자 공간(userspace) 계층에서 NVMe와 같은 초고속 SSD 장치를 효율적으로 사용하기 위한 프레임워크입니다.
+인사말
+---
+
+안녕하세요. 이번 포스트에서는 NVMe SSD와 SPDK의 최신 코드를 이용해서 테스트 환경을 구축해 보고 SPDK에서 제공하는 스토리지 기능을 실습해 보겠습니다.
+
+본 포스팅은 목적은 최근 스토리지 연구를 수행하는 데, SPDK 관련 자료를 검색하는 과정에서 실습 정보가 많이 부족하여 그동안 경험했던 내용을 정리해서 전달하는 데 있습니다.
+
+이 글을 읽는 분들은 본 포스팅을 통해 SPDK 개발에 도움이 되었으면 좋겠습니다.
+
+시작에 앞서 리눅스 커널의 블록 계층 및 NVMe SSD, SPDK에 대한 지식과 git, 컴파일 경험이 있는 분들은 본 포스팅을 이해하는 데 도움이 될 것입니다.
+
+그러면 본격적으로 시작해보겠습니다!
+
+&nbsp;
+
+지난 [포스팅](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)에서 소개한 바와 같이 SPDK(Storage Performance Development Kit)는 사용자 공간(userspace) 계층에서 NVMe(Non-Volatile Memory Express)와 같은 초고속 SSD 장치를 효율적으로 사용하기 위한 프레임워크입니다.
 
 ![Alt text](/assets/SPDK_architecture.jpg) 
 <center>그림 1. SPDK Architecture</center> (※참고 : [Presentation of 2018 Storage Developer Conference](https://www.snia.org/sites/default/files/SDC/2018/presentations/SSS_NVM_PM_NVDIMM/Luse_P_Trahe_F_Virtual_BDEVs_The_Secret_to_Customizing_SPDK.pdf))
 
 &nbsp;
 
-SPDK는 크게 스토리지 전용의 인터페이스(Storage Protocol)과 SPDK의 핵심 개념이 정의된 디바이스 드라이버(Driver), 그리고 커널에서 제공하던 블록 장치 기술(Storage Service)로 구성됩니다. SPDK에서는 블록 장치 기술을 'Block Device Drvier' 또는 'Block Device Module', 줄여서 'bdev'로 표현합니다.
+SPDK는 크게 스토리지 전용의 인터페이스(Storage Protocol)와 SPDK의 핵심 개념이 정의된 디바이스 드라이버(Driver), 그리고 커널에서 제공하던 블록 장치 기술(Storage Service)로 구성됩니다. SPDK에서는 블록 장치 기술을 'Block Device Drvier' 또는 'Block Device Module', 줄여서 'bdev'로 표현합니다.
 
 bdev는 기존 커널에서 장치 드라이버보다 상위 계층에서 동작하는 블록 계층에서 제공하는 기능들과 유사한 기능을 수행하는 C 라이브러리입니다. 블록 계층은 스토리지의 기본 기능들을 제공하는데, 대표적인 기능으로 논리 볼륨과 소프트웨어 RAID, 압축/중복 제거 등이 있습니다. 현재 SPDK에 구현된 bdev 목록은 다음과 같습니다.
   * Ceph RBD(RADOS Block Device)
