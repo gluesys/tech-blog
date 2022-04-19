@@ -12,17 +12,15 @@ main:       "/assets/SPDK_maincover.jpg"
 인사말
 ---
 
-안녕하세요. 이번 포스트에서는 NVMe SSD와 SPDK의 최신 코드를 이용해서 테스트 환경을 구축해 보고 SPDK에서 제공하는 스토리지 기능을 실습해 보겠습니다.
+최근 스토리지 연구를 수행하면서 SPDK를 다룰 일이 많아졌는데, 관련 자료를 찾다 보니 최신 기술이어서 그런지 실습 정보가 많이 부족하다는 것을 느꼈습니다.
 
-본 포스팅은 목적은 최근 스토리지 연구를 수행하는 데, SPDK 관련 자료를 검색하는 과정에서 실습 정보가 많이 부족하여 그동안 경험했던 내용을 정리해서 전달하는 데 있습니다.
+그래서 그동안 경험했던 내용을 잘 정리해서 전달해 보고자 합니다. SPDK 개발에 관심 있으신 분들에게 도움이 되었으면 좋겠습니다.
 
-이 글을 읽는 분들은 본 포스팅을 통해 SPDK 개발에 도움이 되었으면 좋겠습니다.
+이번 포스트에서는 NVMe SSD와 SPDK의 최신 코드를 이용해서 테스트 환경을 구축해 보고 SPDK에서 제공하는 스토리지 기능을 실습해 보겠습니다.
 
-시작에 앞서 리눅스 커널의 블록 계층 및 NVMe SSD, SPDK에 대한 지식과 git, 컴파일 경험이 있는 분들은 본 포스팅을 이해하는 데 도움이 될 것입니다.
+시작에 앞서 리눅스 커널의 블록 계층 및 NVMe SSD, SPDK에 대한 지식과 git, 컴파일 경험이 있는 분들은 본 포스트를 이해하는 데 도움이 될 것입니다.
 
-그러면 본격적으로 시작해보겠습니다!
-
-&nbsp;
+그러면 본격적으로 시작해 보겠습니다!
 
 지난 [포스팅](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)에서 소개한 바와 같이 SPDK(Storage Performance Development Kit)는 사용자 공간(userspace) 계층에서 NVMe(Non-Volatile Memory Express)와 같은 초고속 SSD 장치를 효율적으로 사용하기 위한 프레임워크입니다.
 
@@ -593,20 +591,26 @@ RAID 볼륨 생성은 `bdev_raid_create` 명령을 통해 수행할 수 있습�
   [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid0 -z 64 -r 0 -b "lvol1 lvol2 lvol3 lvol4"
   ```
 
-아무런 결과가 출력되지 않았다면 정상적으로 생성되었다는 뜻입니다(?). RAID 장치 정보는 `bdev_raid_get_bdevs` 명령을 통해 확인할 수 있는데, 이때 인자 값으로 RAID의 상태 카테고리를 입력해야 합니다. 카테고리는 `all`, `online`, `configuring`, `offline`이 있습니다.
+아무런 결과가 출력되지 않았다면 정상적으로 생성되었다는 뜻입니다(?).
+
+RAID 장치 정보는 `bdev_raid_get_bdevs` 명령을 통해 확인할 수 있는데, 이때 인자 값으로 RAID의 상태 카테고리를 입력해야 합니다. 카테고리는 `all`, `online`, `configuring`, `offline`이 있습니다.
 
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
   raid0
   ```
 
-아쉽게도 RAID에 대한 정보를 확인하는 명령은 제공되지 않습니다. 현재 구현된 RAID 관련된 기능은 생성, 리스트 출력, 삭제 기능뿐입니다. `bdev_get_bdevs` 결과에서도 구성한 RAID 정보는 확인할 수 없습니다. 삭제는 `bdev_raid_delete` 명령을 통해 수행합니다.
+아쉽게도 RAID에 대한 정보를 확인하는 명령은 제공되지 않습니다. 현재 구현된 RAID 관련된 기능은 생성, 리스트 출력, 삭제 기능뿐입니다. `bdev_get_bdevs` 결과에서도 구성한 RAID 정보는 확인할 수 없습니다.
+
+삭제는 `bdev_raid_delete` 명령을 통해 수행합니다.
 
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_raid_delete raid0
   ```
 
-RAID 생성과 마찬가지로 정상적으로 삭제된 경우 아무 결과를 출력하지 않습니다(???). RAID bdev 모듈은 아직까지 다양한 기능을 지원하지 않습니다. 따라서 현재까지 구현된 기능만으로는 높은 성능이 요구되지만 안정성은 낮아도 괜찮은 일회성 저장 목적으로 사용할 수 있겠습니다.
+RAID 생성과 마찬가지로 정상적으로 삭제된 경우 아무 결과를 출력하지 않습니다(???).
+
+RAID bdev 모듈은 아직까지 다양한 기능을 지원하지 않습니다. 따라서 현재까지 구현된 기능만으로는 높은 성능이 요구되지만 안정성은 낮아도 괜찮은 일회성 저장 목적으로 사용할 수 있겠습니다.
 
 다만 RAID에 대한 추가 기능 제공이 전혀 없는 것은 아닌 것 같습니다. 커뮤니티에서는 RAID-5 구현에 대한 필요성이 언급되었으며([링크](https://lists.01.org/hyperkitty/list/spdk@lists.01.org/thread/DBSZDNBGNWV6PD7MOF7V5M7EOQP4EVTJ/)), RAID-1의 경우 일부 코드가 [yupeng0921 github](https://github.com/yupeng0921/spdk/tree/raid1/module/bdev/raid1)에 공개되어 있습니다. 또한 SPDK github에는 [RAID-5 코드](https://github.com/spdk/spdk/blob/master/module/bdev/raid/raid5.c)를 일부 확인할 수 있습니다.
 
@@ -638,7 +642,7 @@ RAID 생성과 마찬가지로 정상적으로 삭제된 경우 아무 결과를
 마치며
 -----
 
-이번 포스팅에서는 NVMe SSD가 설치된 실장비에 SPDK 최신 코드를 올려보고 bdev 모듈에서 제공하는 일부 기능을 사용해 보았습니다. 다음 시간에는 SPDK 성능 리포트를 분석하고 SPDK 환경에서 성능을 검증하는 실습 과정을 준비해 보겠습니다. 그럼 다음에 만나요👋
+이번 포스팅에서는 NVMe SSD가 설치된 실장비에 SPDK 최신 코드를 올려보고 bdev 모듈에서 제공하는 일부 기능을 사용해 보았습니다. 다음 시간에는 SPDK 성능 리포트를 분석하고 SPDK 환경에서 성능을 측정해 보겠습니다. 그럼 다음에 만나요👋
 
 &nbsp;
 
