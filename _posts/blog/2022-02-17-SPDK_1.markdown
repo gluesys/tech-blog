@@ -22,15 +22,17 @@ main:       "/assets/SPDK_maincover.jpg"
 
 그러면 본격적으로 시작해 보겠습니다!
 
-지난 [포스팅](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)에서 소개한 바와 같이 SPDK(Storage Performance Development Kit)는 사용자 공간(userspace) 계층에서 NVMe(Non-Volatile Memory Express)와 같은 초고속 SSD 장치를 효율적으로 사용하기 위한 프레임워크입니다.
-
-![Alt text](/assets/SPDK_architecture.jpg) 
-<center>그림 1. SPDK Architecture</center> (※참고 : [Presentation of 2018 Storage Developer Conference](https://www.snia.org/sites/default/files/SDC/2018/presentations/SSS_NVM_PM_NVDIMM/Luse_P_Trahe_F_Virtual_BDEVs_The_Secret_to_Customizing_SPDK.pdf))
-
 &nbsp;
 
 SPDK 소개
 ---
+
+지난 [포스팅](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)에서 소개한 바와 같이 SPDK(Storage Performance Development Kit)는 사용자 공간(userspace) 계층에서 NVMe(Non-Volatile Memory Express)와 같은 초고속 SSD 장치를 효율적으로 사용하기 위한 프레임워크입니다.
+
+![Alt text](/assets/SPDK_architecture.jpg) 
+<center>그림 1. SPDK Architecture</center>
+
+&nbsp;
 
 SPDK는 크게 스토리지 전용의 인터페이스(Storage Protocol)와 SPDK의 핵심 개념이 정의된 디바이스 드라이버(Driver), 그리고 커널에서 제공하던 블록 장치 기술(Storage Service)로 구성됩니다. SPDK에서는 블록 장치 기술을 'Block Device Drvier' 또는 'Block Device Module', 줄여서 'bdev'로 표현합니다.
 
@@ -59,6 +61,9 @@ SPDK에 구현된 bdev 목록은 다음과 같습니다.
 
 이외에도 개발자는 SPDK에서 제공하는 bdev 라이브러리([bdev.h](https://spdk.io/doc/bdev_8h.html))를 이용하여 스토리지 기능을 유저 레벨에서 구현할 수 있습니다.
 
+  * 참고
+    - [Presentation of 2018 Storage Developer Conference](https://www.snia.org/sites/default/files/SDC/2018/presentations/SSS_NVM_PM_NVDIMM/Luse_P_Trahe_F_Virtual_BDEVs_The_Secret_to_Customizing_SPDK.pdf)
+
 &nbsp;
 
 # SPDK 환경 구축
@@ -76,7 +81,7 @@ SPDK에 구현된 bdev 목록은 다음과 같습니다.
   [root@localhost spdk]# scripts/pkgdep.sh --all
   ```
 
-패키지 설치가 완료되면 빌드를 해줍니다. 이때 컴파일 전에 `./configure` 스크립트를 실행하는데, 어떤 기능들을 활성 할지 옵션으로 입력해야 합니다. 일단은 기본값으로 진행하겠습니다.
+패키지 설치가 완료되면 빌드를 해줍니다. 이때 컴파일 전에 `./configure` 스크립트를 실행하는데, 어떤 기능들을 활성화 할지 옵션으로 입력해야 합니다. 현재 `./configure`에서 제공되는 옵션 목록은 [링크](https://github.com/spdk/spdk/blob/master/configure#L47)에서 확인할 수 있습니다. 일단은 기본값으로 진행하겠습니다.
 
   ```
   [root@localhost spdk]# ./configure
@@ -169,7 +174,7 @@ SPDK에서 사용한 장치의 오너쉽을 다시 커널에 넘기려면 `reset
     Hello world!
   ```
 
-'Hello World!'  개발자라면 익숙한 문장이 보입니다. 예제에서는 커널의 드라이버와 연결 해제한 NVMe 장치를 SPDK에서 직접 통신하여 SSD의 컨트롤러 정보를 불러왔습니다. 예제의 코드는 `examples/nvme/hello_world/hello_world.c`에서 확인할 수 있습니다.
+'Hello World!'  개발자라면 익숙한 문장이 보입니다. 예제에서는 커널의 드라이버와 연결 해제한 NVMe 장치를 SPDK에서 직접 통신하여 SSD의 컨트롤러 정보를 불러왔습니다. 예제의 코드는 `examples/nvme/hello_world/hello_world.c`([링크](https://github.com/spdk/spdk/blob/master/examples/nvme/hello_world/hello_world.c))에서 확인할 수 있습니다.
 
   * 참고
     - https://spdk.io/doc/getting_started.html
@@ -314,13 +319,16 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 &nbsp;
 
 ![Alt text](/assets/nvme_register.png)
-<center>그림 3. NVMe controller register format</center> (※ 출처 : [NVMe Spec. version 1.4b document](https://nvmexpress.org/wp-content/uploads/NVM-Express-1_4b-2020.09.21-Ratified.pdf))
+<center>그림 3. NVMe controller register format</center> 
 
 &nbsp;
 
 점점 깊어지고 실습하기 싫어지네요. 하드웨어를 잘 아는 개발자들이 NVMe 스펙을 참고해서 일반인도 편히 사용할 수 있는 `nvme` 명령을 만들었는데, 그걸 사용하지 못하니까 답답합니다.
 
 다행히도 SPDK에서는 `nvme` 명령처럼 기존 프로그램에서 NVMe SSD와 직접 통신할 수 있는 방법을 제공합니다. 바로 문자 드라이버 등록입니다.
+
+  * 참고
+    - 그림 출처 : [NVMe Spec. version 1.4b document](https://nvmexpress.org/wp-content/uploads/NVM-Express-1_4b-2020.09.21-Ratified.pdf)
 
 &nbsp;
 
