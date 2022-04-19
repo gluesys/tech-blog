@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "SPDK 시리즈 1 : SPDK 실습 어디까지 해봤니?"
+title:      "SPDK 시리즈 1 : SPDK 환경 구축 실습"
 date:       2022-04-19
 author:     김 태훈 (thkim@gluesys.com)
 categories: blog
