@@ -29,9 +29,14 @@ main:       "/assets/SPDK_maincover.jpg"
 
 &nbsp;
 
+SPDK 소개
+---
+
 SPDK는 크게 스토리지 전용의 인터페이스(Storage Protocol)와 SPDK의 핵심 개념이 정의된 디바이스 드라이버(Driver), 그리고 커널에서 제공하던 블록 장치 기술(Storage Service)로 구성됩니다. SPDK에서는 블록 장치 기술을 'Block Device Drvier' 또는 'Block Device Module', 줄여서 'bdev'로 표현합니다.
 
-bdev는 기존 커널에서 장치 드라이버보다 상위 계층에서 동작하는 블록 계층에서 제공하는 기능들과 유사한 기능을 수행하는 C 라이브러리입니다. 블록 계층은 스토리지의 기본 기능들을 제공하는데, 대표적인 기능으로 논리 볼륨과 소프트웨어 RAID, 압축/중복 제거 등이 있습니다. 현재 SPDK에 구현된 bdev 목록은 다음과 같습니다.
+bdev는 리눅스 커널의 블록 계층과 유사한 기능을 제공하는 C 라이브러리입니다. 블록 계층은 디바이스 드라이버보다 상위 계층이며, 스토리지의 기본 기능들을 제공합니다. 대표적인 기능으로 논리 볼륨과 소프트웨어 RAID, 씬 프로비저닝, 중복 제거 등이 있습니다.
+    
+SPDK에 구현된 bdev 목록은 다음과 같습니다.
   * Ceph RBD(RADOS Block Device)
   * Thin Provisioning
   * Device Crypto
@@ -50,7 +55,9 @@ bdev는 기존 커널에서 장치 드라이버보다 상위 계층에서 동작
   * Uring
   * Virtio-Block & Virtio-SCSI using vhost
 
-익숙한 기능과 처음 보는 기능도 보이네요. 모듈의 자세한 설명은 [링크](https://spdk.io/doc/bdev.html)에서 확인하실 수 있습니다. 이외에도 개발자는 SPDK에서 제공하는 bdev 라이브러리([bdev.h](https://spdk.io/doc/bdev_8h.html))를 이용하여 스토리지 기능을 유저 레벨에서 구현할 수 있습니다.
+익숙한 기능과 처음 보는 기능도 보이네요. 모듈의 자세한 설명은 [링크](https://spdk.io/doc/bdev.html)에서 확인하실 수 있습니다.
+
+이외에도 개발자는 SPDK에서 제공하는 bdev 라이브러리([bdev.h](https://spdk.io/doc/bdev_8h.html))를 이용하여 스토리지 기능을 유저 레벨에서 구현할 수 있습니다.
 
 &nbsp;
 
@@ -173,7 +180,7 @@ SPDK에서 사용한 장치의 오너쉽을 다시 커널에 넘기려면 `reset
 
 # SPDK 실습
 
-SPDK는 bdev와 같은 기능을 동적으로 구성할 수 있도록 JSON-RPC[^3] 프로토콜을 이용하여 프로세스 간의 통신을 수행합니다. 이는 커널에서 시스템 콜을 통해 장치 드라이버에 사용자 명령을 전달하는 것과 같은 구조입니다.
+SPDK는 bdev와 같은 기능을 동적으로 구성할 수 있도록 JSON-RPC[^3] 프로토콜을 이용하여 프로세스 간의 통신을 수행합니다. 이는 커널에서 시스템 콜을 통해 디바이스 드라이버에 사용자 명령을 전달하는 것과 같은 구조입니다.
 
 `app` 디렉토리에는 SPDK에서 제공하는 모든 구성 요소들을 사용해 보고 테스트할 수 있는 코드가 포함되어 있습니다. 정상적으로 빌드가 완료될 경우 `build/bin` 경로에 프로그램이 생성됩니다. 대표적으로 `spdk_tgt`는 iSCSi target과 NVMe-oF target, Vhost 기능을 모두 제공하는 서버 프로그램입니다. `spdk_tgt`를 실행하면 SPDK 드라이버가 로드되고 SPDK에서 제공하는 모든 구성 요소를 사용할 준비 상태가 됩니다.
 
@@ -478,7 +485,7 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 다음으로 논리 볼륨을 생성해 보겠습니다. SPDK에서는 lvol 모듈을 통해 논리 볼륨을 구성할 수 있습니다. lvol은 리눅스 커널에서 제공하는 LVM(Logical Volume Manager)[^6]의 LV(Logical Volume)과 유사한 기능입니다.
 
-lvol 생성은 NVMe SSD를 '논리 볼륨 저장소'에 등록하는 작업이 선행되어야 합니다. 이는 LVM에서 PV(Phisical Volume)를 VG(Volume Group)에 등록하는 작업과 유사합니다. 논리 볼륨 저장소는 lvstore로 불립니다. lvstore 생성은 `bdev_lvol_create_lvstore` 명령으로 수행할 수 있습니다. `bdev_lvol_create_lvstore`의 첫 번째 인자는 `bdev_get_bdevs` 명령으로 출력된 장치의 이름이 입력되며, 두 번째 인자는 등록할 신규 논리 볼륨 저장소의 이름입니다.
+lvol 생성은 NVMe SSD를 '논리 볼륨 저장소'에 등록하는 작업이 선행되어야 합니다. 이는 LVM에서 PV(Physical Volume)를 VG(Volume Group)에 등록하는 작업과 유사합니다. 논리 볼륨 저장소는 lvstore로 불립니다. lvstore 생성은 `bdev_lvol_create_lvstore` 명령으로 수행할 수 있습니다. `bdev_lvol_create_lvstore`의 첫 번째 인자는 `bdev_get_bdevs` 명령으로 출력된 장치의 이름이 입력되며, 두 번째 인자는 등록할 신규 논리 볼륨 저장소의 이름입니다.
 
   ```
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs
