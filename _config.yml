@@ -5,6 +5,9 @@ gems:
   - jekyll-sitemap
   - jekyll-paginate
 
+plugins:
+  - jemoji
+
 exclude:
   - "/vendor/"
 
