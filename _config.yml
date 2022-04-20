@@ -28,6 +28,7 @@ logo: "/assets/logo_header.png"
 
 # Build settings
 markdown: kramdown
+highligher: rouge
 paginate: 10
 paginate_path: "/page:num/"
 inter_post_navigation: false
