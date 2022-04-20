@@ -70,20 +70,20 @@ SPDK에 구현된 bdev 목록은 다음과 같습니다.
 
 이제부터 이번 포스팅의 목표인 SPDK  실습 환경을 구성해 보도록 하겠습니다. 먼저 SPDK 깃허브에서 master 브랜치의 최신 코드를 테스트 장비로 가져옵니다. 
 
-  ```
+  ```console
   [root@localhost ~]# git clone https://github.com/spdk/spdk
   [root@localhost ~]# cd spdk
   ```
 
 그리고 설치할 코드의 의존성 패키지를 설치합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/pkgdep.sh --all
   ```
 
 패키지 설치가 완료되면 빌드를 해줍니다. 이때 컴파일 전에 `./configure` 스크립트를 실행하는데, 어떤 기능들을 활성화 할지 옵션으로 입력해야 합니다. 현재 `./configure`에서 제공되는 옵션 목록은 [링크](https://github.com/spdk/spdk/blob/master/configure#L47)에서 확인할 수 있습니다. 일단은 기본값으로 진행하겠습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# ./configure
   [root@localhost spdk]# make -j 40
   ```
@@ -92,7 +92,7 @@ SPDK에 구현된 bdev 목록은 다음과 같습니다.
 
 현재 테스트 장비에는 Intel Optane NVMe SSD가 설치되어 있습니다. 해당 장치를 SPDK에서 사용할 수 있도록 준비해 보겠습니다. 커널과의 장치 해제는 `scripts/setup.sh` 스크립트를 사용하면 됩니다.
 
-  ```
+  ```console
   [root@localhost spdk]# nvme list
   Node             SN                   Model                                    Namespace Usage                      Format           FW Rev
   ---------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
@@ -121,7 +121,7 @@ SPDK에 구현된 bdev 목록은 다음과 같습니다.
 
 PCIe 0000:3b:00.0 장치에 대한 커널 드라이버 해제가 완료되었습니다. 다시 조회해 볼까요?
 
-  ```
+  ```console
   [root@localhost spdk]# nvme list
   [root@localhost spdk]# lsblk | grep nvme
   ```
@@ -132,7 +132,7 @@ SPDK는 장치의 오너쉽을 사용자 공간의 프로그램에 할당하기 
 
 SPDK에서 사용한 장치의 오너쉽을 다시 커널에 넘기려면 `reset` 옵션을 추가하면 됩니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/setup.sh reset
   0000:3b:00.0 (8086 2700): uio_pci_generic -> nvme
   0000:80:04.2 (8086 2021): uio_pci_generic -> no driver
@@ -157,7 +157,7 @@ SPDK에서 사용한 장치의 오너쉽을 다시 커널에 넘기려면 `reset
 
 이어서 SPDK 환경이 정상적으로 구성되었는지 확인해 보겠습니다. 다시 `scripts/setup.sh` 스크립트를 수행하여 테스트할 장치를 준비하고, `build/examples/hello_world` 예제를 수행합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# build/examples/hello_world
   [2022-01-13 03:44:04.916653] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
   [2022-01-13 03:44:04.916839] [ DPDK EAL parameters: [2022-01-13 03:44:04.916872] hello_world [2022-01-13 03:44:04.916896] -c 0x1 [2022-01-13 03:44:04.916919] --log-level=lib.eal:6 [2022-01-13 03:44:04.916942] --log-level=lib.cryptodev:5 [2022-01-13 03:44:04.916986] --log-level=user1:6 [2022-01-13 03:44:04.917014] --iova-mode=pa [2022-01-13 03:44:04.917040] --base-virtaddr=0x200000000000 [2022-01-13 03:44:04.917062] --match-allocations [2022-01-13 03:44:04.917086] --file-prefix=spdk0 [2022-01-13 03:44:04.917111] --proc-type=auto [2022-01-13 03:44:04.917133] ]
@@ -193,7 +193,7 @@ SPDK는 bdev와 같은 기능을 동적으로 구성할 수 있도록 JSON-RPC[^
 
   * 새로운 터미널에서 수행
 
-  ```
+  ```console
   [root@localhost spdk]# build/bin/spdk_tgt
   [2022-01-13 03:45:42.140847] Starting SPDK v22.01-pre git sha1 ed8be4ad0 / DPDK 21.08.0 initialization...
   [2022-01-13 03:45:42.141026] [ DPDK EAL parameters: [2022-01-13 03:45:42.141060] spdk_tgt [2022-01-13 03:45:42.141086] --no-shconf [2022-01-13 03:45:42.141108] -c 0x1 [2022-01-13 03:45:42.141142] --log-level=lib.eal:6 [2022-01-13 03:45:42.141189] --log-level=lib.cryptodev:5 [2022-01-13 03:45:42.141217] --log-level=user1:6 [2022-01-13 03:45:42.141241] --iova-mode=pa [2022-01-13 03:45:42.141265] --base-virtaddr=0x200000000000 [2022-01-13 03:45:42.141293] --match-allocations [2022-01-13 03:45:42.141316] --file-prefix=spdk_pid9976 [2022-01-13 03:45:42.141339] ]
@@ -207,7 +207,7 @@ SPDK는 bdev와 같은 기능을 동적으로 구성할 수 있도록 JSON-RPC[^
 
 `spdk_tgt`이 정상적으로 실행되면 RPC 통신을 위한 소켓 파일이 생성됩니다. 다른 터미널에서 소켓이 생성되었는지 확인합니다. 소켓 파일은 `/var/tmp/spdk.sock` 경로에 생성됩니다.
 
-  ```
+  ```console
   [root@localhost spdk]# ls -l /var/tmp/spdk.sock
   srwxr-xr-x 1 root root 0 Apr  8 19:36 /var/tmp/spdk.sock
   [root@localhost spdk]# lsof -U | grep 'spdk.sock'
@@ -232,7 +232,7 @@ SPDK는 bdev와 같은 기능을 동적으로 구성할 수 있도록 JSON-RPC[^
  
  그만큼 `nvme` 명령은 강력한 기능을 제공합니다만, SPDK로 장치의 오너쉽을 넘긴 이상 `nvme` 명령으로는 더 이상 NVMe SSD를 제어할 수 없습니다. 한번 확인해 볼까요?
 
-  ```
+  ```console
   [root@localhost spdk]# nvme list
   <no output message>
   ```
@@ -243,7 +243,7 @@ NVMe 스펙이 공개되기 전까지 PCIe 기반의 SSD는 표준이 없었기 
     
 음... 잠깐 샛길로 빠졌군요. 다시 돌아와서! NVMe 스펙을 참고하여 SPDK에서도 `nvme` 명령과 유사한 작업을 수행할 수 있습니다. `spdk_tgt`을 포그라운드 프로세스로 실행한 상태에서 다른 터미널로 접속하여 설치되어 있는 NVMe SSD의 PCIe 번호를 확인합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# lspci | grep -i ssd
   3b:00.0 Non-Volatile memory controller: Intel Corporation Optane SSD 900P Series
   ```
@@ -252,14 +252,14 @@ NVMe 스펙이 공개되기 전까지 PCIe 기반의 SSD는 표준이 없었기 
 
 `3b:00.0`을 확인했으니 컨트롤러를 SPDK에 연결해 봅니다. 이때, RPC 통신을 위해서 모든 명령은 `scripts/rpc.py`로 수행되어야 합니다. 실행할 명령은 `bdev_nvme_attach_controller`입니다. 연결할 컨트롤러의 이름은 `NVMe0`, 연결 방식은 `pcie`로 하겠습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_attach_controller -b NVMe0 -t pcie -a 0000:3b:00.0
   NVMe0n1
   ```
 
 오 뭔가 명령이 잘 수행된 느낌입니다. 다음으로 `bdev_nvme_get_controllers` 명령을 수행하여 연결된 컨트롤러 정보를 불러오겠습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_get_controllers
   [
     {
@@ -277,9 +277,9 @@ NVMe 스펙이 공개되기 전까지 PCIe 기반의 SSD는 표준이 없었기 
   ]
   ```
 
-👏👏👏 연결된 컨트롤러 정보를 확인할 수 있습니다. 반대로 연결 해제는 `bdev_nvme_detach_controlle` 명령을 사용합니다.
+:clap::clap::clap: 연결된 컨트롤러 정보를 확인할 수 있습니다. 반대로 연결 해제는 `bdev_nvme_detach_controlle` 명령을 사용합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_detach_controller NVMe0
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_get_controllers
   []
@@ -287,7 +287,7 @@ NVMe 스펙이 공개되기 전까지 PCIe 기반의 SSD는 표준이 없었기 
 
 이외에도 SPDK는 nvme와 관련된 다양한 기능을 제공합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# # scripts/rpc.py | grep nvme
       bdev_nvme_set_options (set_bdev_nvme_options)
                             Set options for the bdev nvme type. This is startup
@@ -340,7 +340,7 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 이제 문자 드라이버 등록 실습을 해보겠습니다. 먼저 테스트 서버에 cuse 패키지를 설치해야 합니다. 동작 중인 `spdk_tgt`를 Ctrl+C로 종료하고, ./configure 명령에 `--with-nvme-cuse` 옵션을 추가하고 리빌드를 수행합니다.
 
-  ```
+  ```console
   [2022-01-13 03:46:48.864407] bdev_nvme_rpc.c: 400:rpc_bdev_nvme_attach_controller: *ERROR*: The multipath parameter was not specified to bdev_nvme_attach_controller but it was used to add a failover path. This behavior will default to rejecting the request in the future. Specify the 'multipath' parameter to control the behavior[2022-01-13 03:46:33.714712] bdev_nvme.c:3620:bdev_nvme_delete: *ERROR*: Failed to find NVMe bdev controller
   ^C
   [root@localhost spdk]# 
@@ -357,7 +357,7 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 리빌드가 완료되었습니다. `spdk_tgt` 프로그램을 실행하기 전에 cuse 커널 모듈을 불러옵니다.
 
-  ```
+  ```console
   [root@localhost spdk]# modprobe cuse
   [root@localhost spdk]# lsmod | grep cuse
   cuse                   13274  0
@@ -375,7 +375,7 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 리빌드 및 `spdk_tgt`이 정상적으로 실행되었다면 다른 터미널에서 문자 드라이버를 등록해 보겠습니다. 문자 드라이버 등록은 `bdev_nvme_cuse_register` 명령으로 수행합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_attach_controller -b NVMe0 -t PCIe -a 0000:3b:00.0
   NVMe0n1
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_cuse_register -n NVMe0
@@ -383,7 +383,7 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 `spdk_tgt` 터미널에서 문자 드라이버가 정상적으로 생성되었다는 로그가 출력됩니다.
 
-  ```
+  ```console
   [2022-01-13 03:47:52.183893] nvme_cuse.c: 972:nvme_cuse_start: *NOTICE*: Creating cuse device for controller
   [2022-01-13 03:47:52.184053] nvme_cuse.c: 763:cuse_session_create: *NOTICE*: fuse session for device spdk/nvme0 created
   [2022-01-13 03:47:52.184117] nvme_cuse.c: 763:cuse_session_create: *NOTICE*: fuse session for device spdk/nvme0n1 created
@@ -391,14 +391,14 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 다른 터미널에서 문자 드라이버가 생성되었는지 확인해 보겠습니다. `/dev/spdk` 디렉토리 하위에 위치합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# ls /dev/spdk/
   nvme0  nvme0n1
   ```
 
 이제 `nvme` 명령을 사용해서 컨트롤러 정보를 확인해 봅시다. `nvme id-ctrl` 명령에 `-H` 옵션(--human-readable)을 추가하면 [그림 3]에서 보여준 NVMe controller register format 정보를 보기 쉽게 변환해 줍니다.
 
-  ```
+  ```console
   [root@localhost spdk]# nvme id-ctrl /dev/spdk/nvme0 -H
   NVME Identify Controller:
   vid       : 0x8086
@@ -478,7 +478,7 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 `nvme id-ctrl`로 확인한 NVMe SSD 정보와 SPDK의 `bdev_get_bdevs` 출력 결과가 동일한 것을 확인할 수 있습니다.
 마지막으로 문자 드라이버 등록을 해제하려면 `bdev_nvme_cuse_unregister` 명령을 사용하면 됩니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_cuse_unregister -n NVMe0
   [root@localhost spdk]# ls /dev/spdk/nvme0
   ls: cannot access /dev/spdk/nvme0: No such file or directory
@@ -495,14 +495,14 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 
 lvol 생성은 NVMe SSD를 '논리 볼륨 저장소'에 등록하는 작업이 선행되어야 합니다. 이는 LVM에서 PV(Physical Volume)를 VG(Volume Group)에 등록하는 작업과 유사합니다. 논리 볼륨 저장소는 lvstore로 불립니다. lvstore 생성은 `bdev_lvol_create_lvstore` 명령을 사용합니다. `bdev_lvol_create_lvstore`의 첫 번째 인자는 `bdev_get_bdevs` 명령으로 출력된 장치의 이름이 입력되며, 두 번째 인자는 등록할 신규 논리 볼륨 저장소의 이름입니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs
   1818d45a-3a05-42c9-bbb2-9229cc25ac49
   ```
 
 NVMe SSD가 논리 볼륨 저장소에 정상적으로 등록되면 생성된 lvstore의 uuid를 출력합니다. 논리 볼륨 저장소는 `bdev_lvol_get_lvstores` 명령으로 확인할 수 있지만, `bdev_get_bdevs` 명령으로는 확인할 수 없습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
   [
     {
@@ -519,7 +519,7 @@ NVMe SSD가 논리 볼륨 저장소에 정상적으로 등록되면 생성된 lv
 
 논리 볼륨 저장소 삭제는 `bdev_lvol_delete_lvstore` 명령을 사용합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete_lvstore -l lvs
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_get_lvstores
   []
@@ -527,14 +527,14 @@ NVMe SSD가 논리 볼륨 저장소에 정상적으로 등록되면 생성된 lv
 
 다음으로 논리 볼륨을 생성해 보겠습니다. 논리 볼륨은 `bdev_lvol_create` 명령으로 생성할 수 있습니다. `bdev_lvol_create`의 첫 번째 인자는 생성할 논리 볼륨의 이름이며, 두 번째 인자는 논리 볼륨의 크기로 기본 단위는 MiB입니다. 마지막으로 `-l` 옵션으로 생성된 논리 볼륨 저장소의 이름 또는 uuid를 입력합니다. 예제로 lvs 이름의 논리 볼륨 저장소에 1GB 용량을 갖는 lvol1 논리 볼륨을 생성해 보겠습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_create lvol1 1024 -l lvs
   68ba7bbc-d26b-464b-ae12-f48a62512b0d
   ```
 
 논리 볼륨이 정상적으로 생성되면 논리 볼륨 저장소와 마찬가지로 lvol의 uuid를 출력합니다. SPDK에서 생성된 논리 볼륨은 `bdev_get_bdevs` 명령으로 확인할 수 있지만, `bdev_get_lvstores`와 같이 논리 볼륨 정보만 출력하는 명령은 제공하지 않습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_get_bdevs
   [
     {...},
@@ -582,7 +582,7 @@ NVMe SSD가 논리 볼륨 저장소에 정상적으로 등록되면 생성된 lv
 
 생성된 논리 볼륨 삭제는 `bdev_lvol_delete` 명령을 사용합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_lvol_delete lvs/lvol1
   ```
 
@@ -602,7 +602,7 @@ SPDK는 소프트웨어 기반의 RAID[^7] 볼륨을 지원합니다. 다만 현
 
 RAID 볼륨은 `bdev_raid_create` 명령으로 생성할 수 있습니다. 이때 생성할 RAID 이름(`-n`)과 스트라이프 크기(`-z`), RAID 번호(`-r`), 등록할 장치(`-b`)를 입력해야 합니다. 예제로 4개의 lvol를 묶어서 레벨 0 RAID 볼륨을 생성해 보겠습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid0 -z 64 -r 0 -b "lvol1 lvol2 lvol3 lvol4"
   ```
 
@@ -610,7 +610,7 @@ RAID 볼륨은 `bdev_raid_create` 명령으로 생성할 수 있습니다. 이�
 
 RAID 장치 정보는 `bdev_raid_get_bdevs` 명령을 통해 확인할 수 있는데, 이때 인자 값으로 RAID의 상태 카테고리를 입력해야 합니다. 카테고리는 `all`, `online`, `configuring`, `offline`이 있습니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
   raid0
   ```
@@ -619,7 +619,7 @@ RAID 장치 정보는 `bdev_raid_get_bdevs` 명령을 통해 확인할 수 있�
 
 삭제는 `bdev_raid_delete` 명령을 통해 수행합니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_raid_delete raid0
   ```
 
@@ -633,7 +633,7 @@ RAID bdev 모듈은 아직까지 다양한 기능을 지원하지 않습니다. 
 
 먼저 `./configure`에서 `--with-raid5` 옵션을 추가하고 리빌드를 수행해야 합니다. 
 
-  ```
+  ```console
   [root@localhost spdk]# ./configure --with-raid5
   [root@localhost spdk]# make -j 40
   [root@localhost spdk]# ./build/bin/spdk_tgt
@@ -641,7 +641,7 @@ RAID bdev 모듈은 아직까지 다양한 기능을 지원하지 않습니다. 
 
 리빌드 및 `spdk_tgt` 시작을 완료하고 `bdev_raid_create` 명령에서 RAID 레벨(`-r`)을 5로 입력하면 RAID-5 볼륨을 생성할 수 있습니다. 하지만 RAID-0과 마찬가지로 재시작 시 구성했던 볼륨 정보는 사라집니다.
 
-  ```
+  ```console
   [root@localhost spdk]# scripts/rpc.py bdev_raid_create -n raid5 -z 64 -r 5 -b "lvol1 lvol2 lvol3 lvol4"
   [root@localhost spdk]# scripts/rpc.py bdev_raid_get_bdevs all
   raid5
@@ -657,7 +657,7 @@ RAID bdev 모듈은 아직까지 다양한 기능을 지원하지 않습니다. 
 마치며
 -----
 
-이번 포스팅에서는 NVMe SSD가 설치된 실장비에 SPDK 최신 코드를 올려보고 bdev 모듈에서 제공하는 일부 기능을 사용해 보았습니다. 다음 시간에는 SPDK 성능 리포트를 분석하고 SPDK 환경에서 성능을 측정해 보겠습니다. 그럼 다음에 만나요👋
+이번 포스팅에서는 NVMe SSD가 설치된 실장비에 SPDK 최신 코드를 올려보고 bdev 모듈에서 제공하는 일부 기능을 사용해 보았습니다. 다음 시간에는 SPDK 성능 리포트를 분석하고 SPDK 환경에서 성능을 측정해 보겠습니다. 그럼 다음에 만나요:wave:
 
 &nbsp;
 
