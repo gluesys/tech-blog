@@ -277,7 +277,7 @@ NVMe 스펙이 공개되기 전까지 PCIe 기반의 SSD는 표준이 없었기 
   ]
   ```
 
-:clap::clap::clap: 연결된 컨트롤러 정보를 확인할 수 있습니다. 반대로 연결 해제는 `bdev_nvme_detach_controlle` 명령을 사용합니다.
+:clap: :clap: :clap: 연결된 컨트롤러 정보를 확인할 수 있습니다. 반대로 연결 해제는 `bdev_nvme_detach_controlle` 명령을 사용합니다.
 
   ```console
   [root@localhost spdk]# scripts/rpc.py bdev_nvme_detach_controller NVMe0
@@ -288,7 +288,7 @@ NVMe 스펙이 공개되기 전까지 PCIe 기반의 SSD는 표준이 없었기 
 이외에도 SPDK는 nvme와 관련된 다양한 기능을 제공합니다.
 
   ```console
-  [root@localhost spdk]# # scripts/rpc.py | grep nvme
+  [root@localhost spdk]# scripts/rpc.py | grep nvme
       bdev_nvme_set_options (set_bdev_nvme_options)
                             Set options for the bdev nvme type. This is startup
       bdev_nvme_set_hotplug (set_bdev_nvme_hotplug)
@@ -657,7 +657,7 @@ RAID bdev 모듈은 아직까지 다양한 기능을 지원하지 않습니다. 
 마치며
 -----
 
-이번 포스팅에서는 NVMe SSD가 설치된 실장비에 SPDK 최신 코드를 올려보고 bdev 모듈에서 제공하는 일부 기능을 사용해 보았습니다. 다음 시간에는 SPDK 성능 리포트를 분석하고 SPDK 환경에서 성능을 측정해 보겠습니다. 그럼 다음에 만나요:wave:
+이번 포스팅에서는 NVMe SSD가 설치된 실장비에 SPDK 최신 코드를 올려보고 bdev 모듈에서 제공하는 일부 기능을 사용해 보았습니다. 다음 시간에는 SPDK 성능 리포트를 분석하고 SPDK 환경에서 성능을 측정해 보겠습니다. 그럼 다음에 만나요 :wave:
 
 &nbsp;
 
