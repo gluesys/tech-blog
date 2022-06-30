@@ -82,7 +82,7 @@ main:       "/assets/CSI_maincover.jpg"
         Recycle : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다림
         ```
 
-PVC, PV 생성 실습
+정적 프로비저닝 실습
 ---
 1. PVC Yaml 파일 작성(test_pvc.yaml)
   ```yaml
@@ -195,7 +195,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 
 이후 만들어진 PVC를 사용하는 파드가 생성되거나 대기상태일 때 파드가 배포되는 워커 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 워커 노드 볼륨에 마운트하고 해당 볼륨을 파드에 마운트 시킵니다.
 
-실습
+동적 프로비저닝 실습
 ---
 
 * SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태 
