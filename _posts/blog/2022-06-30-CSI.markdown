@@ -91,7 +91,8 @@ main:       "/assets/CSI_maincover.jpg"
 ## 정적 프로비저닝 실습
 
 * PVC Yaml 파일 작성(test_pvc.yaml)
-  ```yaml
+* 
+  ```console
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -106,9 +107,10 @@ main:       "/assets/CSI_maincover.jpg"
       matchLabels:
         name: test-pv
   ```
+  
 * PVC 생성
 
-  ```Shell
+  ```console
   [root@master ~]# kubectl create -f test_pvc.yaml
   [root@master ~]# kubectl get pvc
   NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
@@ -117,7 +119,8 @@ main:       "/assets/CSI_maincover.jpg"
   ```
 
 * PV Yaml 파일 작성(test_pv.yaml)
-  ```yaml
+
+  ```console
   apiVersion: v1
   kind: PersistentVolume
   metadata:
@@ -135,7 +138,7 @@ main:       "/assets/CSI_maincover.jpg"
   ```
   
 * PV 생성
-  ```Shell
+  ```console
   [root@master ~]# kubectl create -f test-pv.yaml
   [root@master ~]# kubectl get pv
   NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS         REASON   AGE
@@ -158,7 +161,7 @@ main:       "/assets/CSI_maincover.jpg"
 
 파드가 볼륨을 사용하기 위한 단계는 아래와 같습니다.
 
-``` PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> POD에 PVC 할당 ```
+`PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> POD에 PVC 할당`
 
 동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 프로비저너가 PVC 상태 모니터링, PV 생성을 담당합니다.
 스토리지 클래스에서 사용하는 프로비저너는 CSI 드라이버로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI 드라이버를 사용하거나 외부의 CSI 드라이버를 사용할 수 있습니다.
@@ -219,13 +222,11 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 
 * SPDK 스토리지 서버 설정
 
-  SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태입니다.
-
-  &nbsp;
-  (참조 : https://tech.gluesys.com/blog/2022/04/19/SPDK_tutorial_1.html)
+  SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태입니다. SPDK 기본 설정은 [링크](https://tech.gluesys.com/blog/2022/04/19/SPDK_tutorial_1.html)를 참고하시면 되겠습니다.
 
   * SPDK 실행
-  ```shell
+  
+  ```console
   [root@spdk spdk]# build/bin/nvmf_tgt
   [2022-05-12 15:48:15.906122] Starting SPDK v22.05-pre git sha1 68184a503 / DPDK 21.11.0 initialization...
   [2022-05-12 15:48:15.906269] [ DPDK EAL parameters: [2022-05-12 15:48:15.906319] nvmf [2022-05-12 15:48:15.906346] --no-shconf [2022-05-12 15:48:15.906367] -c 0x1 [2022-05-12 15:48:15.906390] --huge-unlink [2022-05-12 15:48:15.906407] --log-level=lib.eal:6 [2022-05-12 15:48:15.906424] --log-level=lib.cryptodev:5 [2022-05-12 15:48:15.906443] --log-level=user1:6 [2022-05-12 15:48:15.906458] --iova-mode=pa [2022-05-12 15:48:15.906474] --base-virtaddr=0x200000000000 [2022-05-12 15:48:15.906487] --match-allocations [2022-05-12 15:48:15.906503] --file-prefix=spdk_pid28416 [2022-05-12 15:48:15.906520] ]
@@ -240,7 +241,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   * Logical Volume Store 생성
 
     연결되어 있는 NVMe 중 Logical Volume Store로 사용할 NVMe를 선택하여 SPDK에 등록한 뒤 Logical Volume Store를 생성합니다.
-  ```shell
+    
+  ```console
   [root@spdk spdk]# lspci | grep SSD
   10000:82:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
   10001:81:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
@@ -257,7 +259,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   ```
 
   * SPDK HTTP Proxy 시작
-  ```shell
+  
+  ```console
   # rpc_http_proxy.py [spdk-server-ip] [port] [username] [password]
   [root@spdk spdk]# sudo scripts/rpc_http_proxy.py 192.168.10.118 9009 root gluesys
   Started RPC http proxy server
@@ -268,7 +271,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 * 워커 노드 설정
 
   * 워커 노드 전부 SPDK CSI 이미지를 생성 ,nvme-cli 모듈 설치
-  ```shell
+  
+  ```console
   [root@worker1 ~]# docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock golang:1.14 bash -c "apt update && apt install -y make git docker.io && git clone https://review.spdk.io/gerrit/spdk/spdk-csi && cd spdk-csi && make image"
   ...
   ...
@@ -323,7 +327,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 * 쿠버네티스 Master 노드 설정
 
   * SPDK CSI 배포 파일 다운
-  ```shell
+  
+  ```console
   [root@master ~]# git clone https://review.spdk.io/gerrit/spdk/spdk-csi
   [root@master ~]# cd spdk-csi/deploy/kubernetes/
   [root@master kubernetes]# ls
@@ -333,7 +338,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   &nbsp;
   
   * config yaml 파일 수정
-  ```yaml
+  
+  ```console
   # SPDX-License-Identifier: Apache-2.0
   # Copyright (c) Arm Limited and Contributors
   # Copyright (c) Intel Corporation
@@ -362,7 +368,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   &nbsp;
   
   * Secret yaml 수정
-  ```yaml
+  
+  ```console
   # SPDX-License-Identifier: Apache-2.0
   # Copyright (c) Arm Limited and Contributors
   # Copyright (c) Intel Corporation
@@ -393,7 +400,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   &nbsp;
   
   * SPDK CSI Driver 배포
-  ```shell
+  
+  ```console
   [root@master kubernetes]# ./deploy.sh
   === kubectl apply -f config-map.yaml
   configmap/spdkcsi-cm created
@@ -425,7 +433,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   &nbsp;
   
 * PVC&POD 생성 및 확인
-  ```shell
+
+  ```console
   [root@master kubernetes]# kubectl create -f testpod.yaml
   persistentvolumeclaim/spdkcsi-pvc created
   pod/spdkcsi-test created
@@ -453,7 +462,8 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   &nbsp;
   
 * SPDK Storage 서버 확인
-  ```
+
+  ```console
   [root@spdk spdk]# sudo scripts/rpc.py bdev_get_bdevs
   [
     {
