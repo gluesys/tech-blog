@@ -9,9 +9,11 @@ cover:      "/assets/lustre_maincover.jpg"
 main:       "/assets/lustre_maincover.jpg"
 ---
 
-# Lustre File System 소개
+이번 장에서는 `고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터에서 사용될 `러스터 파일시스템(Lustre File System)`과 `GPU Direct Storage(GDS)`에대해 간략하게 알아보겠습니다.
 
-`고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터는 대규모 애플리케이션에 최고의 컴퓨팅 성능을 제공하기 위해 사용됩니다. `HPC` 클러스터에서는 많은 양의 데이터를 처리합니다. 꽤 오랜 시간 동안 프로세서와 메모리의 속도는 급격히 증가했지만 I/O 시스템의 성능은 이보다 뒤처지고 있습니다. 따라서 상대적으로 성능이 떨어지는 I/O 성능은 클러스터의 전체 성능을 저하 시킬 수 있습니다. 이를 위해  lustre 파일시스템을 사용합니다.
+# Lustre File System(Lustre FS) 소개
+
+`HPC` 클러스터는 대규모 애플리케이션에 최고의 컴퓨팅 성능을 제공하기 위해 사용됩니다. `HPC` 클러스터에서는 많은 양의 데이터를 처리합니다. 꽤 오랜 시간 동안 프로세서와 메모리의 속도는 급격히 증가했지만 I/O 시스템의 성능은 이보다 뒤처지고 있습니다. 따라서 상대적으로 성능이 떨어지는 I/O 성능은 클러스터의 전체 성능을 저하 시킬 수 있습니다. 이를 위해  lustre 파일시스템을 사용합니다.
  
 `러스터(Lustre)`는 병렬 분산 파일 시스템으로 주로 고성능 컴퓨팅의 대용량 파일 시스템으로 사용되고 있습니다. 
 러스터의 이름은 `Linux`와 `Cluster`의 혼성어에서 유래됐습니다. 
@@ -22,9 +24,9 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-# Lustre FS Architecture
+# 러스터 파일시스템 아키텍처
 ![Lustre FS Architecture](/assets/Lustre_Architecture.PNG)
-<center>그림 1. Lustre Architecture </center>
+<center>그림 1. 러스터 파일시스템 아키텍처 </center>
 
 &nbsp;
 
@@ -56,7 +58,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-# Lustre FS 특징 및 기능
+# 러스터 파일시스템 특징 및 기능
 &nbsp;
 
 ## HSM(Hierarchical Storage Management)
@@ -212,21 +214,27 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 
 &nbsp;
 
-# GPU Direct 스토리지 기술
+# GPU Direct Storage(GDS) 기술
+
+&nbsp;
 
 ![GPU Direct Storage](/assets/GPU_Direct_Storage.PNG)
 <center>그림 8. GPU Direct Storage</center>
 
 &nbsp;
 
-오늘날 많은 연산을 사용하는 `빅데이터/AI` 분석을 가속화를 위해 `GPU Direct 스토리지` 기술이 등장하였습니다. 
-`빅데이터/AI`에서는 많은 양의 데이터를 분석해야 하고, 이를 위해 데이터를 로드해야합니다. 이때, 소요되는 시간이 애플리케이션 성능에 영향을 미칠 수 있습니다. 이를 위해 `GPU Direct 스토리지`는 `NVMe or NVMe over Fabrics(NVMe-oF)[^1]`와 같은 로컬 또는 원격 스토리지와 `GPU` 메모리 사이에 데이터 경로를 생성합니다. 네트워크 어댑터 또는 스토리지와 가까운 `직접 메모리 접근(Direct Memory Access, 이하 DMA)[^2]`엔진을 활성화하여 CPU에 부담을 주지 않고 `GPU` 메모리로 데이터를 이동하는 기술입니다.
+오늘날 많은 연산을 필요로 하는 빅데이터/AI,ML,HPC 애플리케이션을 위해 CPU에서 GPU 연산으로 변경됨에 따라, GPU I/O가 전체 애플리케이션 성능에 주요 병목 현상이 될 수 있습니다.
 
-**GPU Direct 스토리지 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
+NVIDIA는 스토리지와 GPU 메모리간의 데이터 이동을 간소화하고, 성능 병목 현상을 없애기 위해 `GPU Direct Storage(GDS)`를 만들었습니다. 이는 CPU 메모리의 버퍼를 통해 데이터를 저장하고 전달해야 하는 것과 같습니다.
+
+기존에는 GPU I/O를 사용하면 CPU 메모리를 거처 GPU 메모리로 접근해야합니다. 하지만, GDS는 원격 스토리지 간에 직접 메모리 엑세스(Direct Memory Access, 이하 DMA)[^2]를 활성화하여 대역폭을 높이고 대기 시간을 줄이며, CPU에 의존하지 않아 CPU 사용에 대한 부담을 줄일 수 있습니다. 
+
+
+**GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
 
 &nbsp;
 
-## GPU Direct 스토리지 이점
+## GDS 이점
 
 * `GPU` 기반 분석 어플리케이션의 병렬 스토리지 입출력 오버헤드를 최소화 하여 분석 시간을 획기적으로 단축할 수 있습니다.
   * `GPU` 연산 대기 시간 감소와 `PCI` 대역폭 최대 활용
