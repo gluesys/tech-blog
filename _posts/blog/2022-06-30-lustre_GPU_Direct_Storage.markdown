@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Lustre File System과 GPU Direct Storage 소개"
+title:      "Lustre 파일시스템과 GPU Direct Storage 소개"
 date:       2022-06-30
 author:     권세훈 (qsh700@gluesys.com)
 categories: blog
@@ -11,14 +11,14 @@ main:       "/assets/lustre_maincover.jpg"
 
 # Lustre File System 소개
 
-High Performance Computing(HPC) 클러스터는 대규모 애플리케이션에 최고의 컴퓨팅 성능을 제공하기 위해 사용됩니다. `HPC` 클러스터에서는 많은 양의 데이터를 처리합니다. 꽤 오랜 시간 동안 프로세서와 메모리의 속도는 급격히 증가했지만 I/O 시스템의 성능은 이보다 뒤처지고 있습니다. 따라서 상대적으로 성능이 떨어지는 I/O 성능은 클러스터의 전체 성능을 저하 시킬 수 있습니다. 이를 위해  `lustre File System`을 사용합니다.
+`고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터는 대규모 애플리케이션에 최고의 컴퓨팅 성능을 제공하기 위해 사용됩니다. `HPC` 클러스터에서는 많은 양의 데이터를 처리합니다. 꽤 오랜 시간 동안 프로세서와 메모리의 속도는 급격히 증가했지만 I/O 시스템의 성능은 이보다 뒤처지고 있습니다. 따라서 상대적으로 성능이 떨어지는 I/O 성능은 클러스터의 전체 성능을 저하 시킬 수 있습니다. 이를 위해  `lustre 파일시스템`을 사용합니다.
  
 `러스터(Lustre)`는 병렬 분산 파일 시스템으로 주로 고성능 컴퓨팅의 대용량 파일 시스템으로 사용되고 있습니다. 
-`러스터(Lustre)`의 이름은 `Linux`와 `Cluster`의 혼성어에서 유래됐습니다. 
+러스터의 이름은 `Linux`와 `Cluster`의 혼성어에서 유래됐습니다. 
 
 러스터는 `GNU GPL` 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터 시스템용 고성능 파일 시스템입니다. 
 
-러스터는 `Linux` 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다.
+러스터는 리눅스 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다.
 
 &nbsp;
 
@@ -29,7 +29,7 @@ High Performance Computing(HPC) 클러스터는 대규모 애플리케이션에 
 &nbsp;
 
 * MGS(Management Server)
-  * 모든 러스터 파일 시스템에 대한 구성 정보를 클러스터에 저장하고 이 정보를 다른 `Lustre` 호스트에 제공합니다.
+  * 모든 러스터 파일 시스템에 대한 구성 정보를 클러스터에 저장하고 이 정보를 다른 `러스터` 호스트에 제공합니다.
 
 * MGT(Management Target)
   * 모든 러스터 노드에 대한 구성 정보는 `MGS`에 의해 `MGT`라는 저장 장치에 기록됩니다.
@@ -48,7 +48,7 @@ High Performance Computing(HPC) 클러스터는 대규모 애플리케이션에 
 * OST(Object Storage Target)
   * `OSS` 호스트에 고르게 분산되어 성능의 균형을 유지하고 처리량을 최대화합니다.
 
-* Lustre clients
+* Lustre 클라이언트
   * 각 `클라이언트(client)`는 여러 다른 러스터 파일 시스템 인스턴스를 동시에 마운트 가능합니다.
 
 * LNet(Lustre Networking)
@@ -65,25 +65,25 @@ High Performance Computing(HPC) 클러스터는 대규모 애플리케이션에 
 
 `HSM`을 사용하면 다음과 같은 이점이 있습니다. 회사에서는 새 장비에 투자하지 않고도 이미 보유하고 있는 리소스를 최대한 활용할 수 있습니다. 또한, 가장 중요한 데이터의 운선 순위를 저장하여 고속 저장 장치의 공간을 확보합니다. 고속 저장 장치 보다 저속 저장 장치의 비용이 훨씬 저렴하기 때문에 스토리지 비용을 절감할 수 있습니다. 이는 기업에서 비용이 증가할 수 있는 대량의 데이터를 관리하는 경우에 특히 경제적입니다.
 
-* HSM Architecture
+* HSM 아키텍처
 
 ![HSM](/assets/HSM_Architecture.png)
-<center>그림 2. HSM Architecture </center>
+<center>그림 2. HSM 아키텍처 </center>
 
 &nbsp;
 
   * 러스터 파일 시스템을 하나 이상의 외부 스토리지 시스템에 연결할 수 있습니다.
   * 파일을 읽기, 쓰기, 수정과 같이 파일에 접근하게 되면 `HSM` 스토리지에서 러스터 파일 시스템으로 파일을 다시 가져옵니다.
-  * 파일을 `HSM` 스토리지에 복사하는 프로세스를 `아카이브(Archive)`라고 하고 아카이브가 완료되면 러스터 파일 시스템에 존재하는 데이터를 삭제할 수 있습니다. 이것을 `Release`라고 말합니다. `HSM`스토리지에서 러스터 파일 시스템으로 데이터를 반환하는 프로세스를 `restore`라 하고 여기서 말하는 restore와 archive는 `HSM Agent`라는 데몬이 필요합니다.
+  * 파일을 `HSM` 스토리지에 복사하는 프로세스를 `아카이브(Archive)`라고 하고 아카이브가 완료되면 러스터 파일 시스템에 존재하는 데이터를 삭제할 수 있습니다. 이것을 `릴리즈(Release)`라고 말합니다. `HSM`스토리지에서 러스터 파일 시스템으로 데이터를 반환하는 프로세스를 `복원(restore)`라 하고 여기서 말하는 복원과 아카이브는 `HSM Agent`라는 데몬이 필요합니다.
   * `에이전트(Agent)`는 `coopytool`이라는 유저 프로세스가 실행되어 러스터 파일 시스템과 `HSM`간의 파일 아카이브 및 복원을 관리합니다.
   * `코디네이터(Coordinator)`는 러스터 파일 시스템을 `HSM` 시스템에 바인딩하려면 각 파일 시스템 `MDT`에서 코디네이터가 활성화되어야 합니다.
 
 * HSM과 러스터 파일 시스템간의 데이터 관리 유형은 5가지의 요청으로 이루어집니다.
-  * archive : 러스터 파일 시스템 파일에서 `HSM` 솔루션으로 데이터를 복사합니다.
-  * release : 러스터 파일 시스템에서 파일 데이터를 제거합니다.
-  * restore : `HSM` 솔루션에서 해당 러스터 파일 시스템으로 파일 데이터를 다시 복사합니다.
-  * remove : `HSM` 솔루션에서 데이터 사본을 삭제합니다.
-  * cancel : 진행 중이거나 보류 중인 요청을 삭제합니다.
+  * `archive` : 러스터 파일 시스템 파일에서 `HSM` 솔루션으로 데이터를 복사합니다.
+  * `release` : 러스터 파일 시스템에서 파일 데이터를 제거합니다.
+  * `restore` : `HSM` 솔루션에서 해당 러스터 파일 시스템으로 파일 데이터를 다시 복사합니다.
+  * `remove` : `HSM` 솔루션에서 데이터 사본을 삭제합니다.
+  * `cancel` : 진행 중이거나 보류 중인 요청을 삭제합니다.
 
 &nbsp;
 
@@ -94,7 +94,7 @@ High Performance Computing(HPC) 클러스터는 대규모 애플리케이션에 
 
 &nbsp;
 
-`PCC`는 러스터 클라이언트 측에서 로컬 캐시 그룹을 제공하는 프레임워크입니다. 각 클라이언트는 `OST`대신 로컬 저장 장치를 자체 캐시로 사용합니다. 로컬 파일 시스템은 로컬 저장장치 안에 있는 캐시 데이터를 관리하는 데 사용됩니다. 캐시 된 I/O의 경우 로컬 파일 시스템으로 전달되어 처리되고 일반 I/O는 OST로 전달됩니다.
+`PCC`는 러스터 클라이언트 측에서 로컬 캐시 그룹을 제공하는 프레임워크입니다. 각 클라이언트는 `OST`대신 로컬 저장 장치를 자체 캐시로 사용합니다. 로컬 파일 시스템은 로컬 저장장치 안에 있는 캐시 데이터를 관리하는 데 사용됩니다. 캐시 된 I/O의 경우 로컬 파일 시스템으로 전달되어 처리되고 일반 I/O는 `OST`로 전달됩니다.
 
 `PCC`는 데이터 동기화를 위해 `HSM` 기술을 사용합니다. `HSM copytool`을 사용하여 로컬 캐시에서 `OST`로 파일을 복원합니다. 각 `PCC`에는 고유한 아카이브 번호로 실행되는 copytool 인스턴스가 있고 다른 러스터 클라이언트에서 접근하게 되면 데이터 동기화가 진행됩니다. `PCC`가 있는 클라이언트가 오프라인 될 시 캐시 된 데이터는 일시적으로 다른 클라이언트에서 접근할 수 없게 됩니다. 이후 `PCC` 클라이언트가 재부팅되고 `copytool`이 다시 동작하면 캐시 데이터에 다시 접근할 수 있습니다.
 
@@ -218,12 +218,9 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 &nbsp;
 
 오늘날 많은 연산을 사용하는 `빅데이터/AI` 분석을 가속화를 위해 `GPU Direct 스토리지` 기술이 등장하였습니다. 
-`빅데이터/AI`에서는 많은 양의 데이터를 분석해야 하고, 이를 위해 데이터를 로드해야합니다. 이때, 소요되는 시간이 애플리케이션 성능에 영향을 미칠 수 있습니다. 이를 위해 `GPU Direct 스토리지`는 `NVMe or NVMe over Fabrics(NVMe-oF)`와 같은 로컬 또는 원격 스토리지와 `GPU` 메모리 사이에 데이터 경로를 생성합니다. 네트워크 어댑터 또는 스토리지와 가까운 `DMA(Direct Memory Access)`엔진을 활성화하여 CPU에 부담을 주지 않고 `GPU` 메모리로 데이터를 이동하는 기술입니다.
+`빅데이터/AI`에서는 많은 양의 데이터를 분석해야 하고, 이를 위해 데이터를 로드해야합니다. 이때, 소요되는 시간이 애플리케이션 성능에 영향을 미칠 수 있습니다. 이를 위해 `GPU Direct 스토리지`는 `NVMe or NVMe over Fabrics(NVMe-oF)[^1]`와 같은 로컬 또는 원격 스토리지와 `GPU` 메모리 사이에 데이터 경로를 생성합니다. 네트워크 어댑터 또는 스토리지와 가까운 `직접 메모리 접근(Direct Memory Access, 이하 DMA)[^2]`엔진을 활성화하여 CPU에 부담을 주지 않고 `GPU` 메모리로 데이터를 이동하는 기술입니다.
 
 **GPU Direct 스토리지 기술을 lustre에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다**(https://wiki.lustre.org/Lustre_2.15.0_Changelog).
-
-* NVMe 이전 블러그 참고 : https://tech.gluesys.com/blog/2021/03/03/NVMe_1.html
-* DMA : https://en.wikipedia.org/wiki/Direct_memory_access
 
 &nbsp;
 
@@ -244,18 +241,24 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 참고
 ---
 
-* https://wiki.lustre.org/Introduction_to_Lustre
-* https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre
-* https://wiki.lustre.org/Main_Page
-* https://jaynamm.tistory.com/entry/Lustre-File-System
-* https://github.com/DDNStorage/lustre_manual_markdown/blob/master/03.15-Hierarchical%20Storage%20Management%20(HSM).md
-* https://www.sungardas.com/en-us/blog/what-is-hierarchical-storage-management/
-* https://jira.whamcloud.com/browse/LU-10092
-* https://wiki.lustre.org/images/0/04/LUG2018-Lustre_Persistent_Client_Cache-Xi.pdf
-* https://wiki.lustre.org/images/b/b3/LUG2019-Lustre_Overstriping_Shared_Write_Performance-Farrell.pdf
-* https://jira.whamcloud.com/browse/LUDOC-385
-* https://wiki.lustre.org/images/c/c5/LUG2018-Small_File_IO_Perf_DataOnMDT-Gmitter.pdf
-* https://wiki.whamcloud.com/display/PUB/DNE+1+Remote+Directories+High+Level+Design
-* https://wiki.whamcloud.com/display/PUB/Remote+Directories+Solution+Architecture
-* https://jira.whamcloud.com/browse/LU-1187?jql=text%20~%20%22DNE%22
-* https://developer.nvidia.com/gpudirect-storage
+* Introduction to Lustre - Lustre Wiki: https://wiki.lustre.org/Introduction_to_Lustre
+* Why use Lustre - Lustre whamcloud Wiki: https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre
+* Lustre Wiki Main Page - Lustre Wiki: https://wiki.lustre.org/Main_Page
+* Introduction to Lustre & Lustre function - Blog: https://jaynamm.tistory.com/entry/Lustre-File-System
+* Introduction to HSM - Git hub: https://github.com/DDNStorage/lustre_manual_markdown/blob/master/03.15-Hierarchical%20Storage%20Management%20(HSM).md
+* What is HSM - Blog: https://www.sungardas.com/en-us/blog/what-is-hierarchical-storage-management/
+* Wath is PCC - Lustre whamcloud community: https://jira.whamcloud.com/browse/LU-10092
+* Architecture of PCC - DDN storage: https://wiki.lustre.org/images/0/04/LUG2018-Lustre_Persistent_Client_Cache-Xi.pdf
+* Waht is overstripe - whamcloud LUG2019: https://wiki.lustre.org/images/b/b3/LUG2019-Lustre_Overstriping_Shared_Write_Performance-Farrell.pdf
+* DoM user guid - Lustre whamcloud community: https://jira.whamcloud.com/browse/LUDOC-385
+* Small File I/O Performance in Lustre - Intel: https://wiki.lustre.org/images/c/c5/LUG2018-Small_File_IO_Perf_DataOnMDT-Gmitter.pdf
+* Architecture of DNE1 - Lustre whamcloud community: https://wiki.whamcloud.com/display/PUB/DNE+1+Remote+Directories+High+Level+Design
+* Introduction to DNE1 - Lustre whamcloud community:https://jira.whamcloud.com/browse/LU-1187?jql=text%20~%20%22DNE%22
+* Introduction to GDS - NVIDIA: https://developer.nvidia.com/gpudirect-storage
+
+
+각주
+---
+
+[^1]: https://tech.gluesys.com/blog/2021/03/03/NVMe_1.html
+[^2]: https://en.wikipedia.org/wiki/Direct_memory_access
