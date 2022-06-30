@@ -50,10 +50,13 @@ main:       "/assets/CSI_maincover.jpg"
     pvc는 사용자가 PV에 요구하는 스펙입니다. 사용하려는 용량, 접근 모드 등을 PV에 요청합니다.
 
   - Life Cycle
-  
+    &nbsp; 
+    
     ![Alt_text](/assets/pv-pvc-lifecycle.jpg)
     <center>그림 1. PV-PVC Lifecycle</center>
-  
+    
+    &nbsp;
+    
     - Provisioning
       
       PV를 만드는 단계입니다.  
@@ -164,8 +167,11 @@ main:       "/assets/CSI_maincover.jpg"
 
 ## CSI(Container Storage Instance) 드라이버
 
+&nbsp;
+
 ![Alt_text](/assets/csi-plugin.jpg)
 <center>그림 2. CSI Plugin</center>
+
 &nbsp;
 
 - 쿠버네티스 CSI 플러그인
@@ -189,12 +195,16 @@ main:       "/assets/CSI_maincover.jpg"
     `NodeServer`는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.
 
 &nbsp;
+
 ## SPDK CSI 드라이버
 
 많은 CSI 드라이버 중 저번에 다뤄서 조금은 친숙한 `SPDK`에서 제공하는 SPDK CSI 드라이버를 알아보겠습니다.
 
+&nbsp;
+
 ![Alt_text](/assets/SPDK_CSI.png)
 <center>그림 3. SPDK CSI 드라이버 동작 흐름</center>
+
 &nbsp;
 
 [그림 3]에서 보는 것처럼 SPDK Controller는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
@@ -203,6 +213,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 
 이후 만들어진 PVC를 사용하는 파드가 생성되거나 대기상태일 때 파드가 배포되는 워커 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 워커 노드 볼륨에 마운트하고 해당 볼륨을 파드에 마운트 시킵니다.
 &nbsp;
+
 ## 동적 프로비저닝 실습
 
 * SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태 
