@@ -19,8 +19,8 @@ main:       "/assets/CSI_maincover.jpg"
 
 쿠버네티스에서는 다양한 유형의 볼륨을 지원하며, 파드는 여러 볼륨 유형을 동시에 사용할 수 있습니다.
 
-볼륨 유형
----
+파드가 사용할 수 있는 볼륨 유형은 다음과 같습니다: 
+
   * emptyDir
   * hostPath
   * awsElasticBlockStore
@@ -35,14 +35,15 @@ main:       "/assets/CSI_maincover.jpg"
 
 위의 볼륨 유형 중 emptyDir는 파드가 노드에 할당될 때 생성되며 파드가 노드에서 제거되면 데이터가 영구적으로 삭제됩니다.
 
-PV / PVC
+쿠버네티스 스토리지
 ---
+쿠버네티스 사용자 및 관리자에게 스토리지 사용 방법에서부터 제공 방법에 대한 세부 사항을 추상화하는 퍼시스턴트 볼륨(Persistent Volume, 이하 pv), 퍼시스턴트볼륨클레임(Persistent Volume Claim,이하 pvc)라는 두 가지 API 리소스를 사용한다.
 
-  - PV(PersistentVolume)
+  - PV
   
-    pv는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 스토리지입니다.
+    pv는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 
 
-  - PVC(PersistentVolumeClaim)
+  - PVC
   
     pvc는 사용자가 PV에 요구하는 스펙입니다. 사용하려는 용량, 접근 모드 등을 PV에 요청합니다.
 
@@ -81,7 +82,7 @@ PV / PVC
         Recycle : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다림
         ```
 
-PVC, PV 실습
+PVC, PV 생성 실습
 ---
 1. PVC Yaml 파일 작성(test_pvc.yaml)
   ```yaml
@@ -138,7 +139,7 @@ PVC, PV 실습
   test-pvc        bound    test-pv                                    1Gi        RWX                                 32s
 
   ```
-SC(Storage Class)
+스토리지 클래스(Storage Class)
 ---
 위에서 PVC를 생성하고 PVC에 맞게 정적 방법으로 PV를 생성하여 PV에 연결하는 걸 실습해봤습니다.
 
@@ -151,16 +152,16 @@ SC(Storage Class)
 
 ``` PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> POD에 PVC 할당 ```
 
-동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 provisioner가 PVC 생성 모니터링, PV 생성을 담당합니다.
-스토리지 클래스에서 사용하는 provisioner는 CSI Driver로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI Driver를 사용하거나 외부의 CSI Driver를 사용할 수 있습니다.
+동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 프로비저너가 PVC 상태 모니터링, PV 생성을 담당합니다.
+스토리지 클래스에서 사용하는 프로비저너는 CSI 드라이버로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI 드라이버를 사용하거나 외부의 CSI 드라이버를 사용할 수 있습니다.
 
-CSI(Container Storage Instance) Driver
+CSI(Container Storage Instance) 드라이버
 ---
 
 ![Alt_text](/assets/csi-plugin.jpg)
 <center>그림 2. CSI Plugin</center>
 
-- Kubernetes CSI Plugin
+- 쿠버네티스 CSI 플러그인
 
   쿠버네티스 CSI은 기본적으로 `Provsioner`, `Attacher`, `Controller`, `NodeServer`로 이루어져 있습니다.
   
@@ -180,27 +181,28 @@ CSI(Container Storage Instance) Driver
   
     `NodeServer`는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.
     
-SPDK CSI Driver
+SPDK CSI 드라이버
 ---
-많은 CSI Driver 중 저번에 다뤄서 조금은 친숙한 `SPDK`에서 제공하는 SPDK CSI Driver를 알아보겠습니다.
+많은 CSI 드라이버 중 저번에 다뤄서 조금은 친숙한 `SPDK`에서 제공하는 SPDK CSI 드라이버를 알아보겠습니다.
 
 ![Alt_text](/assets/SPDK_CSI.png)
-<center>그림 3. SPDK CSI Driver Work Flow</center>
+<center>그림 3. SPDK CSI 드라이버 동작 흐름</center>
 
 
 [그림 3]에서 보는 것처럼 SPDK Controller는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
 
 PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 선택한 후 요청한 디스크 용량을 가지는 `Logical Volume`을 만듭니다. 만들어진 `Logical Volume`을 NVMe-oF Target을 만드는 것으로 Controller의 일이 끝납니다.
 
-이후 만들어진 PVC를 사용하는 POD가 생성되거나 대기상태일 때 POD가 배포되는 Worker 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 Worker 노드볼륨에 마운트하고 해당 볼륨을 POD에 마운트 시킵니다.
+이후 만들어진 PVC를 사용하는 파드가 생성되거나 대기상태일 때 파드가 배포되는 워커 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 워커 노드 볼륨에 마운트하고 해당 볼륨을 파드에 마운트 시킵니다.
 
 실습
 ---
 
-* SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태 ( 참조 : https://tech.gluesys.com/blog/2022/04/19/SPDK_tutorial_1.html
+* SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태 
+( 참조 : https://tech.gluesys.com/blog/2022/04/19/SPDK_tutorial_1.html
 * 1-3은 SPDK 스토리지 서버에서 진행
 
-1. SPDK Start 
+1. SPDK 실행
 ```shell
 [root@spdk spdk]# build/bin/nvmf_tgt
 [2022-05-12 15:48:15.906122] Starting SPDK v22.05-pre git sha1 68184a503 / DPDK 21.11.0 initialization...
@@ -239,9 +241,9 @@ NVMe0n1
 Started RPC http proxy server
 ```
 
-4. Worker 노드 설정
+4. 워커 노드 설정
 
-  * Worker 노드 전부 SPDK CSI 이미지를 생성 ,nvme-cli 모듈 설치
+  * 워커 노드 전부 SPDK CSI 이미지를 생성 ,nvme-cli 모듈 설치
   
 ```shell
 [root@worker1 ~]# docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock golang:1.14 bash -c "apt update && apt install -y make git docker.io && git clone https://review.spdk.io/gerrit/spdk/spdk-csi && cd spdk-csi && make image"
@@ -518,7 +520,7 @@ Node             SN                   Model                                    N
 
 마치며
 ---
-이번 포스팅에서는 쿠버네티스에서 파드의 데이터를 영구적으로 보관하기 위한 PV, PVC 개념과 정적으로 생성하는 방법과 동적으로 생성할 때 필요한 CSI Driver 중 SPDK CSI Driver를 알아봤습니다. 다음 시간엔 CSI Driver를 직접 만드는 시간을 가져보겠습니다.
+이번 포스팅에서는 쿠버네티스에서 파드의 데이터를 영구적으로 보관하기 위한 PV, PVC 개념과 정적으로 생성하는 방법과 동적으로 생성할 때 필요한 CSI 드라이버 중 SPDK CSI 드라이버를 알아봤습니다. 다음 시간엔 CSI 드라이버를 직접 만드는 시간을 가져보겠습니다.
 
 * 참고
   - https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/
