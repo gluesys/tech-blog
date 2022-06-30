@@ -1,0 +1,527 @@
+---
+layout:     post
+title:      "Kubernetes CSI 개념 정리 및 실습"
+date:       2022-06-21
+author:     김 재환 (jhkim@gluesys.com)
+categories: blog
+tags:       [Kubernetes, CSI, NFS-CSI, SPDK-CSI, Gluster-CSI, Kadalu]
+cover:      "/assets/CSI_maincover.jpg"
+main:       "/assets/CSI_maincover.jpg"
+---
+
+최근 클러스터 환경에서 많이 사용하는 쿠버네티스에서 스토리지를 어떻게 사용하는 지 알아보겠습니다. 
+
+기본적으로 컨테이너 내에 있는 데이터는 임시적이며, 컨테이너가 비정상적으로 종료됐을 때 데이터가 날라가거나 파드 내 컨테이너간 파일을 공유할 때 문제가 생깁니다.
+
+위의 문제들을 해결하기 위해 쿠버네티스에서는 `볼륨 추상화`를 사용합니다.
+
+도커에서도 볼륨이라는 개념이라는 개념이 있지만, 볼륨 드라이버 기능이 제한적이며 관리도 잘 이루어지지 않습니다.
+
+쿠버네티스에서는 다양한 유형의 볼륨을 지원하며, 파드는 여러 볼륨 유형을 동시에 사용할 수 있습니다.
+
+볼륨 유형
+---
+  * emptyDir
+  * hostPath
+  * awsElasticBlockStore
+  * azureDisk
+  * cephfs
+  * cinder
+  * gcePersistentDisk
+  * glusterfs
+  * iSCSI
+  * nfs
+  * rbd
+
+위의 볼륨 유형 중 emptyDir는 파드가 노드에 할당될 때 생성되며 파드가 노드에서 제거되면 데이터가 영구적으로 삭제됩니다.
+
+PV / PVC
+---
+
+  - PV(PersistentVolume)
+  
+    pv는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 스토리지입니다.
+
+  - PVC(PersistentVolumeClaim)
+  
+    pvc는 사용자가 PV에 요구하는 스펙입니다. 사용하려는 용량, 접근 모드 등을 PV에 요청합니다.
+
+  - Life Cycle
+  
+    ![Alt_text](/assets/pv-pvc-lifecycle.jpg)
+    <center>그림 1. PV-PVC Lifecycle</center>
+  
+    - Provisioning
+      
+      PV를 만드는 단계입니다.  
+      이 단계에서는 PV를 미리 만들고 사용하는 `정적(static)` 방법과 요청이 있을 때 PV를 만드는 `동적(dynamic)` 방법이 있습니다
+    
+    - Binding
+      
+      위에서 만든 PV를 PVC와 연결하는 단계입니다.
+      PVC에서 원하는 스토리지 용량과 접근 방법에 대응되는 PV와 연결되는데 대응되는 PV가 없으면 대응되는 PV가 생길 때까지 대기합니다.
+      
+      PV와 PVC는 1:1 관계이므로, PVC 하나가 여러 개의 PV에 할당될 순 없습니다.
+    
+    - Using
+      
+      PVC는 파드에 설정되고 파트는 PVC를 볼륨으로 인식하여 사용하는 단계입니다.
+    
+    - Reclaiming
+      
+      사용이 끝난 PVC는 삭제되고 PVC가 사용하던 PV를 초기화하는 단계입니다. 
+      
+      이 과정에는 `Retain`, `Delete`, `Recycle`의 3가지 정책이 있습니다. 
+      
+        ```
+        Retain : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지 
+      
+        Delete : PVC가 삭제될 때 대응되는 PV도 같이 삭제
+      
+        Recycle : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다림
+        ```
+
+PVC, PV 실습
+---
+1. PVC Yaml 파일 작성(test_pvc.yaml)
+  ```yaml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: test-pvc
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: 1Gi
+    selector:
+      matchLabels:
+        name: test-pv
+  ```
+2. PVC 생성
+
+  ```Shell
+  [root@master ~]# kubectl create -f test_pvc.yaml
+  [root@master ~]# kubectl get pvc
+  NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+  test-pvc        Pending                                             1Gi        RWX                                  1s
+
+  ```
+
+3. PV Yaml 파일 작성(test_pv.yaml)
+  ```yaml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: test-pv
+    labels:
+      name: test-pv
+  spec:
+    capacity:
+      storage: 1Gi
+    accessModes:
+    - ReadWriteMany
+    nfs:
+      server: 192.168.x.x
+      path: /testPath
+  ```
+  
+4. PV 생성
+  ```Shell
+  [root@master ~]# kubectl create -f test-pv.yaml
+  [root@master ~]# kubectl get pv
+  NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS         REASON   AGE
+  test-pv                                    1Gi        RWX            Delete           Bound    default/test-pvc                                       1s
+  [root@master ~]# kubectl get pvc
+  NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+  test-pvc        bound    test-pv                                    1Gi        RWX                                 32s
+
+  ```
+SC(Storage Class)
+---
+위에서 PVC를 생성하고 PVC에 맞게 정적 방법으로 PV를 생성하여 PV에 연결하는 걸 실습해봤습니다.
+
+자~ 이제 관리자 입장에서 생각해봅시다. 
+
+사용자가 파드에 사용할 PVC를 생성했습니다. 이 때 관리자는 사용자가 PVC를 사용할 수 있도록 대응되는 PV를 만드는데 사용자가 적으면 대응되는 PV 만드는건 어렵지 않습니다. 하지만 사용자가 많아 PVC 요청이 많고 요청하는 시간이 제각각이라면 PVC에 해당되는 PV를 하나하나 만드는 것도 힘들 뿐 아니라 24시간 항시 PVC 요청을 확인하고 만들 수 도 없습니다. 또한 사용자들도 파드를 사용하기 위해 PV가 만들어지길 기다려야하고 그 시간이 길어지면 불만이 생길겁니다.
+위와 같은 상황을 위해 쿠버네티스는 동적 프로비저닝을 제공합니다!!
+
+파드가 볼륨을 사용하기 위한 단계는 아래와 같습니다.
+
+``` PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> POD에 PVC 할당 ```
+
+동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 provisioner가 PVC 생성 모니터링, PV 생성을 담당합니다.
+스토리지 클래스에서 사용하는 provisioner는 CSI Driver로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI Driver를 사용하거나 외부의 CSI Driver를 사용할 수 있습니다.
+
+CSI(Container Storage Instance) Driver
+---
+
+![Alt_text](/assets/csi-plugin.jpg)
+<center>그림 2. CSI Plugin</center>
+
+- Kubernetes CSI Plugin
+
+  쿠버네티스 CSI은 기본적으로 `Provsioner`, `Attacher`, `Controller`, `NodeServer`로 이루어져 있습니다.
+  
+  - Provisioner
+  
+    `Provisioner`는 클러스터에 PVC가 생성되는 걸 모니터링하고 있다가 PVC가 생성되면 PV를 생성하는 걸 담당합니다.
+    
+  - Attacher
+  
+    `Attacher`는 파드가 PVC를 사용하려할 때 해당 컨테이너에서 PV를 마운트하는 걸 담당합니다.
+    
+  - Controller
+  
+    `Controller`는 쿠버네티스 컨테이너에서 사용할 볼륨을 스토리지 서버에서 생성 및 삭제하는 걸 담당합니다.
+    
+  - NodeServer
+  
+    `NodeServer`는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.
+    
+SPDK CSI Driver
+---
+많은 CSI Driver 중 저번에 다뤄서 조금은 친숙한 `SPDK`에서 제공하는 SPDK CSI Driver를 알아보겠습니다.
+
+![Alt_text](/assets/SPDK_CSI.png)
+<center>그림 3. SPDK CSI Driver Work Flow</center>
+
+
+[그림 3]에서 보는 것처럼 SPDK Controller는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
+
+PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 선택한 후 요청한 디스크 용량을 가지는 `Logical Volume`을 만듭니다. 만들어진 `Logical Volume`을 NVMe-oF Target을 만드는 것으로 Controller의 일이 끝납니다.
+
+이후 만들어진 PVC를 사용하는 POD가 생성되거나 대기상태일 때 POD가 배포되는 Worker 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 Worker 노드볼륨에 마운트하고 해당 볼륨을 POD에 마운트 시킵니다.
+
+실습
+---
+
+* SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태 ( 참조 : https://tech.gluesys.com/blog/2022/04/19/SPDK_tutorial_1.html
+* 1-3은 SPDK 스토리지 서버에서 진행
+
+1. SPDK Start 
+```shell
+[root@spdk spdk]# build/bin/nvmf_tgt
+[2022-05-12 15:48:15.906122] Starting SPDK v22.05-pre git sha1 68184a503 / DPDK 21.11.0 initialization...
+[2022-05-12 15:48:15.906269] [ DPDK EAL parameters: [2022-05-12 15:48:15.906319] nvmf [2022-05-12 15:48:15.906346] --no-shconf [2022-05-12 15:48:15.906367] -c 0x1 [2022-05-12 15:48:15.906390] --huge-unlink [2022-05-12 15:48:15.906407] --log-level=lib.eal:6 [2022-05-12 15:48:15.906424] --log-level=lib.cryptodev:5 [2022-05-12 15:48:15.906443] --log-level=user1:6 [2022-05-12 15:48:15.906458] --iova-mode=pa [2022-05-12 15:48:15.906474] --base-virtaddr=0x200000000000 [2022-05-12 15:48:15.906487] --match-allocations [2022-05-12 15:48:15.906503] --file-prefix=spdk_pid28416 [2022-05-12 15:48:15.906520] ]
+EAL: No free 2048 kB hugepages reported on node 1
+EAL: No available 1048576 kB hugepages reported
+TELEMETRY: No legacy callbacks, legacy socket not created
+[2022-05-12 15:48:15.974793] app.c: 603:spdk_app_start: *NOTICE*: Total cores available: 1
+[2022-05-12 15:48:16.134453] reactor.c: 947:reactor_run: *NOTICE*: Reactor started on core 0
+[2022-05-12 15:48:16.134551] accel_engine.c: 842:sw_accel_engine_init: *NOTICE*: Accel framework software engine initialized.
+```
+
+2. Logical Volume Store 생성
+
+  연결되어 있는 NVMe 중 Logical Volume Store로 사용할 NVMe를 선택하여 SPDK에 등록한 뒤 Logical Volume Store를 생성합니다.
+```shell
+[root@spdk spdk]# lspci | grep SSD
+10000:82:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10001:81:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10001:83:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10001:84:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10002:02:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10003:01:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10003:03:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+10003:04:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+[root@spdk spdk]# sudo scripts/rpc.py bdev_nvme_attach_controller -b NVMe0 -t PCIe -a 10000:82:00.0
+NVMe0n1
+[root@spdk spdk]# sudo scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs_1
+76d6ec0d-a13f-4bc7-a248-00e4b9f87dcd
+```
+
+3. SPDK HTTP Proxy 시작
+```shell
+# rpc_http_proxy.py [spdk-server-ip] [port] [username] [password]
+[root@spdk spdk]# sudo scripts/rpc_http_proxy.py 192.168.10.118 9009 root gluesys
+Started RPC http proxy server
+```
+
+4. Worker 노드 설정
+
+  * Worker 노드 전부 SPDK CSI 이미지를 생성 ,nvme-cli 모듈 설치
+  
+```shell
+[root@worker1 ~]# docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock golang:1.14 bash -c "apt update && apt install -y make git docker.io && git clone https://review.spdk.io/gerrit/spdk/spdk-csi && cd spdk-csi && make image"
+...
+...
+=== running docker build
+Sending build context to Docker daemon  16.18MB
+Step 1/6 : FROM alpine:3.8
+ ---> c8bccc0af957
+Step 2/6 : LABEL maintainers "SPDK-CSI Authors"
+ ---> Running in 1427a677fa66
+ ---> ca9dbdd54a02
+Removing intermediate container 1427a677fa66
+Step 3/6 : LABEL description "SPDK-CSI Plugin"
+ ---> Running in d1ba6e722919
+ ---> 0ef066ecb079
+Removing intermediate container d1ba6e722919
+Step 4/6 : COPY spdkcsi /usr/local/bin/spdkcsi
+ ---> 1293ad3ef3cd
+Removing intermediate container 1fd591bb9c07
+Step 5/6 : RUN apk add nvme-cli open-iscsi e2fsprogs xfsprogs blkid
+ ---> Running in a633714753e3
+
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/community/x86_64/APKINDEX.tar.gz
+(1/11) Installing libuuid (2.32-r0)
+(2/11) Installing libblkid (2.32-r0)
+(3/11) Installing blkid (2.32-r0)
+(4/11) Installing libcom_err (1.44.2-r2)
+(5/11) Installing e2fsprogs-libs (1.44.2-r2)
+(6/11) Installing e2fsprogs (1.44.2-r2)
+(7/11) Installing nvme-cli (1.4-r0)
+(8/11) Installing open-isns-lib (0.97-r3)
+(9/11) Installing libmount (2.32-r0)
+(10/11) Installing open-iscsi (2.0.874-r0)
+(11/11) Installing xfsprogs (4.16.1-r1)
+Executing busybox-1.28.4-r3.trigger
+OK: 9 MiB in 24 packages
+ ---> d55f7c1fb00a
+Removing intermediate container a633714753e3
+Step 6/6 : ENTRYPOINT /usr/local/bin/spdkcsi
+ ---> Running in 6048c9d80cb2
+ ---> c2f69de4cc2c
+Removing intermediate container 6048c9d80cb2
+Successfully built c2f69de4cc2c
+[root@worker1 ~]# docker images | grep spdk
+spdkcsi/spdkcsi                                    canary              c2f69de4cc2c        49 seconds ago      26.2 MB
+[root@worker1 ~]# yum install -y nvme-cli
+[root@worker1 ~]# modprobe nvme-tcp
+```
+
+5. 쿠버네티스 Master 노드 설정
+
+* SPDK CSI 배포 파일 다운
+```shell
+[root@master ~]# git clone https://review.spdk.io/gerrit/spdk/spdk-csi
+[root@master ~]# cd spdk-csi/deploy/kubernetes/
+[root@master kubernetes]# ls
+config-map.yaml  controller-rbac.yaml  controller.yaml  deploy.sh  ex_pod.yaml  node-rbac.yaml  node.yaml  secret.yaml  snapshotclass.yaml  snapshot.yaml  storageclass.yaml  test_pod.yaml  testpod.yaml  test_pvc.yaml
+```
+* config yaml 파일 수정
+```yaml
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) Arm Limited and Contributors
+# Copyright (c) Intel Corporation
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spdkcsi-cm
+data:
+  # rpcURL: spdk json rpc target - http://[SPDK Server IP]:[SPDK http proxy port]
+  # targetType: nvme-rdma, nvme-tcp, iscsi
+  # targetAddr: target service IP
+  config.json: |-
+    {
+      "nodes": [
+        {
+          "name": "spdk-1",
+          "rpcURL": "http://192.168.10.118:9009",  
+          "targetType": "nvme-tcp",
+          "targetAddr": "192.168.10.118" # SPDK Server IP
+        }
+      ]
+    }
+```
+* Secret yaml 수정
+```yaml
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) Arm Limited and Contributors
+# Copyright (c) Intel Corporation
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spdkcsi-secret
+stringData:
+  # Specify node specific token with item "name" matches ConfigMap.
+  # {
+  #   "name": "spdk-testnode",
+  #   "username": "myuser",
+  #   "password": "mypass"
+  # }
+  secret.json: |-
+    {
+      "rpcTokens": [
+        {
+          "name": "spdk-1",
+          "username": "root",
+          "password": "gluesys"
+        }
+      ]
+    }
+```
+* SPDK CSI Driver 배포
+```shell
+[root@master kubernetes]# ./deploy.sh
+=== kubectl apply -f config-map.yaml
+configmap/spdkcsi-cm created
+=== kubectl apply -f secret.yaml
+secret/spdkcsi-secret created
+=== kubectl apply -f controller-rbac.yaml
+serviceaccount/spdkcsi-controller-sa created
+clusterrole.rbac.authorization.k8s.io/spdkcsi-provisioner-role created
+clusterrolebinding.rbac.authorization.k8s.io/spdkcsi-provisioner-binding created
+clusterrole.rbac.authorization.k8s.io/spdkcsi-attacher-role created
+clusterrolebinding.rbac.authorization.k8s.io/spdkcsi-attacher-binding created
+=== kubectl apply -f node-rbac.yaml
+serviceaccount/spdkcsi-node-sa created
+=== kubectl apply -f controller.yaml
+statefulset.apps/spdkcsi-controller created
+=== kubectl apply -f node.yaml
+daemonset.apps/spdkcsi-node created
+=== kubectl apply -f storageclass.yaml
+storageclass.storage.k8s.io/spdkcsi-sc created
+=== kubectl apply -f snapshotclass.yaml
+error: unable to recognize "snapshotclass.yaml": no matches for kind "VolumeSnapshotClass" in version "snapshot.storage.k8s.io/v1beta1"
+[root@master kubernetes]# kubectl get pods
+NAME                   READY   STATUS    RESTARTS   AGE
+spdkcsi-controller-0   4/4     Running   0          60s
+spdkcsi-node-jqz6w     2/2     Running   0          60s
+spdkcsi-node-x2n72     2/2     Running   0          60s
+```
+* PVC&POD 생성 및 확인
+```shell
+[root@master kubernetes]# kubectl create -f testpod.yaml
+persistentvolumeclaim/spdkcsi-pvc created
+pod/spdkcsi-test created
+[root@master kubernetes]# kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   REASON   AGE
+pvc-645738ac-e166-426d-9ae6-6bca7f137711   256Mi      RWO            Delete           Bound    default/spdkcsi-pvc   spdkcsi-sc              30s
+[root@master kubernetes]# kubectl get pvc
+NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+spdkcsi-pvc   Bound    pvc-645738ac-e166-426d-9ae6-6bca7f137711   256Mi      RWO            spdkcsi-sc     32s
+[root@master kubernetes]# kubectl get pods -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP              NODE      NOMINATED NODE   READINESS GATES
+spdkcsi-controller-0   4/4     Running   0          5m10s   192.168.10.82   worker1   <none>           <none>
+spdkcsi-node-jqz6w     2/2     Running   0          5m10s   192.168.10.82   worker1   <none>           <none>
+spdkcsi-node-x2n72     2/2     Running   0          5m10s   192.168.10.81   master    <none>           <none>
+spdkcsi-test           1/1     Running   0          52s     10.36.0.2       worker1   <none>           <none>
+[root@master kubernetes]# kubectl exec -it spdkcsi-test -- mount | grep spdk
+/dev/disk/by-id/nvme-2a208f5b-a9fd-4dd7-933c-99783e3ddbfb_spdkcsi-sn on /spdkvol type xfs (rw,seclabel,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+#Worker Node
+[root@worker1 ~]# nvme list
+Node             SN                   Model                                    Namespace Usage                      Format           FW Rev
+---------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1     spdkcsi-sn           2a208f5b-a9fd-4dd7-933c-99783e3ddbfb     1         268.44  MB / 268.44  MB    512   B +  0 B   22.05
+```
+* SPDK Storage 서버 확인
+```
+[root@spdk spdk]# sudo scripts/rpc.py bdev_get_bdevs
+[
+  {
+    "name": "NVMe0n1",
+    "aliases": [
+      "19eab925-666a-48fe-b633-15310bd007dd"
+    ],
+    "product_name": "NVMe disk",
+    "block_size": 512,
+    "num_blocks": 3125627568,
+    "uuid": "19eab925-666a-48fe-b633-15310bd007dd",
+    "assigned_rate_limits": {
+      "rw_ios_per_sec": 0,
+      "rw_mbytes_per_sec": 0,
+      "r_mbytes_per_sec": 0,
+      "w_mbytes_per_sec": 0
+    },
+    "claimed": true,
+    "zoned": false,
+    "supported_io_types": {
+      "read": true,
+      "write": true,
+      "unmap": true,
+      "write_zeroes": true,
+      "flush": true,
+      "reset": true,
+      "nvme_admin": true,
+      "nvme_io": true
+    },
+    "driver_specific": {
+      "nvme": [
+        {
+          "pci_address": "10000:82:00.0",
+          "trid": {
+            "trtype": "PCIe",
+            "traddr": "10000:82:00.0"
+          },
+          "ctrlr_data": {
+            "cntlid": 3,
+            "vendor_id": "0x1c58",
+            "model_number": "HUSPR3216ADP301",
+            "serial_number": "STM0001B4236",
+            "firmware_revision": "KMGNP120",
+            "oacs": {
+              "security": 0,
+              "format": 1,
+              "firmware": 1,
+              "ns_manage": 0
+            },
+            "multi_ctrlr": false,
+            "ana_reporting": false
+          },
+          "vs": {
+            "nvme_version": "1.1"
+          },
+          "ns_data": {
+            "id": 1,
+            "can_share": false
+          }
+        }
+      ],
+      "mp_policy": "active_passive"
+    }
+  },
+  {
+    "name": "2a208f5b-a9fd-4dd7-933c-99783e3ddbfb",
+    "aliases": [
+      "lvs_1/csi-eb26746f-7554-481b-8e24-957730123992"
+    ],
+    "product_name": "Logical Volume",
+    "block_size": 512,
+    "num_blocks": 524288,
+    "uuid": "2a208f5b-a9fd-4dd7-933c-99783e3ddbfb",
+    "assigned_rate_limits": {
+      "rw_ios_per_sec": 0,
+      "rw_mbytes_per_sec": 0,
+      "r_mbytes_per_sec": 0,
+      "w_mbytes_per_sec": 0
+    },
+    "claimed": true,
+    "zoned": false,
+    "supported_io_types": {
+      "read": true,
+      "write": true,
+      "unmap": true,
+      "write_zeroes": true,
+      "flush": false,
+      "reset": true,
+      "nvme_admin": false,
+      "nvme_io": false
+    },
+    "driver_specific": {
+      "lvol": {
+        "lvol_store_uuid": "76d6ec0d-a13f-4bc7-a248-00e4b9f87dcd",
+        "base_bdev": "NVMe0n1",
+        "thin_provision": true,
+        "snapshot": false,
+        "clone": false
+      }
+    }
+  }
+]
+```
+
+마치며
+---
+이번 포스팅에서는 쿠버네티스에서 파드의 데이터를 영구적으로 보관하기 위한 PV, PVC 개념과 정적으로 생성하는 방법과 동적으로 생성할 때 필요한 CSI Driver 중 SPDK CSI Driver를 알아봤습니다. 다음 시간엔 CSI Driver를 직접 만드는 시간을 가져보겠습니다.
+
+* 참고
+  - https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/
+  - https://kubernetes-csi.github.io/docs/drivers.html
+  - https://kubernetes.io/ko/docs/concepts/storage/storage-classes/
+  - https://github.com/spdk/spdk-csi
