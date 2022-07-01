@@ -110,7 +110,7 @@ main:       "/assets/lustre_maincover.jpg"
 ### Overstriping
 
 ![Overstriping Example](/assets/overstriping.PNG)
-<center>그림 4. Overstriping Example</center>
+<center>그림 4. Overstriping 예시</center>
 
 &nbsp;
 
@@ -132,7 +132,7 @@ main:       "/assets/lustre_maincover.jpg"
 [그림 5]에서 보시다시피, 단일 스트라이핑은 노드 수가 많아도 일관적으로 낮은 성능을 보이는 반면, 오버스트라이핑으로는 최대 8개 노드까지 성능 향상을 보이고 있습니다.
 
 ![Overstriping Performance](/assets/overstriping2.PNG)
-<center>그림 5. overstriping Performance</center>
+<center>그림 5. Overstriping 이점</center>
 
 &nbsp;
 
@@ -220,7 +220,7 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 &nbsp;
 
 ![GPU Direct Storage](/assets/GPU_Direct_Storage.PNG)
-<center>그림 8. GPU Direct Storage</center>
+<center>그림 8. GPU Direct Storage 아키텍처</center>
 
 &nbsp;
 
@@ -239,7 +239,7 @@ GDS의 이점은 다음과 같습니다.
 * CPU가 데이터를 이동하는 데 사용되는 경우 전체 CPU 사용률이 증가하고 CPU의 나머지 작업을 방해합니다. GDS를 사용하면 CPU의 워크로드가 줄어들고 컴퓨팅 및 메모리 대역폭 병목 현상을 피할 수 있습니다.
 * 가장 명백하게 드라나는 이점은 전송 시간과 대역폭의 약 2배 상승입니다.
 
-**추신: GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
+**※ GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
 &nbsp;
 
 # 마치며
