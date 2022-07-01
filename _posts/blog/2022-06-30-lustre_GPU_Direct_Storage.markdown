@@ -103,7 +103,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 * PCC 이점
  
-클라이언트에서 로컬 저장장치를 캐시로 이용하게 되면 네트워크 지연이 없고 다른 클라이언트에 대한 오버헤드가 없습니다. 또한, 로컬 저장장치를 I/O 속도가 빠른 `SSD or NVMe SSD`를 통해 좋은 성능을 낼 수 있습니다. SSD는 모든 종류의 SSD가 사용가능하며, 캐시 장치로 이용할 수 있습니다. `PCC`를 통해 작거나 임의의 I/O를 `OST`로 저장할 필요 없이 로컬 캐시 장치에 저장하여 사용하면 `OST`용량의 부담을 줄일 수 있는 장점이 있습니다.
+클라이언트에서 로컬 저장장치를 캐시로 이용하게 되면 네트워크 지연이 없고 다른 클라이언트에 대한 오버헤드가 없습니다. 또한, 로컬 저장장치를 I/O 속도가 빠른 SSD or NVMe SSD[^1]를 통해 좋은 성능을 낼 수 있습니다. SSD는 모든 종류의 SSD가 사용가능하며, 캐시 장치로 이용할 수 있습니다. `PCC`를 통해 작거나 임의의 I/O를 `OST`로 저장할 필요 없이 로컬 캐시 장치에 저장하여 사용하면 `OST`용량의 부담을 줄일 수 있는 장점이 있습니다.
 
 &nbsp;
 
@@ -230,7 +230,7 @@ NVIDIA에서는 스토리지와 GPU 메모리간의 데이터 이동을 간소�
 GDS는 원격 또는 로컬 스토리지와 GPU 메모리 사이에 직접 접근할 수 있는 경로를 생성하는 기술입니다. CPU 메모리의 바운스 버퍼(Bounce Buffer)를 통해 추가 복사본을 만드는 불편한 작업을 하지않습니다. 여기서 바운스 버퍼는 GPU 및 스토리지와 같은 두 장치 간의 데이터 전송을 용이하게 하기위해 시스템 메모리의 임시 버퍼로 정의됩니다. GDS는 이런 과정을 하지않아 CPU에 부담을 주지 않고 GPU로 또는 GPU에서 직접 데이터를 전송할 수 있습니다. 
 
 GDS의 이점은 다음과 같습니다.
-* 대역폭을 높이고 대기 시간을 줄이며 CPU 및 GPU 처리량 부하를 줄입니다. 또한 스토리지 근처의 DMA 엔진이 데이터를 GPU 메모리로 직접 이동할 수 있습니다.
+* 대역폭을 높이고 대기 시간을 줄이며 CPU 및 GPU 처리량 부하를 줄입니다. 또한 스토리지 근처의 Direct Memory Access(DMA)[^2] 엔진이 데이터를 GPU 메모리로 직접 이동할 수 있습니다.
 * 바운스 버퍼를 사용하면 두 가지 복사 작업이 발생합니다.
   * 소스에서 바운스 버퍼로 데이터 복사
   * 바운스 버퍼에서 대상 장치로 다시 복사
@@ -248,7 +248,6 @@ GDS의 이점은 다음과 같습니다.
 
 참고
 ---
-&nbsp;
 
 * Introduction to Lustre - Lustre Wiki: https://wiki.lustre.org/Introduction_to_Lustre
 * Why use Lustre - Lustre whamcloud Wiki: https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre
@@ -268,7 +267,7 @@ GDS의 이점은 다음과 같습니다.
 
 각주
 ---
-&nbsp;
+
 [^1]: https://tech.gluesys.com/blog/2021/03/03/NVMe_1.html
 [^2]: https://en.wikipedia.org/wiki/Direct_memory_access
 [^3]: https://wiki.lustre.org/Lustre_2.15.0_Changelog
