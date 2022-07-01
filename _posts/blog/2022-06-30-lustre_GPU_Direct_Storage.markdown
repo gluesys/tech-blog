@@ -239,8 +239,7 @@ GDS의 이점은 다음과 같습니다.
 * CPU가 데이터를 이동하는 데 사용되는 경우 전체 CPU 사용률이 증가하고 CPU의 나머지 작업을 방해합니다. GDS를 사용하면 CPU의 워크로드가 줄어들고 컴퓨팅 및 메모리 대역폭 병목 현상을 피할 수 있습니다.
 * 가장 명백하게 드라나는 이점은 전송 시간과 대역폭의 약 2배 상승입니다.
 
-**GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
-
+**추신: GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
 &nbsp;
 
 # 마치며
@@ -249,6 +248,7 @@ GDS의 이점은 다음과 같습니다.
 
 참고
 ---
+&nbsp;
 
 * Introduction to Lustre - Lustre Wiki: https://wiki.lustre.org/Introduction_to_Lustre
 * Why use Lustre - Lustre whamcloud Wiki: https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre
@@ -268,7 +268,7 @@ GDS의 이점은 다음과 같습니다.
 
 각주
 ---
-
+&nbsp;
 [^1]: https://tech.gluesys.com/blog/2021/03/03/NVMe_1.html
 [^2]: https://en.wikipedia.org/wiki/Direct_memory_access
 [^3]: https://wiki.lustre.org/Lustre_2.15.0_Changelog
