@@ -225,9 +225,10 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 
 &nbsp;
 
-오늘날 많은 연산을 필요로 하는 빅데이터/AI,ML,HPC 애플리케이션을 위해 CPU에서 GPU 연산으로 변경됨에 따라, GPU I/O가 전체 애플리케이션 성능에 주요 병목 현상이 될 수 있습니다.
+빅데이터, 인공지능, HPC 애플리케이션은 많은 연산을 수행하므로 빠른 연산을 위하여 CPU가 아닌 GPU로 연산을 처리합니다. 하지만 현재 GPU를 사용할 때 I/O가 바로 GPU로 가는 것이 아니라
+CPU를 거치고 GPU로 가기때문에 연산을 처리하는 성능에 있어서 주요 병목 현상이 될 수 있습니다.
 
-NVIDIA에서는 스토리지와 GPU 메모리간의 데이터 이동을 간소화하고, 성능 병목 현상을 없애기 위해 `GDS(GPU Direct Storage)`를 만들었습니다.
+NVDIA는 위와 같은 문제를 해결하고 스토리지와 GPU 메모리간 데이터 이동을 간소화하기 위하여 `GDS(GPU Direct Storage)`를 만들었습니다.
 GDS는 원격 또는 로컬 스토리지와 GPU 메모리 사이에 직접 접근할 수 있는 경로를 생성하는 기술입니다. CPU 메모리의 바운스 버퍼(Bounce Buffer)를 통해 추가 복사본을 만드는 불편한 작업을 하지않습니다. 여기서 바운스 버퍼는 GPU 및 스토리지와 같은 두 장치 간의 데이터 전송을 용이하게 하기위해 시스템 메모리의 임시 버퍼로 정의됩니다. GDS는 이런 과정을 하지않아 CPU에 부담을 주지 않고 GPU로 또는 GPU에서 직접 데이터를 전송할 수 있습니다. 
 
 GDS의 이점은 다음과 같습니다.
@@ -253,6 +254,7 @@ GDS의 이점은 다음과 같습니다.
 * Introduction to Lustre - Lustre Wiki: https://wiki.lustre.org/Introduction_to_Lustre
 * Why use Lustre - Lustre whamcloud Wiki: https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre
 * Lustre Wiki Main Page - Lustre Wiki: https://wiki.lustre.org/Main_Page
+* What is Lustre - Blog: https://www.weka.io/learn/lustre-file-system-explained/
 * Introduction to Lustre & Lustre function - Blog: https://jaynamm.tistory.com/entry/Lustre-File-System
 * Introduction to HSM - Git hub: https://github.com/DDNStorage/lustre_manual_markdown/blob/master/03.15-Hierarchical%20Storage%20Management%20(HSM).md
 * What is HSM - Blog: https://www.sungardas.com/en-us/blog/what-is-hierarchical-storage-management/
