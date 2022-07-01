@@ -9,18 +9,17 @@ cover:      "/assets/lustre_maincover.jpg"
 main:       "/assets/lustre_maincover.jpg"
 ---
 
+&nbsp;
+
 이번 장에서는 `고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터에서 사용될 `러스터 파일시스템(Lustre File System)`과 `GPU Direct Storage(GDS)`에대해 간략하게 알아보겠습니다.
 
 # Lustre File System(Lustre FS) 소개
 
-`HPC` 클러스터는 대규모 애플리케이션에 최고의 컴퓨팅 성능을 제공하기 위해 사용됩니다. `HPC` 클러스터에서는 많은 양의 데이터를 처리합니다. 꽤 오랜 시간 동안 프로세서와 메모리의 속도는 급격히 증가했지만 I/O 시스템의 성능은 이보다 뒤처지고 있습니다. 따라서 상대적으로 성능이 떨어지는 I/O 성능은 클러스터의 전체 성능을 저하 시킬 수 있습니다. 이를 위해  lustre 파일시스템을 사용합니다.
- 
-`러스터(Lustre)`는 병렬 분산 파일 시스템으로 주로 고성능 컴퓨팅의 대용량 파일 시스템으로 사용되고 있습니다. 
-러스터의 이름은 `Linux`와 `Cluster`의 혼성어에서 유래됐습니다. 
+`HPC` 클러스터는 대규모 애플리케이션에 최고의 컴퓨팅 성능을 제공하기 위해 사용됩니다. `HPC` 클러스터에서는 많은 양의 데이터를 처리합니다. 꽤 오랜 시간 동안 프로세서와 메모리의 속도는 급격히 증가했지만, I/O 시스템의 성능은 이보다 뒤처지고 있습니다. 따라서 상대적으로 성능이 떨어지는 I/O 성능은 클러스터의 전체 성능을 저하 시킬 수 있습니다. 이를 위해 러스터 파일시스템을 사용합니다.
 
-러스터는 GNU GPL 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터 시스템용 고성능 파일 시스템입니다. 
+`러스터(Lustre)`는 분산 파일시스템의 한 유형인 병렬 파일시스템입니다. 러스터와 일반 분산 시스템의 차이점은 데이터와 메타데이터가 저장되는 방식에 있습니다. 분산 파일시스템은 병렬 파일시스템과 마찬가지로 단일 전역 네임스페이스를 지원하지만, 병렬 파일시스템은 파일을 데이터 블록으로 분할하고 병렬로 쓰고 읽을 수 있는 여러 스토리지 서버에 파일 데이터를 분산합니다. 메타데이터는 일반적으로 더욱 효율적인 파일 조회를 위해 별도의 메타데이터 서버에 저장됩니다. 반면 분산 파일시스템은 표준 네트워크 파일 액세스를 사용하며 전체 파일 데이터와 메타데이터는 단일 스토리지 컨트롤러에 의해 관리됩니다. 대역폭을 많이 사용하는 워크로드의 경우 이러한 단일 액세스 지점이 성능의 병목 현상이 됩니다. 러스터 병렬 파일 시스템은 이러한 단일 컨트롤러 병목 현상을 겪지는 않지만, 병렬 액세스를 제공하는데 필요한 아키텍처가 상대적으로 복잡합니다. 또한, 러스터는 GNU GPL 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터까지 사용되는 고성능 파일 시스템입니다. 리눅스 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다. 
 
-러스터는 리눅스 기반 운영체제에서 실행되며 `클라이언트(Client)-서버(Server) 네트워크 아키텍처`를 사용합니다.
+러스터라는 이름의 유래는 `Linux`와 `Clustre`의 혼성어로 탄생하였습니다.
 
 &nbsp;
 
@@ -29,6 +28,8 @@ main:       "/assets/lustre_maincover.jpg"
 <center>그림 1. 러스터 파일시스템 아키텍처 </center>
 
 &nbsp;
+
+아래는 [그림 1]에서 볼 수 있는 러스터를 구성하는데 필요한 각 구성요소의 역할을 설명합니다. 
 
 * MGS(Management Server)
   * 모든 러스터 파일 시스템에 대한 구성 정보를 클러스터에 저장하고 이 정보를 다른 러스터 호스트에 제공합니다.
@@ -58,10 +59,10 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-# 러스터 파일시스템 특징 및 기능
+## 러스터 파일시스템 특징 및 기능
 &nbsp;
 
-## HSM(Hierarchical Storage Management)
+### HSM(Hierarchical Storage Management)
 
 `HSM`은 고가의 저장매체와 저가의 저장매체 간의 데이터를 자동으로 이동하는 데이터 저장 기술입니다.
 
@@ -89,7 +90,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-## PCC(Persistent Client Cache)
+### PCC(Persistent Client Cache)
 
 ![pcc](/assets/PCC_Architecture.png)
 <center>그림 3. Persistent Client Cache </center>
@@ -106,7 +107,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-## Overstriping
+### Overstriping
 
 ![Overstriping Example](/assets/overstriping.PNG)
 <center>그림 4. Overstriping Example</center>
@@ -135,7 +136,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-## DoM(Data-On-MDT)
+### DoM(Data-On-MDT)
 
 러스터 파일시스템은 현재 `대용량 파일에 최적화`되어 있습니다. 이로 인해 파일 크기가 `너무 작은 단일 파일일 경우` 성능이 크게 저하되는 문제가 있습니다. `DoM`은 작은 파일을 `MDT`에 저장하여 이러한 문제를 해결합니다. `DoM`을 이용해서 MDT에 작은 파일을 저장하였을 때 추가적으로 OST에 접근할 필요가 없어 작은 I/O에 대한 성능이 향상됩니다.
 
@@ -191,7 +192,7 @@ test2_domfile
 
 &nbsp;
 
-## DNE(Distributed Namespace Environment)
+### DNE(Distributed Namespace Environment)
 
 ![DNE](/assets/DNE.PNG)
 <center>그림 7. Distributed Namespace Environment</center>
