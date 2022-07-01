@@ -11,7 +11,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-이번 장에서는 `고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터에서 사용될 `러스터 파일시스템(Lustre File System)`과 `GPU Direct Storage(GDS)`에대해 간략하게 알아보겠습니다.
+이번 장에서는 `고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터에서 사용될 `러스터 파일시스템(Lustre File System)`과 `GDS(GPU Direct Storage)`에대해 간략하게 알아보겠습니다.
 
 # 러스터 파일 소개
 
@@ -226,7 +226,7 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 
 오늘날 많은 연산을 필요로 하는 빅데이터/AI,ML,HPC 애플리케이션을 위해 CPU에서 GPU 연산으로 변경됨에 따라, GPU I/O가 전체 애플리케이션 성능에 주요 병목 현상이 될 수 있습니다.
 
-NVIDIA에서는 스토리지와 GPU 메모리간의 데이터 이동을 간소화하고, 성능 병목 현상을 없애기 위해 `GPU Direct Storage(GDS)`를 만들었습니다.
+NVIDIA에서는 스토리지와 GPU 메모리간의 데이터 이동을 간소화하고, 성능 병목 현상을 없애기 위해 `GDS(GPU Direct Storage)`를 만들었습니다.
 GDS는 원격 또는 로컬 스토리지와 GPU 메모리 사이에 직접 접근할 수 있는 경로를 생성하는 기술입니다. CPU 메모리의 바운스 버퍼(Bounce Buffer)를 통해 추가 복사본을 만드는 불편한 작업을 하지않습니다. 여기서 바운스 버퍼는 GPU 및 스토리지와 같은 두 장치 간의 데이터 전송을 용이하게 하기위해 시스템 메모리의 임시 버퍼로 정의됩니다. GDS는 이런 과정을 하지않아 CPU에 부담을 주지 않고 GPU로 또는 GPU에서 직접 데이터를 전송할 수 있습니다. 
 
 GDS의 이점은 다음과 같습니다.
