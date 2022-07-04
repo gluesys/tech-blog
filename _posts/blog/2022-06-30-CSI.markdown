@@ -4,10 +4,12 @@ title:      "Kubernetes CSI 개념 정리 및 실습"
 date:       2022-06-21
 author:     김 재환 (jhkim@gluesys.com)
 categories: blog
-tags:       [Kubernetes, CSI, NFS-CSI, SPDK-CSI, Gluster-CSI, Kadalu]
+tags:       [Kubernetes, PV, PVC, SC, CSI, SPDK ]
 cover:      "/assets/CSI_maincover.jpg"
 main:       "/assets/CSI_maincover.jpg"
 ---
+
+## 인사말
 
 최근 클러스터 환경에서 많이 사용하는 쿠버네티스에서 스토리지를 어떻게 사용하는 지 알아보겠습니다. 
 
@@ -20,7 +22,6 @@ main:       "/assets/CSI_maincover.jpg"
 쿠버네티스에서는 다양한 유형의 볼륨을 지원하며, 파드는 여러 볼륨 유형을 동시에 사용할 수 있습니다.
 
 파드가 사용할 수 있는 볼륨 유형은 다음과 같습니다: 
-
   * emptyDir
   * hostPath
   * awsElasticBlockStore
@@ -33,21 +34,21 @@ main:       "/assets/CSI_maincover.jpg"
   * nfs
   * rbd
 
-위의 볼륨 유형 중 emptyDir는 파드가 노드에 할당될 때 생성되며 파드가 노드에서 제거되면 데이터가 영구적으로 삭제됩니다.
+위의 볼륨 유형 중 `emptyDir`는 파드가 노드에 할당될 때 생성되며 파드가 노드에서 제거되면 데이터가 영구적으로 삭제됩니다.
 
 &nbsp;
 
 ## 쿠버네티스 스토리지
 
-쿠버네티스 사용자 및 관리자에게 스토리지 사용 방법에서부터 제공 방법에 대한 세부 사항을 추상화하는 퍼시스턴트 볼륨(Persistent Volume, 이하 pv), 퍼시스턴트볼륨클레임(Persistent Volume Claim,이하 pvc)라는 두 가지 API 리소스를 사용한다.
+쿠버네티스 사용자 및 관리자에게 스토리지 사용 방법에서부터 제공 방법에 대한 세부 사항을 추상화하는 퍼시스턴트 볼륨(Persistent Volume, 이하 PV), 퍼시스턴트볼륨클레임(Persistent Volume Claim,이하 PVC)라는 두 가지 API 리소스를 사용한다.
 
   - PV
   
-    pv는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 
+    PV는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 
 
   - PVC
   
-    pvc는 사용자가 PV에 요구하는 스펙입니다. 사용하려는 용량, 접근 모드 등을 PV에 요청합니다.
+    PVC는 사용자가 PV에 요구하는 스펙입니다. 사용하려는 용량, 접근 모드 등을 PV에 요청합니다.
 
   - Life Cycle
     &nbsp; 
@@ -71,27 +72,25 @@ main:       "/assets/CSI_maincover.jpg"
     
     - Using
       
-      PVC는 파드에 설정되고 파트는 PVC를 볼륨으로 인식하여 사용하는 단계입니다.
+      PVC는 파드에 설정되고 파드는 PVC를 볼륨으로 인식하여 사용하는 단계입니다.
     
     - Reclaiming
       
       사용이 끝난 PVC는 삭제되고 PVC가 사용하던 PV를 초기화하는 단계입니다. 
       
-      이 과정에는 `Retain`, `Delete`, `Recycle`의 3가지 정책이 있습니다. 
+      이 과정에는 `Retain`, `Delete`, `Recycle`의 3가지 정책이 있습니다.
+       
+      * Retain : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지 
       
-        ```
-        Retain : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지 
+      * Delete : PVC가 삭제될 때 대응되는 PV도 같이 삭제
       
-        Delete : PVC가 삭제될 때 대응되는 PV도 같이 삭제
-      
-        Recycle : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다림
-        ```
+      * Recycle : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다림
+        
 &nbsp;
 
 ## 정적 프로비저닝 실습
 
-* PVC Yaml 파일 작성(test_pvc.yaml)
-* 
+* PVC YAML 파일 작성(test_pvc.yaml)
   ```console
   apiVersion: v1
   kind: PersistentVolumeClaim
@@ -118,7 +117,7 @@ main:       "/assets/CSI_maincover.jpg"
 
   ```
 
-* PV Yaml 파일 작성(test_pv.yaml)
+* PV YAML 파일 작성(test_pv.yaml)
 
   ```console
   apiVersion: v1
@@ -161,7 +160,7 @@ main:       "/assets/CSI_maincover.jpg"
 
 파드가 볼륨을 사용하기 위한 단계는 아래와 같습니다.
 
-`PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> POD에 PVC 할당`
+`PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> 파드에 PVC 할당`
 
 동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 프로비저너가 PVC 상태 모니터링, PV 생성을 담당합니다.
 스토리지 클래스에서 사용하는 프로비저너는 CSI 드라이버로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI 드라이버를 사용하거나 외부의 CSI 드라이버를 사용할 수 있습니다.
@@ -432,7 +431,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   &nbsp;
   
-* PVC&POD 생성 및 확인
+* PVC &  생성 및 확인
 
   ```console
   [root@master kubernetes]# kubectl create -f testpod.yaml
@@ -461,7 +460,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   &nbsp;
   
-* SPDK Storage 서버 확인
+* SPDK 스토리지 서버 확인
 
   ```console
   [root@spdk spdk]# sudo scripts/rpc.py bdev_get_bdevs
