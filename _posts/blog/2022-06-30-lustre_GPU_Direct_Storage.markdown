@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Lustre 파일시스템과 GPU Direct Storage 소개"
+title:      "HPC를 위한 병렬 분산 파일 시스템인 Lustre와 Gpu Direct Storage 개요"
 date:       2022-06-30
 author:     권세훈 (qsh700@gluesys.com)
 categories: blog
@@ -30,7 +30,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-위 [그림 1]은 러스터 아키텍처를 표현한 것으로 각각의 구성요소와 역할은 다음과 같습니다. 
+위 [그림 1]은 러스터 아키텍처를 표현한 것으로 각각의 구성 요소와 역할은 다음과 같습니다. 
 
 * MGS(Management Server)
   * 모든 러스터 파일 시스템에 대한 구성 정보를 클러스터에 저장하고 이 정보를 다른 러스터 호스트에 제공합니다.
