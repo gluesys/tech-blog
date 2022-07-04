@@ -13,24 +13,24 @@ main:       "/assets/lustre_maincover.jpg"
 
 이번 장에서는 `고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터에서 사용될 `러스터 파일시스템(Lustre File System)`과 `GDS(GPU Direct Storage)`에대해 간략하게 알아보겠습니다.
 
-# 러스터 파일 소개
+# 병렬 분산 파일시스템 러스터
 
-`HPC` 클러스터는 대규모 애플리케이션들이 최상의 컴퓨터 성능을 발휘할 수 있게 합니다. 이처럼 HPC 클러스터는 대규모 애플리케이션들을 다루기때문에 많은 양의 데이터를 처리하게 됩니다. 지난 세월동안 프로세서와 메모리의 속도의 발전 속도에 비해 I/O를 처리하는 시스템의 발전은 느려 대용량의 데이터를 처리할 때 클러스터의 전체 성능을 저하 시킬 수 있습니다.
-위와 같은 문제점을 해결하기 위해 러스터 파일시스템을 사용합니다.
+`HPC` 클러스터는 고도의 컴퓨팅 성능이 필요한 환경으로, 대규모의 애플리케이션들이 많은 양의 데이터를 처리합니다. 개발자는 HPC 애플리케이션 개발을 위해 병렬 처리를 위한 표준 라이브러리인 MPI(Message Passing Interface)를 이용하거나, MapReduce, Spark 등의 병렬 처리 프레임워크를 사용했습니다. HPC 클러스터는 컴퓨팅 성능 외에도 대규모의 데이터를 다룰 수 있는 병렬 스토리지를 필요로 합니다. 대표적으로 병렬/분산 스토리지 분야에서 구글(Google)의 GFS(Google File System)와 이를 모티브한 오픈 프로젝트인 HDFS(Hadoop Distributed File System)등이 있지만, 두 프로젝트 모두 대용량의 데이터를 저장하는데 초점이 맞춰있습니다. HPC 클러스터 환경은 이보다 작은 규모의 스토리지 환경에서 다수의 애플리케이션이 실시간으로 데이터에 동시 접근하기 때문에 보다 빠르고 더 작은 크기의 I/O 처리를 요구합니다. 이렇듯 소규모의 스토리지 환경에서도 데이터를 빠르게 처리할 수 있는 병렬 분산파일시스템인 러스터 파일시스템이 있습니다.
 
-`러스터(Lustre)`는 분산 파일시스템의 한 유형인 병렬 파일시스템입니다. 러스터와 일반 분산 시스템의 차이점은 데이터와 메타데이터가 저장되는 방식에 있습니다. 분산 파일시스템은 단일 스토리지 노등에 파일을 저장하는 반면 병렬 파일시스템은 일반적으로 파일을 분할하고 여러 스토리지 노드에 데이터 블록을 나누어 저장합니다. 메타데이터는 일반적으로 효율적인 파일 조회를 위해 별도의 메타데이터 서버에 저장되는 반면에 분산 파일시스템은 표준 네트워크 파일 액세스를 사용하며 전체 파일 데이터와 메타데이터를 단일 스토리지에서 컨트롤러에 의해 관리됩니다. 대역폭을 많이 사용하는 워크로드의 경우 이러한 단일 액세스 지점이 성능의 병목 현상이 됩니다. 러스터 병렬 파일 시스템은 이러한 단일 컨트롤러 병목 현상을 겪지는 않지만, 병렬 액세스를 제공하는데 필요한 아키텍처가 상대적으로 복잡합니다. 또한, 러스터는 GNU GPL 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터까지 사용되는 고성능 파일 시스템입니다. 리눅스 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다. 
+러스터를 알아보기에 앞서 분산 파일 시스템과 병렬 분산 파일 시스템의 차이를 알아보겠습니다. 분산 파일시스템은 단일 스토리지 노드에 파일을 저장하는 반면 병렬 파일시스템은 일반적으로 파일을 분할하고 여러 스토리지 노드에 데이터 블록을 나누어 저장합니다. 메타데이터는 일반적으로 효율적인 파일 조회를 위해 별도의 메타데이터 서버에 저장되는 반면에 분산 파일시스템은 표준 네트워크 파일 액세스를 사용하며 전체 파일 데이터와 메타데이터를 단일 스토리지에서 컨트롤러에 의해 관리됩니다. 대역폭을 많이 사용하는 워크로드의 경우 이러한 단일 액세스 지점이 성능의 병목 현상이 됩니다. 러스터 병렬 파일 시스템은 이러한 단일 컨트롤러 병목 현상을 겪지는 않지만, 병렬 액세스를 제공하는데 필요한 아키텍처가 상대적으로 복잡합니다.
 
-러스터라는 이름의 유래는 `Linux`와 `Clustre`의 혼성어로 탄생하였습니다.
+# 러스터 파일시스템
+
+`러스터(Lustre)`는 분산 파일시스템의 한 유형인 병렬 파일시스템입니다. 러스터는 GNU GPL 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터까지 사용되는 고성능 파일시스템입니다. 리눅스 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다. 러스터라는 이름의 유래는 `Linux`와 `Clustre`의 혼성어로 탄생하였습니다.
 
 &nbsp;
 
-# 러스터 파일시스템 아키텍처
-![Lustre FS Architecture](/assets/Lustre_Architecture.PNG)
+![Lustre FS Architecture](/assets/Lustre_Architecture.PNG)[^1]
 <center>그림 1. 러스터 파일시스템 아키텍처 </center>
 
 &nbsp;
 
-아래는 [그림 1]에서 볼 수 있는 러스터를 구성하는데 필요한 각 구성요소의 역할을 설명합니다. 
+위 [그림 1]은 러스터 아키텍처를 표현한 것으로 각각의 구성요소와 역할은 다음과 같습니다. 
 
 * MGS(Management Server)
   * 모든 러스터 파일 시스템에 대한 구성 정보를 클러스터에 저장하고 이 정보를 다른 러스터 호스트에 제공합니다.
@@ -67,11 +67,9 @@ main:       "/assets/lustre_maincover.jpg"
 
 `HSM`은 고가의 저장매체와 저가의 저장매체 간의 데이터를 자동으로 이동하는 데이터 저장 기술입니다.
 
-`HSM`을 사용하면 다음과 같은 이점이 있습니다. 회사에서는 새 장비에 투자하지 않고도 이미 보유하고 있는 리소스를 최대한 활용할 수 있습니다. 또한, 가장 중요한 데이터의 우선 순위를 저장하여 고속 저장 장치의 공간을 확보합니다. 고속 저장 장치 보다 저속 저장 장치의 비용이 훨씬 저렴하기 때문에 스토리지 비용을 절감할 수 있습니다. 이는 기업에서 비용이 증가할 수 있는 대량의 데이터를 관리하는 경우에 특히 경제적입니다.
-
 * HSM 아키텍처
 
-![HSM](/assets/HSM_Architecture.png)
+![HSM](/assets/HSM_Architecture.png)[^2]
 <center>그림 2. HSM 아키텍처 </center>
 
 &nbsp;
@@ -93,7 +91,9 @@ main:       "/assets/lustre_maincover.jpg"
 
 ### PCC(Persistent Client Cache)
 
-![pcc](/assets/PCC_Architecture.png)
+* PCC 아키텍처
+
+![pcc](/assets/PCC_Architecture.png)[^3]
 <center>그림 3. Persistent Client Cache </center>
 
 &nbsp;
@@ -104,14 +104,16 @@ PCC는 데이터 동기화를 위해 HSM 기술을 사용합니다. `HSM copytoo
 
 * PCC 이점
  
-클라이언트에서 로컬 저장장치를 캐시로 이용하게 되면 네트워크 지연이 없고 다른 클라이언트에 대한 오버헤드가 없습니다. 또한, 로컬 저장장치를 I/O 속도가 빠른 SSD or NVMe SSD[^1]를 통해 좋은 성능을 낼 수 있습니다. SSD는 모든 종류의 SSD가 사용가능하며, 캐시 장치로 이용할 수 있습니다. PCC를 통해 작거나 임의의 I/O를 `OST`로 저장할 필요 없이 로컬 캐시 장치에 저장하여 사용하면 OST 용량의 부담을 줄일 수 있는 장점이 있습니다.
+클라이언트에서 로컬 저장장치를 캐시로 이용하게 되면 네트워크 지연이 없고 다른 클라이언트에 대한 오버헤드가 없습니다. 또한, 로컬 저장장치를 I/O 속도가 빠른 SSD or NVMe SSD[^8]를 통해 좋은 성능을 낼 수 있습니다. SSD는 모든 종류의 SSD가 사용가능하며, 캐시 장치로 이용할 수 있습니다. PCC를 통해 작거나 임의의 I/O를 `OST`로 저장할 필요 없이 로컬 캐시 장치에 저장하여 사용하면 OST 용량의 부담을 줄일 수 있는 장점이 있습니다.
 
 &nbsp;
 
 ### Overstriping
 
-![Overstriping Example](/assets/overstriping.PNG)
-<center>그림 4. Overstriping 예시</center>
+* Stripe와 Overstriping 비교
+
+![Overstriping Example](/assets/overstriping.PNG)[^4]
+<center>그림 4. Overstriping 예시 </center>
 
 &nbsp;
 
@@ -122,18 +124,19 @@ PCC는 데이터 동기화를 위해 HSM 기술을 사용합니다. `HSM copytoo
 다음은 일반 스트라이핑 구성과 오버스트라이핑을 구성하는 명령어입니다.
 ```console
 //Client에서 실행
-[root@lzfs-client ~]# lfs setstripe --stripe-count 4 [file or directory name] //OST가 4개일 때 4개의 스트라이프
-[root@lzfs-client ~]# lfs setstripe --overstripe-count 8 [file or directory name] //OST가 4개일 때 8개의 스트라이프
+// 스트라이핑 구성 명령어, --stripe-count, --overstripe-count 옵션에 이어서 디렉토리 또는 파일명을 입력합니다.
+[root@lzfs-client ~]# lfs setstripe --stripe-count 4 /mnt/stripe //OST가 4개일 때 4개의 스트라이프
+[root@lzfs-client ~]# lfs setstripe --overstripe-count 8 /mnt/overstripe //OST가 4개일 때 8개의 스트라이프
 
 //stripe 구성 확인
-[root@lzfs-client ~]# lfs getstripe [file or directory name]
+[root@lzfs-client ~]# lfs getstripe /mnt/stripe
 ```
 * Overstriping 이점
 
 [그림 5]에서 보시다시피, 단일 스트라이핑은 노드 수가 많아도 일관적으로 낮은 성능을 보이는 반면, 오버스트라이핑으로는 최대 8개 노드까지 성능 향상을 보이고 있습니다.
 
-![Overstriping Performance](/assets/overstriping2.PNG)
-<center>그림 5. Overstriping 이점</center>
+![Overstriping Performance](/assets/overstriping2.PNG)[^5]
+<center>그림 5. Stripe와 Overstriping 비교 </center>
 
 &nbsp;
 
@@ -148,13 +151,16 @@ DoM은 두 가지 구성요소가 있습니다. 첫 번째는 `MDT` 컴포넌트
 [root@MDS ~]# lctl get_param lod.*.dom_stripesize //DoM Stripe 크기를 확인
 [root@MDS ~]# lctl get_param -P lod.*.dom_stripesize=2M //stripe 크기를 2M로 변경
 //파라미터를 config에 저장
-[root@MDS ~]# lctl conf_param <fsname>-MDT0000.lod.dom_stripesize=0
+// conf_param 옵션에 이어서 러스터 구성때 사용한 fsname과 데이터가 저장될 MDT의 번호 다음에 lod.dom_stripesize=0을 입력합니다.(<fsname>-MDT0000.lod.dom_stripesize=0)
+[root@MDS ~]# lctl conf_param lustre-MDT0000.lod.dom_stripesize=0
 ```
 
 다음은 `DoM`을 구성했을 때 예제 그림과 이를 구성하는 명령어 입니다.
 
-![DoM](/assets/DoM.PNG)
-<center>그림 6. Data-On-MDT</center>
+* DoM 구성 예시
+
+![DoM](/assets/DoM.PNG)[^6]
+<center>그림 6. Data-On-MDT </center>
 
 &nbsp;
   
@@ -195,7 +201,9 @@ test2_domfile
 
 ### DNE(Distributed Namespace Environment)
 
-![DNE](/assets/DNE.PNG)
+* DNE 아키텍처
+
+![DNE](/assets/DNE.PNG)[^7]
 <center>그림 7. Distributed Namespace Environment</center>
 
 &nbsp;
@@ -220,6 +228,8 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 
 &nbsp;
 
+* GDS 아키텍처
+
 ![GPU Direct Storage](/assets/GPU_Direct_Storage.PNG)
 <center>그림 8. GPU Direct Storage 아키텍처</center>
 
@@ -232,16 +242,16 @@ NVDIA는 위와 같은 문제를 해결하고 스토리지와 GPU 메모리간 �
 GDS는 원격 또는 로컬 스토리지와 GPU 메모리 사이에 직접 접근할 수 있는 경로를 생성하는 기술입니다. CPU 메모리의 바운스 버퍼(Bounce Buffer)를 통해 추가 복사본을 만드는 불편한 작업을 하지않습니다. 여기서 바운스 버퍼는 GPU 및 스토리지와 같은 두 장치 간의 데이터 전송을 용이하게 하기위해 시스템 메모리의 임시 버퍼로 정의됩니다. GDS는 이런 과정을 하지않아 CPU에 부담을 주지 않고 GPU로 또는 GPU에서 직접 데이터를 전송할 수 있습니다. 
 
 GDS의 이점은 다음과 같습니다.
-* 대역폭을 높이고 대기 시간을 줄이며 CPU 및 GPU 처리량 부하를 줄입니다. 또한 스토리지 근처의 Direct Memory Access(DMA)[^2] 엔진이 데이터를 GPU 메모리로 직접 이동할 수 있습니다.
+* 대역폭을 높이고 대기 시간을 줄이며 CPU 및 GPU 처리량 부하를 줄입니다. 또한 스토리지 근처의 Direct Memory Access(DMA)[^9] 엔진이 데이터를 GPU 메모리로 직접 이동할 수 있습니다.
 * 바운스 버퍼를 사용하면 두 가지 복사 작업이 발생합니다.
-  * 소스에서 바운스 버퍼로 데이터 복사
-  * 바운스 버퍼에서 대상 장치로 다시 복사
+  1. 소스에서 바운스 버퍼로 데이터 복사
+  2. 바운스 버퍼에서 대상 장치로 다시 복사
   * 직접 데이터 경로에는 원본에서 대상으로 하나의 복사본만 있습니다. CPU가 데이터 이동을 수행할 경우 CPU 가용성에 대한 충돌로 인해 지연 시간이 영향을 받아 불안할 수 있습니다. GDS는 이러한 지연 문제를 완화합니다.
     
 * CPU가 데이터를 이동하는 데 사용되는 경우 전체 CPU 사용률이 증가하고 CPU의 나머지 작업을 방해합니다. GDS를 사용하면 CPU의 워크로드가 줄어들고 컴퓨팅 및 메모리 대역폭 병목 현상을 피할 수 있습니다.
 * 가장 명백하게 드라나는 이점은 전송 시간과 대역폭의 약 2배 상승입니다.
 
-**※ GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^3].**
+**※ GDS 기술을 러스터에서도 이번에 출시된 버전 2.15.0에서 지원한다고 합니다[^10].**
 &nbsp;
 
 # 마치며
@@ -270,7 +280,13 @@ GDS의 이점은 다음과 같습니다.
 
 각주
 ---
-
-[^1]: https://tech.gluesys.com/blog/2021/03/03/NVMe_1.html
-[^2]: https://en.wikipedia.org/wiki/Direct_memory_access
-[^3]: https://wiki.lustre.org/Lustre_2.15.0_Changelog
+[^1]: https://wiki.lustre.org/Introduction_to_Lustre
+[^2]: https://github.com/DDNStorage/lustre_manual_markdown/blob/master/03.15-Hierarchical%20Storage%20Management%20(HSM).md 
+[^3]: https://wiki.lustre.org/images/0/04/LUG2018-Lustre_Persistent_Client_Cache-Xi.pdf
+[^4]: https://wiki.lustre.org/images/b/b3/LUG2019-Lustre_Overstriping_Shared_Write_Performance-Farrell.pdf
+[^5]: https://cug.org/proceedings/cug2019_proceedings/includes/files/pap136s2-file1.pdf
+[^6]: https://github.com/DDNStorage/lustre_manual_markdown/blob/master/03.09-Data%20on%20MDT%20(DoM).md
+[^7]: https://wiki.whamcloud.com/display/PUB/DNE+1+Remote+Directories+High+Level+Design
+[^8]: https://tech.gluesys.com/blog/2021/03/03/NVMe_1.html
+[^9]: https://en.wikipedia.org/wiki/Direct_memory_access
+[^10]: https://wiki.lustre.org/Lustre_2.15.0_Changelog
