@@ -336,7 +336,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   &nbsp;
   
-  * config yaml 파일 수정
+  * Config YAML 파일 수정
   
   ```console
   # SPDX-License-Identifier: Apache-2.0
@@ -366,7 +366,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   &nbsp;
   
-  * Secret yaml 수정
+  * Secret YAML 수정
   
   ```console
   # SPDX-License-Identifier: Apache-2.0
@@ -398,7 +398,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   &nbsp;
   
-  * SPDK CSI Driver 배포
+  * SPDK CSI 드라이버 배포
   
   ```console
   [root@master kubernetes]# ./deploy.sh
