@@ -44,7 +44,7 @@ main:       "/assets/CSI_maincover.jpg"
 
   - PV
   
-    PV는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 스토리지
+    PV는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 스토리지입니다.
 
   - PVC
   
@@ -61,7 +61,7 @@ main:       "/assets/CSI_maincover.jpg"
     - Provisioning
       
       PV를 만드는 단계입니다.  
-      이 단계에서는 PV를 미리 만들고 사용하는 `정적(static)` 방법과 요청이 있을 때 PV를 만드는 `동적(dynamic)` 방법이 있습니다
+      이 단계에서는 PV를 미리 만들고 사용하는 `정적(static)` 방법과 요청이 있을 때 PV를 만드는 `동적(dynamic)` 방법이 있습니다.
     
     - Binding
       
