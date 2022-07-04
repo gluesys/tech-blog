@@ -13,7 +13,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 이번 장에서는 `고성능 컴퓨팅(High Performance Computing, 이하 HPC)` 클러스터에서 사용될 `러스터 파일시스템(Lustre File System)`과 `GDS(GPU Direct Storage)`에대해 간략하게 알아보겠습니다.
 
-# 병렬 분산 파일시스템 러스터
+# 병렬 분산 파일시스템
 
 `HPC` 클러스터는 고도의 컴퓨팅 성능이 필요한 환경으로, 대규모의 애플리케이션들이 많은 양의 데이터를 처리합니다. 개발자는 HPC 애플리케이션 개발을 위해 병렬 처리를 위한 표준 라이브러리인 MPI(Message Passing Interface)를 이용하거나, MapReduce, Spark 등의 병렬 처리 프레임워크를 사용했습니다. HPC 클러스터는 컴퓨팅 성능 외에도 대규모의 데이터를 다룰 수 있는 병렬 스토리지를 필요로 합니다. 대표적으로 병렬/분산 스토리지 분야에서 구글(Google)의 GFS(Google File System)와 이를 모티브한 오픈 프로젝트인 HDFS(Hadoop Distributed File System)등이 있지만, 두 프로젝트 모두 대용량의 데이터를 저장하는데 초점이 맞춰있습니다. HPC 클러스터 환경은 이보다 작은 규모의 스토리지 환경에서 다수의 애플리케이션이 실시간으로 데이터에 동시 접근하기 때문에 보다 빠르고 더 작은 크기의 I/O 처리를 요구합니다. 이렇듯 소규모의 스토리지 환경에서도 데이터를 빠르게 처리할 수 있는 병렬 분산파일시스템인 러스터 파일시스템이 있습니다.
 
