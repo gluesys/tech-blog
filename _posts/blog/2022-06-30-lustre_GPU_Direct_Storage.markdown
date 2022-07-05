@@ -21,7 +21,7 @@ main:       "/assets/lustre_maincover.jpg"
 
 # 러스터 파일시스템
 
-`러스터(Lustre)`는 분산 파일시스템의 한 유형인 병렬 파일시스템으로 주로 HPC의 대용량 파일 시스템으로 사용되고 있습니다. 러스터는 GNU GPL 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터까지 사용되는 고성능 파일시스템입니다. 높은 성능과 코드가 개방되어있어서 슈퍼컴퓨터에 자주 사용됩니다. 대한민국에서는 한국과학기술정보연구원과 대한민국 기상청이 러스터 파일시스 기반 스토리지를 사용하고 있습니다. 러스터는 리눅스 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다. 러스터라는 이름의 유래는 `Linux`와 `Clustre`의 혼성어로 탄생하였습니다.
+`러스터(Lustre)`는 분산 파일시스템의 한 유형인 병렬 파일시스템으로 주로 HPC의 대용량 파일 시스템으로 사용되고 있습니다. 러스터는 GNU GPL 정책의 일환으로 개방되어 있으며 소규모 클러스터 시스템부터 대규모 클러스터까지 사용되는 고성능 파일시스템입니다. 높은 성능과 코드가 개방되어있어서 슈퍼컴퓨터에 자주 사용됩니다. 우리나라에서는 한국과학기술정보연구원과 기상청이 러스터 파일시스 기반 스토리지를 사용하고 있습니다. 러스터는 리눅스 기반 운영체제에서 실행되며 클라이언트(Client)-서버(Server) 네트워크 아키텍처를 사용합니다. 러스터라는 이름의 유래는 `Linux`와 `Clustre`의 혼성어로 탄생하였습니다.
 
 &nbsp;
 
@@ -261,7 +261,7 @@ GDS의 이점은 다음과 같습니다.
 참고
 ---
 
-* Introduction to Lustre - Lustre Wiki: https://wiki.lustre.org/Introduction_to_Lustre
+* Introduction to Lustre - Lustre Wiki: https://ko.wikipedia.org/wiki/%EB%9F%AC%EC%8A%A4%ED%84%B0_(%ED%8C%8C%EC%9D%BC_%EC%8B%9C%EC%8A%A4%ED%85%9C)
 * Why use Lustre - Lustre whamcloud Wiki: https://wiki.whamcloud.com/display/PUB/Why+Use+Lustre
 * Lustre Wiki Main Page - Lustre Wiki: https://wiki.lustre.org/Main_Page
 * What is Lustre - Blog: https://www.weka.io/learn/lustre-file-system-explained/
