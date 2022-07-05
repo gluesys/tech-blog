@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "HPC를 위한 병렬 분산 파일 시스템인 Lustre와 Gpu Direct Storage 개요"
+title:      "HPC를 위한 Lustre FS과 Gpu Direct Storage 개요"
 date:       2022-06-30
 author:     권세훈 (qsh700@gluesys.com)
 categories: blog
@@ -15,9 +15,11 @@ main:       "/assets/lustre_maincover.jpg"
 
 먼저 `HPC` 클러스터는 고도의 컴퓨팅 성능이 필요한 환경으로, 대규모의 애플리케이션들이 많은 양의 데이터를 처리합니다. 개발자는 HPC 애플리케이션 개발을 위해 병렬 처리를 위한 표준 라이브러리인 MPI(Message Passing Interface)를 이용하거나, MapReduce, Spark 등의 병렬 처리 프레임워크를 사용했습니다. HPC 클러스터는 컴퓨팅 성능 외에도 대규모의 데이터를 다룰 수 있는 병렬 스토리지를 필요로 합니다. 대표적으로 병렬/분산 스토리지 분야에서 구글(Google)의 GFS(Google File System)와 이를 모티브한 오픈 프로젝트인 HDFS(Hadoop Distributed File System)등이 있지만, 두 프로젝트 모두 대용량의 데이터를 저장하는데 초점이 맞춰있습니다. HPC 클러스터 환경은 이보다 작은 규모의 스토리지 환경에서 다수의 애플리케이션이 실시간으로 데이터에 동시 접근하기 때문에 보다 빠르고 더 작은 크기의 I/O 처리를 요구합니다. 
 
+러스터를 알아보기에 앞서 분산 파일 시스템과 병렬 분산 파일 시스템의 차이를 알아보겠습니다. 
+
 # 병렬 분산 파일시스템
 
-러스터를 알아보기에 앞서 분산 파일 시스템과 병렬 분산 파일 시스템의 차이를 알아보겠습니다. 분산 파일시스템은 단일 스토리지 노드에 파일을 저장하는 반면 병렬 파일시스템은 일반적으로 파일을 분할하고 여러 스토리지 노드에 데이터 블록을 나누어 저장합니다. 메타데이터는 일반적으로 효율적인 파일 조회를 위해 별도의 메타데이터 서버에 저장되는 반면에 분산 파일시스템은 표준 네트워크 파일 액세스를 사용하며 전체 파일 데이터와 메타데이터를 단일 스토리지에서 컨트롤러에 의해 관리됩니다. 대역폭을 많이 사용하는 워크로드의 경우 이러한 단일 액세스 지점이 성능의 병목 현상이 됩니다. 러스터 병렬 파일 시스템은 이러한 단일 컨트롤러 병목 현상을 겪지는 않지만, 병렬 액세스를 제공하는데 필요한 아키텍처가 상대적으로 복잡합니다.
+분산 파일시스템은 단일 스토리지 노드에 파일을 저장하는 반면 병렬 파일시스템은 일반적으로 파일을 분할하고 여러 스토리지 노드에 데이터 블록을 나누어 저장합니다. 메타데이터는 일반적으로 효율적인 파일 조회를 위해 별도의 메타데이터 서버에 저장되는 반면에 분산 파일시스템은 표준 네트워크 파일 액세스를 사용하며 전체 파일 데이터와 메타데이터를 단일 스토리지에서 컨트롤러에 의해 관리됩니다. 대역폭을 많이 사용하는 워크로드의 경우 이러한 단일 액세스 지점이 성능의 병목 현상이 됩니다. 러스터 병렬 파일 시스템은 이러한 단일 컨트롤러 병목 현상을 겪지는 않지만, 병렬 액세스를 제공하는데 필요한 아키텍처가 상대적으로 복잡합니다.
 
 # 러스터 파일시스템
 
@@ -25,7 +27,9 @@ main:       "/assets/lustre_maincover.jpg"
 
 &nbsp;
 
-![Lustre FS Architecture](/assets/Lustre_Architecture.PNG)[^1]
+* 러스터 파일시스템 아키텍처[^1]
+
+![Lustre FS Architecture](/assets/Lustre_Architecture.PNG)
 <center>그림 1. 러스터 파일시스템 아키텍처 </center>
 
 &nbsp;
@@ -67,9 +71,9 @@ main:       "/assets/lustre_maincover.jpg"
 
 `HSM`은 고가의 저장매체와 저가의 저장매체 간의 데이터를 자동으로 이동하는 데이터 저장 기술입니다.
 
-* HSM 아키텍처
+* HSM 아키텍처[^2]
 
-![HSM](/assets/HSM_Architecture.png)[^2]
+![HSM](/assets/HSM_Architecture.png)
 <center>그림 2. HSM 아키텍처 </center>
 
 &nbsp;
@@ -91,9 +95,9 @@ main:       "/assets/lustre_maincover.jpg"
 
 ### PCC(Persistent Client Cache)
 
-* PCC 아키텍처
+* PCC 아키텍처[^3]
 
-![pcc](/assets/PCC_Architecture.png)[^3]
+![pcc](/assets/PCC_Architecture.png)
 <center>그림 3. Persistent Client Cache </center>
 
 &nbsp;
@@ -110,9 +114,9 @@ PCC는 데이터 동기화를 위해 HSM 기술을 사용합니다. `HSM copytoo
 
 ### Overstriping
 
-* Stripe와 Overstriping 비교
+* Stripe와 Overstriping 비교[^4]
 
-![Overstriping Example](/assets/overstriping.PNG)[^4]
+![Overstriping Example](/assets/overstriping.PNG)
 <center>그림 4. Overstriping 예시 </center>
 
 &nbsp;
@@ -131,11 +135,11 @@ PCC는 데이터 동기화를 위해 HSM 기술을 사용합니다. `HSM copytoo
 //stripe 구성 확인
 [root@lzfs-client ~]# lfs getstripe /mnt/stripe
 ```
-* Overstriping 이점
+* Overstriping 이점[^5]
 
 [그림 5]에서 보시다시피, 단일 스트라이핑은 노드 수가 많아도 일관적으로 낮은 성능을 보이는 반면, 오버스트라이핑으로는 최대 8개 노드까지 성능 향상을 보이고 있습니다.
 
-![Overstriping Performance](/assets/overstriping2.PNG)[^5]
+![Overstriping Performance](/assets/overstriping2.PNG)
 <center>그림 5. Stripe와 Overstriping 비교 </center>
 
 &nbsp;
@@ -157,9 +161,9 @@ DoM은 두 가지 구성요소가 있습니다. 첫 번째는 `MDT` 컴포넌트
 
 다음은 `DoM`을 구성했을 때 예제 그림과 이를 구성하는 명령어 입니다.
 
-* DoM 구성 예시
+* DoM 구성 예시[^6]
 
-![DoM](/assets/DoM.PNG)[^6]
+![DoM](/assets/DoM.PNG)
 <center>그림 6. Data-On-MDT </center>
 
 &nbsp;
@@ -201,9 +205,9 @@ test2_domfile
 
 ### DNE(Distributed Namespace Environment)
 
-* DNE 아키텍처
+* DNE 아키텍처[^7]
 
-![DNE](/assets/DNE.PNG)[^7]
+![DNE](/assets/DNE.PNG)
 <center>그림 7. Distributed Namespace Environment</center>
 
 &nbsp;
