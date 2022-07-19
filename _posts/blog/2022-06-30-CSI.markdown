@@ -57,7 +57,7 @@ main:       "/assets/CSI_maincover.jpg"
     &nbsp; 
     
     ![Alt_text](/assets/pv-pvc-lifecycle.jpg)
-    <center>그림 1. PV-PVC Life cyle</center>
+    <center>그림 1. PV-PVC Life yle</center>
     
     &nbsp;
     
