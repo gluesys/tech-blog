@@ -32,9 +32,9 @@ main:       "/assets/CSI_maincover.jpg"
 |`cephfs`|Ceph 볼륨|
 |`cinder`|오픈스택 Cinder 볼륨|
 |`gcePersistentDisk`|구글 컴퓨트 엔진 볼륨|
-|`glusterfs`|글러스터(오픈 소스 네트워크 파일시스템) 볼륨|
-|`iSCSI`|아이스카시 볼륨|
-|`nfs`|nfs(네트워크 파일시스템) 볼륨|
+|`glusterfs`|글러스터[^4](오픈 소스 네트워크 파일시스템) 볼륨|
+|`iSCSI`|iSCSI[^5] 볼륨|
+|`NFS`|NFS(네트워크 파일시스템) 볼륨|
 
 위의 볼륨 유형 중 `emptyDir`는 앞서 설명한 것과 같이, 컨테이너 데이터를 임시로 저장하는 볼륨으로 파드가 삭제될 때 데이터가 영구적으로 삭제가 됩니다. 하지만 `emptyDir` 외 나머지 볼륨들은 파드가 제거되더라도 데이터는 유지되며, 같은 내용을 서로 다른 파드들끼리 공유할 수 있습니다.
 
@@ -42,7 +42,7 @@ main:       "/assets/CSI_maincover.jpg"
 
 ## 쿠버네티스 스토리지
 
-쿠버네티스 사용자 및 관리자에게 스토리지 사용 방법에서부터 제공 방법에 대한 세부 사항을 추상화하는 퍼시스턴트 볼륨(Persistent Volume, 이하 PV), 퍼시스턴트볼륨클레임(Persistent Volume Claim, 이하 PVC)이라는 두 가지 API 리소스를 사용합니다.
+쿠버네티스 사용자 및 관리자에게 스토리지 사용 방법에서부터 제공 방법에 대한 세부 사항을 추상화하는 퍼시스턴트 볼륨(Persistent Volume, 이하 PV), 퍼시스턴트 볼륨 클레임(Persistent Volume Claim, 이하 PVC)이라는 두 가지 API 리소스를 사용합니다.
 
   - PV
   
@@ -604,3 +604,5 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 [^1]: 컨테이너 : https://www.redhat.com/ko/topics/containers/containers-vs-vms
 [^2]: 쿠버네티스 : https://kubernetes.io/ko/docs/concepts/overview/what-is-kubernetes/
 [^3]: 도커 : https://www.docker.com/
+[^4]: GlusterFS : https://docs.gluster.org/en/latest
+[^5]: iSCI : https://ko.wikipedia.org/wiki/ISCSI
