@@ -126,7 +126,7 @@ main:       "/assets/CSI_maincover.jpg"
 
 * PV YAML 파일 작성
 
-  ```console
+  ```
   # test_pv.yaml
   
   apiVersion: v1
