@@ -85,11 +85,11 @@ main:       "/assets/CSI_maincover.jpg"
       
       이 과정에는 `유지(Retain)`, `삭제(Delete)`, `재사용(Recycle)`의 3가지 정책이 있습니다.
        
-      * Retain : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지합니다.
+      * 유지(Retain) : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지합니다.
       
-      * Delete : PVC가 삭제될 때 대응되는 PV도 같이 삭제합니다.
+      * 삭제(Delete) : PVC가 삭제될 때 대응되는 PV도 같이 삭제합니다.
       
-      * Recycle : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다립니다.
+      * 재사용(Recycle) : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다립니다.
         
 &nbsp;
 
@@ -169,7 +169,7 @@ main:       "/assets/CSI_maincover.jpg"
 
 파드가 볼륨을 사용하기 위한 단계는 아래와 같습니다.
 
-![Alt_text](/assets/pod-volume.png)
+![Alt_text](/assets/pod-volume.PNG)
     <center>그림 2. POD Volume</center>
     
 `PVC 생성 -> PV 확인 및 생성 -> PVC-PV bound 확인 -> 파드에 PVC 할당`
