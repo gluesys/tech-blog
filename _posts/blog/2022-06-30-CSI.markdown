@@ -29,11 +29,11 @@ main:       "/assets/CSI_maincover.jpg"
 |`hostPath`|노드의 로컬 볼륨|
 |`awsElasticBlockStore`|아마존 웹 서비스 EBS 볼륨|
 |`azureDisk`|마이크로소프트 애져 볼륨|
-|`cephfs`|Ceph 볼륨|
-|`cinder`|오픈스택 Cinder 볼륨|
+|`cephfs`|Ceph[^4] 볼륨|
+|`cinder`|오픈스택[^5] Cinder 볼륨|
 |`gcePersistentDisk`|구글 컴퓨트 엔진 볼륨|
-|`glusterfs`|글러스터[^4](오픈 소스 네트워크 파일시스템) 볼륨|
-|`iSCSI`|iSCSI[^5] 볼륨|
+|`glusterfs`|글러스터[^6](오픈 소스 네트워크 파일시스템) 볼륨|
+|`iSCSI`|iSCSI[^7] 볼륨|
 |`NFS`|NFS(네트워크 파일시스템) 볼륨|
 
 위의 볼륨 유형 중 `emptyDir`는 앞서 설명한 것과 같이, 컨테이너 데이터를 임시로 저장하는 볼륨으로 파드가 삭제될 때 데이터가 영구적으로 삭제가 됩니다. 하지만 `emptyDir` 외 나머지 볼륨들은 파드가 제거되더라도 데이터는 유지되며, 같은 내용을 서로 다른 파드들끼리 공유할 수 있습니다.
@@ -604,5 +604,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 [^1]: 컨테이너 : https://www.redhat.com/ko/topics/containers/containers-vs-vms
 [^2]: 쿠버네티스 : https://kubernetes.io/ko/docs/concepts/overview/what-is-kubernetes/
 [^3]: 도커 : https://www.docker.com/
-[^4]: GlusterFS : https://docs.gluster.org/en/latest
-[^5]: iSCI : https://ko.wikipedia.org/wiki/ISCSI
+[^4]: Ceph : https://docs.ceph.com/en/quincy/start/intro/
+[^5]: 오픈스택 : https://www.redhat.com/ko/openstack-35971
+[^6]: GlusterFS : https://docs.gluster.org/en/latest
+[^7]: iSCI : https://ko.wikipedia.org/wiki/ISCSI
