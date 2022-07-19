@@ -190,23 +190,23 @@ main:       "/assets/CSI_maincover.jpg"
 
 - 쿠버네티스 CSI 플러그인
 
-  쿠버네티스 CSI은 기본적으로 `Provisioner`, `Attacher`, `Controller`, `NodeServer`로 이루어져 있습니다.
+  쿠버네티스 CSI은 기본적으로 `프로비저너(Provisioner)`, `어태쳐(Attacher)`, `컨트롤러(Controller)`, `노드서버(NodeServer)`로 이루어져 있습니다.
   
   - **`프로비저너(Provisioner)`**
   
-    `Provisioner`는 클러스터에 PVC가 생성되는 걸 모니터링하고 있다가 PVC가 생성되면 PV를 생성하는 걸 담당합니다.
+    `프로비저너`는 클러스터에 PVC가 생성되는 걸 모니터링하고 있다가 PVC가 생성되면 PV를 생성하는 걸 담당합니다.
     
   - **`어태쳐(Attacher)`**
   
-    `Attacher`는 파드가 PVC를 사용하려할 때 해당 컨테이너에서 PV를 마운트하는 걸 담당합니다.
+    `어태처`는 파드가 PVC를 사용하려할 때 해당 컨테이너에서 PV를 마운트하는 걸 담당합니다.
     
   - **`컨트롤러(Controller)`**
   
-    `Controller`는 쿠버네티스 컨테이너에서 사용할 볼륨을 스토리지 서버에서 생성 및 삭제하는 걸 담당합니다.
+    `컨트롤러`는 쿠버네티스 컨테이너에서 사용할 볼륨을 스토리지 서버에서 생성 및 삭제하는 걸 담당합니다.
     
   - **`노드서버(NodeServer)`**
   
-    `NodeServer`는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.
+    ``는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.
 
 &nbsp;
 
@@ -227,9 +227,9 @@ main:       "/assets/CSI_maincover.jpg"
 
 &nbsp;
 
-[그림 3]에서 보는 것처럼 SPDK Controller는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
+[그림 3]에서 보는 것처럼 SPDK 컨트롤러는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
 
-PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 선택한 후 요청한 디스크 용량을 가지는 `Logical Volume`을 만듭니다. 만들어진 `Logical Volume`을 NVMe-oF Target을 만드는 것으로 Controller의 일이 끝납니다.
+PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 선택한 후 요청한 디스크 용량을 가지는 `Logical Volume`을 만듭니다. 만들어진 `Logical Volume`을 NVMe-oF Target을 만드는 것으로 의 일이 끝납니다.
 
 이후 만들어진 PVC를 사용하는 파드가 생성되거나 대기상태일 때 파드가 배포되는 워커 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 워커 노드 볼륨에 마운트하고 해당 볼륨을 파드에 마운트 시킵니다.
 
@@ -341,7 +341,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 
 &nbsp;
 
-### 쿠버네티스 마스터(Master) 노드 설정
+### 쿠버네티스 마스터 노드 설정
 
   * SPDK CSI 배포 파일 다운
   
