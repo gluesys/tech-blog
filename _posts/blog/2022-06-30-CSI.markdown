@@ -21,18 +21,20 @@ main:       "/assets/CSI_maincover.jpg"
 
 기본적으로 컨테이너 내에 있는 데이터는 임시적이며, 컨테이너가 비정상적으로 종료됐을 때 데이터가 사라지거나 파드 내 컨테이너 간 파일을 공유할 때 문제가 생깁니다. 아!! 파드라는 용어도 모르실 수 있으니 설명을 드리자면, 파드는 쿠버네티스에서 생성하고 관리할 수 있는 최소한의 단위이며 파드는 단일 컨테이너일 수 있으며 또한 다중 컨테이너일 수도 있습니다. 컨테이너의 데이터를 임시로 사용하는 것이 아닌 영구적으로 사용해 앞서 말한 문제점을 해결하기 위하여 쿠버네티스에서는 볼륨이라는 개념을 사용합니다. 쿠버네티스에서는 다양한 유형의 볼륨을 지원하며, 파드는 여러 볼륨 유형을 동시에 사용할 수 있습니다.
 
-파드가 사용할 수 있는 볼륨 유형은 다음과 같습니다: 
-  * emptyDir
-  * hostPath
-  * awsElasticBlockStore
-  * azureDisk
-  * cephfs
-  * cinder
-  * gcePersistentDisk
-  * glusterfs
-  * iSCSI
-  * nfs
-  * rbd
+파드가 사용할 수 있는 볼륨 유형은 다음과 같습니다:
+
+|이름|설명|
+|:---:|:---|
+|`emptyDir`|파드가 생성될 때 생성되고 파드가 삭제될 때 삭제되는 임시 볼륨|
+|`hostPath`|노드의 로컬 볼륨|
+|`awsElasticBlockStore`|아마존 웹 서비스 EBS 볼륨|
+|`azureDisk`|마이크로소프트 애져 볼륨|
+|`cephfs`|Ceph 볼륨|
+|`cinder`|오픈스택 Cinder 볼륨|
+|`gcePersistentDisk`|구글 컴퓨트 엔진 볼륨|
+|`glusterfs`|글러스터(오픈 소스 네트워크 파일시스템) 볼륨|
+|`iSCSI`|아이스카시 볼륨|
+|`nfs`|nfs(네트워크 파일시스템) 볼륨|
 
 위의 볼륨 유형 중 `emptyDir`는 앞서 설명한 것과 같이, 컨테이너 데이터를 임시로 저장하는 볼륨으로 파드가 삭제될 때 데이터가 영구적으로 삭제가 됩니다. 하지만 `emptyDir` 외 나머지 볼륨들은 파드가 제거되더라도 데이터는 유지되며, 같은 내용을 서로 다른 파드들끼리 공유할 수 있습니다.
 
@@ -61,27 +63,27 @@ main:       "/assets/CSI_maincover.jpg"
     
     &nbsp;
     
-    - Provisioning
+    - `프로비저닝(Provisioning)`
       
       PV를 만드는 단계입니다.  
       이 단계에서는 PV를 미리 만들고 사용하는 `정적(static)` 방법과 요청이 있을 때 PV를 만드는 `동적(dynamic)` 방법이 있습니다.
     
-    - Binding
+    - `바인딩(Binding)`
       
       위에서 만든 PV를 PVC와 연결하는 단계입니다.
       PVC에서 원하는 스토리지 용량과 접근 방법에 대응되는 PV와 연결되는데 대응되는 PV가 없으면 대응되는 PV가 생길 때까지 대기합니다.
       
       PV와 PVC는 1:1 관계이므로, PVC 하나가 여러 개의 PV에 할당될 순 없습니다.
     
-    - Using
+    - `사용(Using)`
       
       PVC는 파드에 설정되고 파드는 PVC를 볼륨으로 인식하여 사용하는 단계입니다.
     
-    - Reclaiming
+    - `회수(Reclaiming)`
       
       사용이 끝난 PVC는 삭제되고 PVC가 사용하던 PV를 초기화하는 단계입니다. 
       
-      이 과정에는 `Retain`, `Delete`, `Recycle`의 3가지 정책이 있습니다.
+      이 과정에는 `유지(Retain)`, `삭제(Delete)`, `재사용(Recycle)`의 3가지 정책이 있습니다.
        
       * Retain : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지합니다.
       
@@ -93,8 +95,10 @@ main:       "/assets/CSI_maincover.jpg"
 
 ## 정적 프로비저닝 실습
 
-* PVC YAML 파일 작성(test_pvc.yaml)
-  ```console
+* PVC YAML 파일 작성
+  ```yaml
+  # test_pvc.yaml
+  
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -120,9 +124,11 @@ main:       "/assets/CSI_maincover.jpg"
 
   ```
 
-* PV YAML 파일 작성(test_pv.yaml)
+* PV YAML 파일 작성
 
   ```console
+  # test_pv.yaml
+  
   apiVersion: v1
   kind: PersistentVolume
   metadata:
@@ -163,7 +169,10 @@ main:       "/assets/CSI_maincover.jpg"
 
 파드가 볼륨을 사용하기 위한 단계는 아래와 같습니다.
 
-`PVC 생성 -> PV 생성 -> PVC-PV bound 확인 -> 파드에 PVC 할당`
+![Alt_text](/assets/pod-volume.png)
+    <center>그림 2. POD Volume</center>
+    
+`PVC 생성 -> PV 확인 및 생성 -> PVC-PV bound 확인 -> 파드에 PVC 할당`
 
 동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 프로비저너가 PVC 상태 모니터링, PV 생성을 담당합니다.
 스토리지 클래스에서 사용하는 프로비저너는 CSI 드라이버로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI 드라이버를 사용하거나 외부의 CSI 드라이버를 사용할 수 있습니다.
@@ -183,19 +192,19 @@ main:       "/assets/CSI_maincover.jpg"
 
   쿠버네티스 CSI은 기본적으로 `Provisioner`, `Attacher`, `Controller`, `NodeServer`로 이루어져 있습니다.
   
-  - Provisioner
+  - **`프로비저너(Provisioner)`**
   
     `Provisioner`는 클러스터에 PVC가 생성되는 걸 모니터링하고 있다가 PVC가 생성되면 PV를 생성하는 걸 담당합니다.
     
-  - Attacher
+  - **`어태쳐(Attacher)`**
   
     `Attacher`는 파드가 PVC를 사용하려할 때 해당 컨테이너에서 PV를 마운트하는 걸 담당합니다.
     
-  - Controller
+  - **`컨트롤러(Controller)`**
   
     `Controller`는 쿠버네티스 컨테이너에서 사용할 볼륨을 스토리지 서버에서 생성 및 삭제하는 걸 담당합니다.
     
-  - NodeServer
+  - **`노드서버(NodeServer)`**
   
     `NodeServer`는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.
 
@@ -332,7 +341,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 
 &nbsp;
 
-### 쿠버네티스 Master 노드 설정
+### 쿠버네티스 마스터(Master) 노드 설정
 
   * SPDK CSI 배포 파일 다운
   
@@ -347,7 +356,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   * Config YAML 파일 수정
   
-  ```console
+  ```yaml
   # SPDX-License-Identifier: Apache-2.0
   # Copyright (c) Arm Limited and Contributors
   # Copyright (c) Intel Corporation
@@ -377,7 +386,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   
   * Secret YAML 수정
   
-  ```console
+  ```yaml
   # SPDX-License-Identifier: Apache-2.0
   # Copyright (c) Arm Limited and Contributors
   # Copyright (c) Intel Corporation
@@ -590,7 +599,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
   * 쿠버네티스 스토리지 클래스 - https://kubernetes.io/ko/docs/concepts/storage/storage-classes/
   * SPDK CSI 드라이버 - https://github.com/spdk/spdk-csi
 
-**각주**
+## 각주
 
 [^1]: 컨테이너 : https://www.redhat.com/ko/topics/containers/containers-vs-vms
 [^2]: 쿠버네티스 : https://kubernetes.io/ko/docs/concepts/overview/what-is-kubernetes/
