@@ -85,11 +85,11 @@ main:       "/assets/CSI_maincover.jpg"
       
       이 과정에는 `유지(Retain)`, `삭제(Delete)`, `재사용(Recycle)`의 3가지 정책이 있습니다.
        
-      * 유지(Retain) : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지합니다.
+      * `유지(Retain)` : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지합니다.
       
-      * 삭제(Delete) : PVC가 삭제될 때 대응되는 PV도 같이 삭제합니다.
+      * `삭제(Delete)` : PVC가 삭제될 때 대응되는 PV도 같이 삭제합니다.
       
-      * 재사용(Recycle) : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다립니다.
+      * `재사용(Recycle)` : PVC가 삭제될 때 대응되는 PV 상태는 bound -> Pending으로 바뀌며 연결될 다른 PVC를 기다립니다.
         
 &nbsp;
 
@@ -184,7 +184,7 @@ main:       "/assets/CSI_maincover.jpg"
 &nbsp;
 
 ![Alt_text](/assets/csi-plugin.jpg)
-<center>그림 2. CSI Plugin</center>
+<center>그림 3. CSI Plugin</center>
 
 &nbsp;
 
@@ -223,11 +223,11 @@ main:       "/assets/CSI_maincover.jpg"
 &nbsp;
 
 ![Alt_text](/assets/SPDK_CSI.png)
-<center>그림 3. SPDK CSI 드라이버 동작 흐름</center>
+<center>그림 4. SPDK CSI 드라이버 동작 흐름</center>
 
 &nbsp;
 
-[그림 3]에서 보는 것처럼 SPDK 컨트롤러는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
+[그림 4]에서 보는 것처럼 SPDK 컨트롤러는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.
 
 PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 선택한 후 요청한 디스크 용량을 가지는 `Logical Volume`을 만듭니다. 만들어진 `Logical Volume`을 NVMe-oF Target을 만드는 것으로 의 일이 끝납니다.
 
