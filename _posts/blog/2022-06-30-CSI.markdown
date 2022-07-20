@@ -594,6 +594,7 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 &nbsp;
 
 ## 참고
+
   * 쿠버네티스 PV, PVC - https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/
   * 쿠버네티스 CSI 드라이버 - https://kubernetes-csi.github.io/docs/drivers.html
   * 쿠버네티스 스토리지 클래스 - https://kubernetes.io/ko/docs/concepts/storage/storage-classes/
@@ -607,4 +608,4 @@ PVC가 요청한 디스크 용량을 가지고 있는 `Logical Volume Store`를 
 [^4]: Ceph : https://docs.ceph.com/en/quincy/start/intro/
 [^5]: 오픈스택 : https://www.redhat.com/ko/openstack-35971
 [^6]: GlusterFS : https://docs.gluster.org/en/latest
-[^7]: iSCI : https://ko.wikipedia.org/wiki/ISCSI
+[^7]: iSCSI : https://ko.wikipedia.org/wiki/ISCSI
