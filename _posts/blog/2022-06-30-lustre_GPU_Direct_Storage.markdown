@@ -235,7 +235,7 @@ test2_domfile
 
 HPC 시스템은 일상적으로 수많은 클라이언트로 러스터를 구성합니다. 이렇듯 클라이언트가 확장되었을 때 MDT도 추가로 확장 되어야합니다. `DNE`는 MDT가 추가되었을 때 분배하는 방법에 대해 말하고 있습니다. 
 
-러스터 버전 2.4부터는 볼륨의 각 디렉터리 마다 `MDT`를 정해서 동시에 사용하는 원격 디렉터리(Remote Directory, Phase I, 1단계) 기능이 DNE 1로 소개되었으며, 버전 2.8 부터는 단일 디렉터리를 여러개의 MDT로 분산시킬 수 있는 분산 디렉터리(Striped Directory, Phase II, 2단계) 기능 또한 DNE 2로 소개되었습니다. 이후 버전에서는 디렉터리 마이그레이션(Directory Migration), 디렉터리 재분산(Directory Restripe, Phase III, 3단계) 기능을 추가하여 DNE 3으로 소개되고 있습니다. 
+러스터 버전 2.4부터는 볼륨의 각 디렉터리 마다 `MDT`를 정해서 동시에 사용하는 원격 디렉터리(Remote Directory, Phase I, 1단계) 기능이 DNE 1로 소개되었으며, 버전 2.8 부터는 단일 디렉터리를 여러개의 MDT로 분산시킬 수 있는 분산 디렉터리(Striped Directory, Phase II, 2단계) 기능 또한 DNE 2로 소개되었습니다. 이후 버전에서는 디렉터리 마이그레이션(Directory Migration),QoS 할당(QoS Allocation) ,디렉터리 재분산(Directory Restripe, Phase III, 3단계) 기능을 추가하여 DNE 3으로 소개되고 있습니다. 
 
 #### 1단계 - 원격 디렉터리
 
@@ -262,6 +262,9 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 [root@Client ~]# lfs migrate -m 1,3 /tetstfs/largedir
 ```
 
+#### QoS 할당(Quality of Service, QoS Allocation)
+
+test
 &nbsp;
 
 # GPU Direct Storage(GDS) 기술
