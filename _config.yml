@@ -46,7 +46,7 @@ jekyll-archives:
 disqus_shortname: gluesys-github-io
 
 # Google analytics
-# ga_tracking_id: "UA-XXXX-1"
+ga_tracking_id: "G-7Y6MG4Q2JR"
 
 # Category descriptions (for archive pages)
 descriptions:
