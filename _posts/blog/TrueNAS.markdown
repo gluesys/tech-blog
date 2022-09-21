@@ -294,7 +294,7 @@ TrueNAS의 Apps에는 Plex Media Server가 있습니다.
 이러한 문제를 해결하기 위해 로컬서버에 장비를 등록하여, 모니터링과 제어를 할 수가 있는 플랫폼을 설치할 수도 있습니다.
 
 
-!(/assets/TrueNAS/09. Media Server/001.png)
+!(/assets/TrueNAS/09. Media Server/001-001.png)
 
 가상머신에 스마트홈 서버를 설치하여 구동하는 모습입니다.
 IoT 장비의 제조업체는 수십~수백가지가 되는데요, 대부분 API를 제공하고 있기 때문에 계정연동을 하거나, 스마트홈 서버에 바로 등록도 가능합니다.
