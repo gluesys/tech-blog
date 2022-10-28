@@ -5,8 +5,8 @@ date:       2022-10-28
 author:     박현승 (hspark0582@gluesys.com)
 categories: blog
 tags:       [RAID, NVMe, SSD, GRAID, SupremeRAID, PoseidonOS, SPDK]
-cover:      "/assets/graid_and_nvme/cover.png"
-main:       "/assets/graid_and_nvme/main.png"
+cover:      "/assets/graid_and_nvme/orig.jpg"
+main:       "/assets/graid_and_nvme/cut.png"
 ---
 
 다른 컴퓨터 부품과 마찬가지로 스토리지 장치 역시 영원히 문제없이 작동할 수는 없습니다. 잠시 사용자의 요청에 반응하지 못한다거나, 모르는 사이 저장된 자료의 내용이 바뀌어 있기도 하고, 최종적으로는 수명을 다하면 작동을 멈추게 됩니다. 이러한 스토리지 장치의 문제로부터 사용자의 자료를 보호하는 기술은 스토리지 자체와 역사를 같이 했습니다. 가장 대표적인 기술로 Redundant Array of Independent Disks (**[RAID](https://tech.gluesys.com/blog/2020/07/22/storage_6_intro.html)**)가 있는데, RAID는 여러 개의 저장 장치를 하나로 묶어 해당 장치 중 일부가 사용 불가능하게 되더라도 데이터가 손실되지 않도록 하는 기법을 말합니다. RAID에서는 데이터의 안전한 보관을 위해 데이터 복제 방식(RAID-1)과 패리티 블록을 추가로 저장하는 방식(RAID-5, 6)을 제공합니다.
