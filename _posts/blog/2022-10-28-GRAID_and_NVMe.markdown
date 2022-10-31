@@ -63,7 +63,9 @@ RAID를 구성하는 방법에는 크게 두 가지가 있는데, 하드웨어 R
 
 ## PoseidonOS
 
-또 다른 솔루션으로는 삼성이 주도하고 있는 오픈소스 프로젝트인 [PoseidonOS](https://poseidonos.io/)가 있습니다. 기존 소프트웨어 RAID의 경우 저장 장치의 종류에 관계 없이 모두 다 같은 블록 디바이스로 취급하는 반면 PoseidonOS는 [SPDK](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)를 사용하여 NVMe SSD에 최적화되어 있습니다. [SPDK](https://spdk.io/)는 NVMe 장비를 기존 블록 디바이스 인터페이스보다 더욱 효율적으로 사용하기 위해 개발되고 있는 도구와 라이브러리 모음으로, 자세한 내용은 [이전 포스트](https://tech.gluesys.com/blog/2019/12/02/storage_1_intro.html)를 참조 부탁드리겠습니다. PoseidonOS는 이 spdk를 사용해 애플리케이션으로부터 SSD까지의 입출력 스택을 모두 유저 영역에 구현하여 커널 레벨과 유저 레벨 간 컨텍스트 스위치나 데이터 복사에 소요되는 시간을 없애고, 이외에도 I/O 폴링이나 hugepage 등을 통해 성능을 향상시켰습니다.
+또 다른 솔루션으로는 삼성이 주도하고 있는 오픈소스 프로젝트인 [PoseidonOS](https://poseidonos.io/)가 있습니다. 기존 소프트웨어 RAID의 경우 저장 장치의 종류에 관계 없이 모두 다 같은 블록 디바이스로 취급하는 반면 PoseidonOS는 [SPDK](https://spdk.io/)를 사용하여 NVMe SSD에 최적화되어 있습니다. SPDK는 NVMe 장비를 기존 블록 디바이스 인터페이스보다 더욱 효율적으로 사용하기 위해 개발되고 있는 도구와 라이브러리 모음으로, 자세한 내용은 [이전 포스트](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)를 참조 부탁드리겠습니다. PoseidonOS는 이 SPDK를 사용해 애플리케이션으로부터 SSD까지의 입출력 스택을 모두 유저 영역에 구현하여 커널 레벨과 유저 레벨 간 컨텍스트 스위치나 데이터 복사에 소요되는 시간을 없애고, 이외에도 I/O 폴링이나 hugepage 등을 통해 성능을 향상시켰습니다.
+
+PoseidonOS는 현재 공식적으로 Ubuntu 18.04 버전만 지원하고 있으나, CentOS Stream 8이나 Rocky Linux 8과 같은 배포판에서도 구동이 가능하도록 저희 글루시스가 이식 작업을 진행하였습니다. 지난 18일 해당 내용이 메인 브랜치에 병합되었으므로 ([병합 커밋](https://github.com/poseidonos/poseidonos/commit/98f9e0171f70da186c1db74236aa35e549ac21fe)) 다음 릴리즈에서는 더욱 다양한 환경에서 PoseidonOS를 사용할 수 있을 것 같습니다.
 
 &nbsp;
 
@@ -177,7 +179,7 @@ RAID 기술은 데이터 보전과 서비스 가용성을 위해 이전부터 �
 
 ### 참고
 
-* https://www.graidtech.com/how-it-works/
-* https://www.computerweekly.com/news/252526179/GRAID-puts-RAID-on-a-GPU-for-cut-price-disk-protection-and-rebuilds
-* https://blocksandfiles.com/2022/10/12/graids-nuclear-competitive-knockoff/
-* https://poseidonos.io/
+* [https://www.graidtech.com/how-it-works/](https://www.graidtech.com/how-it-works/)
+* [https://www.computerweekly.com/news/252526179/GRAID-puts-RAID-on-a-GPU-for-cut-price-disk-protection-and-rebuilds](https://www.computerweekly.com/news/252526179/GRAID-puts-RAID-on-a-GPU-for-cut-price-disk-protection-and-rebuilds)
+* [https://blocksandfiles.com/2022/10/12/graids-nuclear-competitive-knockoff/](https://blocksandfiles.com/2022/10/12/graids-nuclear-competitive-knockoff/)
+* [https://poseidonos.io/](https://poseidonos.io/)
