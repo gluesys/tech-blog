@@ -76,7 +76,7 @@ main:       "/assets/storage11_maincover.jpg"
 
 &nbsp;
 
----
+--- 
 
 ### 참고
 
