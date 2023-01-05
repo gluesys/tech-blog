@@ -1,0 +1,192 @@
+---
+layout:     post
+title:      "NVMe 시대의 RAID 2편: xiRAID"
+date:       2023-01-??
+author:     박현승 (hspark0582@gluesys.com)
+categories: blog
+tags:       [RAID, NVMe, SSD, GRAID, SupremeRAID, Xinnor, xiRAID]
+cover:      "/assets/graid_and_nvme/orig.jpg"
+main:       "/assets/graid_and_nvme/cut.jpg"
+---
+
+[지난 포스트](https://tech.gluesys.com/blog/2022/10/28/GRAID_and_NVMe.html)에서는 [RAID(Redundant Array of Independent Disks)](https://tech.gluesys.com/blog/2020/07/22/storage_6_intro.html)를 구성할 때 기존에 주로 사용하던 하드 디스크(HDD)가 아닌 고성능 NVMe SSD를 사용하였을 때 발생하는 문제점들에 대하여 알아보았습니다.
+또한 NVMe SSD에 최적화된 RAID 솔루션인 SupremeRAID와 PoseidonOS가 이러한 문제들에 대응하는 방법에 대해서도 살펴보았는데요, 오늘은 이에 더해 또 다른 소프트웨어 RAID 제품인 **xiRAID**에 대해서 알아보겠습니다.
+
+&nbsp;
+
+## Xinnor xiRAID
+
+xiRAID는 지난 2022년 10월 등장한 이스라엘 [Xinnor](https://xinnor.io/) 사의 소프트웨어 RAID 솔루션입니다.
+Xinnor 사는 러시아의 [RAIDIX](https://www.raidix.com/)가 [Yadro](https://yadro.com/en)에 인수된 후 기존 개발진 중 일부가 나와 새로 창립한 회사입니다.
+RAIDIX를 나와 별개의 새로운 회사를 창립하였지만 관계를 이어가며 기존 RAIDIX 제품들의 판매 역시 계속하고 있는데요, 이를 위한 기존 RAIDIX ERA의 새로운 이름이 바로 Xinnor xiRAID입니다.
+
+그렇다면 xiRAID의 특징으로는 어떤 것들이 있을까요?
+먼저 xiRAID는 지난 번 살펴본 PoseidonOS와는 다르게 [SPDK](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)를 사용하지 않습니다.
+SPDK를 사용할 경우 데이터가 커널 영역을 거쳐 가지 않는 등 불필요한 오버헤드가 줄어 성능이 향상될 수 있는데요, 그 대신 메모리 사용량을 최소화하고 NVMe뿐만 아니라 SATA나 SAS SSD/HDD도 사용할 수 있게 되었습니다.
+또한 NVMe-oF로 연결된 원격 장비를 사용하여 RAID를 구성하는 것은 지원하지만, 생성된 RAID는 NVMe-oF 타겟이 아닌 로컬 블록 디바이스 형태로 제공합니다.
+스토리지 노드에서 직접 애플리케이션을 구동하는 경우 좀 더 간편하게 사용할 수 있겠네요.
+
+&nbsp;
+
+그러면 이제 xiRAID의 성능을 살펴보도록 하겠습니다.
+
+&nbsp;
+
+## GRAID SupremeRAID와의 성능 비교
+
+| 워크로드 종류 | xiRAID | GRAID SupremeRAID | 하이엔드 하드웨어 레이드 |
+| :--- | :--- | :--- | :--- |
+| 4k 무작위 읽기 | 30 MIOPS | 19 MIOPS | 3.5 kIOPS |
+| 4k 무작위 쓰기 | 11 MIOPS | 1.5 MIOPS | 180 kIOPS |
+| 512k 순차 읽기 | 260 GB/s | 110 GB/s | 13.5 GB/s |
+| 512k 순차 쓰기 | 62 GB/s | 22 GB/s | 4 GB/s |
+| 리빌드 중 4k 무작위 읽기 | 27M IOPS | 5.5M IOPS | 36K IOPS |
+| 리빌드 중 4k 무작위 쓰기 | 8M IOPS | 1.1M IOPS | 18K IOPS |
+
+<center> Xinnor 사에서 발표한 xiRAID, GRAID SupremeRAID, 하드웨어 레이드 장치의 성능 비교 (출처: Xinnor 사 홈페이지) </center>
+
+&nbsp;
+
+제일 먼저 살펴볼 것은 xiRAID 사에서 발표한 성능 비교 결과입니다.
+이 표의 결과만을 놓고 보자면 xiRAID가 SupremeRAID(위 표에서 GPU 하드웨어 RAID로 언급)에 비해 월등히 좋은 모습을 보여주고 있고, 4k 무작위 쓰기는 그 차이가 7배를 넘어갑니다.
+
+저희도 저희 장비에서 비슷한 실험을 진행했는데요, 성능 측정 결과를 보기에 앞서 저희가 성능 측정을 진행한 환경은 다음과 같습니다.
+
+
+| 종류 | 장비명 |
+| :--- | :--- |
+| CPU | Intel Xeon Silver 4310 CPU @ 2.10GHz x 2 |
+| 메모리 | Micron 18ASF2G72PDZ-3G2R1 3200 MHz 16G x 8 |
+| OS | Rocky Linux 8.7 |
+| SSD | [Micron_7300_MTFDHBE960TDF x 12](https://media-www.micron.com/-/media/client/global/documents/products/product-flyer/7300_nvme_ssd_product_brief.pdf) |
+
+<details>
+    <summary>fio 설정 파일</summary>
+
+    [global]
+    direct=1
+    ioengine=libaio
+    iodepth=32
+    randrepeat=0
+    kb_base=1000
+    filename=/mnt/raidtest/testfile
+    size=512GiB
+    group_reporting=1
+    ramp_time=5s
+    wait_for_previous
+
+    [seqwrite]
+    numjobs=1
+    blocksize=1MiB
+    readwrite=write
+
+    [seqread]
+    numjobs=1
+    blocksize=1MiB
+    readwrite=read
+
+    [randwrite]
+    numjobs=48
+    blocksize=4KiB
+    readwrite=randwrite
+
+    [randread]
+    numjobs=48
+    blocksize=4KiB
+    readwrite=randread
+</details>
+
+&nbsp;
+
+다음은 저희가 수행한 xiRAID와 GRAID SupremeRAID 성능 측정의 결과입니다.
+
+| 워크로드 종류 | xiRAID | GRAID SupremeRAID |
+| :--- | :--- | :--- |
+| 4kiB 무작위 읽기 | 2451 kIOPS | 2467 kIOPS |
+| 4kiB 무작위 쓰기 | 568 kIOPS | 576 kIOPS |
+| 1MiB 순차 읽기 | 11705 MiB/s | 17777 MiB/s |
+| 1MiB 순차 쓰기 | 5276 MiB/s | 3826 MiB/s |
+
+&nbsp;
+
+![위 표의 막대 그래프](/assets/xiraid/bench.png){: width="600"}
+
+&nbsp;
+
+위에서 봤던 xiRAID의 자료와는 사뭇 다른 모습의 결과가 나왔습니다. 지금부터 하나씩 살펴보도록 하겠습니다.
+
+무작위 워크로드의 경우, 읽기와 쓰기 모두 xiRAID와 SupremeRAID가 비슷한 성능을 보여주었습니다.
+실험에 사용한 SSD의 스펙을 토대로 미루어보면 두 제품 모두 큰 손실 없이 SSD의 성능을 모두 뽑아내어 준 것으로 보입니다.
+
+반면 순차 워크로드의 경우 읽기와 쓰기의 결과에 차이가 있었습니다.
+읽기 작업의 경우 SupremeRAID가 약 1.5배의 성능을 보여주었는데, 이는 SupremeRAID의 RAID 디바이스에 읽기 작업을 수행할 때는 데이터가 SupremeRAID 카드를 거치지 않고 SSD에서 호스트로 바로 불러와지는 것이 요인으로 보입니다.
+반대로 쓰기 작업의 경우 xiRAID가 약 1.4배 더 빠른 것으로 나왔습니다.
+쓰기 작업의 경우 패리티를 계산해야 하니 위와 같은 지름길이 없는데, 이러한 면에서 xiRAID가 순수한 속도는 더 빠르다고도 할 수 있겠네요.
+
+위의 두 성능 측정 결과를 종합하여 생각해 보자면, xiRAID의 경우 소프트웨어 RAID이므로 호스트 하드웨어(SSD, CPU 등)가 허락하는 한 자체적인 성능상의 한계는 없거나 무의미한 것으로 보입니다.
+따라서 SupremeRAID의 경우 SupremeRAID 하드웨어의 연산 성능을 초과하여 I/O를 실행하면 병목이 발생하지만, xiRAID는 그러한 문제가 발생하지 않습니다.
+반면 SupremeRAID 카드에 병목이 생길 정도로 대규모가 아닌 저희 실험 서버와 같은 환경에서는 워크로드에 따라 엎치락뒤치락하며 두 제품의 특성에 따른 성능 양상이 좀 더 뚜렷하게 보이는 것 같습니다.
+
+&nbsp;
+
+## 다른 어플리케이션을 같이 구동해야 한다면?
+
+소프트웨어 RAID의 또 다른 약점으로는 적건 많건 호스트 장비의 CPU를 사용한다는 점이 있습니다.
+이는 해당 장비를 스토리지 전용으로 사용하지 않고 그 데이터를 사용하는 애플리케이션을 같이 구동해야 하는 경우 특히 문제가 되는데요.
+이러한 환경에서의 성능을 측정해보고자 저희는 다른 프로세스가 CPU를 점유하고 있는 상황에서의 성능을 측정하여 보았습니다.
+
+CPU 부하는 `stress` 유틸리티([man 링크](https://linux.die.net/man/1/stress))를 사용하여 총 48개의 코어 중 46개의 코어를 100% 사용하는 방식으로 부여하였습니다.
+실제 기계학습 작업을 수행하는 등의 방법도 고려하여 보았지만, 해당 작업이 스토리지 I/O를 수행하거나 CPU 사용량이 일정하지 않은 문제가 있어 적합하지 않다는 결론 하에 사용하지 않았습니다.
+
+위에서 진행하였던 별도의 CPU 부하가 없는 상황에서의 측정 결과와 비교해 보도록 하겠습니다.
+
+&nbsp;
+
+| 워크로드 종류 | xiRAID | xiRAID + CPU 부하 | 성능 변화 | 비율 |
+| :--- | :--- | :--- | :--- | :--- |
+| 4kiB 무작위 읽기 | 2451 kIOPS | 1190 kIOPS | -1261 kIOPS | -51% |
+| 4kiB 무작위 쓰기 | 568 kIOPS | 132 kIOPS | -436 kIOPS | -76% |
+| 1MiB 순차 읽기 | 11705 MiB/s | 4367 MiB/s | -7338 MiB/s | -63% |
+| 1MiB 순차 쓰기 | 5276 MiB/s | 1824 MiB/s | -3452 MiB/s | -65% |
+
+| 워크로드 종류 | SupremeRAID | SupremeRAID + CPU 부하 | 성능 변화 | 비율 |
+| :--- | :--- | :--- | :--- | :--- |
+| 4kiB 무작위 읽기 | 2467 kIOPS	| 2147 kIOPS | -320 kIOPS | -13% |
+| 4kiB 무작위 쓰기 | 576 kIOPS | 540 kIOPS | -35 kIOPS | -6.2% |
+| 1MiB 순차 읽기 | 17777 MiB/s | 16577 MiB/s | -1200 MiB/s | -6.8% |
+| 1MiB 순차 쓰기 | 3826 MiB/s | 3450 MiB/s | -376 MiB/s | -9.8% |
+
+&nbsp;
+
+![위 표의 막대 그래프](/assets/xiraid/stress.png){: width="600"}
+
+&nbsp;
+
+결과는 당초 저희 예상보다 큰 두 제품 간의 차이를 보였습니다.
+
+xiRAID의 경우 모든 워크로드에서 별도의 CPU 부하가 없는 상황 대비 절반 미만의 성능을 보인 반면, SupremeRAID는 가장 많은 차이를 보인 4kiB 무작위 쓰기 실험에서도 13%만 하락하였고 나머지 워크로드에서는 10% 미만의 차이를 보였습니다.
+또한, 별도의 CPU 부하가 없었을 때는 1MiB 순차 쓰기 워크로드에서 xiRAID가 더 빨랐지만, CPU 부하로 인한 성능 하락으로 인하여 오히려 GRAID SupremeRAID가 2배에 가까운 속도를 내는 것을 확인할 수 있습니다.
+
+여기에 추가적으로 우려되는 점이 있다면, 저희가 이번 성능 측정에 사용한 장비는 위에서 보았듯 SupremeRAID에 병목을 일으킬 정도로 고속으로 I/O를 처리할 수 없습니다.
+xiRAID의 장점인 확장성을 살리기 위해서는 더욱 고성능의 SSD를 다수 사용해야 하는데, 그러한 환경에서는 xiRAID의 연산 요구량이 늘어나 CPU 자원에 더더욱 민감해질 가능성이 있습니다.
+따라서 본 실험의 환경과 같이 스토리지 서버에서 별도의 연산 워크로드를 수행해야 한다면 xiRAID와 같은 소프트웨어 RAID보다는 GRAID SupremeRAID와 같은 하드웨어 RAID를 사용하는 것이 유리할 것으로 보입니다.
+
+&nbsp;
+
+## 마치며
+
+오늘은 NVMe SSD의 성능을 활용할 수 있는 소프트웨어 RAID 솔루션인 Xinnor 사의 xiRAID에 대하여 알아보았습니다.
+xiRAID는 소프트웨어 솔루션의 장점을 십분 발휘할 수 있는 대규모 스토리지 전용 서버와 같은 환경에서는 타의 추종을 불허하는 성능을 보여줍니다.
+하지만 애플리케이션이 CPU 자원을 사용하는 환경이라면 별도의 하드웨어 장치를 사용하는 GRAID SupremeRAID와 같은 제품이 좀 더 적합할 것으로 보입니다.
+
+고성능의 NVMe SSD가 보급되면서 이를 활용할 수 있도록 해주는 제품들도 속속들이 등장하고 있습니다.
+NVMe 시스템을 도입할 예정이신 분들께서는 신제품 소식에 계속해서 귀를 기울이고 계셔야 할 것 같습니다.
+감사합니다.
+
+---
+
+### 참고 링크 및 출처
+
+* [https://xinnor.io/what-is-xiraid/](https://xinnor.io/what-is-xiraid/)
+* [https://blocksandfiles.com/2022/11/18/startup-xinnor/](https://blocksandfiles.com/2022/11/18/startup-xinnor/)
+* 커버 이미지: [Image by pikisuperstar](https://www.freepik.com/free-vector/realistic-microchip-processor-background_12977892.htm#query=cpu&position=4&from_view=search&track=sph) on Freepik
