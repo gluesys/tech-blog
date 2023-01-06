@@ -36,19 +36,19 @@ SPDK를 사용할 경우 데이터가 커널 영역을 거쳐 가지 않는 등 
 
 | 워크로드 종류 | xiRAID | GRAID SupremeRAID | 하이엔드 하드웨어 레이드 |
 | :--- | :--- | :--- | :--- |
-| 4k 무작위 읽기 | 30 MIOPS | 19 MIOPS | 3.5 kIOPS |
+| 4k 무작위 읽기 | 30 MIOPS | 19 MIOPS | 3.5 MIOPS |
 | 4k 무작위 쓰기 | 11 MIOPS | 1.5 MIOPS | 180 kIOPS |
 | 512k 순차 읽기 | 260 GB/s | 110 GB/s | 13.5 GB/s |
 | 512k 순차 쓰기 | 62 GB/s | 22 GB/s | 4 GB/s |
-| 리빌드 중 4k 무작위 읽기 | 27M IOPS | 5.5M IOPS | 36K IOPS |
-| 리빌드 중 4k 무작위 쓰기 | 8M IOPS | 1.1M IOPS | 18K IOPS |
+| 리빌드 중 4k 무작위 읽기 | 27 MIOPS | 5.5 MIOPS | 36 kIOPS |
+| 리빌드 중 4k 무작위 쓰기 | 8 MIOPS | 1.1 MIOPS | 18 kIOPS |
 
 <center> Xinnor 사에서 발표한 xiRAID, GRAID SupremeRAID, 하드웨어 레이드 장치의 성능 비교 (출처: Xinnor 사 홈페이지) </center>
 
 &nbsp;
 
-제일 먼저 살펴볼 것은 xiRAID 사에서 발표한 성능 비교 결과입니다.
-이 표의 결과만을 놓고 보자면 xiRAID가 SupremeRAID(위 표에서 GPU 하드웨어 RAID로 언급)에 비해 월등히 좋은 모습을 보여주고 있고, 4k 무작위 쓰기는 그 차이가 7배를 넘어갑니다.
+제일 먼저 살펴볼 것은 Xinnor 사에서 발표한 xiRAID와 SupremeRAID의 성능 비교 결과입니다.
+이 표의 결과만을 놓고 보자면 xiRAID가 SupremeRAID(출처에서는 GPU 하드웨어 RAID로 언급)에 비해 월등히 좋은 모습을 보여주고 있고, 4k 무작위 쓰기는 그 차이가 7배를 넘어갑니다.
 
 저희도 저희 장비에서 비슷한 실험을 진행했는데요, 성능 측정 결과를 보기에 앞서 저희가 성능 측정을 진행한 환경은 다음과 같습니다.
 
@@ -102,10 +102,10 @@ SPDK를 사용할 경우 데이터가 커널 영역을 거쳐 가지 않는 등 
 
 | 워크로드 종류 | xiRAID | GRAID SupremeRAID |
 | :--- | :--- | :--- |
-| 4kiB 무작위 읽기 | 2451 kIOPS | 2467 kIOPS |
+| 4kiB 무작위 읽기 | 2,451 kIOPS | 2,467 kIOPS |
 | 4kiB 무작위 쓰기 | 568 kIOPS | 576 kIOPS |
-| 1MiB 순차 읽기 | 11705 MiB/s | 17777 MiB/s |
-| 1MiB 순차 쓰기 | 5276 MiB/s | 3826 MiB/s |
+| 1MiB 순차 읽기 | 11,705 MiB/s | 17,777 MiB/s |
+| 1MiB 순차 쓰기 | 5,276 MiB/s | 3,826 MiB/s |
 
 &nbsp;
 
@@ -144,17 +144,17 @@ CPU 부하는 `stress` 유틸리티([man 링크](https://linux.die.net/man/1/str
 
 | 워크로드 종류 | xiRAID | xiRAID + CPU 부하 | 성능 변화 | 비율 |
 | :--- | :--- | :--- | :--- | :--- |
-| 4kiB 무작위 읽기 | 2451 kIOPS | 1190 kIOPS | -1261 kIOPS | -51% |
+| 4kiB 무작위 읽기 | 2,451 kIOPS | 1,190 kIOPS | -1,261 kIOPS | -51% |
 | 4kiB 무작위 쓰기 | 568 kIOPS | 132 kIOPS | -436 kIOPS | -76% |
-| 1MiB 순차 읽기 | 11705 MiB/s | 4367 MiB/s | -7338 MiB/s | -63% |
-| 1MiB 순차 쓰기 | 5276 MiB/s | 1824 MiB/s | -3452 MiB/s | -65% |
+| 1MiB 순차 읽기 | 11,705 MiB/s | 4,367 MiB/s | -7,338 MiB/s | -63% |
+| 1MiB 순차 쓰기 | 5,276 MiB/s | 1,824 MiB/s | -3,452 MiB/s | -65% |
 
 | 워크로드 종류 | SupremeRAID | SupremeRAID + CPU 부하 | 성능 변화 | 비율 |
 | :--- | :--- | :--- | :--- | :--- |
-| 4kiB 무작위 읽기 | 2467 kIOPS	| 2147 kIOPS | -320 kIOPS | -13% |
+| 4kiB 무작위 읽기 | 2,467 kIOPS | 2,147 kIOPS | -320 kIOPS | -13% |
 | 4kiB 무작위 쓰기 | 576 kIOPS | 540 kIOPS | -35 kIOPS | -6.2% |
-| 1MiB 순차 읽기 | 17777 MiB/s | 16577 MiB/s | -1200 MiB/s | -6.8% |
-| 1MiB 순차 쓰기 | 3826 MiB/s | 3450 MiB/s | -376 MiB/s | -9.8% |
+| 1MiB 순차 읽기 | 17,777 MiB/s | 16,577 MiB/s | -1,200 MiB/s | -6.8% |
+| 1MiB 순차 쓰기 | 3,826 MiB/s | 3,450 MiB/s | -376 MiB/s | -9.8% |
 
 &nbsp;
 
