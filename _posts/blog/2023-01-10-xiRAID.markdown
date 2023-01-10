@@ -5,8 +5,8 @@ date:       2023-01-10
 author:     박현승 (hspark0582@gluesys.com)
 categories: blog
 tags:       [RAID, NVMe, SSD, GRAID, SupremeRAID, Xinnor, xiRAID]
-cover:      "/assets/graid_and_nvme/orig.jpg"
-main:       "/assets/graid_and_nvme/cut.jpg"
+cover:      "/assets/xiraid/orig.jpg"
+main:       "/assets/xiraid/cut.jpg"
 ---
 
 [지난 포스트](https://tech.gluesys.com/blog/2022/10/28/GRAID_and_NVMe.html)에서는 [RAID(Redundant Array of Independent Disks)](https://tech.gluesys.com/blog/2020/07/22/storage_6_intro.html)를 구성할 때 기존에 주로 사용하던 하드 디스크(HDD)가 아닌 고성능 NVMe SSD를 사용하였을 때 발생하는 문제점들에 대하여 알아보았습니다.
