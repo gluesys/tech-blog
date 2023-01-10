@@ -45,6 +45,7 @@ layout: main
 			</li>
 		</ul>
 	</div>
+    <!--
 	<div class="sub-title-out">
 		<div class="sub-title-in">
 			<div style="display: inline-block; width: 380px; text-align: center;">
@@ -86,11 +87,12 @@ layout: main
 
 		</div>
 	</div>
+    -->
 	<div class="wrapper-index">
 		<div style="text-align: center; height: 138px; padding-top: 50px;">
 			<div class="main-content-title">최근 게시물</div></div>
 		<div class="post-list">
-		  {% for post in paginator.posts limit:3 %}
+		  {% for post in paginator.posts limit:5 %}
 				<div style="padding-bottom: 30px; height: 270px;">
 					<div style="float: left; width: 240px; background-color: #fff;">
 						<img src="{{ post.main }}" style="width: 240px; height: 240px">
