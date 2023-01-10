@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "NVMe 시대의 RAID 2편: xiRAID"
-date:       2023-01-??
+date:       2023-01-10
 author:     박현승 (hspark0582@gluesys.com)
 categories: blog
 tags:       [RAID, NVMe, SSD, GRAID, SupremeRAID, Xinnor, xiRAID]
