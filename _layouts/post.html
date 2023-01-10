@@ -46,7 +46,9 @@ layout: default
 <section class="rss">
   <p class="rss-subscribe text"><strong>Subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></strong></p>
 </section>
+-->
 
+<!--
 <section class="share">
   <span>Share: </span>
   {% for social in site.social %}
@@ -94,6 +96,7 @@ layout: default
   {% endfor %}
 </section>
 -->
+
 {% if site.inter_post_navigation == true %}
 	<section class="post-navigation">
 		<span class="prev-post">
@@ -120,6 +123,15 @@ layout: default
 		</span>
 	</section>
 {% endif %}
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
 
 {% if site.disqus_shortname %}
 {% unless page.disqus_disabled %}
