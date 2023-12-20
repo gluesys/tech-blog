@@ -5,8 +5,8 @@ date:       2023-12-20
 author:     박주형 (jhpark@gluesys.com)
 categories: blog
 tags:       [ZFS, 파일시스템, File System, ARC, L2ARC, 스냅샷, Snapshot, RAID, 압축, Compression, 중복제거, Deduplication]
-cover:      "/assets/ZFSintro_maincover.png"
-main:       "/assets/ZFSintro_maincover.png"
+cover:      "/assets/ZFSintro_maincover.jpg"
+main:       "/assets/ZFSintro_maincover.jpg"
 ---
 
 이번 기술 블로그 포스트에서는 ZFS에 대해 소개하고자 합니다.  
