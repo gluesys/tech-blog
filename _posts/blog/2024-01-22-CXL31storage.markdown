@@ -5,8 +5,8 @@ date:       2024-01-22
 author:     박주형 (jhpark@gluesys.com)
 categories: blog
 tags:       [CXL, 인터커넥트, Interconnect, 캐시 일관성, Cache Coherence, PCIe, 고성능, High Performance, Storage, 스토리지, 표준]
-cover:      "/assets/ZFSintro_maincover.jpg"
-main:       "/assets/ZFSintro_maincover.jpg"
+cover:      "/assets/CXL31intro_maincover.jpg"
+main:       "/assets/CXL31intro_maincover.jpg"
 ---
 
 지난 번 [<PCIe를 대체할 인터커넥트 표준 기술, CXL>](https://tech.gluesys.com/blog/2021/11/15/cxl_1.html) 포스트에서 CXL(Compute Express Link)에 대해 2.0 버전을 기준으로 내용을 다룬 바 있었습니다. 그로부터 약 2년이 지난 현재(2024년 1월), CXL은 기술적인 성숙도 뿐만 아니라, 인터커넥트 표준으로써의 위상도 많이 높아졌습니다.  
@@ -25,11 +25,25 @@ main:       "/assets/ZFSintro_maincover.jpg"
   
 * **PCIe 6.0 지원에 따른 기능 개선:** CXL 3.0부터는 PCIe 6.0에서 제공하는 4레벨 펄스 진폭 변조(PAM-4) 시그널링과 경량 FEC(Forward Error Correction), CRC(Cyclic Redundancy Check)를 그대로 활용해 낮은 지연시간과 복잡도, 전송 에러 방지를 구현하고자 했고, 256 바이트 FLIT(Flow Control Unit) 단위로 데이터를 전송합니다.  
   
+&nbsp;
+  
+![HDM에 직접 peer-to-peer 접근](/assets/CXL31_hdm_p2paccess.PNG){: width="700"}
+<center>&#60; HDM에 직접 peer-to-peer 접근 &#62;</center>
+  
+&nbsp;
+  
 * **캐시 일관성 강화:** CXL 3.0 부터는 CXL 메모리 장치에서 BISnp(Back-Invalidate Snoop)로 호스트의 캐시 상태를 변경시켜 다중 호스트 접근 환경에서 HDM[^1]의 캐시 일관성이 강화(enhanced coherency)되었다고 볼 수 있습니다. 게다가 CXL 3.0 부터 호스트의 간섭 없이 Type 2 또는 Type 3 장치가 HDM에 직접 peer-to-peer 접근이 가능해져, 대규모 시스템 환경에서 안정적인 성능을 제공할 수 있게 되었습니다.  
   
 * **메모리 풀 및 메모리 공유:** 이런 하드웨어 기반의 일관화를 활용해 소프트웨어의 개입 없이 CXL 메모리 풀에 연결된 메모리 장치의 한 주소 영역을 복수의 호스트가 동시(simultaneously)에 접근하고, 그 영역의 데이터가 항상 일관된 최신의 상태를 유지하는 메모리 공유(memory sharing) 개념이 추가되었습니다. 예를 들어, 호스트 1과 호스트 2가 한 메모리 장치 영역에 있는 데이터 A를 일관성을 유지하면서 각각의 로컬 메모리에 동시에 불러와 작업할 수 있다는 것입니다. 메모리 공유 기능은 GPU 서버 팜과 같이 여러 컴퓨팅 서버가 대규모 연산 작업을 수행할 때 유용하다고 볼 수 있습니다.  
   
 * **새로운 패브릭 구조:** CXL 3.0의 패브릭은 이전 CXL 버전의 트리 구조와는 다른 non-tree 구조(또는 multipath 구조)를 제공하고, 포트 기반 라우팅(Port Based Routing, 이하 PBR)을 통해 최대 4,096개의 노드까지 상호 연결을 제공합니다. 이로 인해 지연 시간과 대역폭이 향상되었습니다. 여기서 말하는 노드는 모든 엔드 포인트를 의미하며, CPU 호스트나 스마트 NIC, 가속기, 메모리 장치, PCIe 장치, GFAM 장치 등이 될 수 있겠습니다. 추가로, CXL 3.1 에서는 PBR 스위치에 대한 CXL Fabric Manager API가 공개되었습니다.  
+  
+&nbsp;
+  
+![다중 레벨 스위치](/assets/CXL31_cxlswitchhierarchy.jpg){: width="700"}
+<center>&#60; 다중 레벨 스위치 &#62;</center>
+  
+&nbsp;
   
 * **다중 레벨 스위치 지원:** CXL 2.0에서 처음 CXL 스위치를 선보이면서 스위치를 통해 호스트를 여러 장치들과 연결할 수 있게 되었고, CXL 3.0에서는 캐스캐이드 방식으로 CXL 스위치 간 계층 구성이 가능하게 되었습니다. 추가로, 호스트 당 여러 개의 Type 1과 Type 2 장치를 같이 연결시킬 수 있어, 랙 스케일 이상의 대규모 메모리 자원 풀을 구성하고 공유할 수 있겠습니다.  
   
