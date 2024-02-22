@@ -179,7 +179,7 @@ main:       "/assets/CSI_maincover.jpg"
 
 &nbsp;
 
-## CSI(Container Storage Instance) 드라이버
+## CSI(Container Storage Interface) 드라이버
 
 &nbsp;
 
