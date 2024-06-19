@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "pNFS 소개"
+title:      "병렬 네트워크 파일 시스템 pNFS의 재조명"
 date:       2024-06-10
 author:     박주형 (jhpark@gluesys.com)
 categories: blog
@@ -37,7 +37,7 @@ pNFS의 아키텍처는 크게 클라이언트와 **메타데이터 서버(Metad
   
 &nbsp;
   
-![pNFS 구조](/assets/pNFSarchitecture.PNG){: width="700"}
+![pNFS 구조](/assets/pNFSarchitecture.png){: width="700"}
 <center>&#60; pNFS 구조 &#62;</center>
   
 &nbsp;
