@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "스냅샷 관리 기능 개발 후기(1)"
+title:      "스냅샷 관리 기능 개발 후기 (1)"
 date:       2024-06-03
 author:     이헌제 (lhj4125@gluesys.com)
 categories: blog
