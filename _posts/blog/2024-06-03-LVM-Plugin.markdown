@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "스냅샷 개발후기(1)"
+title:      "스냅샷 관리 기능 개발 후기(1)"
 date:       2024-06-03
 author:     이헌제 (lhj4125@gluesys.com)
 categories: blog
@@ -293,11 +293,11 @@ LVM 메타데이터에서는 어떤 데이터가 있는지 확인한다면, 조�
 
 35 /* On disk - 32 bytes */
 36 struct label_header {
-37 >---int8_t id[8];>-->---/* LABELONE */
-38 >---uint64_t sector_xl;>/* Sector number of this label */
-39 >---uint32_t crc_xl;>---/* From next field to end of sector */
-40 >---uint32_t offset_xl;>/* Offset from start of struct to contents */
-41 >---int8_t type[8];>>---/* LVM2 001 */
+37	int8_t id[8];		/* LABELONE */
+38	uint64_t sector_xl;	/* Sector number of this label */
+39	uint32_t crc_xl;	/* From next field to end of sector */
+40	uint32_t offset_xl;	/* Offset from start of struct to contents */
+41	int8_t type[8];		/* LVM2 001 */
 42 } __attribute__ ((packed));
 ```
 
@@ -337,22 +337,22 @@ LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저
 40 /* Fields with the suffix _xl should be xlate'd wherever they appear */
 41 /* On disk */
 42 struct pv_header {
-43 >---int8_t pv_uuid[ID_LEN];      /* 32 Byte */
+43 	int8_t pv_uuid[ID_LEN];	/* 32 Byte */
 44
-45 >---/* This size can be overridden if PV belongs to a VG */
-46 >---uint64_t device_size_xl;>---/* Bytes */
+45 	/* This size can be overridden if PV belongs to a VG */
+46 	uint64_t device_size_xl;	/* Bytes */
 47
-48 >---/* NULL-terminated list of data areas followed by */
-49 >---/* NULL-terminated list of metadata area headers */
-50 >---struct disk_locn disk_areas_xl[0];>-/* Two lists */
+48 	/* NULL-terminated list of data areas followed by */
+49 	/* NULL-terminated list of metadata area headers */
+50 	struct disk_locn disk_areas_xl[0];	/* Two lists */
 51 } __attribute__ ((packed));
 
 # cat lib/format_text/format-text.h
 
 67 /* On disk */
 68 struct disk_locn {
-69 >---uint64_t offset;>---/* Offset in bytes to start sector */
-70 >---uint64_t size;>->---/* Bytes */
+69 	uint64_t offset;	/* Offset in bytes to start sector */
+70 	uint64_t size;		/* Bytes */
 71 } __attribute__ ((packed));
 ```
 
@@ -399,21 +399,21 @@ LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저
  71 /* On disk */
  72 /* Structure size limited to one sector */
  73 struct mda_header {
- 74 >---uint32_t checksum_xl;>--/* Checksum of rest of mda_header */
- 75 >---int8_t magic[16];>--/* To aid scans for metadata */
- 76 >---uint32_t version;
- 77 >---uint64_t start;>>---/* Absolute start byte of mda_header */
- 78 >---uint64_t size;>->---/* Size of metadata area */
+ 74		uint32_t checksum_xl;	/* Checksum of rest of mda_header */
+ 75		int8_t magic[16];	/* To aid scans for metadata */
+ 76		uint32_t version;
+ 77		uint64_t start;		/* Absolute start byte of mda_header */
+ 78		uint64_t size;		/* Size of metadata area */
  79
- 80 >---struct raw_locn raw_locns[0];>--/* NULL-terminated list */
+ 80 	struct raw_locn raw_locns[0];	/* NULL-terminated list */
  81 } __attribute__ ((packed));
 
  60 /* On disk */
  61 struct raw_locn {
- 62 >---uint64_t offset;>---/* Offset in bytes to start sector */
- 63 >---uint64_t size;>->---/* Bytes */
- 64 >---uint32_t checksum;
- 65 >---uint32_t flags;
+ 62 	uint64_t offset;	/* Offset in bytes to start sector */
+ 63 	uint64_t size;		/* Bytes */
+ 64 	uint32_t checksum;
+ 65 	uint32_t flags;
  66 } __attribute__ ((packed));
 ```
 
@@ -459,7 +459,7 @@ LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저
 
 ### 마치며
 
-이 외에도 스냅샷 서비스의 스펙을 결정하기 위해서 많은 고민이 있었고, 또 고도화를 위해서 많은 의견들이 있었습니다. 예를 들어 Samba 의 Shadow copy 를 통한 스냅샷의 Windows 클라이언트 노출, Gluster 볼륨의 스냅샷 제공, PV 의 메타데이터가 너무 작은 경우 스냅샷 생성 실패 사례, 여러 가지 장애 케이스(Thin 볼륨, 파일 시스템, PV, VG, Data LV 등의 각각의 장애 사례)에 대한 위험 관리의 다양한 측면으로 서비스를 더욱더 안정적으로 확장해 가도록 진행하고 있습니다.
+이 외에도 스냅샷 서비스의 스펙을 결정하기 위해서 많은 고민이 있었고, 또 고도화를 위해서 많은 의견들이 있었습니다. 예를 들어 섀도 복제본(Shadow copy)을 통한 스냅샷의 Windows 클라이언트 노출, Gluster 볼륨의 스냅샷 제공, PV 의 메타데이터가 너무 작은 경우 스냅샷 생성 실패 사례, 여러 가지 장애 케이스(Thin 볼륨, 파일 시스템, PV, VG, Data LV 등의 각각의 장애 사례)에 대한 위험 관리의 다양한 측면으로 서비스를 더욱더 안정적으로 확장해 가도록 진행하고 있습니다.
 
 &nbsp;
 
