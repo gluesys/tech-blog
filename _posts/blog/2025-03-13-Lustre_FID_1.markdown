@@ -5,6 +5,8 @@ date:       2025-03-13
 categories: blog
 author:     김성환 (shkim3220@gluesys.com)
 tags:       [Lustre, File, Metadata, Data]
+cover:	    "/assets/FID_thumbnail.png"
+main:	    "/assets/FID_thumbnail.png"
 ---
 
 # 들어가기 앞서
