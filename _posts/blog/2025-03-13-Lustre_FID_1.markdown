@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Lustre의파일create&open 과정 분석 - 1"
+title:      "Lustre의파일create & open 과정 분석 - 1"
 date:       2025-03-13
 categories: blog
 author:     김성환 (shkim3220@gluesys.com)
@@ -10,14 +10,14 @@ main:	    "/assets/FID_thumbnail.png"
 ---
 
 # 들어가기 앞서
-이번 블로그에서 설명할 내용은 러스터를 활용하고 있는 환경에서 사용자가 새로운 파일을 생성하면, 내부적으로 이루어지는 과정을 분석한 내용을 담고 있습니다
+이번 블로그에서 설명할 내용은 러스터를 활용하고 있는 환경에서 사용자가 새로운 파일을 생성하면, 내부적으로 이루어지는 과정을 분석한 내용을 담고 있습니다.
  본 내용은 러스터의 전반적인 구조에 대해 기본적으로 알고 있는 것으로 가정하고 기술하고 있어서, 러스터의 구조가 궁금하신 분들은 `Lustre 파일시스템과 GPUDirect Storage 소개`\[1\] 글을 참고하실 수 있습니다.
 <br> 
 
-또한 러스터에서 새로운 파일의 생성은 다양한 Component들의 상호작용에 의해 이루어지기 때문에, 총 2편에 걸쳐 설명할 예정입니다.
+또한 러스터에서 새로운 파일의 생성은 다양한 컴포넌트들의 상호작용에 의해 이루어지기 때문에, 총 2편에 걸쳐 설명할 예정입니다.
 1편에서는 전체적인 흐름을 간략하게 소개하기 위해 러스터의 software stack 및 분석에 활용될 러스터 디버그 시스템에 대한 소개 후, 러스터 클라이언트에서
 러스터 서버로 요청을 보내는 부분까지 서술할 예정입니다. 그리고 이어서 2편에서는 러스터 서버에서의 처리 과정과, 서버에서 처리한 내용을 바탕으로 실제
-데이터가 쓰일 OST에 접근하는 과정을 서술할 예정입니다.
+데이터가 쓰일 `OST(Object Storage Target)`에 접근하는 과정을 서술할 예정입니다.
 
 ## Lustre software stack
 러스터 소프트웨어 스택은 아래 그림과 같이 여러 계층으로 구성되어 있습니다. 해당 그림에서 화살표는 클라이언트에서 러스터 서버로의 요청 흐름을 나타냅니다.
@@ -26,9 +26,9 @@ main:	    "/assets/FID_thumbnail.png"
 `LLITE`는 해당 요청이 메타데이터에 대한 접근이 필요한 경우 먼저 `LMV(Logical Metadata Volume)` 계층으로 요청을 보냅니다. `LMV` 계층은 단일 `MDT(Meta Data Target)` 구조일 경우에는
 별다른 역할을 수행하지 않지만, 하나 이상의 `MDT`를 사용 하는 구조에서는 사용자의 요청을 분산하는 역할을 수행합니다.<br>
 
-이 후 직접적으로 러스터 서버의 `MDS(Meta Data Server)`와 통신하는  `MDC(Metadata Client)`로 요청이 보내지고, 최종적으로 `MDC`가 러스터 서버의 MDS에 요청을 하게 됩니다. <br>
+이 후 직접적으로 러스터 서버의 `MDS(Meta Data Server)`와 통신하는  `MDC(Metadata Client)`로 요청이 보내지고, 최종적으로 `MDC`가 러스터 서버의 `MDS`에 요청을 하게 됩니다. <br>
 
-`LLITE`에 들어온 요청이 메타데이터가 아니고 데이터에 대한 요청이라면, 해당 요청을 어느 `OST(Obejct Storage Target)`로 보낼지 선택하는 `LOV(Logical Object Volume)` 계층으으로 전달됩니다. 
+`LLITE`에 들어온 요청이 메타데이터가 아니고 데이터에 대한 요청이라면, 해당 요청을 어느 `OST`로 보낼지 선택하는 `LOV(Logical Object Volume)` 계층으으로 전달됩니다. 
 `LOV`는 현재 러스터에 존재하는 클라이언트 수 만큼 `OSC(Object Storage Client)`를 보유하고, 각 `OSC`를 통해 해당하는 `OST`에 접근이 가능합니다.
 
 ![Alt text](/assets/lustre_software_stack.png)
@@ -41,7 +41,7 @@ main:	    "/assets/FID_thumbnail.png"
 어느 `OST`에 존재하는지에 대한 정보가 존재합니다. `MDS`로 받은 `Layout EA`를 통해 클라이언트는 `LOV`,`OSC`를 거쳐
 최종적으로 해당 데이터 블럭이 존재하는 `OST`에 접근해 데이터를 읽거나 쓰게 됩니다.
 
-다음 내용 부터는 러스터에서 새로운 파일을 생성할 때, 위의 Software stack 에서 어떠한 작업들이 이루어지는지를 추적할 수 있는 방법에 대해 소개한 다음, 클라이언트에서부터 과정을 서술할 예정입니다.
+다음 내용 부터는 러스터에서 새로운 파일을 생성할 때, 위의 software stack 에서 어떠한 작업들이 이루어지는지를 추적할 수 있는 방법에 대해 소개한 다음, 클라이언트에서부터 과정을 서술할 예정입니다.
 
 ## How to lustre debugging
 본격적인 내용에 앞서, 해당 내용은 러스터에서 제공하는 디버그 메세지를 바탕으로 작성되었습니다.
@@ -99,8 +99,7 @@ lctl set_param subsystem_debug=-1
 
 # 클라이언트의 최초 처리 과정
 러스터는 `LLITE` 계층을 활용해 POSIX로 들어온 요청을 러스터에 맞게 변환해서 활용하고 있습니다.
-`VFS` 계층은 실제 `Underlying` 파일 시스템에 맞는 `Open` 함수를 호출하는데, 아래 코드 블럭에서 `atomic_open`의 `dir->i_op->atomic_open` 입니다.
-이 코드가 수행되면 러스터의 `LLITE` 계층의  `ll_dir_inode_operations`에 정의된 함수인 `ll_atomic_open`이 호출됩니다.<br>
+`VFS` 계층은 실제 `Underlying` 파일 시스템에 맞는 `Open` 함수를 호출하는데, 아래 코드 블럭에서 `atomic_open`의 `dir->i_op->atomic_open` 입니다.<br>
 ```c
 // fs/namei.c
 /* Handle the last step of open() */
@@ -153,6 +152,9 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
 ...
 }
 ```
+
+이 코드가 수행되면 아래의 코드와 같이 러스터 `LLITE` 계층의 `ll_dir_inode_operations`에 정의된 함수인 `ll_atomic_open`이 호출됩니다.<br>
+
 ```c
 // lustre/llite/namei.c
 const struct inode_operations ll_dir_inode_operations = {
@@ -207,8 +209,9 @@ VFS Op:name=drunk, dir=[0x200000bd2:0x1:0x0](00000000c19f0c4c), file 0000000027a
 `ll_atomic_open` 함수가 `VFS`로부터 요청을 넘겨 받으면 먼저 파일을 단순히 열기만 하는지, 아니면 새로운 파일을 생성하고 여는지 확인합니다.
 단순 파일 열기라면 `IT_OPEN` 플래그만 설정하고, 그게 아니라 파일 생성 후에 여는 작업이라면 `O_CREAT` 플래그 값까지 설정합니다.<br>
 
-이 후 수행하는 작업은 크게 2가지 입니다. 첫 번째는 `ll_lookup_it` 이고 두 번째는 `ll_create_it` 입니다.  `ll_lookup_it`는 `MDS`에 해당 파일이
-존재하는지 찾고, 없다면 관련 메타데이터 생성까지 요청한 후, `ll_create_it` 에서 쓸 `layout EA` 메타데이터를 요청하는 작업까지 수행합니다.
+이 후 수행하는 작업은 크게 2가지 입니다. 첫 번째는 `ll_lookup_it` 이고 두 번째는 `ll_create_it` 입니다.<br>
+
+`ll_lookup_it`는 `MDS`에 해당 파일이 존재하는지 찾고, 없다면 관련 메타데이터 생성까지 요청한 후, `ll_create_it` 에서 쓸 `layout EA` 메타데이터를 요청하는 작업까지 수행합니다.
 그리고 `ll_create_it`는 `ll_lookup_it`의 수행 결과로 받은 `layout EA` 를 가지고, `OST`에 실제 파일을 만드는 작업을 수행합니다.<br>
 
 ```c
@@ -291,8 +294,9 @@ OPEN_INTENT with fid1=[0x200000bd2:0x1:0x0], fid2=[0x200000bd2:0x3fe:0x0], name=
 `drunk` 파일은  `[0x200000bd2:0x3fe:0x0]` 이라는 `FID`를 할당 받았고,
 `MDS` 쪽에  이 `FID`에 관해 요청한 것은 `OPEN_INTENT` 입니다. `fid1`은 `drunk` 파일의 부모 디렉토리의 `FID`이고, `fid2`는 `drunk` 자신의 `FID` 입니다.<br>
 
-`MDC`의 요청은 `PTLRPC` 계층을 거쳐 `MDS`로 보내지고, 러스터 서버측의 `PTLRPC` 계층의 데몬이 이를 받아서 `MDS` 계층에게 넘겨주게 됩니다.
-`MDS`에서 요청을 처리하는 과정 및 `OST` 연동 내용은 2편에 이어서 진행하도록 하겠습니다.
+`MDC`의 요청은 `PTLRPC` 계층을 거쳐 `MDS`로 보내지고, 러스터 서버측의 `PTLRPC` 계층의 데몬이 이를 받아서 `MDS` 계층에게 넘겨주게 됩니다.<br>
+
+이렇게 create & open 의 시작 부분인 클라이언트의 첫 처리 과정을 코드 레벨로 살펴보았습니다. 이 후 `MDC`의 요청을 받아 `MDS`에서 처리하는 과정 및 `OST` 연동 내용은 2편에 이어서 진행하도록 하겠습니다.
 
 
 ## 참고 링크 및 자료
