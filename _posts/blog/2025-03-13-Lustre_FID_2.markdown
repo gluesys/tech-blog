@@ -11,7 +11,7 @@ main:	    "/assets/FID_thumbnail.png"
 
 ## 들어가기 앞서
 이번 블로그에서 설명할 내용은 지난 [Lustre의 파일 create & open 과정 분석 -1](https://tech.gluesys.com/blog/2025/03/13/Lustre_FID_1.html)의 후속 내용으로, 클라이언트에서 보낸 요청이 `MDS`에서 처리되는 과정과 이후 클라이언트의 후속 처리 과정을 담고 있습니다. 
-아래 그림에서 지난 1편은 1번에 대한 내용이고, 2편은 2번 과정에 대한 내용입니다. 1편의 내용을 숙지하고, 2편을 보시면 전체 흐름을 이해하는 데 도움이 될 수 있습니다.
+아래 그림에서 1번은 지난 1편 블로그의 내용이고, 2번은 본 편에서 설명할 내용입니다. 1편의 내용을 숙지하고, 2편을 보시면 전체 흐름을 이해하는 데 도움이 될 수 있습니다.
 <br> 
 
 <p align="center">
@@ -232,7 +232,7 @@ int lod_qos_prep_create(const struct lu_env *env, struct lod_object *lo,
 만약 별도로 지정하지 않고 기본값을 쓰도록 한다면, 러스터는 자체 QoS 정책에 의해 먼저 `OST` 선택을 시도하고(`lod_ost_alloc_qos`), 
 만약 QoS를 통한 할당이 실패한다면 라운드로빈 방식으로 `OST`를 선택합니다(`lod_ost_alloc_rr`). 
 `llc_stripe_offset` 값이 기본값이 아니면 사용자가 offset을 지정한 것으로, 이 경우에는 사용자의 요구 사항에 맞춰 선택됩니다(`lod_ost_alloc_specific`).
-offset을 지정하는 방법은 `lfs setstripe`를 통해 지정할 수 있습니다. 아래의 예시에서 `-i` 
+offset은 `lfs setstripe` 명령어에서 `-i` 옵션을 통해 지정할 수 있습니다.
 ```
 lfs setstripe -i 3 -c 2 -S 1M <target path, directory or file>
 ```
