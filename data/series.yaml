@@ -1,0 +1,40 @@
+# Post series. `posts` are post filename slugs (no date prefix, no
+# extension) in reading order. Read by tools/convert_posts.py.
+- name: 스토리지 기초 지식
+  posts:
+    - storage_1_intro
+    - storage_2_intro
+    - storage_3_intro
+    - storage_4_intro
+    - storage_5_intro
+    - storage_6_intro
+    - storage_7_intro
+    - storage_8_intro
+    - storage_9_intro
+    - storage_10
+    - storage_11_DR
+- name: 스토리지 이중화
+  posts:
+    - HA_1_intro
+    - HA_2_intro
+- name: 소프트웨어 정의 스토리지
+  posts:
+    - SDS_1
+    - SDS_2
+- name: NVMe
+  posts:
+    - NVMe_1
+    - NVMe_2_KV
+    - NVMe_2_ZNS
+- name: SPDK
+  posts:
+    - SPDK_1
+    - SPDK_tutorial_1
+- name: NVMe 시대의 RAID
+  posts:
+    - GRAID_and_NVMe
+    - xiRAID
+- name: Lustre 분석
+  posts:
+    - Lustre_FID_1
+    - Lustre_FID_2
