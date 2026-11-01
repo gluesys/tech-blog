@@ -7,6 +7,13 @@
 
 <div class="article">
   <div class="article-main">
+    {{- /* Search metadata: Pagefind reads these hidden nodes; they sit outside .prose so the indexed body stays the article text. */}}
+    <div hidden>
+      <span data-pagefind-meta="title">{{ .Title }}</span>
+      <span data-pagefind-meta="date">{{ .Date.Format "2006-01-02" }}</span>
+      {{- with (.Params.main | default .Params.cover) }}<span data-pagefind-meta="image">{{ . }}</span>{{ end }}
+      {{- range .Params.tags }}<span data-pagefind-filter="tag">{{ . }}</span>{{ end }}
+    </div>
     <div class="prose" data-pagefind-body>{{ .Content }}</div>
     <div class="after" data-pagefind-ignore>
       {{ partial "series-box.html" . }}

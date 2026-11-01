@@ -1,0 +1,20 @@
+ZFS	/blog/2023/12/20/ZFSintro.html
+Lustre	/blog/2022/07/22/lustre_GPU_Direct_Storage.html
+스냅샷	/blog/2020/12/16/storage_7_intro.html
+스냅샷을	/blog/2020/12/16/storage_7_intro.html
+중복 제거	/blog/2020/05/20/storage_4_intro.html
+중복제거	/blog/2020/05/20/storage_4_intro.html
+이중화	/blog/2020/08/22/HA_1_intro.html
+NVMe-oF	/blog/2022/08/22/nvmeof_intro.html
+씬 프로비저닝	/blog/2021/03/17/storage_8_intro.html
+재해복구	/blog/2022/11/21/storage_11_DR.html
+재해 복구	/blog/2022/11/21/storage_11_DR.html
+pNFS	/blog/2024/06/10/pnfsintro.html
+CXL	/blog/2021/11/15/cxl_1.html
+RAID	/blog/2020/07/22/storage_6_intro.html
+백업 방식	/blog/2021/09/23/storage_10.html
+재해복구에서	/blog/2022/11/21/storage_11_DR.html
+이중화를	/blog/2020/08/22/HA_1_intro.html
+ZFS를	/blog/2023/12/20/ZFSintro.html
+오브젝트 스토리지를	/blog/2021/04/20/storage_9_intro.html
+Swordfish	/blog/2020/11/18/swordfish_API.html

@@ -26,7 +26,10 @@
 
 @media (max-width: 760px) {
   .bar { height: 60px; padding: 0 16px; }
-  .nav, .nav-search { display: none; }
+  .nav { display: none; }
+  .nav-search { width: 40px; height: 40px; padding: 0; justify-content: center; margin-left: auto; }
+  .nav-search .lbl, .nav-search kbd { display: none; }
+  .menu-btn { margin-left: 8px; }
   .menu-btn { display: grid; place-items: center; }
   .brand img { width: 30px; }
   .brand .name { font-size: 19px; }
