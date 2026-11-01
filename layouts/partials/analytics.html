@@ -1,0 +1,5 @@
+{{- /* GA4 loads only for `--environment production`; hugo and hugo server emit nothing. */ -}}
+{{- if hugo.IsProduction }}
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-7Y6MG4Q2JR");</script>
+{{- end }}

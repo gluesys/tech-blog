@@ -30,3 +30,4 @@
 {{- range $css }}{{ $parts = $parts | append (resources.Get (printf "css/%s.css" .)) }}{{ end -}}
 {{- $style := $parts | resources.Concat "css/site.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+{{ partial "analytics.html" . }}

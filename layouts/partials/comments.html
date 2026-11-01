@@ -1,0 +1,6 @@
+{{- /* giscus mount point. Renders nothing until the owner fills repoId and categoryId in hugo.toml. */ -}}
+{{- with site.Params.giscus }}
+{{- if and .repo .repoId .categoryId }}
+<section class="comments" id="comments" aria-label="댓글" data-giscus="{{ dict "repo" .repo "repoId" .repoId "category" .category "categoryId" .categoryId "mapping" .mapping "lang" .lang | jsonify }}"></section>
+{{- end }}
+{{- end }}
