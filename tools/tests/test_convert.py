@@ -195,6 +195,12 @@ class BodyTest(unittest.TestCase):
         for md in ("<p>**(a)**b</p>\n", "**(a)**b **c\n", "***(a)***b\n"):
             self.assertEqual(body(md), md)
 
+    def test_line_with_private_use_char_untouched(self):
+        md = '\ue000 **(a)**b "x!"y\n'
+        out, notes = cp.convert_body(md, [])
+        self.assertEqual(out, md)
+        self.assertFalse(notes)
+
     def test_closing_quote_goldmark_cannot_see(self):
         md = ('혹은 "두 개 다!"라고 하는 "모음"이라고, "end."\n'
               '"Braam, Peter., "The Lustre architecture.", arXiv\n')

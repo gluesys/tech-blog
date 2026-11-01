@@ -115,6 +115,12 @@ def _parse(html, root):
     return p
 
 
+def has_root(html, root):
+    """True if some element carries the root class."""
+    p = _parse(html, root)
+    return p.done or p.depth > 0
+
+
 def heading_ids(html, root):
     return _parse(html, root).headings
 

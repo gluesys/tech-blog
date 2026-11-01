@@ -453,8 +453,11 @@ def _cjk_inline(line, notes):
     and a letter) and `"x"이` / `"x!"이` (Goldmark typographer) differ from
     kramdown, which is common in Korean text. Such `**` pairs become
     <strong>, and such closing `"` become a literal U+201D, matching what
-    kramdown rendered. Lines with unbalanced or 3+ star runs are left alone.
+    kramdown rendered. Lines with unbalanced or 3+ star runs, or with any
+    private-use character (used here as placeholders), are left alone.
     """
+    if re.search("[\ue000-\uf8ff]", line):
+        return line             # real private-use chars would clash with placeholders
     saved, html_ph = [], set()
 
     def mask(m):
@@ -500,9 +503,7 @@ def _cjk_inline(line, notes):
         chars[i] = "\u201d"
         notes.append(f"cjk_quote: {s[max(0, i - 15):i + 5]}")
     s = "".join(chars)
-    return re.sub("[\ue000-\uf8ff]",
-                  lambda m: saved[ord(m.group(0)) - _PH] if ord(m.group(0)) - _PH < len(saved)
-                  else m.group(0), s)
+    return re.sub("[\ue000-\uf8ff]", lambda m: saved[ord(m.group(0)) - _PH], s)
 
 
 def _indent_lazy_list_fences(rows, notes):

@@ -5,13 +5,15 @@
         --allow migration/allowlist.yaml [--content content]
 
 For every snapshot post (`<snapshot>/posts/<url path>`) it checks that the
-built page exists at the same path and that heading ids, image sources,
+built page exists at the same path, that both pages contain their article
+root, and that heading ids, image sources,
 footnote ids and body text are equal. The live article root is `.post-content`,
 the built one `.prose`. With `--content`, it also checks that every canonical
 tag used in content has a built `/tags/<tag_slug>/index.html`.
 
-Exit status is 1 if any difference is not covered by an allow-list entry
-`{url, check, reason}`, or if an allow-list entry matches nothing.
+Exit status is 1 if no snapshot post is found, if any difference is not
+covered by an allow-list entry `{url, check, reason}`, or if an allow-list
+entry matches nothing.
 """
 import argparse
 import difflib
@@ -28,7 +30,7 @@ from tags import tag_slug  # noqa: E402
 
 LIVE_ROOT = "post-content"
 BUILD_ROOT = "prose"
-CHECKS = ("exists", "heading_ids", "img_srcs", "footnotes", "body_text")
+CHECKS = ("exists", "root", "heading_ids", "img_srcs", "footnotes", "body_text")
 ALLOW_KEYS = ("url", "check", "reason")
 
 _FACTS = {
@@ -125,6 +127,13 @@ def compare(build, snapshot):
         yield url, "exists", None
         live_html = live_path.read_text(encoding="utf-8")
         new_html = built_path.read_text(encoding="utf-8")
+        missing = [f"{side} .{root}" for side, html, root in
+                   (("live", live_html, LIVE_ROOT), ("build", new_html, BUILD_ROOT))
+                   if not htmlfacts.has_root(html, root)]
+        if missing:
+            yield url, "root", "no root element: " + ", ".join(missing)
+            continue
+        yield url, "root", None
         for check, fn in _FACTS.items():
             a, b = fn(live_html, LIVE_ROOT), fn(new_html, BUILD_ROOT)
             yield url, check, None if a == b else _describe(check, a, b)
@@ -166,6 +175,11 @@ def main(argv=None):
     used = set()
     stats = {c: {"ok": 0, "allowed": 0, "fail": 0} for c in CHECKS}
     failures, excused = [], []
+    posts_dir = Path(a.snapshot) / "posts"
+    if not posts_dir.is_dir() or not any(posts_dir.rglob("*.html")):
+        print(f"FAIL no snapshot posts under {posts_dir}")
+        print("RESULT: FAIL")
+        return 1
     for url, check, detail in compare(a.build, a.snapshot):
         if detail is None:
             stats[check]["ok"] += 1

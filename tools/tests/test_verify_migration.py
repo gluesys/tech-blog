@@ -104,6 +104,41 @@ class VerifyTests(unittest.TestCase):
         code, out = self.run_main()
         self.assertEqual(code, 0, out)
 
+    def test_first_prose_is_the_article(self):
+        page = ('<html><body>'
+                f'<div class="prose" data-pagefind-body>{BODY}</div>'
+                '<div class="prose"><h2 id="x">Other</h2><img src="/o.png">'
+                '<p>more text</p></div></body></html>')
+        self.write(self.build / URL.lstrip("/"), page)
+        code, out = self.run_main()
+        self.assertEqual(code, 0, out)
+
+    def test_missing_build_root_fails(self):
+        self.write(self.build / URL.lstrip("/"),
+                   f'<html><body><div class="content">{BODY}</div></body></html>')
+        code, out = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("FAIL root", out)
+
+    def test_missing_live_root_fails(self):
+        self.write(self.snap / "posts" / URL.lstrip("/"), "<html><body><p>x</p></body></html>")
+        self.write(self.build / URL.lstrip("/"), "<html><body><p>x</p></body></html>")
+        code, out = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("FAIL root", out)
+
+    def test_missing_snapshot_dir_fails(self):
+        self.snap = Path(self.tmp.name) / "nope"
+        code, out = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("no snapshot posts", out)
+
+    def test_empty_snapshot_fails(self):
+        (self.snap / "posts" / URL.lstrip("/")).unlink()
+        code, out = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("no snapshot posts", out)
+
 
 class TagPageTests(unittest.TestCase):
     def test_missing_tag_dir_reported(self):
