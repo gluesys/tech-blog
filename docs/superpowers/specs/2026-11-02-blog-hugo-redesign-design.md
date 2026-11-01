@@ -447,7 +447,7 @@ On pull requests the built site is uploaded as a workflow artifact for review.
 Authoring for new posts: `content/blog/YYYY-MM-DD-slug.md` with front matter
 `title`, `date`, `author`, `tags`, `cover`, `main`, optional `series`,
 `series_order`, `summary`. New posts use the permalink
-`/blog/:year/:month/:day/:slug.html` (same scheme, no explicit `url` needed).
+`/blog/:year/:month/:day/:slugorfilename` with `uglyURLs` for the blog section and `[frontmatter] date = [":default", ":filename"]`: the same scheme, no explicit `url` needed, and a post file `YYYY-MM-DD-slug.md` without `date` in its front matter builds as the plain file `/blog/YYYY/MM/DD/slug.html`. `tools/verify_site.py` checks that every post is such a file.
 The README documents this and `hugo server` for local preview.
 
 ## 11. Verification

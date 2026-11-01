@@ -32,8 +32,19 @@ startLevel = 2
 endLevel = 3
 ordered = false
 
+# Blog posts are plain files (/blog/2026/12/01/new-post.html), as on Jekyll.
+# Converted posts carry an explicit `url`. New posts have no `url` and no
+# front-matter `date`: the date and the slug come from the file name
+# (YYYY-MM-DD-slug.md). `:slugorfilename` only drops the date prefix when the
+# date was taken from the file name, so a new post must not set `date`.
 [permalinks]
-blog = "/blog/:year/:month/:day/:slug.html"
+blog = "/blog/:year/:month/:day/:slugorfilename"
+
+[uglyURLs]
+blog = true
+
+[frontmatter]
+date = [":default", ":filename"]
 
 [taxonomies]
 tag = "tags"

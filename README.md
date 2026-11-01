@@ -208,21 +208,18 @@ After `_posts/` is deleted, author posts directly as `content/blog/YYYY-MM-DD-sl
 ```yaml
 ---
 title: "..."
-slug: "my-post-slug"   # required for new posts, see below
-date: 2026-11-02
 author: "이름 (name@gluesys.com)"
 tags: ["NVMe", "스토리지"]
 cover: "/assets/slug/cover.jpg"
 main: "/assets/slug/cover.jpg"
 summary: "one sentence (optional)"
-series: "NVMe"        # optional
-series_order: 3       # optional
+series: "NVMe"        # optional, see below
 ---
 ```
 
-- No `url` is needed, but set `slug` (ASCII, same as the file name without the date). The permalink rule `/blog/:year/:month/:day/:slug.html` takes `:slug` from the front matter `slug`, falling back to the title, so a Korean title without `slug` produces a broken `한글-제목.html/index.html` path. Converted posts keep their explicit `url`.
+- Do not set `url`, `slug` or `date`. The date and the URL slug come from the file name: `content/blog/2026-12-01-new-post.md` is built as `/blog/2026/12/01/new-post.html` (a plain file, like Jekyll). If `date` is set, Hugo keeps the date prefix in the slug and `tools/verify_site.py` fails ("slug keeps the date prefix"); `slug` or `url` can override the slug when needed. Converted posts keep their explicit `url` and `date`.
 - Use canonical tags from `data/tag_aliases.yaml`. `python3 tools/check_tags.py content/blog` warns about unknown or non-canonical tags.
-- A series needs `series` and `series_order` in front matter, plus an entry in `data/series.yaml` (post file name without the date prefix, in reading order).
+- A series is defined by `data/series.yaml`: add the post slug (file name without the date prefix) to the series list in reading order. Membership and order come from that file; `series_order` is not required. Also set `series: "<series name>"` in front matter so the post shows its series box.
 - Images go under `static/assets/` and are referenced as `/assets/...`.
 
 ## CI (`.github/workflows/pages.yml`)

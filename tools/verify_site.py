@@ -123,6 +123,27 @@ def check_aliases(build):
 
 # ---------------------------------------------------------------- static, sitemap
 
+def check_post_files(build):
+    """Every post page must be a plain file /blog/Y/M/D/<slug>.html.
+
+    Catches a directory-style post (<slug>.html/index.html) and a slug that kept
+    its YYYY-MM-DD- file name prefix (new post that also set `date`).
+    """
+    problems = []
+    root = Path(build) / "blog"
+    if not root.is_dir():
+        return [f"{root}: missing"]
+    for f in sorted(p for p in root.rglob("*") if p.is_file()):
+        rel = f.relative_to(root)
+        if len(rel.parts) == 1:        # /blog/index.html alias
+            continue
+        if len(rel.parts) != 4 or f.suffix != ".html":
+            problems.append(f"blog/{rel}: post page is not a plain /blog/Y/M/D/<slug>.html file")
+        elif re.match(r"\d{4}-\d{2}-\d{2}-", f.name):
+            problems.append(f"blog/{rel}: slug keeps the date prefix (do not set `date` in a new post)")
+    return problems
+
+
 def load_static_baseline(path):
     """Read `<sha256>  <path>` lines -> {path: sha256}."""
     out = {}
@@ -387,6 +408,10 @@ def run_build(build, snapshot, allow, static_baseline=DEFAULT_BASELINE):
         f = check_sitemap(sm.read_text(encoding="utf-8"), snap_sm.read_text(encoding="utf-8"), exempt)
         failures += f
         notes.append(f"sitemap: {'ok' if not f else str(len(f)) + ' problems'}")
+
+    f = check_post_files(build)
+    failures += f
+    notes.append(f"post files: {'ok' if not f else str(len(f)) + ' problems'}")
 
     baseline = load_static_baseline(static_baseline)
     f = check_static(build, baseline)

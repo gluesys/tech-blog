@@ -64,6 +64,25 @@ class FeedTests(unittest.TestCase):
             rss(self.LINKS)))
 
 
+class PostFileTests(unittest.TestCase):
+    def setUp(self):
+        self.site = Site()
+        self.addCleanup(self.site.cleanup)
+        self.site.write("blog/index.html", refresh(f"{BASE}/posts/"))
+
+    def test_plain_file_ok(self):
+        self.site.write("blog/2026/12/01/new-post.html", page("", ""))
+        self.assertEqual(vs.check_post_files(self.site.root), [])
+
+    def test_directory_style_post_fails(self):
+        self.site.write("blog/2026/12/01/new-post.html/index.html", page("", ""))
+        self.assertEqual(len(vs.check_post_files(self.site.root)), 1)
+
+    def test_date_prefixed_slug_fails(self):
+        self.site.write("blog/2026/12/01/2026-12-01-new-post.html", page("", ""))
+        self.assertEqual(len(vs.check_post_files(self.site.root)), 1)
+
+
 class AliasTests(unittest.TestCase):
     def setUp(self):
         self.site = Site()
