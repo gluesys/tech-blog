@@ -1,0 +1,14 @@
+{{- /* Sticky table of contents (h2-h3, links to the existing heading ids) plus
+       share buttons. Hidden when the post has fewer than 2 headings. */ -}}
+<aside class="toc" data-pagefind-ignore>
+  {{- if ge (len (findRE `<a ` .TableOfContents)) 2 }}
+  <div class="toc-nav">
+    <b>목차</b>
+    {{ .TableOfContents }}
+  </div>
+  {{- end }}
+  <div class="share">
+    <button type="button" data-share="copy" data-url="{{ .Permalink }}">링크 복사</button>
+    <button type="button" data-share="native" data-url="{{ .Permalink }}" data-title="{{ .Title }}">공유</button>
+  </div>
+</aside>

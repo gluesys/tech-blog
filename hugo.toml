@@ -27,11 +27,29 @@ backlinkHTML = "&#8617;"
 [markup.highlight]
 noClasses = false
 
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 3
+ordered = false
+
 [permalinks]
 blog = "/blog/:year/:month/:day/:slug.html"
 
 [taxonomies]
 tag = "tags"
+
+# Related posts: shared tags dominate, publication year breaks ties.
+[related]
+includeNewer = true
+threshold = 50
+toLower = true
+  [[related.indices]]
+  name = "tags"
+  weight = 100
+  [[related.indices]]
+  name = "date"
+  weight = 10
+  pattern = "2006"
 
 [pagination]
 pagerSize = 20

@@ -1,3 +1,7 @@
+import { initToc } from "./toc";
+import { initCodeCopy } from "./code-copy";
+import { initShare } from "./share";
+
 // Mobile menu: the button toggles the .open class on the header bar and aria-expanded.
 const menuBtn = document.querySelector<HTMLButtonElement>(".menu-btn");
 const bar = document.querySelector<HTMLElement>(".site-header .bar");
@@ -20,3 +24,7 @@ if (menuBtn && bar) {
     }
   });
 }
+
+initToc();
+initCodeCopy();
+initShare();

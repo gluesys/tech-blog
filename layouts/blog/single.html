@@ -1,4 +1,46 @@
 {{ define "main" }}
-<h1>{{ .Title }}</h1>
-<div class="prose" data-pagefind-body>{{ .Content }}</div>
+<div class="article-head" data-pagefind-ignore>
+  <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
+  <h1>{{ .Title }}</h1>
+  {{ partial "author-card.html" . }}
+</div>
+
+<div class="article">
+  <div class="article-main">
+    <div class="prose" data-pagefind-body>{{ .Content }}</div>
+    <div class="after" data-pagefind-ignore>
+      {{ partial "series-box.html" . }}
+      <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
+      <div class="share share-m">
+        <button type="button" data-share="copy" data-url="{{ .Permalink }}">링크 복사</button>
+        <button type="button" data-share="native" data-url="{{ .Permalink }}" data-title="{{ .Title }}">공유</button>
+      </div>
+      {{- $all := (where site.RegularPages "Section" "blog").ByDate -}}
+      {{- $prev := false -}}{{- $next := false -}}
+      {{- range $i, $p := $all }}{{ if eq $p.Permalink $.Permalink }}
+        {{- if gt $i 0 }}{{ $prev = index $all (sub $i 1) }}{{ end }}
+        {{- if lt (add $i 1) (len $all) }}{{ $next = index $all (add $i 1) }}{{ end }}
+      {{- end }}{{ end }}
+      {{- if or $prev $next }}
+      <nav class="pn" aria-label="이전 글, 다음 글">
+        {{ with $prev }}<a href="{{ .RelPermalink }}" rel="prev"><span>이전 글</span><b>{{ .Title }}</b></a>{{ else }}<span></span>{{ end }}
+        {{ with $next }}<a href="{{ .RelPermalink }}" rel="next"><span>다음 글</span><b>{{ .Title }}</b></a>{{ else }}<span></span>{{ end }}
+      </nav>
+      {{- end }}
+      {{- $related := first 3 (where (.Site.RegularPages.Related .) "Section" "blog") -}}
+      {{- with $related }}
+      <section class="related" aria-label="관련 글">
+        <p class="series-title"><span class="hx"></span><b>관련 글</b></p>
+        <ul>
+          {{- range . }}
+          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006년 1월 2일" }}</time></li>
+          {{- end }}
+        </ul>
+      </section>
+      {{- end }}
+      {{ partial "cta.html" . }}
+    </div>
+  </div>
+  {{ partial "toc.html" . }}
+</div>
 {{ end }}

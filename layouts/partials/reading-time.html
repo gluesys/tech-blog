@@ -1,0 +1,3 @@
+{{- /* Minutes to read: characters of plain text / 500, rounded up (Korean). Returns an int. */ -}}
+{{- $n := math.Ceil (div (float (strings.RuneCount (plainify .Content))) 500) -}}
+{{- return int $n -}}
