@@ -118,7 +118,7 @@ def table(src, aliases):
     out = [f"Total: {len(counts)} raw tags, {len({c for c, _, _ in rows})} canonical tags.",
            "", "| Raw tag | Canonical tag | Posts |", "|---|---|---:|"]
     for c, r, n in rows:
-        out.append(f"| {r} | {c} |")
+        out.append(f"| {r} | {c} | {n} |")
     return "\n".join(out) + "\n"
 
 

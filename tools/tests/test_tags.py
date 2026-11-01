@@ -64,6 +64,15 @@ class TagTests(unittest.TestCase):
         for tag, slug in cases.items():
             self.assertEqual(tags.tag_slug(tag), slug, tag)
 
+    def test_table_rows_have_three_cells_and_counts(self):
+        rows = tags.table(ROOT / "_posts" / "blog", self.aliases).splitlines()
+        data = [r for r in rows if r.startswith("| ") and not r.startswith("| Raw tag")]
+        self.assertGreater(len(data), 200)
+        for r in data:
+            cells = [c.strip() for c in r.strip().strip("|").split("|")]
+            self.assertEqual(len(cells), 3, r)
+            self.assertTrue(cells[2].isdigit() and int(cells[2]) > 0, r)
+
     def test_scalar_and_loader_quoting(self):
         import tempfile
         with tempfile.TemporaryDirectory() as d:
