@@ -36,6 +36,19 @@ tag = "tags"
 [pagination]
 pagerSize = 20
 
+# RSS 2.0 lives at /feed.xml only. The built-in "rss" format (index.xml in
+# every section and term) is not listed for any kind.
+[outputFormats.feed]
+mediaType = "application/rss+xml"
+baseName = "feed"
+
+[outputs]
+home = ["html", "feed"]
+section = ["html"]
+taxonomy = ["html"]
+term = ["html"]
+page = ["html"]
+
 [params]
 # Placeholder until the owner provides the real careers URL.
 careersURL = "https://gluesys.com/"
