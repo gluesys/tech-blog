@@ -37,7 +37,6 @@ fetch "https://github.com/Pagefind/pagefind/releases/download/v${PAGEFIND_VERSIO
   "$PAGEFIND_SHA256" "$pf_name"
 mkdir "$work/pagefind"
 tar -xzf "$work/$pf_name" -C "$work/pagefind"
-install -m 0755 "$work/pagefind/pagefind_extended" "$dest/pagefind" 2>/dev/null \
-  || install -m 0755 "$work/pagefind/pagefind" "$dest/pagefind"
+install -m 0755 "$work/pagefind/pagefind_extended" "$dest/pagefind"
 
 echo "Installed hugo ${HUGO_VERSION} and pagefind ${PAGEFIND_VERSION} into ${dest}"
