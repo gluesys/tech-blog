@@ -9,7 +9,11 @@ Per post this applies the rules of spec section 5.1 and nothing else:
 front matter rewrite, heading IDs from the live snapshot, `{: width}` images,
 space-encoded link/image paths, `{::nomarkdown}` unwrapping and
 `{:target="_blank"}` links, plus blank lines around `<center>` caption lines
-(controller ruling: keeps CommonMark HTML blocks from swallowing Markdown).
+(controller ruling: keeps CommonMark HTML blocks from swallowing Markdown),
+and three fixes found by tools/verify_migration.py where CommonMark and
+kramdown disagree: non-flanking `**` pairs become <strong>, closing `"` the
+Goldmark typographer cannot see become U+201D, and lines after a list item
+followed directly by a column-0 fence are indented into the item.
 Any other kramdown syntax, a heading mismatch against the snapshot, a stray
 .md in the output directory, or a live URL not covered by exactly one post
 makes the
@@ -401,11 +405,137 @@ def convert_body(md, heading_ids):
                     f"line {n}: multi-line setext heading not supported: {line!r}")
             attr = take_heading(n, line.strip())
             new = f"{new.rstrip()} {attr}"
+        if not line.lstrip().startswith("<"):
+            new = _cjk_inline(new, notes)
         row[0] = new
     if hi != len(headings):
         raise ConversionError(
             f"heading count mismatch: markdown has {hi}, live has {len(headings)}")
+    _indent_lazy_list_fences(rows, notes)
     return _isolate_centers(rows, notes), notes
+
+
+# Inline spans whose neighbours CommonMark treats as punctuation; masked so the
+# CJK rules below never look inside them. Group 1 marks an inline HTML tag.
+_MASK_RE = re.compile(
+    r"(`+).+?\1"                               # code span
+    r"|(<[A-Za-z/!?][^>]*>)"                    # inline HTML tag
+    r"|\\[!-/:-@\[-`{-~]"                     # backslash escape
+    r"|(?<=\])\([^()]*\)"                       # link destination
+    r"|\{(?:#|id=)[^}]*\}[ \t]*$")              # heading attribute
+_PH = 0xE000            # first private-use code point used as a placeholder
+
+
+def _is_ph(ch):
+    return ch is not None and _PH <= ord(ch) < _PH + 0x1900
+
+
+def _ws(ch):
+    return ch is None or ch.isspace()
+
+
+def _punct(ch):
+    return ch is not None and (_is_ph(ch) or unicodedata.category(ch)[0] in "PS")
+
+
+def _left_flanking(prev, nxt):
+    return not _ws(nxt) and (not _punct(nxt) or _ws(prev) or _punct(prev))
+
+
+def _right_flanking(prev, nxt):
+    return not _ws(prev) and (not _punct(prev) or _ws(nxt) or _punct(nxt))
+
+
+def _cjk_inline(line, notes):
+    """Rule 10: keep kramdown's emphasis and closing quotes under CommonMark.
+
+    CommonMark delimiter rules make `**(x)**이` (closer between punctuation
+    and a letter) and `"x"이` / `"x!"이` (Goldmark typographer) differ from
+    kramdown, which is common in Korean text. Such `**` pairs become
+    <strong>, and such closing `"` become a literal U+201D, matching what
+    kramdown rendered. Lines with unbalanced or 3+ star runs are left alone.
+    """
+    saved, html_ph = [], set()
+
+    def mask(m):
+        ch = chr(_PH + len(saved))
+        saved.append(m.group(0))
+        if m.group(2):
+            html_ph.add(ch)
+        return ch
+    s = _MASK_RE.sub(mask, line)
+
+    def at(i):
+        return s[i] if 0 <= i < len(s) else None
+
+    # ** pairs
+    marker = re.match(r"[ \t]*(?:[*+-][ \t]+)?", s).end()   # skip a list marker
+    runs = [m for m in re.finditer(r"\*+", s) if m.start() >= marker]
+    if runs and all(len(m.group(0)) == 2 for m in runs) and len(runs) % 2 == 0:
+        out, pos = [], 0
+        for o, c in zip(runs[::2], runs[1::2]):
+            if _ws(at(o.end())) or _ws(at(c.start() - 1)):
+                break
+            if (_left_flanking(at(o.start() - 1), at(o.end()))
+                    and _right_flanking(at(c.start() - 1), at(c.end()))):
+                continue
+            out.append(s[pos:o.start()] + "<strong>" + s[o.end():c.start()] + "</strong>")
+            pos = c.end()
+            notes.append(f"cjk_strong: {s[o.start():c.end()][:40]}")
+        else:
+            s = "".join(out) + s[pos:]
+
+    # closing double quotes
+    chars = list(s)
+    for i, ch in enumerate(chars):
+        if ch != '"':
+            continue
+        prev, nxt = at(i - 1), at(i + 1)
+        if _ws(prev) or prev in '\\[{(-*_"\'' or prev in html_ph:
+            continue
+        if re.match(r"[_*]{1,2}\S|'\w", s[i + 1:]):
+            continue
+        if _right_flanking(prev, nxt) and not _left_flanking(prev, nxt):
+            continue                    # Goldmark already renders a closer
+        chars[i] = "\u201d"
+        notes.append(f"cjk_quote: {s[max(0, i - 15):i + 5]}")
+    s = "".join(chars)
+    return re.sub("[\ue000-\uf8ff]",
+                  lambda m: saved[ord(m.group(0)) - _PH] if ord(m.group(0)) - _PH < len(saved)
+                  else m.group(0), s)
+
+
+def _indent_lazy_list_fences(rows, notes):
+    """Rule 11: a column-0 list item followed directly by a column-0 fence.
+
+    kramdown keeps the fence and the lines after it (up to a blank line or the
+    next column-0 list item) inside the item; CommonMark ends the list. Indent
+    those lines by the item's content offset so Goldmark nests them too.
+    """
+    i = 0
+    while i < len(rows):
+        m = re.match(r"((?:[-+*]|\d+[.)]) +)\S", rows[i][0]) if rows[i][2] == "text" else None
+        nxt = rows[i + 1] if i + 1 < len(rows) else None
+        if not (m and nxt and nxt[2] == "fence" and FENCE_RE.match(nxt[0])
+                and not nxt[0][:1].isspace()):
+            i += 1
+            continue
+        pad = " " * len(m.group(1))
+        j = i + 1
+        while j < len(rows):
+            line, _, kind = rows[j]
+            if kind == "blank" or (kind != "fence" and LIST_ITEM_RE.match(line)
+                                   and not line[:1].isspace()):
+                break
+            if line.strip():
+                rows[j][0] = pad + line
+            j += 1
+        notes.append(f"list_fence: {rows[i][0][:40]}")
+        i = j
+
+
+def _indent(line):
+    return len(line) - len(line.lstrip(" "))
 
 
 def _isolate_centers(rows, notes):
@@ -419,6 +549,9 @@ def _isolate_centers(rows, notes):
     for i, (line, end, kind) in enumerate(rows):
         is_center = (kind == "text" and line.lstrip(" ").startswith("<center>")
                      and "</center>" in line)
+        if (is_center and _indent(line) >= 4 and i > 0 and rows[i - 1][2] == "text"
+                and _indent(rows[i - 1][0]) < 4):
+            is_center = False   # paragraph continuation; isolating makes it code
         if is_center:
             blank_end = end or "\n"
             added = False
@@ -459,7 +592,7 @@ def convert_post(text, filename, heading_ids, tag_map, series_map):
 
 
 CATEGORIES = ("heading", "width", "nomarkdown", "target_blank", "space_path",
-              "center_isolated")
+              "center_isolated", "cjk_strong", "cjk_quote", "list_fence")
 
 
 def _summary(notes):

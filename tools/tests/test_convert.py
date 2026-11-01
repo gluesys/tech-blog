@@ -161,6 +161,92 @@ class BodyTest(unittest.TestCase):
         md = "a\r\n<center>x</center>\r\nb\r\n"
         self.assertEqual(body(md), "a\r\n\r\n<center>x</center>\r\n\r\nb\r\n")
 
+    def test_indented_center_after_paragraph_not_isolated(self):
+        # An indented <center> line continues the paragraph above (kramdown
+        # and CommonMark agree); blank lines around it would make it an
+        # indented code block.
+        md = "![a](/x.PNG)\n    <center>cap</center>\n    \n`code`\n"
+        self.assertEqual(body(md), md)
+
+    def test_indented_center_in_list_still_isolated(self):
+        md = "- item\n    ![a](/x.jpg)\n    <center>cap</center>\n    \n"
+        self.assertEqual(
+            body(md), "- item\n    ![a](/x.jpg)\n\n    <center>cap</center>\n    \n")
+
+    def test_strong_not_flanking_becomes_html(self):
+        # CommonMark: `)**` followed by a letter cannot close; kramdown closed it.
+        md = "기술을 **데이터 티어링(data tiering)**이라고 합니다.\n"
+        out, notes = cp.convert_body(md, [])
+        self.assertEqual(out, "기술을 <strong>데이터 티어링(data tiering)</strong>이라고 합니다.\n")
+        self.assertEqual(sum(n.startswith("cjk_strong") for n in notes), 1)
+
+    def test_strong_after_star_list_marker(self):
+        self.assertEqual(body(" * **RPO(x)**는 y\n"), " * <strong>RPO(x)</strong>는 y\n")
+
+    def test_strong_flanking_untouched(self):
+        md = "a **bold**이 and **b** and `**x)**y` and **c.** d\n"
+        self.assertEqual(body(md), md)
+
+    def test_strong_with_code_span_inside(self):
+        md = "**`x`**는 좋다\n"
+        self.assertEqual(body(md), "<strong>`x`</strong>는 좋다\n")
+
+    def test_strong_skips_html_lines_and_odd_runs(self):
+        for md in ("<p>**(a)**b</p>\n", "**(a)**b **c\n", "***(a)***b\n"):
+            self.assertEqual(body(md), md)
+
+    def test_closing_quote_goldmark_cannot_see(self):
+        md = ('혹은 "두 개 다!"라고 하는 "모음"이라고, "end."\n'
+              '"Braam, Peter., "The Lustre architecture.", arXiv\n')
+        out, notes = cp.convert_body(md, [])
+        self.assertEqual(out, (
+            '혹은 "두 개 다!\u201d라고 하는 "모음\u201d이라고, "end."\n'
+            '"Braam, Peter., "The Lustre architecture.\u201d, arXiv\n'))
+        self.assertEqual(sum(n.startswith("cjk_quote") for n in notes), 3)
+
+    def test_quotes_left_alone_in_code_html_and_attrs(self):
+        md = ('`a"b` <a href="x">y</a>"z\n\n'
+              '<center>"a"b</center>\n\n'
+              "    code \"a\"b\n")
+        self.assertEqual(body(md), md)
+
+    def test_lazy_list_fence_indented(self):
+        md = ("1. `first`\n"
+              "```perl\n"
+              "sub x {\n"
+              "\n"
+              "}\n"
+              "```\n"
+              "after first.\n"
+              "2. `second`\n"
+              "```\n"
+              "y\n"
+              "```\n"
+              "tail of second.\n"
+              "\n"
+              "outside\n")
+        out, notes = cp.convert_body(md, [])
+        self.assertEqual(out, (
+            "1. `first`\n"
+            "   ```perl\n"
+            "   sub x {\n"
+            "\n"
+            "   }\n"
+            "   ```\n"
+            "   after first.\n"
+            "2. `second`\n"
+            "   ```\n"
+            "   y\n"
+            "   ```\n"
+            "   tail of second.\n"
+            "\n"
+            "outside\n"))
+        self.assertEqual(sum(n.startswith("list_fence") for n in notes), 2)
+
+    def test_list_with_blank_before_fence_untouched(self):
+        md = "1. item\n\n```\nx\n```\n2. y\n"
+        self.assertEqual(body(md), md)
+
     def test_kramdown_in_indented_code_fails(self):
         with self.assertRaises(ConversionError):
             body("text\n\n    ![a](b.png){: width=\"7\"}\n")

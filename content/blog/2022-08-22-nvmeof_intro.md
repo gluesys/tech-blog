@@ -21,7 +21,7 @@ main: "/assets/nvmeof_maincover.jpg"
 
 ## NVMe-oF 소개 {#nvme-of-소개}
   
-**NVMe over Fabrics(이하 NVMe-oF)**는 말 그대로 NVMe 프로토콜로 다양한 네트워크들(fabrics)을 통해 NVMe 장치들을 연결할 수 있게 해주는 네트워크 프로토콜의 개념입니다. 쉽게 말해, NVMe-oF는 네트워크를 통해 NVMe 프로토콜로 원격 장치에 접근하는 방식이라고 볼 수 있습니다. NVMe-oF는 지난 2016년, NVMe 사양을 정의한 NVM Express Inc.에서 1.0 버전을 공개했고, 가장 최근 버전인 1.1은 2019년에 NVMe 1.4 버전과 함께 공개되었습니다.  
+<strong>NVMe over Fabrics(이하 NVMe-oF)</strong>는 말 그대로 NVMe 프로토콜로 다양한 네트워크들(fabrics)을 통해 NVMe 장치들을 연결할 수 있게 해주는 네트워크 프로토콜의 개념입니다. 쉽게 말해, NVMe-oF는 네트워크를 통해 NVMe 프로토콜로 원격 장치에 접근하는 방식이라고 볼 수 있습니다. NVMe-oF는 지난 2016년, NVMe 사양을 정의한 NVM Express Inc.에서 1.0 버전을 공개했고, 가장 최근 버전인 1.1은 2019년에 NVMe 1.4 버전과 함께 공개되었습니다.  
   
 NVMe 프로토콜은 로컬의 PCIe 스위치나 PCIe 버스를 통해 NVMe 장치들에 접근하지만, NVMe-oF 기술을 활용하면 파이버 채널이나 이더넷과 같은 네트워크를 통해 네트워크상에 존재하는 NVMe 장치에도 접근할 수 있게 됩니다. 무엇보다, NVMe-oF는 전용 네트워크가 아닌 기존의 파이버 채널과 이더넷 환경을 활용하기 때문에 별도의 네트워크 환경을 추가로 도입할 필요가 없습니다.  
   
@@ -39,7 +39,7 @@ NVMe-oF는 파이버 채널과 이더넷 기반의 RDMA 및 TCP/IP 환경에서 
 
 #### NVMe/RDMA {#nvmerdma}
   
-이더넷을 활용하는 NVMe-oF는 기본적으로 RDMA 기술을 활용합니다. 이전 포스트인 [스토리지 기초 지식 2편: 스토리지 프로토콜](https://tech.gluesys.com/blog/2019/12/17/storage_2_intro.html) 에서도 다루었습니다만, **RDMA(Remote Direct Memory Access)**는 같은 네트워크상에 있는 서버 간의 메모리에 CPU를 거치지 않고 접근할 수 있는 기술입니다. **NVMe/RDMA** 환경에서는 주로 **RoCE(RDMA over Converged Ethernet)**나 **iWARP(Internet Wide-area RDMA Protocol)**와 같은 네트워크 프로토콜을 통해 NVMe-oF 프로토콜 패킷을 캡슐화하여 전송합니다.  
+이더넷을 활용하는 NVMe-oF는 기본적으로 RDMA 기술을 활용합니다. 이전 포스트인 [스토리지 기초 지식 2편: 스토리지 프로토콜](https://tech.gluesys.com/blog/2019/12/17/storage_2_intro.html) 에서도 다루었습니다만, <strong>RDMA(Remote Direct Memory Access)</strong>는 같은 네트워크상에 있는 서버 간의 메모리에 CPU를 거치지 않고 접근할 수 있는 기술입니다. **NVMe/RDMA** 환경에서는 주로 <strong>RoCE(RDMA over Converged Ethernet)</strong>나 <strong>iWARP(Internet Wide-area RDMA Protocol)</strong>와 같은 네트워크 프로토콜을 통해 NVMe-oF 프로토콜 패킷을 캡슐화하여 전송합니다.  
   
 기존에 이더넷 기반 인프라를 보유하고 있는 경우에는 네트워크 카드 추가 구축을 통해 도입이 가능하고, NVMe/RoCE의 경우에는 주로 매우 낮은 지연 시간을 목표로 물리적으로 컴퓨팅 자원과 가깝게 단일 랙 환경에서 구축합니다. 이러한 RDMA 기반의 NVMe-oF는 워크로드 유형이나 인프라 규모에 따라 비교적 낮은 CPU 사용률과 마이크로초 수준의 지연 시간(latency)을 제공하지만, 확장성에 있어서는 NVMe/FC나 NVMe/TCP에 비해 떨어지는 단점이 있습니다.  
   
