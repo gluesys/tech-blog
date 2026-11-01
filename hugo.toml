@@ -1,0 +1,4 @@
+baseURL = "https://tech.gluesys.com/"
+languageCode = "ko"
+title = "TECH-G"
+publishDir = "build"
