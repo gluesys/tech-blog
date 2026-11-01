@@ -1,0 +1,5 @@
+# SHA-256 of files that must stay byte-identical, as at the Jekyll baseline
+# commit 5605f21. Read by tools/verify_site.py. Format: "<sha256>  <path>".
+bd20bd7e96b237bd2005d66174b23f94f38aa69b0f4998d409caf9232f28f323  CNAME
+ae1cfa6ee05ff83eaf2c2fa9aa7cb7638e984f3fd020e25ad1fb83d8be663ceb  googlea2b9a3ab05f01437.html
+78366df2fed9cb7307ada8043db2ba2c887971cabdf4f078b647b6f92a4f9459  assets/icons/favicon.ico

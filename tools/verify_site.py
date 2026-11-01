@@ -12,8 +12,8 @@ Build mode checks:
   * /feed.xml is RSS 2.0 with 10 items whose links equal the snapshot feed's;
   * every URL in the snapshot sitemap is in the new sitemap (redirect pages
     are exempt: they are not canonical, /posts/ stands in for them);
-  * CNAME, the Search Console file and favicon.ico are byte-identical to
-    origin/master;
+  * CNAME, the Search Console file and favicon.ico match the SHA-256 values
+    pinned in migration/static-baseline.txt (Jekyll baseline 5605f21);
   * the /tags/ page carries the tag lookup JSON for the old /tags#<tag> links,
     and it covers every alias in data/tag_aliases.yaml whose tag page exists;
   * every internal <a href> in build/**/*.html resolves to a file and, with a
@@ -27,9 +27,9 @@ a running site (expects HTTP 200) and compares its /feed.xml item links.
 Exit status is 1 on any failure.
 """
 import argparse
+import hashlib
 import json
 import re
-import subprocess
 import sys
 import unicodedata
 import urllib.error
@@ -49,7 +49,7 @@ SITE_HOST = "tech.gluesys.com"
 ALIAS_PATHS = ("/blog/", "/page2/", "/page3/", "/page4/", "/page5/", "/page6/")
 LIVE_EXTRA = ("/", "/posts/", "/tags/", "/sitemap.xml", "/robots.txt",
               "/googlea2b9a3ab05f01437.html", "/assets/icons/favicon.ico")
-IDENTICAL_FILES = ("CNAME", "googlea2b9a3ab05f01437.html", "assets/icons/favicon.ico")
+DEFAULT_BASELINE = ROOT / "migration" / "static-baseline.txt"
 FEED_ITEMS = 10
 SITE_ALLOW_KEYS = ("page", "href", "reason")
 
@@ -78,7 +78,10 @@ def check_feed(feed_text, snapshot_feed_text):
         out.append(f"feed.xml: RSS version {version!r}, expected '2.0'")
     if len(links) != FEED_ITEMS:
         out.append(f"feed.xml: {len(links)} items, expected {FEED_ITEMS}")
-    want = feed_links(snapshot_feed_text)[1]
+    try:
+        want = feed_links(snapshot_feed_text)[1]
+    except ValueError as e:
+        return out + [f"snapshot feed.xml: {e}"]
     if links != want:
         for i, (a, b) in enumerate(zip(links, want), 1):
             if a != b:
@@ -120,29 +123,29 @@ def check_aliases(build):
 
 # ---------------------------------------------------------------- static, sitemap
 
-def git_show(path):
-    """Bytes of `origin/master:<path>`."""
-    r = subprocess.run(["git", "-C", str(ROOT), "show", f"origin/master:{path}"],
-                       capture_output=True)
-    if r.returncode:
-        raise OSError(r.stderr.decode(errors="replace").strip())
-    return r.stdout
+def load_static_baseline(path):
+    """Read `<sha256>  <path>` lines -> {path: sha256}."""
+    out = {}
+    for n, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        m = re.match(r"^([0-9a-f]{64})  (\S.*)$", line)
+        if not m:
+            raise ValueError(f"{path}:{n}: cannot parse {line!r}")
+        out[m.group(2)] = m.group(1)
+    if not out:
+        raise ValueError(f"{path}: no entries")
+    return out
 
 
-def check_static(build, reader=git_show, files=IDENTICAL_FILES):
+def check_static(build, baseline):
     out = []
-    for rel in files:
+    for rel, want in sorted(baseline.items()):
         f = Path(build) / rel
         if not f.is_file():
             out.append(f"static {rel}: missing from build")
-            continue
-        try:
-            ref = reader(rel)
-        except (OSError, KeyError) as e:
-            out.append(f"static {rel}: cannot read origin/master version: {e}")
-            continue
-        if f.read_bytes() != ref:
-            out.append(f"static {rel}: differs from origin/master")
+        elif hashlib.sha256(f.read_bytes()).hexdigest() != want:
+            out.append(f"static {rel}: differs from the baseline checksum")
     return out
 
 
@@ -157,7 +160,12 @@ def check_sitemap(new_text, snapshot_text, exempt):
         new = sitemap_paths(new_text)
     except ET.ParseError as e:
         return [f"sitemap.xml: not well-formed XML: {e}"]
-    want = sitemap_paths(snapshot_text)
+    try:
+        want = sitemap_paths(snapshot_text)
+    except ET.ParseError as e:
+        return [f"snapshot sitemap.xml: not well-formed XML: {e}"]
+    if not want:
+        return ["snapshot sitemap.xml: no <loc> entries"]
     return [f"sitemap.xml: snapshot URL {p} missing"
             for p in sorted(want - new - set(exempt))]
 
@@ -270,9 +278,11 @@ def check_links(build, allow=()):
     failures = []
     seen = set()
     cache = {}
+    scanned = 0
     for html in sorted(build.rglob("*.html")):
         page_url = "/" + html.relative_to(build).as_posix()
         for href in _scan(html, cache).hrefs:
+            scanned += 1
             target = _internal(href, f"https://{SITE_HOST}{page_url}")
             if target is None:
                 continue
@@ -293,6 +303,8 @@ def check_links(build, allow=()):
             elif (page_url, href) not in seen:
                 seen.add((page_url, href))
                 failures.append(f"link {page_url}: {href!r}: {problem}")
+    if not scanned:
+        failures.append(f"link scan: no <a href> found under {build}")
     unused = [e for e in allow if (e["page"], e["href"]) not in used]
     return failures, unused
 
@@ -342,7 +354,7 @@ def url_to_file(build, url):
     return _resolve(build, unquote(url))
 
 
-def run_build(build, snapshot, allow):
+def run_build(build, snapshot, allow, static_baseline=DEFAULT_BASELINE):
     failures, notes = [], []
     build = Path(build)
     urls = read_urls(snapshot)
@@ -376,9 +388,10 @@ def run_build(build, snapshot, allow):
         failures += f
         notes.append(f"sitemap: {'ok' if not f else str(len(f)) + ' problems'}")
 
-    f = check_static(build)
+    baseline = load_static_baseline(static_baseline)
+    f = check_static(build, baseline)
     failures += f
-    notes.append(f"static files: {len(IDENTICAL_FILES) - len(f)}/{len(IDENTICAL_FILES)} identical")
+    notes.append(f"static files: {len(baseline) - len(f)}/{len(baseline)} identical")
 
     f = check_tag_map(build, {norm_key(k): v for k, v in load_aliases().items()})
     failures += f
@@ -437,6 +450,8 @@ def main(argv=None):
     ap.add_argument("--snapshot", required=True)
     ap.add_argument("--build", help="build directory (default mode)")
     ap.add_argument("--live", metavar="BASE", help="check a running site instead of --build")
+    ap.add_argument("--baseline", default=str(DEFAULT_BASELINE),
+                    help="static file checksums (build mode)")
     ap.add_argument("--allow", default=str(ROOT / "migration" / "site-allowlist.yaml"))
     a = ap.parse_args(argv)
     if bool(a.build) == bool(a.live):
@@ -445,7 +460,7 @@ def main(argv=None):
     if a.live:
         failures, notes = run_live(a.live, a.snapshot)
     else:
-        failures, notes = run_build(a.build, a.snapshot, load_site_allowlist(a.allow))
+        failures, notes = run_build(a.build, a.snapshot, load_site_allowlist(a.allow), a.baseline)
     for n in notes:
         print(n)
     for f in failures:

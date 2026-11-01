@@ -100,6 +100,11 @@ class LinkTests(unittest.TestCase):
         self.site.write("blog/x.html", page('<h2 id="s1">S</h2>'))
         self.assertEqual(self.run_links()[0], [])
 
+    def test_zero_links_scanned_fails(self):
+        self.site.write("index.html", page("no links"))
+        failures, _ = self.run_links()
+        self.assertEqual(len(failures), 1)
+
     def test_broken_file_fails(self):
         self.site.write("index.html", page('<a href="/nope/">x</a>'))
         failures, _ = self.run_links()
@@ -181,17 +186,27 @@ class StaticAndSitemapTests(unittest.TestCase):
         self.site = Site()
         self.addCleanup(self.site.cleanup)
 
-    def test_static_files_identical(self):
-        ref = {"CNAME": b"x\n", "google.html": b"g", "assets/icons/favicon.ico": b"\x00\x01"}
-        for rel, data in ref.items():
+    def test_static_files_match_baseline(self):
+        import hashlib
+        data = {"CNAME": b"x\n", "google.html": b"g", "assets/icons/favicon.ico": b"\x00\x01"}
+        for rel, d in data.items():
             p = self.site.root / rel
             p.parent.mkdir(parents=True, exist_ok=True)
-            p.write_bytes(data)
-        files = tuple(ref)
-        self.assertEqual(vs.check_static(self.site.root, ref.__getitem__, files), [])
+            p.write_bytes(d)
+        base = {rel: hashlib.sha256(d).hexdigest() for rel, d in data.items()}
+        self.assertEqual(vs.check_static(self.site.root, base), [])
         (self.site.root / "CNAME").write_bytes(b"y\n")
         (self.site.root / "google.html").unlink()
-        self.assertEqual(len(vs.check_static(self.site.root, ref.__getitem__, files)), 2)
+        self.assertEqual(len(vs.check_static(self.site.root, base)), 2)
+
+    def test_baseline_file_parses_and_matches_repo_files(self):
+        base = vs.load_static_baseline(vs.DEFAULT_BASELINE)
+        self.assertEqual(set(base), {"CNAME", "googlea2b9a3ab05f01437.html",
+                                     "assets/icons/favicon.ico"})
+        self.assertEqual(vs.check_static(ROOT / "static", base), [])
+        self.site.write("b.txt", "nothex  CNAME\n")
+        with self.assertRaises(ValueError):
+            vs.load_static_baseline(self.site.root / "b.txt")
 
     def test_sitemap_must_cover_snapshot(self):
         snap = ("<urlset><url><loc>%s/a/</loc></url><url><loc>%s/blog/</loc></url></urlset>"
@@ -199,7 +214,12 @@ class StaticAndSitemapTests(unittest.TestCase):
         new = "<urlset><url><loc>%s/a/</loc></url></urlset>" % BASE
         self.assertEqual(len(vs.check_sitemap(new, snap, set())), 1)
         self.assertEqual(vs.check_sitemap(new, snap, {"/blog/"}), [])
-        self.assertEqual(vs.check_sitemap(new, "<urlset/>", set()), [])
+        self.assertTrue(vs.check_sitemap(new, "<urlset/>", set()))
+        self.assertTrue(vs.check_sitemap(new, "<urlset", set()))
+
+    def test_unparseable_snapshot_feed_fails_without_traceback(self):
+        links = FeedTests.LINKS
+        self.assertTrue(vs.check_feed(rss(links), "<rss"))
 
 
 class MainTests(unittest.TestCase):
