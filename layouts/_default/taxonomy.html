@@ -1,7 +1,6 @@
 {{ define "main" }}
 {{- /* Hugo also falls back to this template for term pages (/tags/<tag>/), so
        the tag index and the term list are told apart by .Kind. */ -}}
-{{ if eq .Kind "taxonomy" }}
 {{- /* Tag lookup for the /tags#<raw tag> redirect: normalized raw name (as in
        tools/tags.py norm_key) -> tag page path. Built from the real term pages
        plus every alias in data/tag_aliases.yaml whose canonical tag has one. */ -}}
@@ -17,18 +16,24 @@
     {{- $map = merge $map (dict ($raw | lower | replaceRE `\s+` " " | strings.TrimSpace) .) }}
   {{- end }}
 {{- end }}
-<h1>{{ .Title }}</h1>
-<ul>
-{{ range .Pages }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a> ({{ len .Pages }})</li>
-{{ end }}</ul>
+<div class="page-head"><h1 class="sec-title"><span class="hx"></span>{{ .Title }}</h1></div>
+<div class="page-body">
+{{- /* Canonical names as written in front matter; terms sorted by count, then name. */ -}}
+{{- $names := partialCached "tag-names.html" "all" -}}
+{{- $multi := slice -}}{{- $single := slice -}}
+{{- range .Data.Terms.ByCount }}
+  {{- if ge .Count 2 }}{{ $multi = $multi | append . }}{{ else }}{{ $single = $single | append . }}{{ end }}
+{{- end }}
+<div class="tags tag-cloud">{{ range $multi }}{{ partial "tag-chip.html" (dict "tag" (index $names (.Term | lower)) "count" .Count "url" .Page.RelPermalink) }}{{ end }}</div>
+{{- if $single }}
+<details class="single-tags">
+  <summary>한 편에만 쓰인 태그<span class="n">{{ len $single }}</span></summary>
+  <div class="tags tag-cloud">{{ range $single }}{{ partial "tag-chip.html" (dict "tag" (index $names (.Term | lower)) "url" .Page.RelPermalink) }}{{ end }}</div>
+</details>
+{{- end }}
+</div>
 <script type="application/json" id="tag-map">{{ $map | jsonify | safeJS }}</script>
 {{ with resources.Get "ts/tags-redirect.ts" | js.Build (dict "minify" true "target" "es2020") | fingerprint }}
 <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
-{{ end }}
-{{ else }}
-<h1>{{ .Title }}</h1>
-<ul>
-{{ range .Pages }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
-{{ end }}</ul>
 {{ end }}
 {{ end }}

@@ -1,0 +1,41 @@
+{{ define "main" }}
+<section class="hero">
+  <div class="hero-in">
+    <h1>소프트웨어로 스토리지를 만드는 개발자들의 기술 이야기</h1>
+    <p>파일 시스템, NVMe, 고가용성까지 글루시스 개발자가 직접 겪고 정리한 내용을 공유합니다.</p>
+    <form class="hero-search" action="/search/" method="get" role="search">
+      <input type="search" name="q" placeholder="ZFS, Lustre, 스냅샷처럼 주제로 검색" aria-label="글 검색" autocomplete="off">
+      <button type="submit">검색</button>
+    </form>
+  </div>
+</section>
+
+{{- $posts := where site.RegularPages "Section" "blog" -}}
+<div class="wrap">
+  <main>
+    <h2 class="sec-title"><span class="hx"></span>최근 글</h2>
+    {{ range first 8 $posts }}{{ partial "post-card.html" . }}{{ end }}
+    <a class="more" href="/posts/">전체 글 보기</a>
+  </main>
+
+  <aside>
+    <div class="block">
+      <h2 class="sec-title"><span class="hx"></span>주제별로 보기</h2>
+      <div class="tags">
+        {{- range hugo.Data.featured_tags }}
+          {{- $wp := index site.Taxonomies.tags (. | lower) }}
+          {{- if $wp }}{{ partial "tag-chip.html" (dict "tag" . "count" (len $wp)) }}{{ else }}{{ errorf "featured tag %q has no tag page" . }}{{ end -}}
+        {{- end }}
+      </div>
+    </div>
+    <div class="block">
+      <h2 class="sec-title"><span class="hx"></span>연재</h2>
+      <ul class="series">
+        {{- range hugo.Data.series }}
+        <li><a href="/series/#{{ anchorize .name }}">{{ .name }}</a><span>{{ len .posts }}편</span></li>
+        {{- end }}
+      </ul>
+    </div>
+  </aside>
+</div>
+{{ end }}

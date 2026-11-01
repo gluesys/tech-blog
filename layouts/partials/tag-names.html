@@ -1,0 +1,10 @@
+{{- /* Canonical tag names as written in front matter: lower-cased term key ->
+       name. Hugo lower-cases term keys and title-cases term titles ("NVMe-OF"),
+       so the display name is taken from the posts themselves (first seen wins). */ -}}
+{{- $m := dict -}}
+{{- range where site.RegularPages "Section" "blog" -}}
+  {{- range .Params.tags -}}
+    {{- if not (index $m (. | lower)) }}{{ $m = merge $m (dict (. | lower) .) }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $m -}}

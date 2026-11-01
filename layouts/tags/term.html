@@ -1,0 +1,10 @@
+{{ define "main" }}
+{{- /* Hugo title-cases term titles ("NVMe-OF"); show the tag as written. */ -}}
+<div class="page-head">
+  <h1 class="sec-title"><span class="hx"></span>{{ index (partialCached "tag-names.html" "all") (.Data.Term | lower) }}<span class="n">{{ len .Pages }}편</span></h1>
+  <p class="crumb"><a href="/tags/">모든 태그</a></p>
+</div>
+<div class="page-body">
+  {{ range .Pages.ByDate.Reverse }}{{ partial "post-card.html" . }}{{ end }}
+</div>
+{{ end }}

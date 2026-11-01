@@ -1,0 +1,12 @@
+# Canonical tag names shown in the home page side column, in display order.
+# Post counts are computed at build time.
+- 스토리지
+- NVMe
+- 고가용성
+- 백업
+- CXL
+- RAID
+- SPDK
+- LVM
+- 오픈소스
+- 스냅샷

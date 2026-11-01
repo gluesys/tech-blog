@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="page-head"><h1 class="sec-title"><span class="hx"></span>{{ .Title }}</h1></div>
+<div class="page-body">
+{{- range (where site.RegularPages "Section" "blog").GroupByDate "2006" }}
+  <section class="year-group" aria-labelledby="y{{ .Key }}">
+    <h2 id="y{{ .Key }}">{{ .Key }}<span class="n">{{ len .Pages }}</span></h2>
+    {{ range .Pages }}{{ partial "post-card.html" . }}{{ end }}
+  </section>
+{{- end }}
+</div>
+{{ end }}

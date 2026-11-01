@@ -4,10 +4,6 @@
 # verifier fail. Unless noted, each link is also dead on the live site
 # (checked against migration/snapshot). Values are JSON double-quoted strings.
 
-- page: "*"
-  href: "/about/"
-  reason: "Header and footer link to the about page, which is added in Task 9. Remove this entry then; an unused entry fails the verifier."
-
 - page: "/blog/2021/03/03/NVMe_1.html"
   href: "#flash_memory"
   reason: "Dead on live too: the live page has the same link and no element with this id (the author never added the anchor)."
