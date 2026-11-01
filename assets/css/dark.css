@@ -11,6 +11,8 @@
      tag text #D2DCE8 on soft                9.97   tag hover #A9CBFF on #243F63 6.45
      code text #F8F8F2 on navy               8.55   comment #A9C0D9 on navy 4.87
      white on button bg --ci-deep            8.13
+     CTA button #163CCF text on #fff 8.13 (white in both themes, on the --ci-deep banner)
+     hero search button stays #1775FD (same as light), on the always-white field
      focus ring cyan on bg 8.14, on surface 7.29; ink on cyan (tag focus) 7.34
      control edge #5F7C99 vs bg 4.04, vs surface 3.61 (UI boundary >= 3)
    Plain dividers (--line) are decorative and not counted as UI boundaries. */

@@ -33,7 +33,6 @@ export function initTheme(): void {
     if (!btn) return;
     const dark = current === "dark";
     btn.setAttribute("aria-pressed", String(dark));
-    btn.setAttribute("aria-label", dark ? "밝은 화면으로 전환" : "어두운 화면으로 전환");
   };
   const apply = (next: Theme, explicit: boolean) => {
     if (explicit) document.documentElement.dataset.theme = next;

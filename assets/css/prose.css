@@ -62,7 +62,7 @@
 .related time { color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
 .cta { margin-top: 28px; background: var(--ci-deep); color: #fff; border-radius: 10px; padding: 26px 28px; display: flex; align-items: center; gap: 24px; }
 .cta p { margin: 0; font-size: 17px; line-height: 1.6; }
-.cta a { margin-left: auto; background: var(--surface); color: var(--ci-deep); font-weight: 600; padding: 11px 18px; border-radius: 8px; white-space: nowrap; }
+.cta a { margin-left: auto; background: #fff; color: var(--ci-deep); font-weight: 600; padding: 11px 18px; border-radius: 8px; white-space: nowrap; }
 
 /* sticky TOC and share */
 .toc { position: sticky; top: 24px; align-self: start; font-size: 14.5px; max-height: calc(100vh - 48px); overflow-y: auto; padding-left: 10px; margin-left: -10px; }
