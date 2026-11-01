@@ -10,6 +10,10 @@ from urllib.parse import unquote
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
         "meta", "param", "source", "track", "wbr"}
 SKIP_TEXT = {"script", "style"}
+BLOCK = {"p", "li", "ul", "ol", "div", "h1", "h2", "h3", "h4", "h5", "h6",
+         "pre", "blockquote", "table", "tr", "td", "th", "br", "hr", "figure",
+         "figcaption", "dl", "dt", "dd", "section", "article", "header",
+         "footer", "center"}
 HEADINGS = {"h1", "h2", "h3", "h4", "h5", "h6"}
 
 
@@ -33,6 +37,8 @@ class _Facts(HTMLParser):
         a = dict(attrs)
         if self.done:
             return
+        if self.depth and tag in BLOCK:
+            self.text.append(" ")
         if not self.depth:
             if self.root in (a.get("class") or "").split():
                 self.depth = 1
@@ -51,6 +57,8 @@ class _Facts(HTMLParser):
 
     def handle_startendtag(self, tag, attrs):
         if self.depth and not self.done:
+            if tag in BLOCK:
+                self.text.append(" ")
             self._record(tag, dict(attrs))
 
     def _record(self, tag, a):
@@ -77,6 +85,8 @@ class _Facts(HTMLParser):
             self.depth -= 1
             if t in SKIP_TEXT:
                 self._skip = max(0, self._skip - 1)
+            if t in BLOCK:
+                self.text.append(" ")
             if self._heading and t == self._heading[2]:
                 self.headings.append(
                     (self._heading[0], _norm("".join(self._heading[1]))))

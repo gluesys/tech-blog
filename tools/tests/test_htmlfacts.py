@@ -49,6 +49,17 @@ class HtmlFactsTest(unittest.TestCase):
         html = wrap("a&nbsp;&nbsp; b\n c")
         self.assertEqual(htmlfacts.body_text(html, "post-content"), "a b c")
 
+    def test_body_text_block_boundaries(self):
+        bt = lambda h: htmlfacts.body_text(wrap(h), "post-content")
+        self.assertEqual(bt("<p>a</p><p>b</p>"), "a b")
+        self.assertEqual(bt("<p>a</p>\n<p>b</p>"), "a b")
+        self.assertEqual(bt("<ul><li>x<li>y</ul>"), "x y")
+        self.assertEqual(bt("a<code>b</code>c"), "abc")
+
+    def test_multi_class_root(self):
+        html = '<div class="prose foo" data-pagefind-body><h2 id="x">X</h2></div>'
+        self.assertEqual(htmlfacts.heading_ids(html, "prose"), [("x", "X")])
+
 
 if __name__ == "__main__":
     unittest.main()

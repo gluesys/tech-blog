@@ -4,6 +4,7 @@ import argparse
 import re
 import sys
 import time
+import xml.etree.ElementTree as ET
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -32,22 +33,24 @@ def main(argv=None):
     out = Path(args.out)
 
     sitemap = fetch(base + "/sitemap.xml")
-    locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", sitemap.decode("utf-8"))
-    paths = sorted({unquote(urlparse(u).path) for u in locs})
-    if not paths:
+    root = ET.fromstring(sitemap)
+    locs = [(e.text or "").strip() for e in root.iter() if e.tag.endswith("}loc") or e.tag == "loc"]
+    raw_paths = sorted({urlparse(u).path for u in locs if u})
+    if not raw_paths:
         print("sitemap has no entries", file=sys.stderr)
         return 1
+    paths = sorted(unquote(p) for p in raw_paths)
 
     out.mkdir(parents=True, exist_ok=True)
     (out / "sitemap.xml").write_bytes(sitemap)
     (out / "feed.xml").write_bytes(fetch(base + "/feed.xml"))
-    (out / "urls.txt").write_text("".join(p + "\n" for p in paths), encoding="utf-8")
 
-    posts = [p for p in paths if p.startswith("/blog/") and p.endswith(".html")]
+    posts = [p for p in raw_paths if p.startswith("/blog/") and p.endswith(".html")]
     for p in posts:
-        dest = out / "posts" / p.lstrip("/")
+        dest = out / "posts" / unquote(p).lstrip("/")
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(fetch(base + p))
+    (out / "urls.txt").write_text("".join(p + "\n" for p in paths), encoding="utf-8")
     print(f"saved {len(posts)} posts, {len(paths)} urls")
     return 0
 
