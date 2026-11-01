@@ -12,11 +12,11 @@
 
 {{- $posts := where site.RegularPages "Section" "blog" -}}
 <div class="wrap">
-  <main>
+  <div class="home-main">
     <h2 class="sec-title"><span class="hx"></span>최근 글</h2>
     {{ range first 8 $posts }}{{ partial "post-card.html" . }}{{ end }}
     <a class="more" href="/posts/">전체 글 보기</a>
-  </main>
+  </div>
 
   <aside>
     <div class="block">

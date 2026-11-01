@@ -124,8 +124,8 @@
     - `categories`: 블로그 사이트의 상단 카테고리 부분으로, 현재로는 템플릿대로 놔두는 것을 권장합니다.  
     - `author`: 작성자를 말하며, 포맷은 `이름 (이메일 주소)` 입니다.  
     - `tags`: 포스트 내용과 관련된 태그를 말합니다. 태그는 한국어와 영어를 병행해 작성해야 하며, 포맷은 `[태그1, tag1, 태그2, tag2, ...]` 입니다. 영어 태그는 보통명사라도 첫 글자는 대문자로 써야 합니다.  
-    - `cover`: 블로그 첫 페이지에 표시되는 포스트의 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 포스트에 쓰일 이미지 위치는 `assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다.  
-    - `main`: 블로그 포스트의 상단에 위치하는 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 포스트에 쓰일 이미지 위치는 `assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다. 주로 `cover`와 같은 이미지를 쓰는 경우가 많습니다.  
+    - `cover`: 블로그 첫 페이지에 표시되는 포스트의 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 포스트에 쓰일 이미지 위치는 `static/assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다.  
+    - `main`: 블로그 포스트의 상단에 위치하는 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 포스트에 쓰일 이미지 위치는 `static/assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다. 주로 `cover`와 같은 이미지를 쓰는 경우가 많습니다.  
  * 포스트 본문: 포스트의 주 내용을 말하며, `문서 정보` 아래에 위치합니다. 포스트 본문은 크게 제목, 내용, 첨부 이미지, 참고문헌, 각주 등으로 구성됩니다.  
     - 제목: 각 제목은 고유명사를 사용하는 것이 아닌 이상 한국어로 작성해 주시기 바랍니다. 최상위 제목은 `##`의 뎁스부터 시작하며, 특수문자 사용 시 [HTML 특수문자](http://kor.pe.kr/util/4/charmap2.htm) 를 써야 하니 참고해 주시기 바랍니다.  
     - 내용: 포스트의 내용은 구어체로 작성하되, 격식체를 유지해 주시기 바랍니다(예: ~입니다, ~습니다 등). 영어 약어나 내용에 핵심이 되는 고유명사에는 약어 또는 한국어 표기 단어 뒤에 괄호 안에 정식 영어 표기를 넣어야 합니다. 이후 영어 약어를 활용할 경우에는 괄호 안에 `이하 '영어 약어'`를 넣어야 합니다(예: 소프트웨어 정의 스토리지(Software Defined Storage, 이하 SDS)).  
@@ -161,7 +161,7 @@
 ### 4.2 깃허브에 올려 검토 요청하기
   
  위의 기본 세팅이 완료되었다면, 다음과 같은 과정으로 깃허브에 올려 주시기 바랍니다:  
- 1. 로컬 저장소의 내용 수정 및 업데이트: 작성한 마크다운 파일을 로컬 저장소의 `_post/blog` 경로에 올려 저장하고, `assets/<포스트명>/` 폴더에 커버 및 최상단 이미지, 첨부 이미지를 넣어 주시기 바랍니다.  
+ 1. 로컬 저장소의 내용 수정 및 업데이트: 작성한 마크다운 파일을 로컬 저장소의 `_posts/blog` 경로에 올려 저장하고, `static/assets/<포스트명>/` 폴더에 커버 및 최상단 이미지, 첨부 이미지를 넣어 주시기 바랍니다.  
  2. 원격 저장소에 수정 내용 푸시: 파일을 커밋 후 원격 저장소에 푸시해 주시기 바랍니다. 커밋 메시지는 반드시 작성해야 하며 영문으로 커밋 내용을 작성할 필요가 있습니다. 자세한 내용은 [링크](https://backlog.com/git-tutorial/kr/intro/intro2_4.html) 를 참고해 주시기 바랍니다.  
  3. 기술 블로그 저장소에 풀리퀘스트 작성: 원격 저장소에 푸시가 성공했다면 원격 저장소 페이지에 나타난 `Create pull request` 버튼을 클릭해 풀리퀘스트를 작성할 수 있습니다. 포스트 제목과 요약 내용을 작성해서 풀리퀘스트를 올려 주시기 바랍니다.  
  4. 피드백 요청: 매터모스트의 `시스템` > `리뷰` 에 풀리퀘스트 페이지의 URL과 함께 리뷰를 요청해 주시기 바랍니다.  
@@ -183,3 +183,56 @@
 
 이상으로 기술 블로그 포스트 작성과 관련하여 궁금하신 점이나 추가 의견이 있으신 분은 상기 기술 블로그 담당자나 가이드라인 작성자에 문의 바랍니다.
   
+
+-----
+
+# Development
+
+The site is built with Hugo (extended) and searched with Pagefind. No JavaScript package manager is used anywhere in this repository or its CI.
+
+## Tools and local preview
+
+```
+tools/install_tools.sh .bin     # downloads pinned Hugo and Pagefind into .bin/, verifies SHA-256
+.bin/hugo server                # live preview at http://localhost:1313/
+```
+
+Versions and checksums live in `tools/versions.env`. Search needs the index, so for the search page run `.bin/hugo --minify && .bin/pagefind --site build` and serve `build/`.
+
+## Writing a post
+
+Until the cutover is verified (plan Task 16), new posts still go to `_posts/blog/` in the Jekyll format described above and are converted with `tools/convert_posts.py`. That script regenerates `content/blog/` from `_posts/` and fails on any `.md` there that has no source, so do not hand-add files to `content/blog/` yet.
+
+After `_posts/` is deleted, author posts directly as `content/blog/YYYY-MM-DD-slug.md`:
+
+```yaml
+---
+title: "..."
+slug: "my-post-slug"   # required for new posts, see below
+date: 2026-11-02
+author: "이름 (name@gluesys.com)"
+tags: ["NVMe", "스토리지"]
+cover: "/assets/slug/cover.jpg"
+main: "/assets/slug/cover.jpg"
+summary: "one sentence (optional)"
+series: "NVMe"        # optional
+series_order: 3       # optional
+---
+```
+
+- No `url` is needed, but set `slug` (ASCII, same as the file name without the date). The permalink rule `/blog/:year/:month/:day/:slug.html` takes `:slug` from the front matter `slug`, falling back to the title, so a Korean title without `slug` produces a broken `한글-제목.html/index.html` path. Converted posts keep their explicit `url`.
+- Use canonical tags from `data/tag_aliases.yaml`. `python3 tools/check_tags.py content/blog` warns about unknown or non-canonical tags.
+- A series needs `series` and `series_order` in front matter, plus an entry in `data/series.yaml` (post file name without the date prefix, in reading order).
+- Images go under `static/assets/` and are referenced as `/assets/...`.
+
+## CI (`.github/workflows/pages.yml`)
+
+On pull requests and pushes to `master` the workflow installs the pinned tools, runs the Python tests (`unittest`) and Deno tests for the TypeScript, builds with `hugo --minify --environment production`, builds the Pagefind index, then runs `verify_migration.py`, `verify_site.py` and `check_tags.py`. `verify_search.py` is a non-blocking report. Pull requests upload `build/` as an artifact; pushes to `master` deploy to GitHub Pages.
+
+## Converter and verifiers
+
+- `tools/convert_posts.py`: Jekyll `_posts/blog` to `content/blog` (kramdown to Goldmark, front matter rewrite, tag canonicalization).
+- `tools/verify_migration.py`: compares each built post against the live-site snapshot in `migration/snapshot`.
+- `tools/verify_site.py`: checks URLs, feeds, redirects, sitemap and page structure of the built site.
+- `tools/verify_search.py`: runs the acceptance queries in `tools/search_cases.txt` against the index.
+- `tools/check_tags.py`: warns about tags missing from `data/tag_aliases.yaml`.
