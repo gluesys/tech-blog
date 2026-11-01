@@ -3,7 +3,7 @@ url: "/blog/2020/07/22/storage_6_intro.html"
 title: "스토리지 기초 지식 6편: 데이터 보호 - RAID와 소거 코드"
 date: 2020-07-22
 author: "박 주형 (jhpark@gluesys.com)"
-tags: ["RAID", "스트라이핑", "Striping", "미러링", "Mirroing", "패리티", "Parity", "소거 코드", "Erasure Coding", "데이터 보호"]
+tags: ["RAID", "스트라이핑", "미러링", "패리티", "소거 코드", "데이터 보호"]
 legacy_tags: [RAID, 스트라이핑, Striping, 미러링, Mirroing, 패리티, Parity, 소거 코드, Erasure Coding, 데이터 보호]
 cover: "/assets/data_protection_raid_erasure_coding.jpg"
 main: "/assets/data_protection_raid_erasure_coding.jpg"

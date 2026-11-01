@@ -3,7 +3,7 @@ url: "/blog/2020/06/22/storage_5_intro.html"
 title: "스토리지 기초 지식 5편: 데이터 티어링"
 date: 2020-06-22
 author: "박 주형 (jhpark@gluesys.com)"
-tags: ["스토리지", "Storage", "티어링", "Tiering"]
+tags: ["스토리지", "티어링"]
 legacy_tags: [스토리지, Storage, 티어링, Tiering]
 cover: "/assets/HDD_SSD.jpg"
 main: "/assets/HDD_SSD.jpg"

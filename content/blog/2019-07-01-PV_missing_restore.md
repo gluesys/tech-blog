@@ -3,7 +3,7 @@ url: "/blog/2019/07/01/PV_missing_restore.html"
 title: "특수한 전원 장애 상황에서 PV missing 복구"
 date: 2019-07-01 14:01:00
 author: "권 진영 (gc757489@gmail.com)"
-tags: ["논리 볼륨 관리자", "Logical Volume Manager", "LVM", "문제 해결", "Troubleshooting"]
+tags: ["LVM", "문제 해결"]
 legacy_tags: [논리 볼륨 관리자, Logical Volume Manager, LVM, 문제 해결, Troubleshooting]
 cover: "/assets/missing.PNG"
 main: "/assets/missing_main.jpg"

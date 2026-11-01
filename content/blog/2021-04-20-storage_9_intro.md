@@ -3,7 +3,7 @@ url: "/blog/2021/04/20/storage_9_intro.html"
 title: "스토리지 기초 지식 9편: 오브젝트 스토리지란"
 date: 2021-04-20
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["스토리지", "Storage", "오브젝트 스토리지", "object storage", "파일 시스템", "file system", "블록 스토리지", "block storage", "스토리지 아키텍처", "storage architecture"]
+tags: ["스토리지", "오브젝트 스토리지", "파일 시스템", "블록 스토리지", "스토리지 아키텍처"]
 legacy_tags: [스토리지, Storage, 오브젝트 스토리지, object storage, 파일 시스템, file system, 블록 스토리지, block storage, 스토리지 아키텍처, storage architecture]
 cover: "/assets/object_title.png"
 main: "/assets/object_title.png"

@@ -3,7 +3,7 @@ url: "/blog/2022/08/22/nvmeof_intro.html"
 title: "NVMe 오버 패브릭(NVMe-oF)이란?"
 date: 2022-08-22
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["NVMe", "NVMe-oF", "NVMe over Fabrics", "RDMA", "Storage", "SSD", "RoCE", "iWARP", "파이버 채널", "Fibre Channel", "이더넷", "Ethernet", "TCP"]
+tags: ["NVMe", "NVMe-oF", "RDMA", "스토리지", "SSD", "RoCE", "iWARP", "파이버 채널", "이더넷", "TCP"]
 legacy_tags: [NVMe, NVMe-oF, NVMe over Fabrics, RDMA, Storage, SSD, RoCE, iWARP, 파이버 채널, Fibre Channel, 이더넷, Ethernet, TCP]
 cover: "/assets/nvmeof_maincover.jpg"
 main: "/assets/nvmeof_maincover.jpg"

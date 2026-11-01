@@ -3,7 +3,7 @@ url: "/blog/2020/05/20/storage_4_intro.html"
 title: "스토리지 기초 지식 4편: 중복 제거"
 date: 2020-05-20
 author: "박 주형 (jhpark@gluesys.com)"
-tags: ["스토리지", "Storage", "중복 제거", "Deduplication", "압축", "Compression", "해시", "백업", "Backup", "아카이빙", "Archiving", "데이터 축소", "Data Reduction"]
+tags: ["스토리지", "중복 제거", "압축", "해시", "백업", "아카이빙", "데이터 축소"]
 legacy_tags: [스토리지, Storage, 중복 제거, Deduplication, 압축, Compression, 해시, 백업, Backup, 아카이빙, Archiving, 데이터 축소, Data Reduction]
 cover: "/assets/storage_rack.jpg"
 main: "/assets/storage_rack.jpg"

@@ -3,7 +3,7 @@ url: "/blog/2022/07/22/lustre_GPU_Direct_Storage.html"
 title: "Lustre 파일시스템과 GPUDirect Storage 소개"
 date: 2022-07-22
 author: "권세훈 (qsh700@gluesys.com)"
-tags: ["Lustre", "HPC", "RDMA", "Storage", "GPU Direct Storage"]
+tags: ["Lustre", "HPC", "RDMA", "스토리지", "GPU Direct Storage"]
 legacy_tags: [Lustre, HPC, RDMA, Storage, GPU Direct Storage]
 cover: "/assets/lustre_maincover.jpg"
 main: "/assets/lustre_maincover.jpg"

@@ -3,7 +3,7 @@ url: "/blog/2018/11/02/Intel-Optane-IMDT-Performance-Test.html"
 title: "인텔 옵테인 IMDT 기반 성능 테스트"
 date: 2018-11-02 08:43:59
 author: "김 경표 (hgichon@gmail.com)"
-tags: ["인텔", "Intel", "옵테인", "Optane", "미디어", "Media", "성능", "Performance", "AnyStor", "SSD", "NVMe"]
+tags: ["인텔", "옵테인", "미디어", "성능", "AnyStor", "SSD", "NVMe"]
 legacy_tags: [인텔, Intel, 옵테인, Optane, 미디어, Media, 성능, Performance, AnyStor, SSD, NVMe]
 cover: "/assets/IntelOptaneIMDT.png"
 main: "/assets/IntelOptaneIMDT_main.jpg"

@@ -3,7 +3,7 @@ url: "/blog/2022/10/28/GRAID_and_NVMe.html"
 title: "NVMe 시대의 RAID: GRAID와 PoseidonOS"
 date: 2022-10-28
 author: "박현승 (hspark0582@gluesys.com)"
-tags: ["RAID", "NVMe", "SSD", "GRAID", "SupremeRAID", "PoseidonOS", "SPDK"]
+tags: ["RAID", "NVMe", "SSD", "GRAID", "PoseidonOS", "SPDK"]
 legacy_tags: [RAID, NVMe, SSD, GRAID, SupremeRAID, PoseidonOS, SPDK]
 cover: "/assets/graid_and_nvme/orig.jpg"
 main: "/assets/graid_and_nvme/cut.png"

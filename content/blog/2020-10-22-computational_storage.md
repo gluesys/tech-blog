@@ -3,7 +3,7 @@ url: "/blog/2020/10/22/computational_storage.html"
 title: "엣지 컴퓨팅 환경과 연산 스토리지"
 date: 2020-10-22
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["스토리지", "Storage", "엣지 컴퓨팅", "Edge Computing", "연산 스토리지", "Computational Storage", "인-시튜 프로세싱", "In-situ-processing", "인-스토리지 프로세싱"]
+tags: ["스토리지", "엣지 컴퓨팅", "연산 스토리지", "인-시튜 프로세싱", "인-스토리지 프로세싱"]
 legacy_tags: [스토리지, Storage, 엣지 컴퓨팅, Edge Computing, 연산 스토리지, Computational Storage, 인-시튜 프로세싱, In-situ-processing, 인-스토리지 프로세싱]
 cover: "/assets/brain_circuit.jpg"
 main: "/assets/brain_circuit.jpg"

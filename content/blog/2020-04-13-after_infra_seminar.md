@@ -3,7 +3,7 @@ url: "/blog/2020/04/16/after_infra_seminar.html"
 title: "제 7회 난공불락 인프라 세미나"
 date: 2020-04-16 14:01:00
 author: "권 진영 (gc757489@gmail.com)"
-tags: ["중복 제거", "Deduplication", "VDO"]
+tags: ["중복 제거", "VDO"]
 legacy_tags: [중복 제거, Deduplication, VDO]
 cover: "/assets/after_seminar_vdo/vdoSeminar_cover.png"
 main: "/assets/after_seminar_vdo/vdoSeminar_cover.png"

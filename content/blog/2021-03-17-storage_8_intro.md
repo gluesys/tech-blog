@@ -3,7 +3,7 @@ url: "/blog/2021/03/17/storage_8_intro.html"
 title: "스토리지 기초 지식 8편: 씬 프로비저닝이란"
 date: 2021-03-17
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["스토리지", "Storage", "씬 프로비저닝", "Thin Provisioning", "씩 프로비저닝", "Thick Provisioning", "스토리지 관리", "Storage Management", "스토리지 가상화", "Storage Virtualization"]
+tags: ["스토리지", "씬 프로비저닝", "씩 프로비저닝", "스토리지 관리", "스토리지 가상화"]
 legacy_tags: [스토리지, Storage, 씬 프로비저닝, Thin Provisioning, 씩 프로비저닝, Thick Provisioning, 스토리지 관리, Storage Management, 스토리지 가상화, Storage Virtualization]
 cover: "/assets/provisioning_title.jpg"
 main: "/assets/provisioning_title.jpg"

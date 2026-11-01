@@ -3,7 +3,7 @@ url: "/blog/2024/06/10/pnfsintro.html"
 title: "병렬 네트워크 파일 시스템 pNFS의 재조명"
 date: 2024-06-10
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["pNFS", "NFS", "병렬 파일시스템", "Parallel File System", "고성능", "High Performance", "Storage", "스토리지"]
+tags: ["pNFS", "NFS", "병렬 파일 시스템", "고성능", "스토리지"]
 legacy_tags: [pNFS, NFS, 병렬 파일시스템, Parallel File System, 고성능, High Performance, Storage, 스토리지]
 cover: "/assets/pnfsintro_maincover.jpg"
 main: "/assets/pnfsintro_maincover.jpg"

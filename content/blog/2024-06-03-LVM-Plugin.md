@@ -3,7 +3,7 @@ url: "/blog/2024/06/03/LVM-Plugin.html"
 title: "LVM 스냅샷 관리 기능 개발 후기 (1)"
 date: 2024-06-03
 author: "이헌제 (lhj4125@gluesys.com)"
-tags: ["스냅샷", "스토리지", "LVM", "Thin Provisioning", "장애", "Storage", "Metadata", "디스크 덤프"]
+tags: ["스냅샷", "스토리지", "LVM", "씬 프로비저닝", "장애", "메타데이터", "디스크 덤프"]
 legacy_tags: [스냅샷, 스토리지, LVM, Thin Provisioning, 장애, Storage, Metadata, 디스크 덤프]
 cover: "/assets/Snapshot1intro_maincover.png"
 main: "/assets/Snapshot1intro_maincover.png"

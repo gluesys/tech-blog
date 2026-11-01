@@ -3,7 +3,7 @@ url: "/blog/2023/01/06/aiworkload.html"
 title: "AI 워크로드에 적합한 스토리지"
 date: 2023-01-06
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["인공지능", "Artificial Intelligence", "AI", "머신러닝", "Machine Learning", "딥러닝", "Deep Learning"]
+tags: ["인공지능", "머신러닝", "딥러닝"]
 legacy_tags: [인공지능, Artificial Intelligence, AI, 머신러닝, Machine Learning, 딥러닝, Deep Learning, ]
 cover: "/assets/aiworkload_maincover.jpg"
 main: "/assets/aiworkload_maincover.jpg"

@@ -3,7 +3,7 @@ url: "/blog/2022/04/19/SPDK_tutorial_1.html"
 title: "SPDK 시리즈 1 : SPDK 환경 구축 실습"
 date: 2022-04-19
 author: "김 태훈 (thkim@gluesys.com)"
-tags: ["SPDK", "NVMe", "SSD", "Flash", "Memory", "RDMA", "Storage"]
+tags: ["SPDK", "NVMe", "SSD", "플래시 메모리", "메모리", "RDMA", "스토리지"]
 legacy_tags: [SPDK, NVMe, SSD, Flash, Memory, RDMA, Storage]
 cover: "/assets/SPDK_maincover.jpg"
 main: "/assets/SPDK_maincover.jpg"

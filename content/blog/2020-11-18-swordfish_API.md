@@ -3,7 +3,7 @@ url: "/blog/2020/11/18/swordfish_API.html"
 title: "스토리지 관리 인터페이스의 표준화, Swordfish"
 date: 2020-11-18
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["스토리지", "Storage", "스토리지 관리", "Storage Management", "표준", "API", "SNIA", "소드피쉬", "Swordfish", "레드피쉬", "Redfish", "SMI-S"]
+tags: ["스토리지", "스토리지 관리", "표준", "API", "SNIA", "Swordfish", "Redfish", "SMI-S"]
 legacy_tags: [스토리지, Storage, 스토리지 관리, Storage Management, 표준, API, SNIA, 소드피쉬, Swordfish, 레드피쉬, Redfish, SMI-S]
 cover: "/assets/swordfish.png"
 main: "/assets/swordfish.png"

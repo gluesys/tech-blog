@@ -3,7 +3,7 @@ url: "/blog/2021/10/26/composableinfra.html"
 title: "컴포저블 인프라란?: 개념과 구성"
 date: 2021-10-26
 author: "박주형 (jhpark@gluesys.com)"
-tags: ["컴포저블 인프라", "Composable Infrastructure", "PCIe", "CXL", "Gen-Z"]
+tags: ["컴포저블 인프라", "PCIe", "CXL", "Gen-Z"]
 legacy_tags: [컴포저블 인프라, Composable Infrastructure, PCIe, CXL, Gen-Z]
 cover: "/assets/composableinfra.jpg"
 main: "/assets/composableinfra.jpg"
