@@ -1,0 +1,14 @@
+{{- $sec := .Section -}}
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="{{ "/" | relURL }}"><img src="{{ "brand/symbol.png" | relURL }}" srcset="{{ "brand/symbol.png" | relURL }} 1x, {{ "brand/symbol@2x.png" | relURL }} 2x" width="34" alt="글루시스"><span class="txt"><span class="name">TECH-G</span><span class="by">글루시스 기술 블로그</span></span></a>
+    <nav class="nav" id="site-nav" aria-label="주 메뉴">
+      <a href="/posts/"{{ if or (eq $sec "posts") (eq $sec "blog") .IsHome }} aria-current="page"{{ end }}>글</a>
+      <a href="/tags/"{{ if or (eq .Kind "taxonomy") (eq .Kind "term") }} aria-current="page"{{ end }}>태그</a>
+      <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>소개</a>
+      <a href="{{ site.Params.careersURL }}">채용</a>
+    </nav>
+    <button class="nav-search" type="button" aria-label="글 검색">글 검색<kbd>/</kbd></button>
+    <button class="menu-btn" type="button" aria-label="메뉴" aria-expanded="false" aria-controls="site-nav">☰</button>
+  </div>
+</header>

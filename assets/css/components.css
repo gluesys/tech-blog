@@ -1,0 +1,11 @@
+/* hexagon marker and section title */
+.hx { display: inline-block; width: 14px; height: 16px; clip-path: var(--hex-pt); background: var(--ci-bright); }
+.sec-title { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; margin: 0 0 8px; }
+
+/* tag chips (long hexagon, 30deg ends) */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { clip-path: var(--hex); background: var(--soft); color: #36405a; font-size: 13px; line-height: 1; padding: 7px 14px; }
+.tag:hover { background: #e4ecff; color: var(--ci-deep); }
+.tag .n { color: var(--ci-gray); margin-left: 4px; font-variant-numeric: tabular-nums; }
+
+.more { display: inline-block; margin-top: 28px; font-weight: 600; color: var(--ci-bright); }

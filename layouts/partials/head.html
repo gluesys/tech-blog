@@ -1,0 +1,28 @@
+{{- $title := cond .IsHome site.Title (printf "%s | %s" .Title site.Title) -}}
+{{- $desc := cond (ne .Description "") .Description (cond (ne .Summary "") (.Summary | plainify | truncate 160) site.Params.description) -}}
+{{- $ogImage := absURL "brand/og-default.png" -}}
+{{- with .Params.cover }}{{ $ogImage = . | absURL }}{{ end -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $desc }}">
+<link rel="canonical" href="{{ .Permalink }}">
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ "feed.xml" | absURL }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:type" content="{{ cond (eq .Section "blog") "article" "website" }}">
+<meta property="og:title" content="{{ .Title | default site.Title }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:image" content="{{ $ogImage }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ .Title | default site.Title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+<meta name="twitter:image" content="{{ $ogImage }}">
+<link rel="icon" type="image/png" href="{{ "brand/symbol.png" | relURL }}">
+<link rel="preload" href="{{ "fonts/saira/Saira-TECH-G.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- $css := slice "fonts" "tokens" "base" "layout" "components" -}}
+{{- $parts := slice -}}
+{{- range $css }}{{ $parts = $parts | append (resources.Get (printf "css/%s.css" .)) }}{{ end -}}
+{{- $style := $parts | resources.Concat "css/site.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">

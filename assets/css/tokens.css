@@ -1,0 +1,14 @@
+:root {
+  --ci-deep: #163CCF;   /* hero and call-to-action background, avatar */
+  --ci-bright: #1775FD; /* links, buttons, current TOC item, hexagon markers */
+  --ci-gray: #6A6E7F;   /* dates, secondary text */
+  --ci-navy: #274B6B;   /* code block background */
+  --ci-cyan: #00C3D2;   /* keyboard focus ring, code accents only */
+  --ink: #1C2233;
+  --line: #E3E6EE;
+  --soft: #F4F6FB;
+  --bg: #FFFFFF;
+  --hex: polygon(9px 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 9px 100%, 0 50%);
+  --hex-pt: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  --content: 1160px;
+}
