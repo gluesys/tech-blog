@@ -6,6 +6,12 @@ if (menuBtn && bar) {
     const open = bar.classList.toggle("open");
     menuBtn.setAttribute("aria-expanded", String(open));
   });
+  document.addEventListener("click", (e) => {
+    if (bar.classList.contains("open") && !bar.contains(e.target as Node)) {
+      bar.classList.remove("open");
+      menuBtn.setAttribute("aria-expanded", "false");
+    }
+  });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && bar.classList.contains("open")) {
       bar.classList.remove("open");
