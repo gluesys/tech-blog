@@ -38,6 +38,7 @@ pNFS의 아키텍처는 크게 클라이언트와 **메타데이터 서버(Metad
 &nbsp;
   
 <img src="/assets/pNFSarchitecture.png" alt="pNFS 구조" width="700" loading="lazy">
+
 <center>&#60; pNFS 구조 &#62;</center>
   
 &nbsp;

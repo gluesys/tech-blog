@@ -109,11 +109,12 @@ class BodyTest(unittest.TestCase):
     def test_untouched_constructs(self):
         md = (
             "<center>&#60; x &#62;</center>\n"
+            "\n"
             "&nbsp;\n"
             "a  \nb\n"
             "text[^1]\n\n"
             ":clap: :wave:\n\n"
-            "    indented code {: x}\n"
+            "    indented code { x}\n"
             "    ![a](b c.png)\n\n"
             '<iframe src="//x" width="700"></iframe>\n'
             "[^1]: note\n"
@@ -132,6 +133,39 @@ class BodyTest(unittest.TestCase):
             "  ~~~\n"
         )
         self.assertEqual(body(md), md)
+
+    def test_center_isolated(self):
+        md = ("para line\n"
+              "<center>&#60; cap &#62;</center>  \n"
+              "[link](http://x) and `code`\n"
+              "tail\n")
+        out, notes = cp.convert_body(md, [])
+        self.assertEqual(out, (
+            "para line\n\n"
+            "<center>&#60; cap &#62;</center>  \n\n"
+            "[link](http://x) and `code`\n"
+            "tail\n"))
+        self.assertEqual(sum(n.startswith("center_isolated") for n in notes), 1)
+
+    def test_center_already_isolated_unchanged(self):
+        md = "a\n\n<center>&#60; cap &#62;</center>\n\nb\n"
+        out, notes = cp.convert_body(md, [])
+        self.assertEqual(out, md)
+        self.assertFalse(any(n.startswith("center_isolated") for n in notes))
+
+    def test_center_in_fence_unchanged(self):
+        md = "```\na\n<center>x</center>\nb\n```\n"
+        self.assertEqual(body(md), md)
+
+    def test_center_crlf(self):
+        md = "a\r\n<center>x</center>\r\nb\r\n"
+        self.assertEqual(body(md), "a\r\n\r\n<center>x</center>\r\n\r\nb\r\n")
+
+    def test_kramdown_in_indented_code_fails(self):
+        with self.assertRaises(ConversionError):
+            body("text\n\n    ![a](b.png){: width=\"7\"}\n")
+        with self.assertRaises(ConversionError):
+            body("text\n\n    {::nomarkdown}<b>x</b>{:/}\n")
 
     def test_inline_code_untouched(self):
         md = 'use `![a](b c.png){: width="7"}` and `{:target="_blank"}` here\n'
@@ -261,6 +295,12 @@ class PostTest(unittest.TestCase):
             self.assertIn(b"## H {#h}\r\n", out)
             self.assertTrue(out.startswith(b"---\r\nurl: "))
             self.assertNotIn(b"\n", out.replace(b"\r\n", b""))
+            # a stray .md in --out that no source produced must fail the run
+            stray = d / "out/2001-01-01-stray.md"
+            stray.write_text("x\n", encoding="utf-8")
+            self.assertEqual(cp.main(args), 1)
+            self.assertTrue(stray.exists())     # reported, not deleted
+            stray.unlink()
             # a live url not produced by any post must fail the run
             (snap / "urls.txt").write_text(
                 "/blog/2020/04/16/p.html\n/blog/2099/01/01/q.html\n", encoding="utf-8")

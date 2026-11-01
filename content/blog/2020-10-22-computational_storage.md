@@ -28,6 +28,7 @@ main: "/assets/brain_circuit.jpg"
 &nbsp;  
 
 <img src="/assets/computational_storage_comparison.png" alt="Alt text" width="600" loading="lazy">
+
 <center>&#60;연산 스토리지의 구조&#62;</center>
 
 &nbsp;
@@ -39,6 +40,7 @@ main: "/assets/brain_circuit.jpg"
 &nbsp;
 
 <img src="/assets/computational_storage_type.png" alt="Alt text" width="600" loading="lazy">
+
 <center>&#60;연산 스토리지의 종류&#62;</center>
 
 &nbsp;

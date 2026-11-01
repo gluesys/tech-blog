@@ -41,6 +41,7 @@ main: "/assets/Snapshot1intro_maincover.png"
 
 
 <img src="/assets/Snapshot1intro_maincover.png" alt="Thin 볼륨 구조" width="700" loading="lazy">
+
 <center>&#60; Thin 볼륨 구조 &#62;</center>
 
 &nbsp;
@@ -283,6 +284,7 @@ LVM 메타데이터에서는 어떤 데이터가 있는지 확인한다면, 조�
 &nbsp;
 
 <img src="/assets/lvm_metadata1.png" alt="디스크 덤프로 살펴보는 메타데이터의 구조" width="700" loading="lazy">
+
 <center>&#60; 디스크 덤프로 살펴보는 메타데이터의 구조 &#62;</center>
 
 &nbsp;
@@ -314,6 +316,7 @@ LVM 메타데이터에서는 어떤 데이터가 있는지 확인한다면, 조�
 &nbsp;
 
 <img src="/assets/lvm_metadata_label.png" alt="Label Header" width="700" loading="lazy">
+
 <center>&#60; Label Header &#62;</center>
 
 &nbsp;
@@ -366,6 +369,7 @@ LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저
 &nbsp;
 
 <img src="/assets/lvm_metadata_pv.png" alt="PV Header" width="700" loading="lazy">
+
 <center>&#60; PV Header &#62;</center>
 
 &nbsp;
@@ -427,6 +431,7 @@ LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저
 &nbsp;
 
 <img src="/assets/lvm_metadata_metadata.png" alt="Metadata Header" width="700" loading="lazy">
+
 <center>&#60; Metadata Header &#62;</center>
 
 &nbsp;
@@ -456,6 +461,7 @@ LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저
 &nbsp;
 
 <img src="/assets/lvm_metadata2.png" alt="Metadata" width="700" loading="lazy">
+
 <center>&#60; Thin, Thick 볼륨의 Metadata &#62;</center>
 
 &nbsp;

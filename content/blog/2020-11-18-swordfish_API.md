@@ -26,6 +26,7 @@ SNIA는 2000년에 SMI-S(Storage Management Initiative Specification)라는 스�
 &nbsp;  
 
 <img src="/assets/SNIA_Swordfish_logo.jpg" alt="Alt text" width="400" loading="lazy">
+
 <center>&#60; SNIA Swordfish 스토리지 관리 표준 API &#40;출처&#58; SNIA&#41; &#62;</center>
 
 &nbsp;

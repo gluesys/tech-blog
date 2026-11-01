@@ -35,6 +35,7 @@ main: "/assets/lustre_maincover.jpg"
 * 러스터 파일시스템 아키텍처[^1]
 
 ![Lustre FS Architecture](/assets/Lustre_Architecture.PNG)
+
 <center>그림 1. 러스터 파일시스템 아키텍처 </center>
 
 &nbsp;
@@ -78,6 +79,7 @@ main: "/assets/lustre_maincover.jpg"
 * HSM 아키텍처[^2]
 
 ![HSM](/assets/HSM_Architecture.png)
+
 <center>그림 2. HSM 아키텍처 </center>
 
 &nbsp;
@@ -102,6 +104,7 @@ main: "/assets/lustre_maincover.jpg"
 * PCC 아키텍처[^3]
 
 ![pcc](/assets/PCC_Architecture.png)
+
 <center>그림 3. Persistent Client Cache </center>
 
 &nbsp;
@@ -127,6 +130,7 @@ PCC는 데이터 동기화를 위해 HSM 기술을 사용합니다. HSM `copytoo
 * 스트라이핑과 오버스트라이핑 비교[^4]
 
 ![Overstriping Example](/assets/overstriping.PNG)
+
 <center>그림 4. Overstriping 예시 </center>
 
 &nbsp;
@@ -157,6 +161,7 @@ PCC는 데이터 동기화를 위해 HSM 기술을 사용합니다. HSM `copytoo
 [그림 5]에서 보시다시피, 일반 스트라이핑은 노드 수가 많아도 일관적으로 낮은 성능을 보이는 반면, 오버스트라이핑으로는 최대 8개 노드까지 성능 향상을 보이고 있습니다.
 
 ![Overstriping Performance](/assets/overstriping2.PNG)
+
 <center>그림 5. Stripe와 Overstriping 비교 </center>
 
 &nbsp;
@@ -187,6 +192,7 @@ DoM은 두 가지 구성요소가 있습니다. 첫 번째는 `MDT` 컴포넌트
 #### DoM 구성 예시[^6] {#dom-구성-예시}
 
 ![DoM](/assets/DoM.PNG)
+
 <center>그림 6. Data-On-MDT </center>
 
 &nbsp;
@@ -231,6 +237,7 @@ test2_domfile
 #### DNE 아키텍처[^7] {#dne-아키텍처}
 
 ![DNE](/assets/DNE.PNG)
+
 <center>그림 7. Distributed Namespace Environment</center>
 
 &nbsp;
@@ -285,6 +292,7 @@ ex) 아래 명령어는/testfs/largedir MDT0000에 있는 내용을 MDT0001 및 
 
 
 ![GPUDirect Storage](/assets/GPU_Direct_Storage.PNG)
+
 <center>그림 8. GPUDirect Storage 아키텍처</center>
 
 

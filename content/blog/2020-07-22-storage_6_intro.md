@@ -24,6 +24,7 @@ series_order: 6
 &nbsp;  
 
 <img src="/assets/RAID_0.png" alt="Alt text" width="400" loading="lazy">
+
 <center>&#60;RAID 0&#62;</center>
 
 &nbsp;
@@ -33,6 +34,7 @@ series_order: 6
 &nbsp;  
 
 <img src="/assets/RAID_1.png" alt="Alt text" width="400" loading="lazy">
+
 <center>&#60;RAID 1&#62;</center>
 
 &nbsp;
@@ -42,11 +44,13 @@ series_order: 6
 &nbsp;  
 
 <img src="/assets/RAID_5.png" alt="Alt text" width="600" loading="lazy">
+
 <center>&#60;RAID 5&#62;</center>
 
 &nbsp;
 
 <img src="/assets/RAID_6.png" alt="Alt text" width="600" loading="lazy">
+
 <center>&#60;RAID 6&#62;</center>
 
 &nbsp;

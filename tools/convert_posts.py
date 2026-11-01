@@ -8,8 +8,11 @@ Usage:
 Per post this applies the rules of spec section 5.1 and nothing else:
 front matter rewrite, heading IDs from the live snapshot, `{: width}` images,
 space-encoded link/image paths, `{::nomarkdown}` unwrapping and
-`{:target="_blank"}` links. Any other kramdown syntax, a heading mismatch
-against the snapshot, or a live URL not covered by exactly one post makes the
+`{:target="_blank"}` links, plus blank lines around `<center>` caption lines
+(controller ruling: keeps CommonMark HTML blocks from swallowing Markdown).
+Any other kramdown syntax, a heading mismatch against the snapshot, a stray
+.md in the output directory, or a live URL not covered by exactly one post
+makes the
 run exit 1 without writing anything. Output is deterministic, so re-running
 is idempotent. Python 3 standard library only.
 """
@@ -180,6 +183,7 @@ TARGET_RE = re.compile(
 LINK_RE = re.compile(r"(!?)\[([^\[\]]*)\]\(([^()]*)\)")
 NOMD_RE = re.compile(r"\{::nomarkdown\}|\{:/\}")
 CODE_SPAN_RE = re.compile(r"(`+)(.+?)\1")
+KRAMDOWN_IN_CODE_RE = re.compile(r"\{::?")
 UNKNOWN_RES = [
     (re.compile(r"\{:"), "kramdown IAL/extension"),
     (re.compile(r"^\*\[[^\]]+\]:"), "kramdown abbreviation"),
@@ -373,6 +377,9 @@ def convert_body(md, heading_ids):
     for i, row in enumerate(rows):
         line, end, kind = row
         n = i + 1
+        if kind == "code" and KRAMDOWN_IN_CODE_RE.search(line):
+            raise ConversionError(
+                f"line {n}: kramdown syntax in an indented code line: {line!r}")
         if kind != "text":
             continue
         new = _transform_line(line, notes)
@@ -398,7 +405,38 @@ def convert_body(md, heading_ids):
     if hi != len(headings):
         raise ConversionError(
             f"heading count mismatch: markdown has {hi}, live has {len(headings)}")
-    return "".join(line + end for line, end, _ in rows), notes
+    return _isolate_centers(rows, notes), notes
+
+
+def _isolate_centers(rows, notes):
+    """Rule 9: surround <center> caption lines with blank lines.
+
+    A `<center>` line starts a CommonMark HTML block that would swallow the
+    following lines up to the next blank line (and could interrupt the
+    paragraph above), unlike kramdown. The caption line itself is unchanged.
+    """
+    out = []
+    for i, (line, end, kind) in enumerate(rows):
+        is_center = (kind == "text" and line.lstrip(" ").startswith("<center>")
+                     and "</center>" in line)
+        if is_center:
+            blank_end = end or "\n"
+            added = False
+            if out and out[-1][2] != "blank":
+                out.append(["", blank_end, "blank"])
+                added = True
+            out.append([line, end or "", kind])
+            nxt = rows[i + 1] if i + 1 < len(rows) else None
+            if nxt and nxt[2] != "blank":
+                if not end:
+                    out[-1][1] = "\n"
+                out.append(["", blank_end, "blank"])
+                added = True
+            if added:
+                notes.append(f"center_isolated: {line.strip()[:60]}")
+            continue
+        out.append([line, end, kind])
+    return "".join(line + end for line, end, _ in out)
 
 
 # --------------------------------------------------------------------------
@@ -420,7 +458,8 @@ def convert_post(text, filename, heading_ids, tag_map, series_map):
     return head + new_body, url, notes
 
 
-CATEGORIES = ("heading", "width", "nomarkdown", "target_blank", "space_path")
+CATEGORIES = ("heading", "width", "nomarkdown", "target_blank", "space_path",
+              "center_isolated")
 
 
 def _summary(notes):
@@ -485,6 +524,10 @@ def main(argv=None):
     missing = sorted(set(live_urls) - set(seen_urls))
     for u in missing:
         errors.append(f"live url {u} is not produced by any post")
+    if a.out.is_dir():
+        expected = {a.out / (p.stem + ".md") for p in posts}
+        for stray in sorted(set(a.out.glob("*.md")) - expected):
+            errors.append(f"{stray} was not produced by any source post")
     if errors:
         for e in errors:
             print(f"error: {e}", file=sys.stderr)

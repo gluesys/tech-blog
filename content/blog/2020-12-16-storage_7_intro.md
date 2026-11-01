@@ -37,6 +37,7 @@ series_order: 7
 &nbsp;
   
 <img src="/assets/cow_snap.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; Copy-on-write 스냅샷 &#62;</center>
   
 &nbsp;
@@ -58,6 +59,7 @@ COW 스냅샷은 즉각적으로 스냅샷을 생성할 수 있고, 변경되지
 &nbsp;
   
 <img src="/assets/row_snap.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; Redirect-on-write 스냅샷 &#62;</center>
   
 &nbsp;
@@ -73,6 +75,7 @@ COW 스냅샷은 즉각적으로 스냅샷을 생성할 수 있고, 변경되지
 &nbsp;
   
 <img src="/assets/incremental_snap.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 증분 스냅샷 &#62;</center>
   
 &nbsp;
@@ -88,6 +91,7 @@ COW 스냅샷은 즉각적으로 스냅샷을 생성할 수 있고, 변경되지
 스냅샷은 데이터 보호 방식 중에서도 가장 빠르고 많이 쓰이는 기능 중 하나입니다. 데이터를 따로 저장해 두고, 필요에 따라 복원하는 점은 일반적인 백업과 같지만, 스냅샷은 별도의 시스템이나 하드웨어 없이 보통 스토리지 공간 일부를 할애해 사용되기 때문에 저장과 복원을 더욱 빠르게 수행할 수 있습니다. 다만 저장공간의 한계로 스냅샷을 새로 생성할 때마다 오래된 스냅샷을 덮어씌우기 때문에 단기적인 백업 및 복구 용도로 사용할 수밖에 없습니다.  
   
 <img src="/assets/snap_comparison.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 스냅샷 비교 &#62;</center>
 
 &nbsp;

@@ -32,6 +32,7 @@ SPDK 소개 {#spdk-소개}
 지난 [포스팅](https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html)에서 소개한 바와 같이 SPDK(Storage Performance Development Kit)는 사용자 공간(userspace) 계층에서 NVMe(Non-Volatile Memory Express)와 같은 초고속 SSD 장치를 효율적으로 사용하기 위한 프레임워크입니다.
 
 ![Alt text](/assets/SPDK_architecture.jpg) 
+
 <center>그림 1. SPDK Architecture</center>
 
 &nbsp;
@@ -316,11 +317,13 @@ NVMe SSD 최적화를 위해 제조사에서 제공하는 컨트롤러 설정을
 먼저 PCIe configuration register format(아래 그림 2)을 보시고, BAR(Base Address Registers)에 등록된 NVMe controller register format(아래 그림 3)을 확인한 다음에, 얻으려는 정보가 매핑된 메모리의 위치를 찾아서 `bdev_nvme_send_cmd` 명령을 사용해서 NVMe 컨트롤러에 명령을 보내면 알려줍니다.
 
 ![Alt text](/assets/pci_header.png)
+
 <center>그림 2. PCIe configuration register format</center>
 
 &nbsp;
 
 ![Alt text](/assets/nvme_register.png)
+
 <center>그림 3. NVMe controller register format</center> 
 
 &nbsp;

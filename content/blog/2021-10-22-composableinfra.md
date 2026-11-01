@@ -26,6 +26,7 @@ main: "/assets/composableinfra.jpg"
 &nbsp;
   
 <img src="/assets/composableinfra_table.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 표. HCI와 컴포저블 인프라 비교 &#62;</center>
   
 &nbsp;
@@ -43,6 +44,7 @@ main: "/assets/composableinfra.jpg"
 &nbsp;
   
 <img src="/assets/composableinfra_cxlgenz.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 컴포저블 인프라 구성도 예시 &#62;</center>
   
 &nbsp;

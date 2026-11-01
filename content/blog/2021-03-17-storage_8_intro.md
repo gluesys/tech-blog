@@ -24,6 +24,7 @@ series_order: 8
 &nbsp;
   
 <img src="/assets/thick_provisioning.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 씩 프로비저닝 &#62;</center>
   
 &nbsp;
@@ -41,6 +42,7 @@ series_order: 8
 &nbsp;
   
 <img src="/assets/thin_provisioning.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 씬 프로비저닝 &#62;</center>
   
 &nbsp;

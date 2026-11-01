@@ -20,6 +20,7 @@ series_order: 9
 &nbsp;
   
 <img src="/assets/blockfileobject.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 블록, 파일, 오브젝트 비교 &#62;</center>
   
 &nbsp;
@@ -43,6 +44,7 @@ series_order: 9
 &nbsp;  
   
 <img src="/assets/filesystemvsobject.png" alt="Alt text" width="700" loading="lazy">
+
 <center>&#60; 파일 시스템과 오브젝트의 비교 &#62;</center>
   
 &nbsp;
