@@ -1,7 +1,7 @@
-import { initToc } from "./toc";
-import { initCodeCopy } from "./code-copy";
-import { initShare } from "./share";
-import { initSearch } from "./search";
+import { initToc } from "./toc.ts";
+import { initCodeCopy } from "./code-copy.ts";
+import { initShare } from "./share.ts";
+import { initSearch } from "./search.ts";
 
 // Mobile menu: the button toggles the .open class on the header bar and aria-expanded.
 const menuBtn = document.querySelector<HTMLButtonElement>(".menu-btn");

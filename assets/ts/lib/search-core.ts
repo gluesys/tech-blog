@@ -20,19 +20,31 @@ export interface PagefindLike {
   search(q: string): Promise<{ results: { id: string; data(): Promise<PagefindData> }[] }>;
 }
 
-const escapeRe = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const LATIN_DIGIT = /[a-z0-9]/;
 
 /**
- * True when every whitespace-separated token of some variant occurs in the
- * title. A Latin token must not start inside a longer word ("RAID" does not
- * match "GRAID"); Hangul tokens match anywhere (no word spacing in compounds).
+ * Does `tok` occur in `title` (both lower case)? A token that starts with a
+ * Latin letter or digit must not start inside a longer Latin word ("raid" does
+ * not match "graid"); any other token (Hangul, punctuation) matches anywhere.
+ * No regex lookbehind: Safari before 16.4 throws on it.
  */
+function hasToken(title: string, tok: string): boolean {
+  const needsBoundary = LATIN_DIGIT.test(tok[0]);
+  let from = 0;
+  for (;;) {
+    const i = title.indexOf(tok, from);
+    if (i < 0) return false;
+    if (!needsBoundary || i === 0 || !LATIN_DIGIT.test(title[i - 1])) return true;
+    from = i + 1;
+  }
+}
+
+/** True when every whitespace-separated token of some variant occurs in the title (see hasToken). */
 export function titleMatches(title: string, variants: string[]): boolean {
   const t = title.toLowerCase();
   return variants.some((v) => {
     const tokens = v.toLowerCase().split(/\s+/).filter(Boolean);
-    return tokens.length > 0 &&
-      tokens.every((tok) => new RegExp(`(?<![a-z0-9])${escapeRe(tok)}`).test(t));
+    return tokens.length > 0 && tokens.every((tok) => hasToken(t, tok));
   });
 }
 

@@ -1,5 +1,5 @@
 // "링크 복사" copies the canonical URL; "공유" uses navigator.share when present, else copies.
-import { writeClipboard } from "./code-copy";
+import { writeClipboard } from "./code-copy.ts";
 
 export function initShare(): void {
   document.querySelectorAll<HTMLButtonElement>("[data-share]").forEach((btn) => {

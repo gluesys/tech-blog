@@ -13,6 +13,18 @@ Deno.test("shouldNavigate: stale list or pending search must not navigate", () =
   eq(shouldNavigate("스냅샷", null, false), false); // nothing rendered yet
 });
 
+Deno.test("titleMatches: Latin tokens need a word start, Hangul tokens match anywhere", () => {
+  eq(titleMatches("ZFS스냅샷", ["스냅샷"]), true);
+  eq(titleMatches("스토리지 1편", ["편"]), true);
+  eq(titleMatches("RAIDZ 구성", ["raid"]), true); // prefix of a longer word is fine
+  eq(titleMatches("xiRAID", ["raid"]), false);
+  eq(titleMatches("GRAID", ["raid"]), false);
+  eq(titleMatches("GRAID와 RAID", ["raid"]), true); // second occurrence starts a word
+  eq(titleMatches("NVMe-oF 소개", ["nvme-of"]), true);
+  eq(titleMatches("2편", ["2"]), true);
+  eq(titleMatches("v12", ["2"]), false);
+});
+
 Deno.test("titleMatches: all tokens of a variant", () => {
   eq(titleMatches("ZFS 파일 시스템", ["zfs"]), true);
   eq(titleMatches("스토리지 이중화 1편", ["이중화를", "이중화"]), true);
