@@ -1,0 +1,1 @@
+<h{{ .Level }} id="{{ .Anchor }}"{{ range $k, $v := .Attributes }}{{ if ne $k "id" }} {{ $k }}="{{ $v }}"{{ end }}{{ end }}>{{ .Text }}</h{{ .Level }}>

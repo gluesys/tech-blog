@@ -2,3 +2,36 @@ baseURL = "https://tech.gluesys.com/"
 languageCode = "ko"
 title = "TECH-G"
 publishDir = "build"
+timeZone = "UTC"
+disablePathToLower = true
+enableEmoji = true
+
+[markup.goldmark.renderer]
+unsafe = true
+
+[markup.goldmark.parser.attribute]
+title = true
+
+[markup.goldmark.extensions]
+# kramdown never autolinked bare URLs.
+linkify = false
+
+[markup.goldmark.extensions.footnote]
+enable = true
+# kramdown's backlink is a bare U+21A9 without the text variation selector.
+backlinkHTML = "&#8617;"
+
+# The typographer stays on: kramdown also curled quotes and dashes, and turning
+# it off adds 13 body-text differences against the live site.
+
+[markup.highlight]
+noClasses = false
+
+[permalinks]
+blog = "/blog/:year/:month/:day/:slug.html"
+
+[taxonomies]
+tag = "tags"
+
+[pagination]
+pagerSize = 20
