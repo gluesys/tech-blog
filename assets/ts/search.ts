@@ -1,6 +1,6 @@
 // Site search: header overlay (press "/" or click the button) and the /search/ page.
 // Pagefind is loaded lazily, on first use only.
-import { type Hit, type PagefindLike, searchMerged } from "./lib/search-core";
+import { type Hit, type PagefindLike, searchMerged, shouldNavigate } from "./lib/search-core.ts";
 
 const PLACEHOLDER = "ZFS, Lustre, 스냅샷처럼 주제로 검색";
 const MSG_EMPTY = "검색어를 입력하세요";
@@ -35,15 +35,18 @@ interface View {
   status: HTMLElement;
   list: HTMLUListElement;
   active: number;
+  renderedFor: string | null; // trimmed query the list was built from
 }
 
-function render(view: View, q: string, hits: Hit[] | "error" | null, idPrefix: string): void {
+function render(view: View, q: string, found: { hits: Hit[]; total: number } | "error" | null, idPrefix: string): void {
   view.list.replaceChildren();
   view.active = -1;
+  view.renderedFor = q;
+  const hits = found === "error" || found === null ? found : found.hits;
   if (hits === "error") { view.status.textContent = MSG_ERROR; return; }
   if (hits === null) { view.status.textContent = MSG_EMPTY; return; }
   if (!hits.length) { view.status.textContent = noResults(q); return; }
-  view.status.textContent = countOf(hits.length);
+  view.status.textContent = countOf((found as { total: number }).total);
   hits.forEach((h, i) => {
     const li = el("li", "sr-item");
     li.id = `${idPrefix}-${i}`;
@@ -79,29 +82,39 @@ function setActive(view: View, i: number, input?: HTMLInputElement): void {
 function bind(input: HTMLInputElement, view: View, idPrefix: string, onQuery?: (q: string) => void): (q: string) => void {
   let seq = 0;
   let timer: number | undefined;
+  let pending = false; // a debounce timer or a search is outstanding
   const run = async (raw: string) => {
     const q = raw.trim();
     const my = ++seq;
+    pending = true;
     onQuery?.(q);
     input.removeAttribute("aria-activedescendant");
-    if (!q) { render(view, q, null, idPrefix); return; }
+    if (!q) { render(view, q, null, idPrefix); pending = false; return; }
     try {
       const pf = await loadPagefind();
-      const hits = await searchMerged(pf, q);
-      if (my === seq) render(view, q, hits, idPrefix);
+      const found = await searchMerged(pf, q);
+      if (my === seq) { render(view, q, found, idPrefix); pending = false; }
     } catch {
-      if (my === seq) render(view, q, "error", idPrefix);
+      if (my === seq) { render(view, q, "error", idPrefix); pending = false; }
     }
   };
   input.addEventListener("input", () => {
     window.clearTimeout(timer);
+    pending = true;
     timer = window.setTimeout(() => run(input.value), 150);
   });
   input.addEventListener("keydown", (e) => {
-    if (e.isComposing) return;
+    if (e.isComposing || e.keyCode === 229) return; // 229: Safari reports IME Enter as keyCode 229
     if (e.key === "ArrowDown") { e.preventDefault(); setActive(view, view.active + 1, input); }
     else if (e.key === "ArrowUp") { e.preventDefault(); setActive(view, view.active - 1, input); }
     else if (e.key === "Enter") {
+      if (!shouldNavigate(input.value, view.renderedFor, pending)) {
+        // The list is for an older query: run the typed one now instead of opening a stale hit.
+        e.preventDefault();
+        window.clearTimeout(timer);
+        void run(input.value);
+        return;
+      }
       const a = view.list.children[view.active]?.querySelector("a");
       if (a) { e.preventDefault(); location.assign(a.href); }
     }
@@ -119,7 +132,7 @@ function makeResultsView(idPrefix: string): { view: View; wrap: HTMLElement } {
   list.setAttribute("role", "listbox");
   list.setAttribute("aria-label", "검색 결과");
   wrap.append(status, list);
-  return { view: { status, list, active: -1 }, wrap };
+  return { view: { status, list, active: -1, renderedFor: null }, wrap };
 }
 
 // ---------------------------------------------------------------- overlay

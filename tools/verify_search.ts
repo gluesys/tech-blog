@@ -10,7 +10,7 @@ const pf = await import(`file://${abs}/pagefind/pagefind.js`) as PagefindLike & 
 // Pagefind derives result URLs from the file:// location; strip that prefix.
 const prefix = `/file:${abs}`;
 for (const q of queries) {
-  const hits = await searchMerged(pf, q, 5);
+  const { hits } = await searchMerged(pf, q, 5);
   console.log(JSON.stringify({
     query: q,
     variants: queryVariants(q),

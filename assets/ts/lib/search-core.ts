@@ -20,23 +20,56 @@ export interface PagefindLike {
   search(q: string): Promise<{ results: { id: string; data(): Promise<PagefindData> }[] }>;
 }
 
-/** Run every query variant; merge by result id, first-seen order (original query first). */
-export async function searchMerged(pf: PagefindLike, q: string, limit = 20): Promise<Hit[]> {
-  const ids: { id: string; data(): Promise<PagefindData> }[] = [];
+const escapeRe = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * True when every whitespace-separated token of some variant occurs in the
+ * title. A Latin token must not start inside a longer word ("RAID" does not
+ * match "GRAID"); Hangul tokens match anywhere (no word spacing in compounds).
+ */
+export function titleMatches(title: string, variants: string[]): boolean {
+  const t = title.toLowerCase();
+  return variants.some((v) => {
+    const tokens = v.toLowerCase().split(/\s+/).filter(Boolean);
+    return tokens.length > 0 &&
+      tokens.every((tok) => new RegExp(`(?<![a-z0-9])${escapeRe(tok)}`).test(t));
+  });
+}
+
+/**
+ * Enter opens the active result only when the list belongs to what is typed now.
+ * Otherwise the caller must run the typed query first.
+ */
+export function shouldNavigate(inputValue: string, renderedFor: string | null, pending: boolean): boolean {
+  return !pending && renderedFor !== null && inputValue.trim() === renderedFor;
+}
+
+/**
+ * Run every query variant and merge by result id (original query first), then
+ * move title matches to the front, keeping Pagefind's order within each group
+ * (Pagefind weighs the body only; the title sits outside the indexed scope).
+ * `total` counts every merged hit; `hits` holds at most `limit`.
+ */
+export async function searchMerged(
+  pf: PagefindLike,
+  q: string,
+  limit = 20,
+): Promise<{ hits: Hit[]; total: number }> {
+  const variants = queryVariants(q);
+  const merged: { id: string; data(): Promise<PagefindData> }[] = [];
   const seen = new Set<string>();
-  for (const v of queryVariants(q)) {
+  for (const v of variants) {
     if (!v) continue;
     const res = await pf.search(v);
     for (const r of res.results) {
       if (!seen.has(r.id)) {
         seen.add(r.id);
-        ids.push(r);
+        merged.push(r);
       }
     }
   }
-  const top = ids.slice(0, limit);
-  const datas = await Promise.all(top.map((r) => r.data()));
-  return top.map((r, i) => {
+  const datas = await Promise.all(merged.map((r) => r.data()));
+  const all: Hit[] = merged.map((r, i) => {
     const d = datas[i];
     return {
       id: r.id,
@@ -47,4 +80,9 @@ export async function searchMerged(pf: PagefindLike, q: string, limit = 20): Pro
       tags: d.filters?.tag ?? [],
     };
   });
+  const boosted = [
+    ...all.filter((h) => titleMatches(h.title, variants)),
+    ...all.filter((h) => !titleMatches(h.title, variants)),
+  ];
+  return { hits: boosted.slice(0, limit), total: all.length };
 }
