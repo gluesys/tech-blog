@@ -1,0 +1,90 @@
+/* Dark theme. Applies when <html data-theme="dark"> or, with no explicit choice,
+   when the OS prefers dark. Tokens are the same hues as light: navy-based
+   surfaces derived from --ci-navy #274B6B (hue ~207), --ci-bright lightened.
+   Hero, CTA and avatar keep --ci-deep; code blocks keep --ci-navy (a hairline
+   edge keeps them apart from the page).
+   WCAG 2.x contrast ratios (computed with a stdlib script):
+     body ink #E6EDF5 on bg #0F1A26        14.88   on surface #162434  13.32
+     ink-2 #B9C6D6 on bg                    10.13
+     secondary (--ci-gray) #A3B3C6 on bg     8.21   on soft #1C2E42      6.47
+     link #6FA8FF on bg                      7.29   on soft              5.74
+     tag text #D2DCE8 on soft                9.97   tag hover #A9CBFF on #243F63 6.45
+     code text #F8F8F2 on navy               8.55   comment #A9C0D9 on navy 4.87
+     white on button bg --ci-deep            8.13
+     focus ring cyan on bg 8.14, on surface 7.29; ink on cyan (tag focus) 7.34
+     control edge #5F7C99 vs bg 4.04, vs surface 3.61 (UI boundary >= 3)
+   Plain dividers (--line) are decorative and not counted as UI boundaries. */
+:root[data-theme="dark"] {
+  --bg: #0F1A26;
+  --surface: #162434;
+  --soft: #1C2E42;
+  --line: #2A4057;
+  --ink: #E6EDF5;
+  --ink-2: #B9C6D6;
+  --ci-gray: #A3B3C6;
+  --ci-bright: #6FA8FF;
+  --tag-ink: #D2DCE8;
+  --tag-hover-bg: #243F63;
+  --tag-hover-ink: #A9CBFF;
+  --toc-ink: #B9C6D6;
+  --btn-bg: var(--ci-deep);
+  --scrim: rgba(4, 9, 15, .72);
+  --shadow: rgba(0, 0, 0, .5);
+  --mark: rgba(0, 195, 210, .32);
+  --pre-edge: #5F7C99;
+  --edge: #5F7C99;
+  --symbol-tile: #fff;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1A26;
+    --surface: #162434;
+    --soft: #1C2E42;
+    --line: #2A4057;
+    --ink: #E6EDF5;
+    --ink-2: #B9C6D6;
+    --ci-gray: #A3B3C6;
+    --ci-bright: #6FA8FF;
+    --tag-ink: #D2DCE8;
+    --tag-hover-bg: #243F63;
+    --tag-hover-ink: #A9CBFF;
+    --toc-ink: #B9C6D6;
+    --btn-bg: var(--ci-deep);
+    --scrim: rgba(4, 9, 15, .72);
+    --shadow: rgba(0, 0, 0, .5);
+    --mark: rgba(0, 195, 210, .32);
+    --pre-edge: #5F7C99;
+    --edge: #5F7C99;
+    --symbol-tile: #fff;
+    color-scheme: dark;
+  }
+}
+
+/* Rules below depend on the effective theme, so they repeat for both selectors. */
+:root[data-theme="dark"] .nav-search,
+:root[data-theme="dark"] .menu-btn,
+:root[data-theme="dark"] .theme-btn,
+:root[data-theme="dark"] .share button,
+:root[data-theme="dark"] .search-input,
+:root[data-theme="dark"] .search-close,
+:root[data-theme="dark"] .page-search { border-color: var(--edge); }
+:root[data-theme="dark"] .brand img,
+:root[data-theme="dark"] .foot img { box-sizing: content-box; background: var(--symbol-tile); padding: 3px; border-radius: 6px; }
+:root[data-theme="dark"] .prose img { background: #fff; border-radius: 4px; }
+:root[data-theme="dark"] .theme-btn .i-sun { display: block; }
+:root[data-theme="dark"] .theme-btn .i-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .nav-search,
+  :root:not([data-theme="light"]) .menu-btn,
+  :root:not([data-theme="light"]) .theme-btn,
+  :root:not([data-theme="light"]) .share button,
+  :root:not([data-theme="light"]) .search-input,
+  :root:not([data-theme="light"]) .search-close,
+  :root:not([data-theme="light"]) .page-search { border-color: var(--edge); }
+  :root:not([data-theme="light"]) .brand img,
+  :root:not([data-theme="light"]) .foot img { box-sizing: content-box; background: var(--symbol-tile); padding: 3px; border-radius: 6px; }
+  :root:not([data-theme="light"]) .prose img { background: #fff; border-radius: 4px; }
+  :root:not([data-theme="light"]) .theme-btn .i-sun { display: block; }
+  :root:not([data-theme="light"]) .theme-btn .i-moon { display: none; }
+}

@@ -84,7 +84,7 @@
 /* TextWhitespace */ .chroma .w { color:#f8f8f2 }
 
 /* Code block shell */
-.prose pre { position: relative; background: var(--ci-navy); color: #e6edf6; border-radius: 8px; font: 14.5px/1.7 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; padding: 40px 20px 18px; margin: 24px 0; overflow-x: auto; word-break: normal; tab-size: 4; }
+.prose pre { position: relative; background: var(--ci-navy); box-shadow: 0 0 0 1px var(--pre-edge); color: #e6edf6; border-radius: 8px; font: 14.5px/1.7 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; padding: 40px 20px 18px; margin: 24px 0; overflow-x: auto; word-break: normal; tab-size: 4; }
 .prose pre code { font: inherit; background: none; padding: 0; color: inherit; }
 .prose .highlight { position: relative; margin: 24px 0; }
 .prose .highlight pre { margin: 0; }

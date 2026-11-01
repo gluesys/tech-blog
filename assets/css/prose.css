@@ -27,14 +27,14 @@
 .prose figcaption { text-align: center; color: var(--ci-gray); font-size: 14.5px; margin-top: 10px; }
 .prose center { display: block; text-align: center; color: var(--ci-gray); font-size: 14.5px; line-height: 1.6; margin: 10px 0 28px; }
 .prose center img { display: block; margin: 0 auto 10px; }
-.prose blockquote { margin: 24px 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--ci-bright); color: #474d60; }
+.prose blockquote { margin: 24px 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--ci-bright); color: var(--ink-2); }
 .prose blockquote p:last-child { margin-bottom: 0; }
 .prose :not(pre) > code { font: .88em ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; background: var(--soft); border-radius: 4px; padding: .12em .4em; word-break: break-word; }
 .prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 24px 0; font-size: 15.5px; line-height: 1.6; }
 .prose th, .prose td { border: 1px solid var(--line); padding: 8px 12px; vertical-align: top; }
 .prose th { background: var(--soft); text-align: left; }
 .prose hr { border: 0; border-top: 1px solid var(--line); margin: 40px 0; }
-.prose .footnotes { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; color: #474d60; }
+.prose .footnotes { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; color: var(--ink-2); }
 .prose .footnotes ol { padding-left: 1.4em; }
 .prose sup a { text-decoration: none; }
 
@@ -62,7 +62,7 @@
 .related time { color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
 .cta { margin-top: 28px; background: var(--ci-deep); color: #fff; border-radius: 10px; padding: 26px 28px; display: flex; align-items: center; gap: 24px; }
 .cta p { margin: 0; font-size: 17px; line-height: 1.6; }
-.cta a { margin-left: auto; background: #fff; color: var(--ci-deep); font-weight: 600; padding: 11px 18px; border-radius: 8px; white-space: nowrap; }
+.cta a { margin-left: auto; background: var(--surface); color: var(--ci-deep); font-weight: 600; padding: 11px 18px; border-radius: 8px; white-space: nowrap; }
 
 /* sticky TOC and share */
 .toc { position: sticky; top: 24px; align-self: start; font-size: 14.5px; max-height: calc(100vh - 48px); overflow-y: auto; padding-left: 10px; margin-left: -10px; }
@@ -71,7 +71,7 @@
 .toc > .toc-nav > nav > ul { border-left: 2px solid var(--line); }
 .toc ul ul { padding-left: 14px; }
 .toc li { position: relative; margin: 0; padding: 0; line-height: 1.5; }
-.toc li > a { display: block; padding: 6px 0 6px 16px; color: #555c70; }
+.toc li > a { display: block; padding: 6px 0 6px 16px; color: var(--toc-ink); }
 .toc li > ul > li > a { font-size: 13.5px; }
 .toc a:hover { color: var(--ci-bright); }
 .toc li[aria-current] > a { color: var(--ci-bright); font-weight: 600; }
@@ -79,7 +79,7 @@
 .toc ul ul li[aria-current]::before { left: -22px; }
 .share { margin-top: 28px; display: flex; gap: 8px; }
 .toc .toc-nav + .share { margin-top: 28px; }
-.share button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 7px 12px; font: 500 13.5px "Pretendard", system-ui, sans-serif; color: var(--ink); }
+.share button { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 12px; font: 500 13.5px "Pretendard", system-ui, sans-serif; color: var(--ink); }
 .share button:hover { border-color: var(--ci-bright); color: var(--ci-bright); }
 .share-m { display: none; }
 

@@ -4,9 +4,9 @@
 .hero h1 { margin: 0; max-width: 15em; font-size: 40px; line-height: 1.38; font-weight: 700; letter-spacing: -.02em; }
 .hero p { margin: 14px 0 30px; font-size: 17px; opacity: .86; max-width: 30em; }
 .hero-search { display: flex; max-width: 520px; height: 54px; background: #fff; border-radius: 10px; overflow: hidden; }
-.hero-search input { flex: 1; min-width: 0; border: 0; padding: 0 18px; font: 400 16px "Pretendard", system-ui, sans-serif; color: var(--ink); }
+.hero-search input { flex: 1; min-width: 0; border: 0; background: #fff; padding: 0 18px; font: 400 16px "Pretendard", system-ui, sans-serif; color: var(--ink-fixed); }
 .hero-search input:focus-visible { outline-offset: -3px; }
-.hero-search button { border: 0; background: var(--ci-bright); color: #fff; font: 600 15.5px "Pretendard", system-ui, sans-serif; padding: 0 24px; }
+.hero-search button { border: 0; background: var(--btn-bg); color: #fff; font: 600 15.5px "Pretendard", system-ui, sans-serif; padding: 0 24px; }
 .hero-search button:focus-visible { outline-color: var(--ci-cyan); outline-offset: -3px; }
 
 /* post list */
@@ -14,7 +14,7 @@
 .post time { font-size: 14px; color: var(--ci-gray); font-variant-numeric: tabular-nums; }
 .post h3 { margin: 4px 0 8px; font-size: 21px; line-height: 1.45; letter-spacing: -.01em; }
 .post h3 a:hover { color: var(--ci-bright); }
-.post p { margin: 0 0 14px; font-size: 15.5px; line-height: 1.7; color: #474d60; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.post p { margin: 0 0 14px; font-size: 15.5px; line-height: 1.7; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .post .thumb { aspect-ratio: 16 / 10; border-radius: 6px; background: var(--soft) center / cover; }
 
 aside .block { margin-bottom: 44px; }

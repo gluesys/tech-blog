@@ -8,6 +8,20 @@
   --line: #E3E6EE;
   --soft: #F4F6FB;
   --bg: #FFFFFF;
+  --surface: #FFFFFF;       /* header, panels, inputs */
+  --ink-2: #474d60;         /* secondary body text (excerpts, quotes, footnotes) */
+  --tag-ink: #36405a;
+  --tag-hover-bg: #e4ecff;
+  --tag-hover-ink: var(--ci-deep);
+  --toc-ink: #555c70;
+  --ink-fixed: #1C2233;     /* text on always-light surfaces; not themed */
+  --btn-bg: var(--ci-bright);
+  --scrim: rgba(28, 34, 51, .55);
+  --shadow: rgba(28, 34, 51, .3);
+  --mark: rgba(0, 195, 210, .22);
+  --pre-edge: transparent;  /* hairline around code blocks (dark only) */
+  --symbol-tile: transparent;
+  color-scheme: light;
   --hex: polygon(9px 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 9px 100%, 0 50%);
   --hex-pt: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
   --content: 1160px;
