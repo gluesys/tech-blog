@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Nextcloud 란 무엇인가?</title>
+  <meta name="description" content="1. Nextcloud 란??">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="1. Nextcloud 란??" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="Nextcloud 란 무엇인가?" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/1.JPG" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Nextcloud 란 무엇인가?">
+  <meta name="twitter:description" content="1. Nextcloud 란??">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/1.JPG">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2021/05/20/Nextcloud.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/1.JPG); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">Nextcloud 란 무엇인가?</h1>
+      <p class="info">by <strong>이 태민 (tmlee@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">May 20, 2021</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="1-nextcloud-란">1. Nextcloud 란??</h2>
+<hr />
+
+<p>이번 포스트에서는 Nextcloud를 소개하고 설치 방법과 기능들에 대해 알아보고자 합니다.</p>
+
+<p>Nextcloud는 ownCloud 개발자중 하나인 Frank Karlitschek가 ownCloud를 포크해 개발한 오픈소스 기반 클라우드 스토리지 소프트웨어입니다.</p>
+
+<p>지난 2016년 4월에 출시해 지속적으로 개발되고 있으며, 로컬 컴퓨터 또는 외부 파일 스토리지 호스팅에 사용할 수 있습니다.</p>
+
+<p>여타 클라우드 파일 서비스처럼 파일 저장 및 공유 서비스를 포함하여 문서 작업, 가상화, 클라우드, 컴퓨팅 기술 등 하나의 플랫폼에서 사용할 수 있고, MS 오피스, 구글 드라이브 등 추가 기능을 써드파티 앱을 통해 모듈식으로 구현할 수 있습니다.</p>
+
+<p>베이스가 된 ownCloud와 마찬가지로 파일 호스팅 서비스 환경을 제공하고 기능도 비슷하지만, 커뮤니티 버전만 오픈소스로 공개하고 있는 ownCloud에 비해 기업용까지 오픈소스로 제공하고 있는 점에서 차이가 있으며, 무엇보다 Nextcloud만의 기능도 차츰 늘려가고 있다고 합니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/1.JPG" alt="Alt text" /></p>
+
+<h2 id="2-클라우드-서비스와-nasnetwork-attached-storage">2. 클라우드 서비스와 NAS(Network-Attached Storage)</h2>
+<hr />
+
+<p>설치에 앞서 Nextcloud에 적용된 기술의 기반이 되는 클라우드와 NAS의 기능에 대해 안내해 보고자 합니다.</p>
+
+<p><strong>클라우드 서비스 기능</strong></p>
+
+<ul>
+  <li>
+    <p>파일을 지정된 경로에 보관하고, 동기화가 가능하며,  쉽게 공유할 수 있습니다.</p>
+  </li>
+  <li>
+    <p>로컬이나 외부로 문서를 액세스할 수 있습니다.</p>
+  </li>
+  <li>
+    <p>통합된 기능으로 서버 운영에만 집중할 수 있어 효율성이 높아집니다.</p>
+  </li>
+  <li>
+    <p>삭제한 파일도 기간 내 가져올 수 있으며, 파일 작업 시 자동으로 업데이트를 해줍니다.</p>
+  </li>
+</ul>
+
+<p><strong>NAS 기능</strong></p>
+
+<ul>
+  <li>
+    <p>NAS는 본래 데이터 공유를 목적으로 갖지만, 파일 공유 이외에 다양한 기능이 지속적으로 추가되어 현재로서 클라우드의 일부 기능까지 제공하게 되었습니다.</p>
+  </li>
+  <li>
+    <p>NAS는 네트워크 드라이브와 외부 저장 장치의 형태로만 사용되고 클라우드 서비스를 이용하면 동기화 방식이 기본으로 적용되어 용량이 늘어나면서 NAS 와 같이 활용되는 목적으로 구축됩니다.</p>
+  </li>
+  <li>
+    <p>NAS는 한곳에 파일을 올려놔도 다른 곳에서 공유 형태로 접근이 가능히며, 다양한 용도로 사용이 가능하여 영상 스트리밍, 데이터 백업, 서버(웹) 호스트, 가상머신 등 다양한 작업들을 합니다.</p>
+  </li>
+</ul>
+
+<p><img src="/assets/2.JPG" alt="Alt text" /></p>
+
+<p>위 이미지는 실제 저희가 물리적인 NAS에 Nextcloud 소프트웨어를 설치하여 구성한 구조입니다.</p>
+
+<p>운영체제는 CentOS 7으로, APM 스택으로 설치환경을 구현했습니다. 설치 과정은 다음과 같습니다.</p>
+
+<p> </p>
+
+<h2 id="3-nextcloud-설치">3. Nextcloud 설치</h2>
+<hr />
+
+<h3 id="31-apache-설정">3.1 Apache 설정</h3>
+
+<ul>
+  <li>
+    <p>CentOS 7.9, PHP 7.2, MariaDB 배포하고 Apache에서 실행되는 Nextcloud를 배포합니다.</p>
+  </li>
+  <li>
+    <p>CentOS 7을 설치하여 성공적인 플랫폼을 제공하도록 구축합니다.</p>
+  </li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">[root@localhost ~]# yum update -y </code></p>
+<ul>
+  <li>최신 커널 업데이트를 진행합니다.</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">[root@localhost ~]# yum install -y httpd </code></p>
+<ul>
+  <li>Apache 웹 서버 패키지를 설치합니다.</li>
+</ul>
+
+<p> </p>
+
+<h4 id="311-설정-파일-생성">3.1.1 설정 파일 생성</h4>
+
+<ul>
+  <li>vim /etc/httpd/conf.d/nextcloud.conf</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
+     # 실제 소스파일이 있는 Web Root 지정소 
+  DocumentRoot /var/www/html   
+     # 서비스 할 도메인 지정소
+  ServerName test.domain.com  
+&lt;Directory "/var/www/html/"&gt;
+     # 디렉터리에 대한 접근 허용
+  Require all granted  
+     # 접근자를 모두 허락하도록 설정
+  AllowOverride All     
+     # 디렉터리에 대한 특정 옵션 설정
+  Options FollowSymLinks MultiViews  
+&lt;/Directory&gt;
+&lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<ul>
+  <li>Apache Web Service 데몬을 enable &amp; start 시킵니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# systemctl enable httpd.service
+[root@localhost ~]# systemctl start httpd.service
+</code>
+</pre>
+
+<p> </p>
+
+<h3 id="32-php-패키지-설치">3.2 PHP 패키지 설치</h3>
+
+<ul>
+  <li>Nextcloud는 PHP 프로그래밍 언어를 사용하여 새로운 모듈을 만들고 싶으면 (21.03.16, 최신 버전) 7.3 이상의 패키지를 설치합니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# yum install -y centos-release-scl \
+rh-php72 rh-php72-php rh-php72-php-gd rh-php72-php-mbstring \
+rh-php72-php-intl rh-php72-php-pecl-apcu rh-php72-php-mysqlnd rh-php72-php-pecl-redis \
+rh-php72-php-opcache rh-php72-php-imagick
+</code>
+</pre>
+
+<p> </p>
+
+<h3 id="33-apache-설정-파일-symlinks">3.3 Apache 설정 파일 SymLinks</h3>
+
+<ul>
+  <li>httpd 설치 경로 /opt/rh/httpd24에서 Nextcloud 설정 경로와 심볼릭 링크를 설정합니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# ln –s /opt/rh/httpd24/root/etc/httpd/conf.d/rh-php72-php.conf /etc/httpd/conf.d/
+[root@localhost ~]# ln -s /opt/rh/httpd24/root/etc/httpd/conf.modules.d/15-rh-php72-php.conf /etc/httpd/conf.modules.d/
+[root@localhost ~]# ln -s /opt/rh/httpd24/root/etc/httpd/modules/librh-php72-php7.so /etc/httpd/modules/
+</code>
+</pre>
+
+<p> </p>
+
+<h3 id="34-mariadb-설치">3.4 MariaDB 설치</h3>
+
+<ul>
+  <li>
+    <p>이 작업을 완료한 후 Nextcloud가 액세스 할 수 있도록 사용자 이름과 비밀번호로 데이터베이스를 생성합니다.</p>
+  </li>
+  <li>
+    <p>해당 패키지를 설치한 후 데몬을 enable &amp; start 시킵니다.</p>
+  </li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# yum install -y mariadb mariadb-server
+[root@localhost ~]# systemctl enable mariadb.service
+[root@localhost ~]# systemctl start mariadb.service
+</code>
+</pre>
+
+<p> </p>
+
+<h3 id="35-nextcloud-설치">3.5 Nextcloud 설치</h3>
+
+<ol>
+  <li><a href="https://nextcloud.com/install/">Nextcloud Install</a></li>
+</ol>
+
+<ul>
+  <li>
+    <p>Nextcloud Server 다운로드 -&gt; 다운로드 -&gt; 서버 소유자용 아카이브 파일로 이동하여 tar.bz2 파일을 저장합니다.</p>
+  </li>
+  <li>
+    <p>wget 명령어로 1. <a href="https://nextcloud.com/install/">Nextcloud Install</a> 위치의 tar.bz2 파일을 설치합니다.</p>
+  </li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# wget https://download.nextcloud.com/server/release/nextcloud-20.0.4.tar.bz2.asc
+[root@localhost ~]# wget https://nextcloud.com/nextcloud.asc
+</code>
+</pre>
+
+<ul>
+  <li>
+    <p>GPG 공개키 오류로 인한 yum install 실패 시 해결하기 위한 조치사항입니다.</p>
+  </li>
+  <li>
+    <p>RPM 기반의 패키지들은 GPG 공개키 기반의 디지털 서명과 검증을 통해서 각종 소스의 변조 유무를 검사해주고 무결성을 제공하여 허가된 사용자만 권한을 가질 수 있습니다.</p>
+  </li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# gpg -import nextcloud.asc
+[root@localhost ~]# gpg –verify nextcloud-20.0.4.tar.bz2.asc nextcloud-20.0.4.tar.bz2
+</code>
+</pre>
+
+<p> </p>
+
+<h3 id="36-압축-풀기">3.6 압축 풀기</h3>
+
+<ul>
+  <li>콘텐츠를 웹 서버의 루트 디렉터리로 복사합니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# bunzip2 nextcloud-*.bz2
+[root@localhost ~]# tar -xvf nextcloud-20.0.4.tar
+[root@localhost ~]# cp -R nextcloud /var/www/html/
+</code>
+</pre>
+
+<ul>
+  <li>설치 프로세스 중에는 데이터 폴더가 생성되지 않아 수동으로 디렉터리를 생성합니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# mkdir /var/www/html/nextcloud/data
+</code>
+</pre>
+
+<ul>
+  <li>Nextcloud 전체 폴더에 Apache 사용자, 그룹 권한을 부여하고 데몬을 재시작합니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# Chown -R apache:apache /var/www/html/nextcloud
+[root@localhost ~]# systemctl restart httpd.service
+</code>
+</pre>
+
+<ul>
+  <li>Apache에 접근하도록 방화벽에 설정하고 활성화를 시킵니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# firewall-cmd --zone=public --add-service=http --permanent
+[root@localhost ~]# firewall-cmd --reload
+</code>
+</pre>
+
+<p> </p>
+
+<h3 id="37-웹-접속-url-확인">3.7 웹 접속 URL 확인</h3>
+
+<ul>
+  <li>Nextcloud 설치가 끝났으면 <strong>/var/www/html/nextcloud/config/config.php</strong> 파일에서 웹 접근을 위한 경로를 확인합니다.</li>
+</ul>
+
+<pre>
+<code>
+[root@localhost ~]# vim /var/www/html/nextcloud/config/config.php
+</code>
+</pre>
+
+<p> </p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;?php
+$CONFIG = array (
+  'instanceid' =&gt; 'oc5qa6uhr5qj',
+  'passwordsalt' =&gt; 'lSEQRm75mSF9MpG8y4zPBHrF+D+A1B',
+  'secret' =&gt; 'Id0gGxWofZbINYLGouTjLeJJh36eOOsBY/lch1w532Sx5/m0',
+  'trusted_domains' =&gt;
+  array (
+    0 =&gt; '192.xxx.xxx.xxx',
+  ),
+  'datadirectory' =&gt; '/var/www/html/nextcloud/data',
+  'dbtype' =&gt; 'sqlite3',
+  'version' =&gt; '20.0.4.0',
+						    # URL 주소를 확인할 수 있습니다.
+  &lt;span style="color:red"&gt;'overwrite.cli.url' =&gt; 'http://192.168.xx.xx/nextcloud'&lt;/span&gt;, 
+  'installed' =&gt; true,
+  'memcache.distributed' =&gt; '\\OC\\Memcache\\Redis',
+  'memcache.locking' =&gt; '\\OC\\Memcache\\Redis',
+  'memcache.local' =&gt; '\\OC\\Memcache\\APCu',
+  'redis' =&gt;
+  array (
+    'host' =&gt; 'localhost',
+    'port' =&gt; 6379,
+  ),
+  'maintenance' =&gt; false,
+);
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>URL을 통해 접근하면 관리자 웹 화면이 나타나는 걸 확인할 수 있습니다.</p>
+  </li>
+  <li>
+    <p>Nextcloud의 메인 화면입니다.</p>
+  </li>
+</ul>
+
+<p><img src="/assets/3.png" alt="Alt text" />
+<img src="/assets/s1.JPG" alt="Alt text" /></p>
+
+<p> </p>
+
+<h3 id="38-agent-접속-확인">3.8 Agent 접속 확인</h3>
+
+<p><strong><a href="https://nextcloud.com/install/">데스크톱 , 모바일 Nextcloud Install</a></strong></p>
+
+<p><img src="/assets/agent3.JPG" alt="Alt text" /></p>
+
+<ul>
+  <li>위 설치 링크로 들어가면 데스크톱과 모바일 전용 탐색기 2  종류의 에이전트가 있습니다.</li>
+</ul>
+
+<p> </p>
+
+<p><img src="/assets/agent4.JPG" alt="Alt text" /></p>
+
+<ul>
+  <li>데스크톱 클라이언트를 설치합니다.</li>
+</ul>
+
+<p> </p>
+
+<p><img src="/assets/agent5.JPG" alt="Alt text" /></p>
+
+<ul>
+  <li>모바일 클라이언트를 설치합니다.</li>
+</ul>
+
+<p> </p>
+
+<p><img src="/assets/agent.JPG" alt="Alt text" /></p>
+
+<ul>
+  <li>Nextcloud Install 사이트에서 전용 탐색기 설치를 받으면 압축을 풉니다.</li>
+  <li>탐색기 접근 전에 계정 접근을 위한 웹(https://)에서 로그인하여 에이전트 접근을 허용합니다.</li>
+  <li>이메일을 통한 계정 접근과 URL을 통한 계정 접근 2가지 방법이 에이전트에서 가능합니다.</li>
+</ul>
+
+<p> </p>
+
+<p><img src="/assets/agent1.jpg" alt="Alt text" /></p>
+
+<ul>
+  <li>계정 접근이 활성화되면 윈도우에서 Nextcloud 앱이 실행됨을 확인할 수 있습니다.</li>
+  <li>웹과 유사하게 모든 기능을 사용할 수 있고 활동 기록도 확인할 수 있습니다.</li>
+  <li>내 PC에서 Nextcloud가 자동으로 네트워크 드라이브 연결이 되며, 에이전트를 통해서 파일을 관리 및 사용할 수 있습니다.</li>
+</ul>
+
+<p> </p>
+
+<h2 id="4-nextcloud-기능">4. Nextcloud 기능</h2>
+<hr />
+
+<h3 id="41-파일">4.1 파일</h3>
+
+<p><img src="/assets/s2.JPG" alt="Alt text" /></p>
+
+<ol>
+  <li>사용자마다 개인 파일을 관리하고 서로 다른 장치 간 파일 공유를 하여 사용 및 관리합니다.</li>
+  <li>네트워크 기반의 클라우드 서비스로 액세스하는 사용자 데이터 흐름을 원활하게 해줍니다.</li>
+  <li>SMB, SFTP, WebDAV 프로토콜을 통해 외부 저장소에서 파일을 관리 및 공유할 수 있습니다.</li>
+  <li>해당 파일에 대한 사용자 간 댓글 기능을 사용할 수 있습니다.</li>
+</ol>
+
+<p> </p>
+
+<h3 id="42-사진">4.2 사진</h3>
+
+<p><img src="/assets/s3.JPG" alt="Alt text" /></p>
+
+<ol>
+  <li>파일 항목에서 해당 디렉터리에 업로드 하면 업로드 된 파일을 확인할 수 있습니다.</li>
+  <li>클라우드에 많이 사용되는 사진 및 동영상 관리 시스템을 필수로 개인 이미지 또는 다른 사용자 간 공유하여 사용합니다.</li>
+  <li>스프레드시트, 프레젠테이션 제공하는 편집기를 통해 작업 가능하며 문서 작성을 위한 많은 플러그인 기능을 제공합니다.</li>
+</ol>
+
+<p> </p>
+
+<h3 id="43-활동">4.3 활동</h3>
+
+<p><img src="/assets/s4.JPG" alt="Alt text" /></p>
+
+<ol>
+  <li>사용자마다 어느 항목에서 동작을 했거나, 파일을 수정 및 생성, 삭제 하였거나 캘린더 설정 및 채팅 이용시 활동 기록을 해줍니다.</li>
+  <li>활동 기록으로 다른 사용자가 임의로 변동 시 그 정보를 확인할 수 있습니다.</li>
+  <li>개인 및 다른 공유 형태로 통합적 사용으로 인해 추적할 수 있으며, 기본으로 제공하는 플러그인 입니다.</li>
+</ol>
+
+<p> </p>
+
+<h3 id="44-토크">4.4 토크</h3>
+
+<p><img src="/assets/s5.JPG" alt="Alt text" /></p>
+
+<ol>
+  <li>Nextcloud에서 제공하는 파일 관리, 채팅, 캘린더 등 조직에서 사용하는 기능을 통합적으로 사용하여 편리하고 관리가 쉽습니다.</li>
+  <li>관리자에 권한에 의해서 사용자 간 채팅하여 Mattermost와 같은 기능을 제공합니다.</li>
+  <li>Nextcloud Talk는 Microsoft Teams 또는 Slack과 같은 다른 팀 공동 작업 플랫폼에서 통합된 기능으로 그룹 또는 사용자 간 효율적인 공유 정보를 주고 받을 수 있습니다.</li>
+</ol>
+
+<p> </p>
+
+<h3 id="45-연락처">4.5 연락처</h3>
+
+<p><img src="/assets/s6.JPG" alt="Alt text" /></p>
+
+<ol>
+  <li>연락처 기능은 관리자와 사용자들의 연락처를 그룹화 하여 정보를 관리할 수 있습니다.</li>
+  <li>전화번호, 이메일 검색 기능을 통해 조회 가능하며, 개인 사용자마다 개인 연락처를 관리할 수 있습니다.</li>
+  <li>외부 저장소(External Storage)에서 등록한 다른 장치의 공유 파일에서도 연락처 정보를 가져올 수 있고, 개인 로컬에서도 가져올 수 있습니다.</li>
+</ol>
+
+<p> </p>
+
+<h3 id="46-달력">4.6 달력</h3>
+
+<p><img src="/assets/s7.JPG" alt="Alt text" /></p>
+
+<ol>
+  <li>구글 캘린더 기능과 유사하여 개인 캘린더, 다른 공유 캘린더를 사용 가능합니다.</li>
+  <li>사용자 간 일정을 관리하고 공유하여 기업에서 업무 효율을 빠르게 처리할 수 있습니다.</li>
+  <li>로컬 및 다른 장치간 공유 파일에서도 달력 정보에 대한 정보를 업로드 하여 가져올 수 있습니다.</li>
+</ol>
+
+<p> </p>
+
+<h2 id="5-외부-저장소external-storage">5. 외부 저장소(External Storage)</h2>
+<hr />
+
+<h3 id="51-외부-저장소">5.1 외부 저장소</h3>
+
+<ol>
+  <li>
+    <p>Nextcloud 에서 제공하는 기능으로 외부 저장소에서 외부 저장소나 서비스 장치를 Nextcloud 장치로 마운트할 수 있으며, 사용자가 개별 외부 저장소 서비스를 마운트할 수 있도록 허용 가능합니다.</p>
+  </li>
+  <li>
+    <p>아래 이미지에서 Nextcloud에서 마운트할 수 있는 외부 서비스 목록을 볼 수 있습니다.</p>
+  </li>
+</ol>
+
+<p><img src="/assets/ex.JPG" alt="Alt text" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">저장소</th>
+      <th style="text-align: center">내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Amazon S3</td>
+      <td style="text-align: center">웹 서비스 인터페이스를 사용하여 언제든지 웹 어디서나 원하는 양의 데이터를 저장하고 검색할 수 있는 인터넷 스토리지 서비스 입니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">FTP</td>
+      <td style="text-align: center">서버와 클라이언트 사이의 파일 전송을 하기위한 프로토콜입니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Nextcloud</td>
+      <td style="text-align: center">다른 Nextcloud URL 주소와 사용자 계정을 통해 다른 사용자 간 공유적으로 사용할 수 있습니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SFTP</td>
+      <td style="text-align: center">신뢰할 수 있는 데이터 스트림을 통해 파일을 접근, 파일을 전송, 파일을 관리하는 네트워크 프로토콜 입니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">SMB/CIFS</td>
+      <td style="text-align: center">윈도우에서 파일이나 디렉터리 및 주변 장치들을 공유하는데 사용되는 메시지 형식 입니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">WebDAV</td>
+      <td style="text-align: center">하이퍼텍스트 전송 프로토콜(HTTP)의 확장으로, 월드 와이드 웹 서버에 저장된 문서와 파일을 편집하고 관리하도록 합니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">로컬</td>
+      <td style="text-align: center">내 PC나 물리적 서버에서 직접 사용하고 관리 중인 파일, 디렉터리를 경로를 설정하여 사용할 수 있습니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">OpenStack 객체 저장소</td>
+      <td style="text-align: center">객체 저장소 내 폴더의 매핑을 관리하고 외부 저장소에 파일을 저장 및 관리합니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p> </p>
+
+<h3 id="52-인증">5.2 인증</h3>
+
+<p><img src="/assets/ex1.png" alt="Alt text" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">인증</th>
+      <th style="text-align: center">내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">사용자 이름과 암호</td>
+      <td style="text-align: center">수동으로 정의 된 사용자 이름과 암호가 필요하며, 저장소에 계정 및 패스워드를 설정하여 마운트를 합니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">로그인 인증 정보, 세션에 저장됨</td>
+      <td style="text-align: center">Nextcloud 로그인 자격 증명은 스토리지에 연결 하는 데 사용하는 체제로 서버의 어디에도 저장되지 않고 사용자 세션에 저장되어 보안을 강화합니다. 스토리지 자격 증명에 액세스 할 수 없고 백그라운드 파일 검색이 작동하지 않기 때문에 이 체제가 사용 중일 때 공유가 비활성화된다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">로그인 자격 증명, 데이터베이스에 저장</td>
+      <td style="text-align: center">사용자의 Nextcloud 로그인 자격 증명은 스토리지에 연결 하는데 사용하는 체제로 공유 비밀로 암호화 된 데이터베이스에 저장되며, 이 방법으로 마운트 지점 내에서 파일을 공유 할 수 있습니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">사용자는 데이터베이스에 저장</td>
+      <td style="text-align: center">‘사용자 이름과 암호’와 같은 방식으로 메커니즘의 작업을 하지만 자격 증명은 개별적으로 각 사용자에 의해 지정 될 필요가 있다. 해당 마운트에 처음 액세스하기 전에 사용자에게 자격 증명을 입력하라는 메시지가 표시됩니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">글로벌 자격</td>
+      <td style="text-align: center">마운트 포인트 대신 개인의 자격 증명을 위한 소스로 외부에 설정 합니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p> </p>
+
+<h2 id="마치며">마치며~!</h2>
+
+<hr />
+<p>지금까지 Nextcloud의 소개와 기능, 그리고 설치과정에 대해서 알아보았습니다. 해당 포스트에서는 tar 아카이브를 통한 설치과정을 보여드렸습니다만, 패키지 관리 시스템인 스냅크래프트(snapcraft)나 도커를 통해 설치하는 방법도 있습니다. 이번 기회를 통해 Nextcloud를 직접 설치해 보면서 기업용 뿐만 아니라 개인용으로도 쓸수 있을 만큼 설치과정이 심플했고, 자체 매뉴얼이 충실해 혼자서도 구축할 수 있다는 부분이 많이 느껴졌습니다. 감사합니다.</p>
+<hr />
+
+<p> </p>
+
+<h2 id="각주">각주</h2>
+
+<hr />
+<ol>
+  <li>
+    <p>https://en.wikipedia.org/wiki/Nextcloud</p>
+  </li>
+  <li>
+    <p>https://docs.nextcloud.com/server/latest/admin_manual/</p>
+  </li>
+  <li>
+    <p>https://ko.wikipedia.org/wiki/WebDAV</p>
+  </li>
+  <li>
+    <p>https://ko.wikipedia.org/wiki/%EC%98%A4%ED%94%88%EC%8A%A4%ED%83%9D</p>
+    <hr />
+  </li>
+</ol>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#Nextcloud">Nextcloud</a>,&nbsp;<a href="/tags#%EC%98%A4%ED%94%88%EC%86%8C%EC%8A%A4">오픈소스</a>,&nbsp;<a href="/tags#%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C">클라우드</a>,&nbsp;<a href="/tags#%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80">스토리지</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

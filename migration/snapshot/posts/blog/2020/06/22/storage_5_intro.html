@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>스토리지 기초 지식 5편: 데이터 티어링</title>
+  <meta name="description" content="‘최근 가격 하락으로 주목받고 있는 고성능 스토리지는?’이라고 묻는다면 ‘SSD’라고 즉시 답할 수 있는 한편, ‘SSD를 풀어서 쓰면 뭐라고 하나요.’라고 물어본다면 철자를 하나하나 꼬집어서 기억해 내는 과정이 생겨 답이 조금 느려집니다. 이처럼 일상에서 자주 쓰이는 용어는 바로...">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="‘최근 가격 하락으로 주목받고 있는 고성능 스토리지는?’이라고 묻는다면 ‘SSD’라고 즉시 답할 수 있는 한편, ‘SSD를 풀어서 쓰면 뭐라고 하나요.’라고 물어본다면 철자를 하나하나 꼬집어서 기억해 내는 과정이 생겨 답이 조금 느려집니다. 이처럼 일상에서 자주 쓰이는 용어는 바로..." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="스토리지 기초 지식 5편: 데이터 티어링" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/HDD_SSD.jpg" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="스토리지 기초 지식 5편: 데이터 티어링">
+  <meta name="twitter:description" content="‘최근 가격 하락으로 주목받고 있는 고성능 스토리지는?’이라고 묻는다면 ‘SSD’라고 즉시 답할 수 있는 한편, ‘SSD를 풀어서 쓰면 뭐라고 하나요.’라고 물어본다면 철자를 하나하나 꼬집어서 기억해 내는 과정이 생겨 답이 조금 느려집니다. 이처럼 일상에서 자주 쓰이는 용어는 바로...">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/HDD_SSD.jpg">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2020/06/22/storage_5_intro.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/HDD_SSD.jpg); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">스토리지 기초 지식 5편: 데이터 티어링</h1>
+      <p class="info">by <strong>박 주형 (jhpark@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">June 22, 2020</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p>‘최근 가격 하락으로 주목받고 있는 고성능 스토리지는?’이라고 묻는다면 ‘SSD’라고 즉시 답할 수 있는 한편, ‘SSD를 풀어서 쓰면 뭐라고 하나요.’라고 물어본다면 철자를 하나하나 꼬집어서 기억해 내는 과정이 생겨 답이 조금 느려집니다. 이처럼 일상에서 자주 쓰이는 용어는 바로 기억해 답할 수 있지만, 알아 둬도 나쁘지 않은 정도로 중요성이 떨어지는 정보는 다시 끄집어내는 데 시간이 걸립니다. 스토리지에 저장되는 데이터에도 우선순위가 있는데, 이 우선도(티어)에 따라 빠르게 접근할 수 있게 적합한 스토리지에 저장 및 이동시키는 기술을 <strong>데이터 티어링(data tiering)</strong>이라고 합니다.</p>
+
+<p> </p>
+
+<h2 id="데이터-티어링의-개념">데이터 티어링의 개념</h2>
+
+<p>데이터 티어링(스토리지 티어링이라고도 합니다)은 쉽게 설명하자면 자주 접근하는 데이터를 빠른 스토리지에 두고 접근 빈도가 낮은 데이터를 그보다 느린 스토리지에 구분해서 저장하거나 이동시키는 것을 말합니다. 미션 크리티컬한 온라인 거래나 고객정보, 어플리케이션 데이터는 최소의 지연시간으로 즉각적인 전달이 필요해 고속의 플래시 메모리나 파이버 채널 기반 SAN 등에 위치시키고, 일반적인 업무 데이터나 중요성이 떨어지는 대규모 비정형 데이터는 SATA 디스크나 테이프, 공용 클라우드 등에 위치시킵니다. 데이터가 오래되고 접근 빈도가 낮아질수록 고가의 고성능 스토리지에서 낮은 가격의 느린 스토리지로 이동한다고 할 수 있습니다.</p>
+
+<p> </p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">티어</th>
+      <th style="text-align: left">스토리지</th>
+      <th style="text-align: left">성능, 비용, 접근빈도</th>
+      <th style="text-align: left">용도</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">고성능 스토리지</td>
+      <td style="text-align: left">SSD, FC SAN</td>
+      <td style="text-align: left">고</td>
+      <td style="text-align: left"><ul><li>전자상거래</ul></li> <ul><li>금융거래</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">액티브 스토리지</td>
+      <td style="text-align: left">SATA 디스크, SAS</td>
+      <td style="text-align: left">중</td>
+      <td style="text-align: left"><ul><li>파일 서비스</ul></li> <ul><li>데이터 마이닝</ul></li> <ul><li>백업 및 복구</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left">아카이브 스토리지</td>
+      <td style="text-align: left">테이프, 공용 클라우드</td>
+      <td style="text-align: left">저</td>
+      <td style="text-align: left"><ul><li>아카이빙</ul></li></td>
+    </tr>
+  </tbody>
+</table>
+
+<center>&#60;티어 별 스토리지 및 용도&#62;</center>
+
+<p> </p>
+
+<p>데이터 티어링은 이처럼 데이터의 접근 빈도에 따라 스토리지 간에 데이터를 이동시키는 스토리지 정책을 수립해서 TCO를 절감하는 것이 목적입니다. 티어링 정책 수립에 있어서 데이터의 중요도나 접속 빈도는 보통 생성 후 시간이 지나면서 자연스럽게 떨어집니다. 이로 인해 스토리지의 티어링 정책은 데이터 생성 시간, 마지막으로 수정되거나 접속한 시간에 따라 수립되어 자동으로 운영할 수 있습니다. 또한, 데이터 티어의 변동으로 데이터가 낮은 티어의 스토리지로 이동할 시 부가적인 입출력 부하가 발생하는 점도 고려해야 합니다. 이와 같은 티어링 정책은 사전에 정의된 메타데이터 값을 통해 스토리지 관리 소프트웨어 단에서 실시간으로 처리됩니다.</p>
+
+<h2 id="ssd-캐싱과-다른-점">SSD 캐싱과 다른 점</h2>
+
+<p>데이터 티어링과 SSD 캐싱은 자주 접근하는 데이터를 플래시 메모리와 같이 빠른 매체에 저장한다는 의미에서는 같은데요, 그렇다면 이 둘은 어떻게 구분되는 걸까요?</p>
+
+<p>SSD 캐싱은 단지 데이터 접근 속도를 최적화하기 위해 접근 빈도가 높은 데이터를 원래 위치에서 복사해서 SSD에 넣는 것을 말합니다. 특정 데이터로부터 읽기 요청 빈도가 높아지면 캐시는 해당 데이터를 핫 데이터로 인식해 고속 저장 매체로 복사합니다. 이를 write-around 캐싱이라고 하는데요, 그 외에도 SSD 캐시와 주 저장장치에 데이터를 같이 저장하는 write-through 캐싱과 먼저 SSD에 기록하고 SSD에 기록이 끝나면 주 저장장치에 쓰기를 진행하는 write-back 캐싱이 있습니다. 이와 같은 SSD 캐싱 방식은 주 스토리지와 SSD 캐시에 같은 데이터를 둔다는 점에서 공통점을 가지는 한편, 데이터 티어링은 핫 티어와 콜드 티어 간 데이터가 물리적으로 이동한다는 점에서 크게 차이가 있습니다.</p>
+
+<p>많은 기업이 한정된 스토리지 리소스 내에서 데이터 티어링과 SSD 캐싱을 병행해서 활용해 데이터 접근 효율을 극대화하고 있습니다. 기업의 관리자는 이 둘을 같이 사용하려면 자신이 속한 기업의 스토리지 인프라 구조를 잘 이해하고 있어야 합니다. 예를 들어, 현재 스토리지 타입별 가용량과 워크로드 유형에 맞추어 가장 효율적인 스토리지 정책을 세울 수 있어야 합니다.</p>
+
+<p> </p>
+
+<h2 id="클라우드에서의-활용">클라우드에서의 활용</h2>
+
+<p>점점 늘어나는 비정형 데이터를 보관하는 데 있어서 클라우드의 역할도 커지고 있습니다. 클라우드를 활용하고자 하는 기업들은 티어링의 효율을 극대화하고자 기업 내의 온프레미스 스토리지나 사설 클라우드를 공용 클라우드와 함께 사용하는 하이브리드 방식을 채택하고 있습니다. 값비싼 인하우스 스토리지에서 아카이빙을 위한 저비용 클라우드 스토리지로 데이터를 이동시킬 때는 비용 효율뿐만 아니라 접근방식, 요구 성능, 보안 등의 요소도 함께 고려해야 합니다.</p>
+
+<p>공용 클라우드를 운용하는 데 있어서 가장 많이 고려되는 부분은 바로 비용입니다. 공용 클라우드의 이용료는 저장되는 데이터의 양보다는 발생하는 트래픽에서 많이 발생하게 됩니다. 같은 데이터를 반복해서 읽는 경우에도 대역폭 비용이 추가로 발생합니다. 이와 같은 트래픽 이슈는 네트워크 성능과도 관련이 있습니다. 공용 네트워크에서 많은 양의 데이터 읽기 쓰기를 수행하게 된다면 막대한 비용이 발생할 뿐만 아니라 병목을 야기할 수 있기 때문입니다. 백업의 경우에도 문제 발생 시 백업 및 복구 시간을 충족해야 하므로 네트워크 성능에 민감할 수밖에 없습니다. 이처럼 공용 클라우드는 읽기나 쓰기가 빈번한 용도보다는 주로 장기 보존을 위한 아카이빙용 스토리지로 활용하게 됩니다.</p>
+
+<p> </p>
+
+<h2 id="올플래시-스토리지에서의-활용">올플래시 스토리지에서의 활용</h2>
+
+<p>지금까지 전통적인 하이브리드 스토리지 상에서 스토리지의 성능에 따라 계층을 구분한 티어링을 소개해 보았습니다만, 지난 몇 년간 SSD와 하드디스크의 가격 갭이 좁혀지고 SSD의 기본 용량이 증가하게 되면서 많은 기업이 올플래시 스토리지를 도입함에 따라 티어링의 용도 또한 변화하고 있습니다. 빠른 성능의 플래시 메모리만으로 스토리지를 구성해도 비용 효율이 높아 데이터 티어링 기술의 필요성이 줄어들었다는 인식이 늘고 있습니다. 기존의 하드디스크에 비해 여전히 가격이 높고 수명도 짧지만 뛰어난 성능과 낮은 전력 소비로 인해 투자 대비 효율이 높아졌다고 할 수 있습니다.</p>
+
+<p>올플래시 스토리지는 티어링 기술이 필요 없는 것이 아닌가 하면 또 그렇지는 않습니다. NAND 플래시는 QLC(quad-level cell)와 같이 셀 당 비트 수가 많을수록 쓰기 성능과 수명이 감소하지만 읽기 성능에는 영향이 없는 성향을 가지기 때문에 올플래시 구성에서도 용도에 따라 다른 유형의 NAND 플래시로 계층화된 스토리지 아키텍처를 도입할 수 있습니다. 예를 들어 읽기 위주의 데이터는 QLC에 저장하고 쓰기 목적의 스토리지는 MLC(multi-level cell)를 사용하는 방식을 취할 수 있습니다. 이처럼 쓰기 성능과 더불어 스토리지의 수명에 따라서 티어링 구성을 하는 쪽으로 적용하게 되었습니다. 게다가 NVMe SSD를 캐시가 아닌 스토리지 티어로 활용하는 경우, 기존의 SATA SSD보다 상위 티어로 활용할 수도 있습니다. 특히 최근 인텔 옵테인 등을 위시한 스토리지 클래스 메모리(storage class memory, 이하 SCM)가 등장하면서 올플래시 스토리지의 새로운 핫 티어 역할로서 자리매김하고 있습니다. SCM은 NVMe 인터페이스를 사용하며 고가이지만 일반 플래시 메모리보다 지연시간, 수명, IOPS, 처리속도 모두 뛰어납니다.</p>
+
+<p> </p>
+
+<h2 id="마치며">마치며</h2>
+
+<p>디지털 트랜스포메이션과 데이터의 폭증으로 스토리지의 요구성능과 운용비용이 갈수록 높아져 가면서 이를 최적화하기 위해 새로운 데이터 티어링 기술이 요구되고 있습니다. 기존에 관리자들은 스토리지의 성능, 운영비용, 내구성 등을 고려해 데이터의 접근 빈도, 수정 및 최종 접속 시간, 오브젝트의 크기 등에 따른 티어 변동 값을 직접 지정해야 했습니다. 최근에는 이러한 수치 조정에 머신러닝을 활용하고 있습니다. 데이터 접근 패턴을 추적해서 새로운 데이터에 접근 시 적합한 스토리지 티어를 예측 및 할당해 티어링 효율의 정확도를 높이는 기능이 상용화되고 있습니다. 이처럼 데이터 티어링은 성능과 비용 효율을 용도에 따라 최적화하기 위한 기술이며, 비싸고 빠른 스토리지와 저렴한 장기보존용 스토리지의 구분이 존재하는 한 계속 활용될 기술로 보입니다.</p>
+
+<p> </p>
+
+<h2 id="참고">참고</h2>
+
+<p>티어링 개념:</p>
+<ul>
+  <li>https://searchstorage.techtarget.com/definition/tiered-storage</li>
+  <li>https://searchstorage.techtarget.com/tip/Differences-between-SSD-caching-and-tiering-technologies</li>
+</ul>
+
+<p>티어링 동향:</p>
+<ul>
+  <li>https://dcig.com/2019/03/caching-vs-tiering-with-storage-class-memory-and-nvme-a-tale-of-two-systems.html</li>
+  <li>https://www.enmotus.com/hs-fs/hub/486631/file-2574565592-pdf/PDFs/White_papers/Enmotus_Tiering_Technology_Whitepaper.pdf?hsLang=en-us</li>
+</ul>
+
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80">스토리지</a>,&nbsp;<a href="/tags#Storage">Storage</a>,&nbsp;<a href="/tags#%ED%8B%B0%EC%96%B4%EB%A7%81">티어링</a>,&nbsp;<a href="/tags#Tiering">Tiering</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

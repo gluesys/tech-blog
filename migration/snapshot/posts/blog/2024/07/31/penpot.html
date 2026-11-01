@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>디자인 도구 Penpot(펜팟) 설치부터 활용까지</title>
+  <meta name="description" content="디자인 도구 Penpot(펜팟) 설치부터 활용까지">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="디자인 도구 Penpot(펜팟) 설치부터 활용까지" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="디자인 도구 Penpot(펜팟) 설치부터 활용까지" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/penpot/penpot_maincover.JPG" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="디자인 도구 Penpot(펜팟) 설치부터 활용까지">
+  <meta name="twitter:description" content="디자인 도구 Penpot(펜팟) 설치부터 활용까지">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/penpot/penpot_maincover.JPG">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2024/07/31/penpot.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/penpot/penpot_maincover.JPG); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">디자인 도구 Penpot(펜팟) 설치부터 활용까지</h1>
+      <p class="info">by <strong>이현태 (ht518@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">July 31, 2024</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h1 id="디자인-도구-penpot펜팟-설치부터-활용까지">디자인 도구 <code class="language-plaintext highlighter-rouge">Penpot(펜팟)</code> 설치부터 활용까지</h1>
+
+<p>안녕하세요?<br />
+글루시스 웹 개발팀에서 근무하고 있는 이현태입니다.<br />
+프로젝트 개발 과정 중 애플리케이션 또는 웹페이지의 레이아웃과 요소를 보여주기 위해 사용되는 디자인의 시각적 표현 또는 프로토타입을 목업이라 합니다.<br />
+목업은 개발로 넘어가기 전에 애플리케이션 또는 웹사이트의 제품이나 디자인을 시각적으로 표현하는 것으로, 이러한 디자인 작업을 하는 도구인 <code class="language-plaintext highlighter-rouge">Penpot(펜팟)</code>을 소개하고자 합니다.<br />
+Penpot은 오픈소스 프로그램으로, Figma와 유사한 기능을 제공합니다. 디자인 도구로써 다양한 기능을 제공하며, 디자인 프로젝트를 효율적으로 관리할 수 있습니다.<br />
+저는 완전한 제어와 보안을 위해 툴킷을 내부적으로 호스팅하는 것을 선호하기 때문에 Penpot을 자체적으로 호스팅하고 사용하면서 느꼈던 장단점들과 활용 방법을 소개하도록 하겠습니다.</p>
+
+<h2 id="docker로-셀프-호스팅-구성하기">Docker로 셀프 호스팅 구성하기</h2>
+
+<p>Penpot은 Elestio와 Docker로 설치가 가능합니다.<br />
+저는 Windows 환경에서 개발하기 때문에 도커 데스크톱(Docker Desktop)에서 WSL2(Linux용 Windows 하위 시스템, 버전 2)를 사용하도록 설정해 Linux 컨테이너를 실행하는 환경에서 설치를 하였습니다.<br />
+WSL2에서 별도로 Docker 인스턴스를 설치하고 실행할 수 있지만, 저는 초보자이기 때문에 Docker와 관련된 모든 설정과 작업을 CLI를 통해 작업할 자신이 없었습니다.<br />
+그러므로 여기서는 WSL2를 활성화하고 Linux를 설치한 뒤, Docker Desktop을 사용해 Penpot은 설치해 보도록 하겠습니다.<br /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>항목</strong></th>
+      <th style="text-align: left"><strong>설명</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><strong>Docker</strong></td>
+      <td style="text-align: left">컨테이너(소프트웨어를 실행하는 데 필요한 모든 파일, 라이브러리, 설정 파일 등을 포함하는 패키지) 기반의 오픈소스 가상화 시스템</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>Docker Desktop</strong></td>
+      <td style="text-align: left">Windows 및 macOS 운영 체제에서 Docker를 쉽게 설치하고 사용할 수 있게 해주는 애플리케이션</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><strong>WSL</strong></td>
+      <td style="text-align: left">Windows 운영 체제에서 Linux 커널을 실행할 수 있게 해주는 기능</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="wsl2-활성화-후-windows에-linux를-설치">WSL2 활성화 후 Windows에 Linux를 설치</h3>
+
+<ol>
+  <li>
+    <p>Windows - PowerShell - 관리자로 실행을 시켜줍니다.
+  <img src="/assets/penpot/images_1.JPG" alt="images_1.JPG" /></p>
+  </li>
+  <li>
+    <p>PowerShell</p>
+    <ul>
+      <li>WSL 기능 활성화
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">wsl</span><span class="w"> </span><span class="nt">--install</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+      <li>시스템 재부팅
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">Restart-Computer</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+      <li>WSL 버전을 WSL2로 설정
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">wsl</span><span class="w"> </span><span class="nt">--set-default-version</span><span class="w"> </span><span class="nx">2</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+      <li>사용 가능한 배포판 목록 확인
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">wsl</span><span class="w"> </span><span class="nt">--list</span><span class="w"> </span><span class="nt">--online</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+      <li>원하는 Linux 배포판 설치
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">wsl</span><span class="w"> </span><span class="nt">--install</span><span class="w"> </span><span class="nt">-d</span><span class="w"> </span><span class="nx">Ubuntu</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+      <li>WSL에 설치된 배보판 목록
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">wsl</span><span class="w"> </span><span class="nt">--list</span><span class="w"> </span><span class="nt">--verbose</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+      <li>설치한 Ubuntu 배포판 실행
+        <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w"> </span><span class="n">wsl</span><span class="w">
+</span></code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="docker-desktop-설치-및-wsl2-설정">Docker Desktop 설치 및 WSL2 설정</h3>
+
+<ol>
+  <li><a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> 공식 홈페이지에서 [Download for Windows]를 클릭해 다운로드하고 설치합니다.
+  <img src="/assets/penpot/images_2.JPG" alt="images_2.JPG" /></li>
+  <li>Docker Desktop 실행 후 작업 표시줄의 숨겨진 아이콘 메뉴에서 Docker 아이콘을 선택합니다. 아이콘을 마우스 오른쪽 단추로 클릭해 Docker 명령 메뉴를 표시하고 “설정”을 선택합니다.
+  <img src="/assets/penpot/images_3.JPG" alt="images_3.JPG" /></li>
+  <li>설정 &gt; 일반에서 “WSL 2 기반 엔진 사용”이 선택되어 있는지 확인합니다.
+  <img src="/assets/penpot/images_4.JPG" alt="images_4.JPG" /></li>
+  <li>설정 &gt; 리소스 &gt; WSL 통합으로 이동해 Docker 통합을 사용하도록 설정하려는 설치된 WSL 2 배포판에서 선택합니다.
+  <img src="/assets/penpot/images_5.JPG" alt="images_5.JPG" /></li>
+  <li>Docker가 설치되었는지 확인하려면 PowerShell에서 확인을 합니다.
+    <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="n">docker</span><span class="w"> </span><span class="nt">--version</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
+  <li>Docker가 이미지를 실행할 수 있도록 올바르게 설치되었는지 아래와 같은 명령을 PowerShell에서 실행합니다.
+    <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="n">docker</span><span class="w"> </span><span class="nx">run</span><span class="w"> </span><span class="nx">hello-world</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="penpot-설치시작하기"><a href="https://help.penpot.app/technical-guide/getting-started/#start-penpot">Penpot 설치/시작하기</a></h3>
+
+<p>Docker Compose는 Docker 컨테이너들을 정의하고 실행하는 도구인데, 이를 정의하는 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> 파일을 Penpot GitHub 저장소에서 다운로드해 실행할 수 있습니다.<br />
+그러려면 Docker Compose라는 플러그인도 설치가 필요하겠죠?? WSL에서 Docker 엔진으로 설치했다면, Docker Compose도 따로 명령어를 통해 설치하고 복잡한 과정을 거쳐야 합니다.<br />
+하지만 저는 Docker Desktop을 설치했기 때문에 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> 파일만 다운로드하면 됩니다.<br /></p>
+
+<ol>
+  <li>설치한 Ubuntu에서 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> 파일을 다운로드
+    <ul>
+      <li>Windows의 WSL2에서 설치한 Ubuntu를 실행해 다운로드합니다.</li>
+    </ul>
+    <ul>
+      <li>docker-compose.yaml를 설치할 파일 경로는 따로 신경 쓰실 필요 없어요~!</li>
+      <li>wget: 인터넷에서 파일을 다운로드할 때 사용되는 명령 줄 도구
+<img src="/assets/penpot/images_6.JPG" alt="images_6.JPG" />
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://raw.githubusercontent.com/penpot/penpot/main/docker/images/docker-compose.yaml
+</code></pre></div>        </div>
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  - 실질적으로 Windows에서 Ubuntu 가상 시스템을 실행했기 때문에 파일 경로는 파일 탐색기를 열어보면 확인하실 수 있습니다. (Ubuntu 실행 명령어에서 `ll`을 쳤을 때 실제 경로예요~!)  ![images_7.JPG](/assets/penpot/images_7.JPG)
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Penpot 서비스 실행하기
+    <ul>
+      <li>항상 Docker Compose를 통해 명령줄 도구(CLI)를 실행할 땐 <code class="language-plaintext highlighter-rouge">Docker Desktop</code>이 실행되고 있어야 합니다.</li>
+      <li>Ubuntu에서 Penpot 서비스를 실행하고, <code class="language-plaintext highlighter-rouge">http://localhost:9001</code>로 접속을 합니다.</li>
+      <li>포트 <code class="language-plaintext highlighter-rouge">9001</code>은 wget으로 설치한 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> 파일에 기본으로 설정되어 있고, 변경해서 사용할 수 있어요~!
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker compose <span class="nt">-p</span> penpot <span class="nt">-f</span> docker-compose.yaml up <span class="nt">-d</span>
+</code></pre></div>        </div>
+        <p><img src="/assets/penpot/images_8.JPG" alt="images_8.JPG" /></p>
+      </li>
+    </ul>
+  </li>
+  <li>Penpot 서비스 실행 중지
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker compose <span class="nt">-p</span> penpot <span class="nt">-f</span> docker-compose.yaml down
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="gitlab-연동하기">GitLab 연동하기</h3>
+
+<p>앞서 Penpot 컨테이너의 이미지, 환경 변수, 볼륨, 네트워크 설정 등을 명시하는 파일인 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>을 사용해 서비스를 실행했습니다. <br />
+이제 <a href="https://help.penpot.app/technical-guide/developer/">공식 사이트의 가이드</a>에 따라 GitLab을 사용해 로그인 할 수 있게 설정해 보겠습니다.</p>
+
+<h4 id="docker-composeyaml-파일-수정하기">docker-compose.yaml 파일 수정하기</h4>
+
+<p>저는 wget을 통해 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>을 받았습니다. 파일 경로는 <code class="language-plaintext highlighter-rouge">\\wsl.localhost\Ubuntu\home\gluesys</code> 하위에 속해있고, <br />
+해당 파일의 확장자는 <code class="language-plaintext highlighter-rouge">yaml</code> 파일이기 때문에 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> 파일의 속성에 들어가서 연결 프로그램을 <code class="language-plaintext highlighter-rouge">메모장</code>으로 변경 후 파일 내용을 수정했습니다.</p>
+
+<ul>
+  <li>수정된 내용은 아래와 같습니다.
+    <ol>
+      <li><code class="language-plaintext highlighter-rouge">penpot-frontend</code> 밑에 줄에 있는 <code class="language-plaintext highlighter-rouge">PENPOT_FLAGS</code>라는 환경 변수를 <code class="language-plaintext highlighter-rouge">disable-secure-session-cookies disable-login enable-login-with-gitlab disable-registration</code>로 정의했습니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">penpot-backend</code> 밑에 줄에 있는 <code class="language-plaintext highlighter-rouge">PENPOT_FLAGS</code>라는 환경 변수를 <code class="language-plaintext highlighter-rouge">disable-secure-session-cookies disable-login enable-login-with-gitlab</code>로 정의했습니다.</li>
+      <li>GitLab에 인증에 관련된 <code class="language-plaintext highlighter-rouge">PENPOT_GITLAB_BASE_URI, PENPOT_GITLAB_CLIENT_ID, PENPOT_GITLAB_CLIENT_SECRET</code> 환경 변수를 설정했습니다.</li>
+    </ol>
+  </li>
+  <li>직접 수정하기 귀찮다면 <a href="/assets/penpot/docker-compose.yaml">docker-compose.yaml</a> 파일을 바로 사용하셔도 됩니다.</li>
+</ul>
+
+<p><br /></p>
+
+<p>이렇게 설정을 변경한 후에 서비스를 재구동해 보면 기존에 보이던 계정 생성 버튼이 없어지고 <code class="language-plaintext highlighter-rouge">깃랩(GitLab)</code> 버튼이 생깁니다.</p>
+
+<p><img src="/assets/penpot/images_9.JPG" alt="images_9.JPG" /></p>
+
+<h4 id="gitlab에-penpot을-인증할-애플리케이션-생성-후-인증키-등록">GitLab에 Penpot을 인증할 애플리케이션 생성 후 인증키 등록</h4>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">GitLab 로그인</code> - <code class="language-plaintext highlighter-rouge">사용자 설정</code> - <code class="language-plaintext highlighter-rouge">애플리케이션</code> - <code class="language-plaintext highlighter-rouge">[새 애플리케이션 추가]</code>
+  <img src="/assets/penpot/images_10.JPG" alt="images_10.JPG" />
+    <ul>
+      <li>이름: Penpot</li>
+      <li>Redirect URL: http://<penpot을 설치한="" 장비="" IP="">/api/auth/oauth/gitlab/callback</penpot을></li>
+      <li>옵션(선택 사항)</li>
+    </ul>
+    <ul>
+      <li>read_user</li>
+      <li>openid</li>
+      <li>profile</li>
+      <li>email
+  <img src="/assets/penpot/images_11.JPG" alt="images_11.JPG" /></li>
+    </ul>
+  </li>
+  <li>인증키 복사
+    <ul>
+      <li>애플리케이션 ID와 비밀키를 복사합니다.
+ <img src="/assets/penpot/images_12.JPG" alt="images_12.JPG" /></li>
+      <li>여기서 복사한 내용은 <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>파일에서 <code class="language-plaintext highlighter-rouge">PENPOT_GITLAB_CLIENT_ID, PENPOT_GITLAB_CLIENT_SECRET</code>에 입력 후 저장해 Penpot 서비스를 재실행합니다.
+ ```yaml
+ # Backend &amp; Frontend
+ PENPOT_FLAGS=”[…] enable-login-with-gitlab”</li>
+    </ul>
+
+    <p># Backend only
+ PENPOT_GITLAB_BASE_URI=https://gitlab.com
+ PENPOT_GITLAB_CLIENT_ID=<client-id>
+ PENPOT_GITLAB_CLIENT_SECRET=<client-secret>
+ ```
+         - 마지막으로 서비스 접속 후 - [GitLab] 클릭 - 인증 - 로그인하면 끝~!
+ ![images_13.JPG](/assets/penpot/images_13.JPG)</client-secret></client-id></p>
+  </li>
+</ol>
+
+<h2 id="penpot-활용하기">Penpot 활용하기</h2>
+
+<p>이제는 Penpot에서 제공하는 라이브러리를 다운로드하고 해당 디자인 템플릿을 활용해 간단한 로그인 페이지의 목업 작업을 하는 방법을 소개하도록 하겠습니다.<br />
+라이브러리를 다운로드하고, 라이브러리 안에 마음에 드는 템플릿을 공유해 개인 프로젝트에서 해당 디자인을 활용해서 작업을 할 것입니다.<br />
+<a href="https://penpot.app/libraries-templates">Penpot에서 제공되는 라이브러리</a> 중에서 저는 <code class="language-plaintext highlighter-rouge">Firefox mockup</code>와 <code class="language-plaintext highlighter-rouge">Penpot Design System</code>이라는 라이브러리를 사용하겠습니다.</p>
+
+<h3 id="라이브러리-다운로드"><a href="https://penpot.app/libraries-templates">라이브러리</a> 다운로드</h3>
+
+<ol>
+  <li>해당 홈페이지에서 <code class="language-plaintext highlighter-rouge">Firefox mockup</code>와 <code class="language-plaintext highlighter-rouge">Penpot Design System</code>를 다운로드합니다.
+  <img src="/assets/penpot/images_14.JPG" alt="images_14.JPG" />
+  <img src="/assets/penpot/images_15.JPG" alt="images_15.JPG" /></li>
+  <li>다운로드한 라이브러리를 추가해 줍니다.
+    <ul>
+      <li>로그인 - <code class="language-plaintext highlighter-rouge">[초안]</code> - 상단 왼쪽 <code class="language-plaintext highlighter-rouge">설정</code> - <code class="language-plaintext highlighter-rouge">[Import Penpot files]</code>를 클릭해줍니다.
+ <img src="/assets/penpot/images_16.JPG" alt="images_16.JPG" /></li>
+      <li>다운로드 받은 라이브러리를 선택 후 <code class="language-plaintext highlighter-rouge">Import</code>를 해줍니다.</li>
+      <li>인내심을 갖고 등록된 후 허가까지 해주셔야 해요~!
+ <img src="/assets/penpot/images_17.JPG" alt="images_17.JPG" />
+ <img src="/assets/penpot/images_18.JPG" alt="images_18.JPG" />
+ <img src="/assets/penpot/images_19.JPG" alt="images_19.JPG" /></li>
+      <li>해당 라이브러리가 추가가 되었다면 추가된 라이브러리가 나타날 것입니다.
+ <img src="/assets/penpot/images_20.JPG" alt="images_20.JPG" /></li>
+    </ul>
+  </li>
+  <li>디자인 템플릿을 공유하기
+    <ul>
+      <li>개인 프로젝트에서 사용하기 위해 <code class="language-plaintext highlighter-rouge">Firefox mockup</code>에서 웹 브라우저 화면 디자인을 선택해서 공유해 보겠습니다.</li>
+    </ul>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Firefox mockup</code>라이브러리를 선택합니다.(더블클릭을 해주셔야 해요~!)
+<img src="/assets/penpot/images_21.JPG" alt="images_21.JPG" />
+<img src="/assets/penpot/images_22.JPG" alt="images_22.JPG" /></li>
+      <li><code class="language-plaintext highlighter-rouge">[LAYERS]</code> - <code class="language-plaintext highlighter-rouge">[templates]</code> - <code class="language-plaintext highlighter-rouge">[light]</code> 우클릭 - <code class="language-plaintext highlighter-rouge">[Create component]</code> 클릭을 해줍니다.
+        <ul>
+          <li>저는 하얀색을 좋아하기 때문에 밝은색 디자인을 선택할게요~!
+<img src="/assets/penpot/images_23.JPG" alt="images_23.JPG" /></li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">[ASSETS]</code> - 좌측 하단에 있는 <code class="language-plaintext highlighter-rouge">[COMPONENTS]</code>에서 방금 선택한 디자인이 추가가 되었는지 확인합니다.
+<img src="/assets/penpot/images_24.JPG" alt="images_24.JPG" />
+      - 자 이제는 로그인 폼 디자인을 선택해서 공유해 보겠습니다. 똑같은 방법이니 빠르게 넘어가셔도 되요~!<br /></li>
+      <li><code class="language-plaintext highlighter-rouge">Penpot Design System</code> 라이브러리를 선택합니다.
+<img src="/assets/penpot/images_25.JPG" alt="images_25.JPG" />
+<img src="/assets/penpot/images_26.JPG" alt="images_26.JPG" /></li>
+      <li><code class="language-plaintext highlighter-rouge">[LAYERS]</code> - <code class="language-plaintext highlighter-rouge">[PAGES]</code> - <code class="language-plaintext highlighter-rouge">[Login]</code> 우클릭 - <code class="language-plaintext highlighter-rouge">[Create component]</code> 클릭을 해줍니다.
+<img src="/assets/penpot/images_27.JPG" alt="images_27.JPG" /></li>
+      <li><code class="language-plaintext highlighter-rouge">[ASSETS]</code> - 좌측 하단에 있는 <code class="language-plaintext highlighter-rouge">[COMPONENTS]</code>에서 방금 선택한 디자인이 추가가 되었는지 확인합니다.
+<img src="/assets/penpot/images_28.JPG" alt="images_28.JPG" /></li>
+      <li>대시보드 페이지 - <code class="language-plaintext highlighter-rouge">[초안]</code> - <code class="language-plaintext highlighter-rouge">[해당 라이브러리 우클릭]</code> - <code class="language-plaintext highlighter-rouge">[공유 라이브러리로 추가하기]</code> 클릭해 줍니다.
+<img src="/assets/penpot/images_29.JPG" alt="images_29.JPG" /></li>
+    </ul>
+  </li>
+  <li>개인 프로젝트에서 공유한 디자인으로 목업하기
+    <ul>
+      <li>자 다시 그러면 대시보드(메인 페이지)로 돌아와 프로젝트를 생성해 보겠습니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">[NEW PROJECT]</code> 버튼 클릭 후 생성된 프로젝트를 클릭해 줍니다. (저는 <code class="language-plaintext highlighter-rouge">Login</code>이라 할게요!)
+ <img src="/assets/penpot/images_30.JPG" alt="images_30.JPG" /></li>
+      <li><code class="language-plaintext highlighter-rouge">[ASSETS]</code> - <code class="language-plaintext highlighter-rouge">[LIBRARIES]</code> - <code class="language-plaintext highlighter-rouge">Firefox mockup</code>와 <code class="language-plaintext highlighter-rouge">Penpot Design System</code> 추가해 줍니다.
+ <img src="/assets/penpot/images_31.JPG" alt="images_31.JPG" /></li>
+      <li>공유된 라이브러리를 확인합니다.
+ <img src="/assets/penpot/images_32.JPG" alt="images_32.JPG" /></li>
+      <li><code class="language-plaintext highlighter-rouge">Firefox mockup</code> 라이브러리에 생성한 디자인 컴포넌트를 가운데 화면으로 드래그해 줍니다.
+ <img src="/assets/penpot/images_33.JPG" alt="images_33.JPG" /></li>
+      <li>자 이러면 웹 브라우저 화면의 디자인 UI 목업이 추가했으니 Penpot의 로그인 디자인도 입혀보겠습니다.</li>
+    </ul>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Penpot Design System</code> 라이브러리에 생성한 로그인 폼 디자인 컴포넌트를 가운데 화면으로 드래그해 줍니다.
+<img src="/assets/penpot/images_34.JPG" alt="images_34.JPG" /></li>
+      <li>로그인 폼 목업 작업
+<img src="/assets/penpot/images_35.JPG" alt="images_35.JPG" />
+        <ul>
+          <li>로그인 폼 디자인과 웹 브라우저 창 디자인의 규격이 안 맞을 텐데 이 부분은 사이즈를 잘 조정해서 맞춰야 해요~!</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="마치면서">마치면서</h2>
+
+<p>전 디자이너가 아니다 보니 제한적으로 몇몇 기능만 사용하고 있는 상황에서 다루지 못한 Penpot의 기능과 디자인 작업에 대한 내용들이 많이 있습니다.<br />
+Penpot을 사용하면서 디자인 템플릿(CSS, SVG, HTML 등의 디자인 요소)으로 네이티브하게 표현함으로써, 디자인에서 개발 과정으로 별도의 작업 없이 인터페이스에서 바로 작업하는 장점은 최고의 장점이라 봅니다.<br /> 
+물론 Penpot의 클라이언트와 서버 모두 느리고 비효율적인 부분도 있고, 신생 프로젝트인 만큼, 안정성이나 성능 측면에서는 기존 도구들에 비해 부족할 수도 있습니다.<br /></p>
+
+<ul>
+  <li><em>텍스트 편집 중 영어가 아닌 언어(한글)로 입력할 때 발생하는 버그가 있으니 주의하세요!</em>
+    <ul>
+      <li><a href="https://github.com/penpot/penpot/issues/4163">이 이슈</a>는 Penpot GitHub 저장소에서도 알려진 이슈입니다.</li>
+      <li>천천히 입력하는 우회법(?)도 있습니다…</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Penpot은 개발 중심의 조직이라면 별도 비용 부담 없이 자체적으로 호스팅해 사용할 수 있다는 점이 최고의 장점이지 않을까 생각합니다.</p>
+
+<h2 id="참고-링크-및-자료">참고 링크 및 자료</h2>
+
+<ul>
+  <li><a href="https://penpot.app/">Penpot 공식 사이트</a></li>
+  <li><a href="https://penpot.app/self-host">Penpot 셀프 호스트 안내서</a></li>
+  <li><a href="https://help.penpot.app/user-guide/libraries/">Penpot 사용자 안내서</a></li>
+  <li><a href="https://learn.microsoft.com/ko-kr/windows/wsl/tutorials/wsl-containers">WSL2에서 Docker 원격 컨테이너 시작</a></li>
+  <li><a href="https://penpot.app/libraries-templates">Penpot 라이브러리</a></li>
+</ul>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#Penpot">Penpot</a>,&nbsp;<a href="/tags#%ED%8E%9C%ED%8C%9F">펜팟</a>,&nbsp;<a href="/tags#%EB%AA%A9%EC%97%85">목업</a>,&nbsp;<a href="/tags#%EB%94%94%EC%9E%90%EC%9D%B8">디자인</a>,&nbsp;<a href="/tags#%EC%98%A4%ED%94%88%EC%86%8C%EC%8A%A4">오픈소스</a>,&nbsp;<a href="/tags#Docker">Docker</a>,&nbsp;<a href="/tags#%EB%8F%84%EC%BB%A4">도커</a>,&nbsp;<a href="/tags#WSL">WSL</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

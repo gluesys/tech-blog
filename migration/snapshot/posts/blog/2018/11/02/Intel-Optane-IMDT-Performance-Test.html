@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>인텔 옵테인 IMDT 기반 성능 테스트</title>
+  <meta name="description" content="위 이미지는 인텔 사이트에서 발췌한 것임을 밝혀 둔다.최근 인텔 옵테인 NVMe를 테스트할 기회가 생겼다. 설치 방법과 성능 결과를 간략히 정리해 본다.">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="위 이미지는 인텔 사이트에서 발췌한 것임을 밝혀 둔다.최근 인텔 옵테인 NVMe를 테스트할 기회가 생겼다. 설치 방법과 성능 결과를 간략히 정리해 본다." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="인텔 옵테인 IMDT 기반 성능 테스트" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/IntelOptaneIMDT.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="인텔 옵테인 IMDT 기반 성능 테스트">
+  <meta name="twitter:description" content="위 이미지는 인텔 사이트에서 발췌한 것임을 밝혀 둔다.최근 인텔 옵테인 NVMe를 테스트할 기회가 생겼다. 설치 방법과 성능 결과를 간략히 정리해 본다.">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/IntelOptaneIMDT.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2018/11/02/Intel-Optane-IMDT-Performance-Test.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/IntelOptaneIMDT.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">인텔 옵테인 IMDT 기반 성능 테스트</h1>
+      <p class="info">by <strong>김 경표 (hgichon@gmail.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">November 2, 2018</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p>위 이미지는 인텔 사이트에서 발췌한 것임을 밝혀 둔다.
+최근 인텔 옵테인 NVMe를 테스트할 기회가 생겼다. 설치 방법과 성능 결과를 간략히 정리해 본다.</p>
+
+<h2 id="옵테인-">옵테인 ?</h2>
+
+<p>옵테인이 뭔지 어떻게 다른지는 구글에서 찾아 보면 수 많은 자료가 있다.
+나는 힘 좋고 오래 가는 밧데리… 아니 SSD로 정리해 보았고 가성비에 부응하는지 봐야겠다.
+옵테인 활용 솔루션으로 두가지 정도가 눈의 띈다.</p>
+
+<h3 id="cas--일반적인-캐시-소프트웨어">CAS : 일반적인 캐시 소프트웨어</h3>
+
+<p>Linux md-cache와 같은 고속의 플래시 미디어를 HDD 기반 블럭 디바이스의 캐시로 사용할 수 있도록 해주는 소프트웨어 기반 솔루션.
+SSD 제조사나 LSI/Adaptec 같은 RAID 컨트롤러 제조사 또는 여기저기서 캐시 소프트웨어를 제공하고 있다.
+DM-Writeboost와 유사하게 DRAM을 1차 인덱싱 캐시로 사용하고 있어 전원이나 갑작스런 시스템 장애 시 재시작에 recovery 타임이 필요하다.
+일반적인 SSD는 SLC 급을 제외하고 Endurence가 짧아 write intensive 워크로드에는 적합하지 않다고 알고 있다.
+스펙 상의 옵테인은 Endurance가 좋아 캐시로 쓸만한 품질을 가지고 있어 보인다. 가격이 문제지만</p>
+
+<h3 id="imdt--dram--optane-한지붕-두가족-메모리-확장-os">IMDT : DRAM + Optane 한지붕 두가족 메모리 확장 OS?</h3>
+
+<p>캐시 소프트웨어는 워크로드에 따라 결과가 다양해서(극과 극) 범용 환경에서는 굳이 도입할 필요성이 있진 않았다.
+헌데 캐시 영역이 확장된다면 쓸만한 영역이 많이 생기지 않을까 생각이 된다.
+Intel에서 발표한 자료에 따르면 worst case에도 DRAM의 7~80% 수준이라고 하는데, 벌크 데이터 처리에 대한 자료는 없었던 바,
+CIFS 프로토콜 I/O 처리를 page cache 수준에서 처리하는 경우의 성능 영향도를 살펴보아야 겠다.</p>
+
+<h2 id="설치">설치</h2>
+
+<p>인텔의 <a href="https://www.intel.com/content/dam/support/us/en/documents/memory-and-storage/intel-mdt-setup-guide.pdf" target="_blank">공식 설치 가이드</a>를 참고 했다.</p>
+
+<ul>
+  <li>사용한 옵테인: <a href="https://www.intel.com/content/www/us/en/products/memory-storage/solid-state-drives/data-center-ssds/optane-dc-p4800x-series/p4800x-750gb-aic.html" target="_blank">P4800X 750GB 3D XPoint</a> x 2</li>
+  <li>AnyStor-E 하드웨어: SuperMicro X10DRi / E5-2690v3 Dual / LSI-9361-8i (Samsung SSD 8 로컬 스토리지 용도) / Intel 10G 4 port (NFS/CIFS 성능 테스트 용도)</li>
+  <li>설치 순서 요약: 바이오스 설정 ==&gt; 사용자 OS (여기서는 AnyStor-E 3.0) 설치 ==&gt; 사용자 OS 상에서 Optane에 IMDT 설치 ==&gt; Optane NVMe를 부팅 순서 상단으로 배치</li>
+</ul>
+
+<p>OS에는 별다른 패치는 없음</p>
+
+<ul>
+  <li>참고 사항
+    <ul>
+      <li>DRAM과 옵테인은 1:8 크기만 가능 (현재 버전)</li>
+      <li>옵테인은 최소 CPU 당 1개씩 필요 여러 장이 성능상 유리 (스트라이핑 하는 듯)</li>
+      <li>메인보드가 Intel VT/VT-D를 지원하고 CPU 는 E5-x6xx 시리즈의 v3/v4 급이거나 최근 나온 scalable 시리즈일 것</li>
+      <li>IMDT용 OS 부팅 후 사용자 OS 부팅하는 구조</li>
+      <li>Optane NVMe 메모리 일부에 IMDT용 OS가 인스톨되므로(USB 부팅도 있다.), BIOS가 NVMe 디바이스로 부팅 가능해야 함.</li>
+      <li>Optane 메모리에 따라 IMDT가 설치된 버전이 있고, 사용자가 설치해야 하는 버전이 있음. 본 테스트에서는 직접 설치를 하였음.</li>
+      <li>IMDT 설치 시 카드별 라이선스가 필요하고, 설치 스크립트에서 라이센스를 입력받아 이메일을 통해 입력용 라이센스를 받아야 하는… 번거로움을 감수해야 함 - -</li>
+      <li>사용한 <a href="http://memorydrv.com/downloads/latest/" target="_blank">인스톨러</a>의 버전은 8.6.2535.77인데, 오늘자는 8.6.2535.100</li>
+      <li>사용한 OS는 CentOS 7.5.1804 (AnyStor-E Custom)</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="테스트-개요">테스트 개요</h2>
+
+<p>테스트 목적은 다음과 같다.</p>
+
+<ul>
+  <li>일반적인 리눅스 OS 운영에 문제가 없을까? 안 써본거라 노파심에… (/dev/shm을 타겟으로 하는 dd test, stress)</li>
+  <li>Memory Intensive Performance Test (Intel 제공 툴)</li>
+  <li>4K UHD 편집 스토리지: 미디어 환경 테스트  (AJA system test / CIFS)</li>
+</ul>
+
+<p>고려사항</p>
+
+<ul>
+  <li>DATA wirte Intensive workload에서 페이지 캐시 플러시에 따른 process hang</li>
+  <li>RSS 점유가 많은 프로세스의 시스템 응답성?</li>
+</ul>
+
+<h3 id="테스트-환경">테스트 환경</h3>
+
+<ul>
+  <li>구성도</li>
+  <li>클라이언트/ASE H/W 제원</li>
+</ul>
+
+<h3 id="linux-shm-dd-테스트-결과">Linux shm dd 테스트 결과</h3>
+
+<ul>
+  <li>dd if=/dev/zero of=/dev/shm/100G bs=1024k count=102400
+    <ul>
+      <li>850MB/s</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="cifs-미디어-테스트-결과">CIFS 미디어 테스트 결과</h3>
+
+<ul>
+  <li>1 Client  : Write 600MB/s Read 450MB/s</li>
+  <li>7 Clients : Write 2.1GB/s Read 1.2GB/s</li>
+</ul>
+
+<h3 id="memory-performance-testing">Memory Performance Testing</h3>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#%EC%9D%B8%ED%85%94">인텔</a>,&nbsp;<a href="/tags#Intel">Intel</a>,&nbsp;<a href="/tags#%EC%98%B5%ED%85%8C%EC%9D%B8">옵테인</a>,&nbsp;<a href="/tags#Optane">Optane</a>,&nbsp;<a href="/tags#%EB%AF%B8%EB%94%94%EC%96%B4">미디어</a>,&nbsp;<a href="/tags#Media">Media</a>,&nbsp;<a href="/tags#%EC%84%B1%EB%8A%A5">성능</a>,&nbsp;<a href="/tags#Performance">Performance</a>,&nbsp;<a href="/tags#AnyStor">AnyStor</a>,&nbsp;<a href="/tags#SSD">SSD</a>,&nbsp;<a href="/tags#NVMe">NVMe</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

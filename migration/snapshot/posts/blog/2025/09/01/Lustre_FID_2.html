@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Lustre의 파일 create & open 과정 분석 - 2</title>
+  <meta name="description" content="들어가기 앞서이번 블로그에서 설명할 내용은 지난 Lustre의 파일 create &amp; open 과정 분석 -1의 후속 내용으로, 클라이언트에서 보낸 요청이 MDS에서 처리되는 과정과 이후 클라이언트의 후속 처리 과정을 담고 있습니다. 아래 그림에서 1번은 지난 1편 블로그의 ...">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="들어가기 앞서이번 블로그에서 설명할 내용은 지난 Lustre의 파일 create &amp; open 과정 분석 -1의 후속 내용으로, 클라이언트에서 보낸 요청이 MDS에서 처리되는 과정과 이후 클라이언트의 후속 처리 과정을 담고 있습니다. 아래 그림에서 1번은 지난 1편 블로그의 ..." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="Lustre의 파일 create & open 과정 분석 - 2" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/FID_thumbnail.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lustre의 파일 create & open 과정 분석 - 2">
+  <meta name="twitter:description" content="들어가기 앞서이번 블로그에서 설명할 내용은 지난 Lustre의 파일 create &amp; open 과정 분석 -1의 후속 내용으로, 클라이언트에서 보낸 요청이 MDS에서 처리되는 과정과 이후 클라이언트의 후속 처리 과정을 담고 있습니다. 아래 그림에서 1번은 지난 1편 블로그의 ...">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/FID_thumbnail.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2025/09/01/Lustre_FID_2.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/FID_thumbnail.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">Lustre의 파일 create & open 과정 분석 - 2</h1>
+      <p class="info">by <strong>김성환 (shkim3220@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">September 1, 2025</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="들어가기-앞서">들어가기 앞서</h2>
+<p>이번 블로그에서 설명할 내용은 지난 <a href="https://tech.gluesys.com/blog/2025/03/13/Lustre_FID_1.html">Lustre의 파일 create &amp; open 과정 분석 -1</a>의 후속 내용으로, 클라이언트에서 보낸 요청이 <code class="language-plaintext highlighter-rouge">MDS</code>에서 처리되는 과정과 이후 클라이언트의 후속 처리 과정을 담고 있습니다. 
+아래 그림에서 1번은 지난 1편 블로그의 내용이고, 2번은 본 편에서 설명할 내용입니다. 1편의 내용을 숙지하고, 2편을 보시면 전체 흐름을 이해하는 데 도움이 될 수 있습니다.
+<br /></p>
+
+<p align="center">
+  <img src="/assets/lustre_software_stack.png" alt="러스터의 전체적인 software stack" width="800" />
+  <br />
+  <em>러스터의 전체적인 software stack</em>
+</p>
+
+<h2 id="mds에서의-처리">MDS에서의 처리</h2>
+<p>지난 1편에서 클라이언트의 <code class="language-plaintext highlighter-rouge">MDC</code>가 보낸 요청을 <code class="language-plaintext highlighter-rouge">MDS</code>가 받는 것을 확인하고 마무리 하였습니다.
+이 요청을 받아 <code class="language-plaintext highlighter-rouge">MDS</code>가 처리하는 과정의 첫 시작은 <code class="language-plaintext highlighter-rouge">mdt_reint_open</code> 함수 입니다. 
+해당 함수는 <code class="language-plaintext highlighter-rouge">MDC</code>로 부터 요청을 받으면 다음과 같은 로그 메세지를 출력합니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">I</span> <span class="n">am</span> <span class="n">going</span> <span class="n">to</span> <span class="n">open</span> <span class="p">[</span><span class="mh">0x200000007</span><span class="o">:</span><span class="mh">0x1</span><span class="o">:</span><span class="mh">0x0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">Melon</span><span class="o">-&gt;</span><span class="p">[</span><span class="mh">0x20000a811</span><span class="o">:</span><span class="mh">0x1</span><span class="o">:</span><span class="mh">0x0</span><span class="p">])</span> <span class="n">cr_flag</span><span class="o">=</span><span class="mo">0100000000102</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0100666</span> <span class="n">msg_flag</span><span class="o">=</span><span class="mh">0x0</span>
+</code></pre></div></div>
+
+<p>메시지를 살펴보면, <code class="language-plaintext highlighter-rouge">0x20000a811:0x1:0x0</code> FID를 가진 <code class="language-plaintext highlighter-rouge">Melon</code>이라는 파일에 대한 <code class="language-plaintext highlighter-rouge">open</code> 요청임을 알 수 있습니다. 
+그 다음 해당 파일에 대한 <code class="language-plaintext highlighter-rouge">lu_object</code> 가 존재하는지 찾는 과정이 <code class="language-plaintext highlighter-rouge">mdt_object_find</code> 함수에 의해 수행됩니다. 
+아래 코드는 <code class="language-plaintext highlighter-rouge">mdt_object_find</code> 함수 수행을 포함해 앞으로의 설명에 나오는 함수들 위주로 추린 <code class="language-plaintext highlighter-rouge">mdt_reint_open</code> 함수 코드입니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/mdt/mdt_open.c</span>
+<span class="kt">int</span> <span class="nf">mdt_reint_open</span><span class="p">(</span><span class="k">struct</span> <span class="n">mdt_thread_info</span> <span class="o">*</span><span class="n">info</span><span class="p">,</span> <span class="k">struct</span> <span class="n">mdt_lock_handle</span> <span class="o">*</span><span class="n">lhc</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">mdt_object_find</span><span class="p">(</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mti_env</span><span class="p">,</span> <span class="n">mdt</span><span class="p">,</span> <span class="n">rr</span><span class="o">-&gt;</span><span class="n">rr_fid1</span><span class="p">);</span>
+<span class="p">...</span>
+        <span class="n">fid_zero</span><span class="p">(</span><span class="n">child_fid</span><span class="p">);</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="n">ENOENT</span><span class="p">;</span>
+<span class="p">...</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="o">-</span><span class="n">ENOENT</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">...</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">mdt_object_new</span><span class="p">(</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mti_env</span><span class="p">,</span> <span class="n">mdt</span><span class="p">,</span> <span class="n">child_fid</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<span class="p">...</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="o">-</span><span class="n">ENOENT</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">...</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">mdo_create</span><span class="p">(</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mti_env</span><span class="p">,</span> <span class="n">mdt_object_child</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span>
+                                    <span class="o">&amp;</span><span class="n">rr</span><span class="o">-&gt;</span><span class="n">rr_name</span><span class="p">,</span> <span class="n">mdt_object_child</span><span class="p">(</span><span class="n">child</span><span class="p">),</span>
+                                    <span class="o">&amp;</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mti_spec</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mti_attr</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="o">-</span><span class="n">ERESTART</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">...</span>
+<span class="nl">out:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="n">lustre_msg_set_transno</span><span class="p">(</span><span class="n">req</span><span class="o">-&gt;</span><span class="n">rq_repmsg</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">lu_object</code>는 여러 계층으로 구성된 러스터의 디바이스들을 묶어 공통으로 관리하는 객체로 아래와 같은 구조체로 정의되어 있습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/include/lu_object.h</span>
+<span class="cm">/**
+ * Layer in the layered object.
+ */</span>
+<span class="k">struct</span> <span class="n">lu_object</span> <span class="p">{</span>
+        <span class="cm">/**
+         * Header for this object.
+         */</span>
+        <span class="k">struct</span> <span class="n">lu_object_header</span>           <span class="o">*</span><span class="n">lo_header</span><span class="p">;</span>
+        <span class="cm">/**
+         * Device for this layer.
+         */</span>
+        <span class="k">struct</span> <span class="n">lu_device</span>                  <span class="o">*</span><span class="n">lo_dev</span><span class="p">;</span>
+        <span class="cm">/**
+         * Operations for this object.
+         */</span>
+        <span class="k">const</span> <span class="k">struct</span> <span class="n">lu_object_operations</span> <span class="o">*</span><span class="n">lo_ops</span><span class="p">;</span>
+        <span class="cm">/**
+         * Linkage into list of all layers.
+         */</span>
+        <span class="k">struct</span> <span class="n">list_head</span>                   <span class="n">lo_linkage</span><span class="p">;</span>
+        <span class="cm">/**
+         * Link to the device, for debugging.
+         */</span>
+        <span class="k">struct</span> <span class="n">lu_ref_link</span>                 <span class="n">lo_dev_ref</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>현재 <code class="language-plaintext highlighter-rouge">Melon</code> 이라는 파일은 신규로 생성하는 파일이어서 <code class="language-plaintext highlighter-rouge">lu_object</code>를  찾지 못하고, 결과값이 <code class="language-plaintext highlighter-rouge">-ENOENT</code>로 됩니다(위의 <code class="language-plaintext highlighter-rouge">mdt_reint_open</code> 함수 코드에서 <code class="language-plaintext highlighter-rouge">result= -ENOENT</code> 부분입니다.)
+<code class="language-plaintext highlighter-rouge">mdt_reint_open</code> 함수는 결과값이 <code class="language-plaintext highlighter-rouge">-ENOENT</code>로 되면, <code class="language-plaintext highlighter-rouge">mdt_object_new</code>를 통해 신규로 <code class="language-plaintext highlighter-rouge">lu_object</code> 객체를 할당 및 초기화를 진행합니다. 
+ 초기화 시에  <code class="language-plaintext highlighter-rouge">Melon</code> 파일의 <code class="language-plaintext highlighter-rouge">lu_object</code> 계층 구성은 아래와 같이 됩니다.</p>
+
+<p align="center">
+  <img src="/assets/luobj_passthrough.jpg" alt="러스터 디바이스 계층 구조" width="400" />
+  <br />
+  <em>러스터 디바이스 계층 구조</em>
+</p>
+
+<p><code class="language-plaintext highlighter-rouge">MDD</code>와 <code class="language-plaintext highlighter-rouge">LOD</code>라는 새로운 계층이 MDT 하위에 구성되었는데, Lustre 공식 위키의 내용에 따르면  <code class="language-plaintext highlighter-rouge">MDD(Metadata Device Driver)</code>는  POSIX appliance 계층으로, 해당 semantics를 구현하기 위해 존재합니다. 
+그리고 <code class="language-plaintext highlighter-rouge">LOD(Logical Object Device)</code>는 러스터에서 쓰는 객체들을 어느 <code class="language-plaintext highlighter-rouge">MDT</code> 혹은 <code class="language-plaintext highlighter-rouge">OST</code>에 생성할지 결정하는 계층입니다. 
+위와 같은 계층 구조로 <code class="language-plaintext highlighter-rouge">lu_object</code>가 정상적으로 만들어지면, 본격적으로 파일을 생성 및 열기 위한 작업이 수행됩니다. 
+먼저 <code class="language-plaintext highlighter-rouge">mdo_create</code> 함수가 호출되는데, 이 함수는 결과적으로 <code class="language-plaintext highlighter-rouge">mdd_create</code> 함수를 호출합니다. <code class="language-plaintext highlighter-rouge">mdd_create</code>에서는 크게 다음과 같은 작업을 수행합니다.</p>
+
+<ol>
+  <li>어느 OST에 해당 파일을 생성 할지에 대한 Hint 생성</li>
+  <li>POSIX의 하드 링크 관리를 위한 메타데이터 구성</li>
+  <li>앞선 Hint를 기반으로 파일을 생성할 OST 선택</li>
+</ol>
+
+<p>위 작업과 관련된 함수 내 코드는 아래와 같습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre mdd/mdd_dir.c</span>
+<span class="kt">int</span> <span class="nf">mdd_create</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">lu_env</span> <span class="o">*</span><span class="n">env</span><span class="p">,</span> <span class="k">struct</span> <span class="n">md_object</span> <span class="o">*</span><span class="n">pobj</span><span class="p">,</span>
+                      <span class="k">const</span> <span class="k">struct</span> <span class="n">lu_name</span> <span class="o">*</span><span class="n">lname</span><span class="p">,</span> <span class="k">struct</span> <span class="n">md_object</span> <span class="o">*</span><span class="n">child</span><span class="p">,</span>
+                      <span class="k">struct</span> <span class="n">md_op_spec</span> <span class="o">*</span><span class="n">spec</span><span class="p">,</span> <span class="k">struct</span> <span class="n">md_attr</span> <span class="o">*</span><span class="n">ma</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+        <span class="n">mdd_object_make_hint</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">mdd_pobj</span><span class="p">,</span> <span class="n">son</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">hint</span><span class="p">);</span>
+<span class="p">...</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">OBD_FAIL_CHECK</span><span class="p">(</span><span class="n">OBD_FAIL_LFSCK_BAD_PARENT</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">struct</span> <span class="n">lu_fid</span> <span class="n">tfid</span> <span class="o">=</span> <span class="o">*</span><span class="n">mdd_object_fid</span><span class="p">(</span><span class="n">mdd_pobj</span><span class="p">);</span>
+
+                <span class="n">tfid</span><span class="p">.</span><span class="n">f_oid</span><span class="o">--</span><span class="p">;</span>
+                <span class="n">rc</span> <span class="o">=</span> <span class="n">mdd_linkea_prepare</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">son</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span>
+                                        <span class="o">&amp;</span><span class="n">tfid</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ldata</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="n">rc</span> <span class="o">=</span> <span class="n">mdd_linkea_prepare</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">son</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span>
+                                        <span class="n">mdd_object_fid</span><span class="p">(</span><span class="n">mdd_pobj</span><span class="p">),</span>
+                                        <span class="n">lname</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ldata</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">...</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">mdd_declare_create</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">mdd</span><span class="p">,</span> <span class="n">mdd_pobj</span><span class="p">,</span> <span class="n">son</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span>
+                                <span class="n">handle</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">ldata</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">def_acl_buf</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">acl_buf</span><span class="p">,</span>
+<span class="p">...</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">mdd_create_object</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">mdd_pobj</span><span class="p">,</span> <span class="n">son</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">acl_buf</span><span class="p">,</span>
+                               <span class="o">&amp;</span><span class="n">def_acl_buf</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hsm_buf</span><span class="p">,</span> <span class="n">hint</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Hint를 생성하는 작업은 <code class="language-plaintext highlighter-rouge">mdd_object_make_hint</code> 함수가 수행하며, 관련된 힌트 정보들은 아래의 <code class="language-plaintext highlighter-rouge">dt_allocation_hint</code>  구조체에 저장합니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/include/dt_object.h</span>
+<span class="cm">/**
+ * This is a general purpose dt allocation hint.
+ * It now contains the parent object.
+ * It can contain any allocation hint in the future.
+ */</span>
+<span class="k">struct</span> <span class="n">dt_allocation_hint</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">dt_object</span>        <span class="o">*</span><span class="n">dah_parent</span><span class="p">;</span>
+        <span class="k">const</span> <span class="kt">void</span>              <span class="o">*</span><span class="n">dah_eadata</span><span class="p">;</span>
+        <span class="kt">int</span>                     <span class="n">dah_eadata_len</span><span class="p">;</span>
+        <span class="kt">int</span>                     <span class="n">dah_acl_len</span><span class="p">;</span>
+        <span class="n">__u32</span>                   <span class="n">dah_mode</span><span class="p">;</span>
+        <span class="kt">int</span>                     <span class="n">dah_append_stripes</span><span class="p">;</span>
+        <span class="n">bool</span>                    <span class="n">dah_can_block</span><span class="p">;</span>
+        <span class="kt">char</span>                    <span class="o">*</span><span class="n">dah_append_pool</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>Hint 정보는 해당 파일의 부모 디렉토리의 정보를 바탕으로 구성되며, 부모의 속성 및 striping 정책 등을 활용합니다. <br /></p>
+
+<p>Hint가 구성되고 나면 <code class="language-plaintext highlighter-rouge">mdd_linkea_prepare</code> 함수가 호출되어 <code class="language-plaintext highlighter-rouge">linkea_data</code>를 구성합니다. 
+<code class="language-plaintext highlighter-rouge">linkea_data</code>는 해당 파일이 어떤 디렉토리 하위에 무슨 이름으로 존재하는지를 담고 있는 구조체입니다. 
+ 러스터는 이를 활용해 POSIX의 하드 링크를 손쉽게 관리할 수 있습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/include/lustre_linkea.h</span>
+<span class="k">struct</span> <span class="n">linkea_data</span> <span class="p">{</span>
+        <span class="cm">/**
+         * Buffer to keep link EA body.
+         */</span>
+        <span class="k">struct</span> <span class="n">lu_buf</span>           <span class="o">*</span><span class="n">ld_buf</span><span class="p">;</span>
+        <span class="cm">/**
+         * The matched header, entry and its length in the EA
+         */</span>
+        <span class="k">struct</span> <span class="n">link_ea_header</span>   <span class="o">*</span><span class="n">ld_leh</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="n">link_ea_entry</span>    <span class="o">*</span><span class="n">ld_lee</span><span class="p">;</span>
+        <span class="kt">int</span>                     <span class="n">ld_reclen</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>위 두 가지 작업이 끝나면, 본격적으로 <code class="language-plaintext highlighter-rouge">OST</code>를 선택하기 위한 과정을 수행합니다. 
+실질적인 선택은 <code class="language-plaintext highlighter-rouge">mdd_declare_create</code> 함수에서 이루어지는데, 일반적인 파일일 경우 <code class="language-plaintext highlighter-rouge">lod_qos_prep_create</code> 함수가 최종적으로 호출되게 됩니다. 해당 함수에서 <code class="language-plaintext highlighter-rouge">OST</code>를 선택하는 방법은 아래와 같이 구현되어 있습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/lod/lod_qos.c</span>
+<span class="kt">int</span> <span class="nf">lod_qos_prep_create</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">lu_env</span> <span class="o">*</span><span class="n">env</span><span class="p">,</span> <span class="k">struct</span> <span class="n">lod_object</span> <span class="o">*</span><span class="n">lo</span><span class="p">,</span>
+                        <span class="k">struct</span> <span class="n">lu_attr</span> <span class="o">*</span><span class="n">attr</span><span class="p">,</span> <span class="k">struct</span> <span class="n">thandle</span> <span class="o">*</span><span class="n">th</span><span class="p">,</span>
+                        <span class="kt">int</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">__u64</span> <span class="n">reserve</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">lod_comp</span><span class="o">-&gt;</span><span class="n">llc_ostlist</span><span class="p">.</span><span class="n">op_array</span> <span class="o">&amp;&amp;</span> <span class="c1">// 사용자가 지정한 OST에 할당</span>
+                    <span class="n">lod_comp</span><span class="o">-&gt;</span><span class="n">llc_ostlist</span><span class="p">.</span><span class="n">op_count</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">rc</span> <span class="o">=</span> <span class="n">lod_alloc_ost_list</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">stripe</span><span class="p">,</span> <span class="n">ost_indices</span><span class="p">,</span>
+                                                <span class="n">th</span><span class="p">,</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reserve</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">lod_comp</span><span class="o">-&gt;</span><span class="n">llc_stripe_offset</span> <span class="o">==</span> <span class="n">LOV_OFFSET_DEFAULT</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 지정하지 않으면, 먼저 QoS 정책에 의해 할당</span>
+                        <span class="cm">/**
+                         * collect OSTs and OSSs used in other mirrors whose
+                         * components cross the ldo_comp_entries[comp_idx]
+                         */</span>
+                        <span class="n">rc</span> <span class="o">=</span> <span class="n">lod_prepare_avoidance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">lo</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">rc</span><span class="p">)</span>
+                                <span class="n">GOTO</span><span class="p">(</span><span class="n">put_ldts</span><span class="p">,</span> <span class="n">rc</span><span class="p">);</span>
+
+                        <span class="n">QOS_DEBUG</span><span class="p">(</span><span class="s">"collecting conflict osts for comp[%d]</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+                                  <span class="n">comp_idx</span><span class="p">);</span>
+                        <span class="n">lod_collect_avoidance</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="n">comp_idx</span><span class="p">);</span>
+
+                        <span class="n">rc</span> <span class="o">=</span> <span class="n">lod_ost_alloc_qos</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">stripe</span><span class="p">,</span> <span class="n">ost_indices</span><span class="p">,</span>
+                                               <span class="n">flag</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reserve</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">rc</span> <span class="o">==</span> <span class="o">-</span><span class="n">EAGAIN</span><span class="p">)</span> <span class="c1">// QoS 할당 실패 시 라운드로빈 방식으로 할당</span>
+                                <span class="n">rc</span> <span class="o">=</span> <span class="n">lod_ost_alloc_rr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">stripe</span><span class="p">,</span>
+                                                      <span class="n">ost_indices</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span>
+                                                      <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reserve</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// 사용자가 지정한 offset에 맞춰 할당</span>
+                        <span class="n">rc</span> <span class="o">=</span> <span class="n">lod_ost_alloc_specific</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">stripe</span><span class="p">,</span>
+                                                    <span class="n">ost_indices</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">th</span><span class="p">,</span>
+                                                    <span class="n">comp_idx</span><span class="p">,</span> <span class="n">reserve</span><span class="p">);</span>
+                <span class="p">}</span>
+<span class="p">....</span>
+</code></pre></div></div>
+
+<p>먼저 사용자가 지정한 <code class="language-plaintext highlighter-rouge">OST</code>들이 있다면, 해당 <code class="language-plaintext highlighter-rouge">OST</code>들에 생성되도록 합니다(<code class="language-plaintext highlighter-rouge">lod_alloc_ost_list</code>). 
+만약 별도로 지정하지 않고 기본값을 쓰도록 한다면, 러스터는 자체 QoS 정책에 의해 먼저 <code class="language-plaintext highlighter-rouge">OST</code> 선택을 시도하고(<code class="language-plaintext highlighter-rouge">lod_ost_alloc_qos</code>), 
+만약 QoS를 통한 할당이 실패한다면 라운드로빈 방식으로 <code class="language-plaintext highlighter-rouge">OST</code>를 선택합니다(<code class="language-plaintext highlighter-rouge">lod_ost_alloc_rr</code>). 
+<code class="language-plaintext highlighter-rouge">llc_stripe_offset</code> 값이 기본값이 아니면 사용자가 offset을 지정한 것으로, 이 경우에는 사용자의 요구 사항에 맞춰 선택됩니다(<code class="language-plaintext highlighter-rouge">lod_ost_alloc_specific</code>).
+offset은 <code class="language-plaintext highlighter-rouge">lfs setstripe</code> 명령어에서 <code class="language-plaintext highlighter-rouge">-i</code> 옵션을 통해 지정할 수 있습니다.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lfs setstripe -i 3 -c 2 -S 1M &lt;target path, directory or file&gt;
+</code></pre></div></div>
+
+<p>이렇게 선택된 <code class="language-plaintext highlighter-rouge">OST</code>에 대한 정보는 추후에 클라이언트가 접근할 때 필요로 하게 되는데, 이를 위해서 러스터는 <code class="language-plaintext highlighter-rouge">lovea</code>에 해당 정보를 저장하고 클라이언트에게 넘겨줍니다. 
+<code class="language-plaintext highlighter-rouge">lovea</code>는 별도의 특별한 구조체는 아니고,  <code class="language-plaintext highlighter-rouge">lu_buf</code>라는 러스터에서 일반적으로 쓰는 버퍼 구조체를 활용합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">mdd_declare_create</code> 작업이 완료되면 <code class="language-plaintext highlighter-rouge">mdd_create_object</code>를 통해 <code class="language-plaintext highlighter-rouge">MDS</code>에 보관이 필요한 메타데이터 객체를 생성하고, 클라이언트에게 응답 메시지를 보냅니다. 
+이후는 해당 응답 메시지를 활용한 클라이언트 측의 후속 처리 과정에 대한 내용입니다.</p>
+
+<h2 id="클라이언트에서의-후속처리">클라이언트에서의 후속처리</h2>
+
+<p><code class="language-plaintext highlighter-rouge">MDS</code>에서의 작업이 잘 수행되고 응답 메시지를 받으면 클라이언트에서는 <code class="language-plaintext highlighter-rouge">ll_create_it</code> 과정이 시작됩니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/lliste/namei.c</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">ll_create_it</span><span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">dir</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">dentry</span><span class="p">,</span>
+                        <span class="k">struct</span> <span class="n">lookup_intent</span> <span class="o">*</span><span class="n">it</span><span class="p">,</span>
+                        <span class="kt">void</span> <span class="o">*</span><span class="n">secctx</span><span class="p">,</span> <span class="n">__u32</span> <span class="n">secctxlen</span><span class="p">,</span> <span class="n">bool</span> <span class="n">encrypt</span><span class="p">,</span>
+                        <span class="kt">void</span> <span class="o">*</span><span class="n">encctx</span><span class="p">,</span> <span class="n">__u32</span> <span class="n">encctxlen</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">open_flags</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">...</span>
+        <span class="n">inode</span> <span class="o">=</span> <span class="n">ll_create_node</span><span class="p">(</span><span class="n">dir</span><span class="p">,</span> <span class="n">it</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">IS_ERR</span><span class="p">(</span><span class="n">inode</span><span class="p">))</span>
+                <span class="n">RETURN</span><span class="p">(</span><span class="n">PTR_ERR</span><span class="p">(</span><span class="n">inode</span><span class="p">));</span>
+<span class="p">...</span>
+
+        <span class="n">d_instantiate</span><span class="p">(</span><span class="n">dentry</span><span class="p">,</span> <span class="n">inode</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">ll_create_it</code>에서는 생성하려는 파일에 대해 메타데이터가 정상적으로 만들어졌기 때문에, <code class="language-plaintext highlighter-rouge">MDS</code>로부터 받은 <code class="language-plaintext highlighter-rouge">lovea</code>의 정보를 <code class="language-plaintext highlighter-rouge">lov_stripe_md</code> 구조체에 옮긴 다음, <code class="language-plaintext highlighter-rouge">inode</code>에 업데이트합니다.
+<code class="language-plaintext highlighter-rouge">lov_stripe_md</code> 구조체의 형태는 아래와 같습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/lov/lov_object.c</span>
+<span class="k">struct</span> <span class="n">lov_stripe_md</span> <span class="p">{</span>
+        <span class="n">atomic_t</span>        <span class="n">lsm_refc</span><span class="p">;</span>
+        <span class="n">spinlock_t</span>      <span class="n">lsm_lock</span><span class="p">;</span>
+        <span class="n">pid_t</span>           <span class="n">lsm_lock_owner</span><span class="p">;</span> <span class="cm">/* debugging */</span>
+
+        <span class="k">union</span> <span class="p">{</span>
+                <span class="cm">/* maximum possible file size, might change as OSTs status
+                 * changes, e.g. disconnected, deactivated
+                 */</span>
+                <span class="n">loff_t</span>          <span class="n">lsm_maxbytes</span><span class="p">;</span>
+                <span class="cm">/* size of full foreign LOV */</span>
+                <span class="kt">size_t</span>          <span class="n">lsm_foreign_size</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="k">struct</span> <span class="n">ost_id</span>   <span class="n">lsm_oi</span><span class="p">;</span>
+        <span class="n">u32</span>             <span class="n">lsm_magic</span><span class="p">;</span>
+        <span class="n">u32</span>             <span class="n">lsm_layout_gen</span><span class="p">;</span>
+        <span class="n">u16</span>             <span class="n">lsm_flags</span><span class="p">;</span>
+        <span class="n">bool</span>            <span class="n">lsm_is_released</span><span class="p">;</span>
+        <span class="n">u16</span>             <span class="n">lsm_mirror_count</span><span class="p">;</span>
+        <span class="n">u16</span>             <span class="n">lsm_entry_count</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="n">lov_stripe_md_entry</span> <span class="o">*</span><span class="n">lsm_entries</span><span class="p">[];</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>그리고 최종 적으로 업데이트된 내용을 바탕으로 <code class="language-plaintext highlighter-rouge">VFS</code>에게 기존 <code class="language-plaintext highlighter-rouge">dentry</code> 경로에 새로운 <code class="language-plaintext highlighter-rouge">inode</code>의 추가를 요청합니다.</p>
+
+<p>디버그 메시지 내에서 다음과 같이 저장된 정보를 출력해 주는 것을 확인할 수 있습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">lsm</span> <span class="mo">00000000435</span><span class="n">c78ed</span><span class="p">,</span> <span class="n">objid</span> <span class="mh">0x1</span><span class="o">:</span><span class="mi">43025</span><span class="p">,</span> <span class="n">maxbytes</span> <span class="mh">0x7fffffffffffffff</span><span class="p">,</span> <span class="n">magic</span> <span class="mh">0x0BD10BD0</span><span class="p">,</span> <span class="n">refc</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">entry</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mirror</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flags</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span><span class="n">layout_gen</span> <span class="mi">0</span> 
+<span class="p">[</span><span class="mh">0x0</span><span class="p">,</span> <span class="mh">0xffffffffffffffff</span><span class="p">)</span><span class="o">:</span> <span class="n">id</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">flags</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span> <span class="n">magic</span> <span class="mh">0x0BD10BD0</span><span class="p">,</span> <span class="n">layout_gen</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stripe</span> <span class="n">count</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sstripe</span> <span class="n">size</span> <span class="mi">1048576</span><span class="p">,</span> <span class="n">pool</span><span class="o">:</span> <span class="p">[]</span>
+<span class="n">oinfo</span><span class="o">:</span><span class="mo">00000000</span><span class="n">edee2c32</span><span class="o">:</span> <span class="n">ostid</span><span class="o">:</span> <span class="mh">0x0</span><span class="o">:</span><span class="mi">1186</span> <span class="n">ost</span> <span class="n">idx</span><span class="o">:</span> <span class="mi">1</span> <span class="n">gen</span><span class="o">:</span> <span class="mi">0</span>
+</code></pre></div></div>
+
+<p>해당 디버그 메시지를 통해서 <code class="language-plaintext highlighter-rouge">Melon</code>이라는 파일은 1번 OST(<code class="language-plaintext highlighter-rouge">ost idx:1</code>)에 객체 ID 값 1186(<code class="language-plaintext highlighter-rouge">ostid: 0x0:1186</code>)으로 지정되었음을 알 수 있습니다.</p>
+
+<h2 id="ost-에서의-확인과정">OST 에서의 확인과정</h2>
+
+<p>실제 <code class="language-plaintext highlighter-rouge">OST</code>에서의 생성은 <code class="language-plaintext highlighter-rouge">Write</code> 과정을 통해 이루어지는데, 해당 내용은 이번 분석 범위에 포함되지 않아 생략하도록 하겠습니다. 
+대신 <code class="language-plaintext highlighter-rouge">Write</code>를 통해 정상적으로 쓰였음을 가정하고, 위의 <code class="language-plaintext highlighter-rouge">lov_stripe_md</code>에 대한 디버그 메시지 내용대로 잘 생성되었음을 확인하는 과정에 대해 간단히 소개하겠습니다. 
+그리고 추가로 러스터의 하위 파일 시스템으로 쓰는 <code class="language-plaintext highlighter-rouge">ZFS</code>에서도 확인하는 방법을 간단히 소개하고 마치도록 하겠습니다. <br /><br />
+먼저 러스터에서는 <code class="language-plaintext highlighter-rouge">lfs getstripe</code> 명령어를 통해 다음과 같이 앞선 <code class="language-plaintext highlighter-rouge">Melon</code> 파일에 대한 정보 확인이 가능합니다.
+<code class="language-plaintext highlighter-rouge">lfs getstripe</code>의 결과와 위 디버그 메세지의 결과를 비교해보면, 동일한 것을 확인하실 수 있습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># lfs getstripe Melon</span>
+Melon
+lmm_stripe_count:  1
+lmm_stripe_size:   1048576
+lmm_pattern:       raid0
+lmm_layout_gen:    0
+lmm_stripe_offset: 1
+        obdidx           objid           objid           group
+             1            1186          0x4a2                0
+</code></pre></div></div>
+
+<p>다음으로 <code class="language-plaintext highlighter-rouge">zfs</code>에서 확인하기 위해서는, 우선 현재 1번 <code class="language-plaintext highlighter-rouge">OST</code>가 쓰고 있는 <code class="language-plaintext highlighter-rouge">zpool</code> 정보를 <code class="language-plaintext highlighter-rouge">zpool list</code>를 통해 알 수 있습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># zpool list</span>
+NAME          SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
+ost_B         199G   426M   199G        -         -     0%     0%  1.00x    ONLINE  -
+</code></pre></div></div>
+
+<p>그다음 출력 내용 중 <code class="language-plaintext highlighter-rouge">zpool</code>의 이름을  가지고,  <code class="language-plaintext highlighter-rouge">zfs</code>에서 제공하는 디버깅 툴인 <code class="language-plaintext highlighter-rouge">zdb</code>에 인자로 넘겨주면 정보를 출력할 수 있습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># zdb -e -dddd ost_B</span>
+</code></pre></div></div>
+
+<p>여기서 <code class="language-plaintext highlighter-rouge">-e</code> 옵션은 가끔 캐시 정보로 인해 <code class="language-plaintext highlighter-rouge">zdb</code> 정보가 정상적으로 출력되지 않는 문제가 발생하는데, 이를 해결하기 위해 캐시를 참조하지 않게끔 하는 옵션입니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">zdb</code>가 정상적으로 수행되면 <code class="language-plaintext highlighter-rouge">ost_B</code>에 대한 정보가 출력되는데, 여기서 앞선 객체 ID 값(<code class="language-plaintext highlighter-rouge">1186</code>)에 대한 정보를 찾을 수 있습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       902    2   128K    16K    35K      1K    32K  100.00  ZFS directory
+                                               152   bonus  System attributes
+    dnode flags: USED_BYTES USERUSED_ACCOUNTED USEROBJUSED_ACCOUNTED
+    dnode maxblkid: 1
+    uid     0
+    gid     0
+    atime   Thu Jan  1 09:00:00 1970
+    mtime   Thu Jan  1 09:00:00 1970
+    ctime   Thu Jan  1 09:00:00 1970
+    crtime  Wed Jan 22 11:04:17 2025
+    gen 63
+    mode    40755
+    size    0
+    parent  896
+    links   0
+    pflags  800000000000
+    rdev    0x0000000000000000
+    Fat ZAP stats:
+        Pointer table:
+            1024 elements
+            zt_blk: 0
+            zt_numblks: 0
+            zt_shift: 10
+            zt_blks_copied: 0
+            zt_nextblk: 0
+        ZAP entries: 2
+        Leaf blocks: 1
+        Total blocks: 2
+        zap_block_type: 0x8000000000000001
+        zap_magic: 0x2f52ab2ab
+        zap_salt: 0x1859bddd
+        Leafs with 2^n pointers:
+              9:      1 *
+        Blocks with n*5 entries:
+              0:      1 *
+        Blocks n/10 full:
+              1:      1 *
+        Entries with n chunks:
+              3:      2 **
+        Buckets with n entries:
+              0:    510 ****************************************
+              1:      2 *
+        1186 = 338 (type: Regular File)
+        2 = 964 (type: Regular File)
+</code></pre></div></div>
+
+<p>위 메시지에서 <code class="language-plaintext highlighter-rouge">1186</code>은 러스터에서의 객체 ID 값이고, 뒤의 <code class="language-plaintext highlighter-rouge">338</code>은 이에 해당하는 <code class="language-plaintext highlighter-rouge">zfs</code>에서의 객체 ID 값입니다. 
+실제로 <code class="language-plaintext highlighter-rouge">338</code>에 대한 값을 찾아보면 다음과 같습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       338    1   128K     4K      0     512     4K    0.00  ZFS plain file
+                                               312   bonus  System attributes
+    dnode flags: USERUSED_ACCOUNTED USEROBJUSED_ACCOUNTED
+    dnode maxblkid: 0
+    uid     0
+    gid     0
+    atime   Thu Aug 14 15:42:43 2025
+    mtime   Thu Aug 14 15:42:43 2025
+    ctime   Thu Aug 14 15:42:43 2025
+    crtime  Thu Aug 14 15:41:47 2025
+    gen 2247042
+    mode    107666
+    size    0
+    parent  902
+    links   1
+    pflags  800000000000
+    rdev    0x0000000000000000
+    SA xattrs: 160 bytes, 2 entries
+        trusted.lma = \010\000\000\000\000\000\000\000\000\000\001\000\001\000\000\000\242\004\000\000\000\000\000\000
+        trusted.fid = \021\250\000\000\002\000\000\000\001\000\000\000\000\000\000\000\000\000\020\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+</code></pre></div></div>
+
+<p>간단히 mtime 비교를 위한 <code class="language-plaintext highlighter-rouge">ls</code> 명령어 조회 결과는 다음과 같습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ls -alh</span>
+total 200M
+drwxr-xr-x 6 root     root      25K Aug 14 15:42 <span class="nb">.</span>
+<span class="nt">-rw-r--r--</span> 1 root     root     100M Jan 23  2025 Pumpkin
+<span class="nt">-rw-r--r--</span> 1 root     root     100M Feb 10  2025 Apple
+<span class="nt">-rw-r--r--</span> 1 root     root        0 Aug 14 15:42 Melon
+</code></pre></div></div>
+
+<p>mtime 비교는 조금 부족할 수 있어서, 실제 데이터를 가진 다른 파일로 추가 확인을 해보도록 하겠습니다. 현재 <code class="language-plaintext highlighter-rouge">Apple</code> 이라는 파일을 열어보면 내부 데이터는 아래와 같습니다.
+100M 파일이라, 편의상 일부 데이터만 옮겨 적었습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>I have an apple
+I have a pen
+pineapple
+
+
+I was a ghost, I was alone, hah
+어두워진, hah, 앞길속에 (Ah)
+Given the throne, I didn't know how to believe
+I was the queen that I'm meant to be
+I lived two lives, tried to play both sides
+But I couldn't find my own place
+Called a problem child 'cause I got too wild
+But now that's how I'm getting paid, 끝없이 on stage
+</code></pre></div></div>
+
+<p>이 파일을 먼저 동일하게 <code class="language-plaintext highlighter-rouge">lfs getstripe</code>로 확인해보면 다음과 같습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Apple
+lmm_stripe_count:  1
+lmm_stripe_size:   1048576
+lmm_pattern:       raid0
+lmm_layout_gen:    0
+lmm_stripe_offset: 0
+        obdidx           objid           objid           group
+             0            1160          0x488                0
+
+</code></pre></div></div>
+
+<p>현재 <code class="language-plaintext highlighter-rouge">0</code>번 <code class="language-plaintext highlighter-rouge">OST</code>(<code class="language-plaintext highlighter-rouge">obdidx:0</code>)에 존재하고 <code class="language-plaintext highlighter-rouge">objid</code>는 <code class="language-plaintext highlighter-rouge">1160</code> 인것을 확인 할 수 있습니다. 이를 <code class="language-plaintext highlighter-rouge">zdb</code>를 통해 내용을 검색하면 다음과 같이 확인이 가능합니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       914    2   128K    16K    35K      1K    32K  100.00  ZFS directory
+                                               152   bonus  System attributes
+    dnode flags: USED_BYTES USERUSED_ACCOUNTED USEROBJUSED_ACCOUNTED
+    dnode maxblkid: 1
+    path    /O/0/d8
+    uid     0
+    gid     0
+    atime   Thu Jan  1 09:00:00 1970
+    mtime   Thu Jan  1 09:00:00 1970
+    ctime   Thu Jan  1 09:00:00 1970
+    crtime  Wed Jan 22 11:03:59 2025
+    gen 61
+    mode    40755
+    size    0
+    parent  896
+    links   0
+    pflags  800000000000
+    rdev    0x0000000000000000
+    Fat ZAP stats:
+        Pointer table:
+            1024 elements
+            zt_blk: 0
+            zt_numblks: 0
+            zt_shift: 10
+            zt_blks_copied: 0
+            zt_nextblk: 0
+        ZAP entries: 2
+        Leaf blocks: 1
+        Total blocks: 2
+        zap_block_type: 0x8000000000000001
+        zap_magic: 0x2f52ab2ab
+        zap_salt: 0x16dde0e75
+        Leafs with 2^n pointers:
+              9:      1 *
+        Blocks with n*5 entries:
+              0:      1 *
+        Blocks n/10 full:
+              1:      1 *
+        Entries with n chunks:
+              3:      2 **
+        Buckets with n entries:
+              0:    510 ****************************************
+              1:      2 *
+
+        8 = 970 (type: Regular File)
+        1160 = 348 (type: Regular File)
+
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Apple</code> 파일이 부여받은 러스터의 <code class="language-plaintext highlighter-rouge">objid</code> <code class="language-plaintext highlighter-rouge">1160</code>은 <code class="language-plaintext highlighter-rouge">zfs</code>에서 <code class="language-plaintext highlighter-rouge">348</code>의 <code class="language-plaintext highlighter-rouge">id</code>값을 가진 <code class="language-plaintext highlighter-rouge">object</code>에 존재하는 것을 확인 할 수 있습니다.
+이 <code class="language-plaintext highlighter-rouge">348</code> <code class="language-plaintext highlighter-rouge">object</code> 의 정보를 동일 <code class="language-plaintext highlighter-rouge">zdb</code> 결과 내에서 확인하면 다음과 같습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       348    1   128K     8K  23.5K     512     8K  100.00  ZFS plain file
+                                               192   bonus  System attributes
+    dnode flags: USED_BYTES USERUSED_ACCOUNTED USEROBJUSED_ACCOUNTED SPILL_BLKPTR
+    dnode maxblkid: 0
+    path    /O/0/d8/1160
+    uid     0
+    gid     0
+    atime   Thu Jan  1 09:00:00 1970
+    mtime   Mon Aug 11 15:29:09 2025
+    ctime   Mon Aug 11 15:29:09 2025
+    crtime  Mon Aug 11 15:21:58 2025
+    gen 1725358
+    mode    100666
+    size    7902
+    parent  914
+    links   1
+    pflags  800000000000
+    rdev    0x0000000000000000
+    SA xattrs: 204 bytes, 3 entries
+
+        trusted.lma = \010\000\000\000\000\000\000\000\000\000\000\000\001\000\000\000\210\004\000\000\000\000\000\000
+        trusted.fid = \101\240\000\000\002\000\000\000\015\000\000\000\000\000\000\000\000\000\020\000\001\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000
+        trusted.version = \074\000\000\000\025\000\000\000
+
+Spill block: 0:21003a8000:2000 200L/200P F=1 B=1725487/1725487 cksum=0000000463402dff:000001c2ded1efcc:00005d31e8e4d796:000d328f2dec511d
+Indirect blocks:
+               0 L0 0:2100040000:4000 2000L/2000P F=1 B=1725487/1725487 cksum=000002da23a8c5b2:000bf16a4d8e66fa:2022a6b4b0f36087:9e7ec08e337a8708
+
+        segment [0000000000000000, 0000000000002000) size    8K
+
+</code></pre></div></div>
+
+<p>이 <code class="language-plaintext highlighter-rouge">object</code> 정보를 활용해서 <code class="language-plaintext highlighter-rouge">zfs</code> 혹은 러스터에서 실제 데이터 확인이 가능한데, 러스터에서 추적하는 방법만 소개하도록 하겠습니다.</p>
+
+<p>위 정보에서 <code class="language-plaintext highlighter-rouge">path</code> 정보가 <code class="language-plaintext highlighter-rouge">/O/0/d8/1160</code> 으로 나와있는 것을 확인 할 수 있습니다. 이를 <code class="language-plaintext highlighter-rouge">OST</code> 가 마운트된 경로에서 해당 파일을 열어보면 되는데,
+기본적으로 러스터는 <code class="language-plaintext highlighter-rouge">readonly</code>로 마운트 되기 때문에 열어 볼 수 없습니다. 해서 <code class="language-plaintext highlighter-rouge">zfs</code> 스냅샷 기능을 활용해 스냅샷을 찍고 복제본을 만들어 마운트하면 확인이 가능합니다.
+최종적으로 복제본이 마운트된 경로에 해당 파일을 열어보면 다음과 같이 확인이 가능합니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; # pwd
+&gt; /ost/ost_debug/O/0/d8
+&gt; # ls
+&gt; 1160  8
+&gt; cat 1160
+
+I have an apple
+I have a pen
+pineapple
+
+
+I was a ghost, I was alone, hah
+어두워진, hah, 앞길속에 (Ah)
+Given the throne, I didn't know how to believe
+I was the queen that I'm meant to be
+I lived two lives, tried to play both sides
+But I couldn't find my own place
+Called a problem child 'cause I got too wild
+But now that's how I'm getting paid, 끝없이 on stage
+
+</code></pre></div></div>
+
+<h2 id="마치며">마치며</h2>
+<p>지금까지 러스터의 디버그 메시지를 바탕으로, 러스터에서 하나의 파일을 생성하고 열 때의 과정을 소개하였습니다. 
+러스터는 다양한 컴포넌트들이 분산 환경에서 동작하기 때문에 분석 과정에 많은 어려움이 있는데, 소개한 내용이 도움이 되셨길 바라며 마치도록 하겠습니다.</p>
+
+<h2 id="참고-링크-및-자료">참고 링크 및 자료</h2>
+
+<ul>
+  <li>[1] <a href="https://tech.gluesys.com/blog/2025/03/13/Lustre_FID_1.html">Lustre의 파일 create &amp; open 과정 분석 -1</a></li>
+  <li>[2] <a href="https://doc.lustre.org/lustre_manual.xhtml">Lustre Software Release 2.x</a></li>
+  <li>[3] Braam, Peter., “The Lustre storage architecture.”, arXiv preprint arXiv:1903.01955, 2019</li>
+  <li>[4] Understanding Lustre Internals, https://wiki.lustre.org/Understanding_Lustre_Internals</li>
+  <li>[5] <a href="https://github.com/lustre/lustre-release.git">Lustre github</a></li>
+</ul>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#Lustre">Lustre</a>,&nbsp;<a href="/tags#File">File</a>,&nbsp;<a href="/tags#Metadata">Metadata</a>,&nbsp;<a href="/tags#Data">Data</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

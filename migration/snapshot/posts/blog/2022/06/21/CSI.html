@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Kubernetes CSI 개념 정리 및 실습</title>
+  <meta name="description" content="인사말">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="인사말" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="Kubernetes CSI 개념 정리 및 실습" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/CSI_maincover.jpg" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Kubernetes CSI 개념 정리 및 실습">
+  <meta name="twitter:description" content="인사말">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/CSI_maincover.jpg">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2022/06/21/CSI.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/CSI_maincover.jpg); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">Kubernetes CSI 개념 정리 및 실습</h1>
+      <p class="info">by <strong>김 재환 (jhkim@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">June 21, 2022</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="인사말">인사말</h2>
+
+<p>컨테이너<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> 기술의 등장으로 기존 가상 머신보다 적은 용량을 가지는 가상 환경을 만들 수 있게 됐고, 가상 환경을 배포하는 시간도 단축되었습니다. 이와 같은 편의성 때문에 최근 클라우드 시스템에서 컨테이너를 많이 사용하고 있는 추세입니다.</p>
+
+<p>이번 포스팅에서 다룰 내용은 쿠버네티스<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> 환경에서 진행되는데요, 쿠버네티스라는 용어를 오다가다 들어보셨거나 처음 접하신 분들도 있을 거 같습니다. 쿠버네티스가 무엇인지 알아야 포스팅을 이해하는 데 도움이 되기 때문에 간단하게 설명하려 하는데, 그 전에!! 쿠버네티스를 처음 접하시는 분들은 도커<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>라는 용어도 생소할 거 같다는 생각이 드네요. 그래서 도커를 먼저 간략히 설명하겠습니다.</p>
+
+<p>도커는 위에서 말한 컨테이너를 단일 노드 환경에서 생성, 삭제, 배포 등을 도와주는 도구입니다. 그렇다면 쿠버네티스는 무엇이냐?? 쿠버네티스는 다중 노드 환경에서 컨테이너를 생성, 삭제, 배포, 관리 등을 도와주는 컨테이너 오케스트레이션 중 하나입니다. 예를 들어 컨테이너가 생성될 때 여러 노드 중에 어느 노드에서 실행시켜야 좋을지를 정한다든지, 컨테이너가 문제가 생겼을 때 이를 해결하려고 지속적으로 관리하는 것과 같은 일을 수행합니다.</p>
+
+<p>이번 포스트에서는 쿠버네티스에서 동작하는 컨테이너들이 데이터를 어떻게 관리하는 지 알아보고자 합니다.</p>
+
+<p>기본적으로 컨테이너 내에 있는 데이터는 임시적이며, 컨테이너가 비정상적으로 종료됐을 때 데이터가 사라지거나 파드 내 컨테이너 간 파일을 공유할 때 문제가 생깁니다. 아!! 파드라는 용어도 모르실 수 있으니 설명을 드리자면, 파드는 쿠버네티스에서 생성하고 관리할 수 있는 최소한의 단위이며 파드는 단일 컨테이너일 수 있으며 또한 다중 컨테이너일 수도 있습니다. 컨테이너의 데이터를 임시로 사용하는 것이 아닌 영구적으로 사용해 앞서 말한 문제점을 해결하기 위하여 쿠버네티스에서는 볼륨이라는 개념을 사용합니다. 쿠버네티스에서는 다양한 유형의 볼륨을 지원하며, 파드는 여러 볼륨 유형을 동시에 사용할 수 있습니다.</p>
+
+<p>파드가 사용할 수 있는 볼륨 유형은 다음과 같습니다:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">이름</th>
+      <th style="text-align: left">설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">emptyDir</code></td>
+      <td style="text-align: left">파드가 생성될 때 생성되고 파드가 삭제될 때 삭제되는 임시 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">hostPath</code></td>
+      <td style="text-align: left">노드의 로컬 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">awsElasticBlockStore</code></td>
+      <td style="text-align: left">아마존 웹 서비스 EBS 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">azureDisk</code></td>
+      <td style="text-align: left">마이크로소프트 애져 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">cephfs</code></td>
+      <td style="text-align: left">Ceph<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup> 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">cinder</code></td>
+      <td style="text-align: left">오픈스택<sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote" rel="footnote">5</a></sup> Cinder 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">gcePersistentDisk</code></td>
+      <td style="text-align: left">구글 컴퓨트 엔진 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">glusterfs</code></td>
+      <td style="text-align: left">글러스터<sup id="fnref:6" role="doc-noteref"><a href="#fn:6" class="footnote" rel="footnote">6</a></sup>(오픈 소스 네트워크 파일시스템) 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">iSCSI</code></td>
+      <td style="text-align: left">iSCSI<sup id="fnref:7" role="doc-noteref"><a href="#fn:7" class="footnote" rel="footnote">7</a></sup> 볼륨</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="language-plaintext highlighter-rouge">NFS</code></td>
+      <td style="text-align: left">NFS(네트워크 파일시스템) 볼륨</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>위의 볼륨 유형 중 <code class="language-plaintext highlighter-rouge">emptyDir</code>는 앞서 설명한 것과 같이, 컨테이너 데이터를 임시로 저장하는 볼륨으로 파드가 삭제될 때 데이터가 영구적으로 삭제가 됩니다. 하지만 <code class="language-plaintext highlighter-rouge">emptyDir</code> 외 나머지 볼륨들은 파드가 제거되더라도 데이터는 유지되며, 같은 내용을 서로 다른 파드들끼리 공유할 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="쿠버네티스-스토리지">쿠버네티스 스토리지</h2>
+
+<p>쿠버네티스 사용자 및 관리자에게 스토리지 사용 방법에서부터 제공 방법에 대한 세부 사항을 추상화하는 퍼시스턴트 볼륨(Persistent Volume, 이하 PV), 퍼시스턴트 볼륨 클레임(Persistent Volume Claim, 이하 PVC)이라는 두 가지 API 리소스를 사용합니다.</p>
+
+<ul>
+  <li>
+    <p>PV</p>
+
+    <p>PV는 관리자가 사용자의 스토리지 요청에 맞게 프로비저닝하여 파드에서 사용할 수 있는 쿠버네티스 클러스터의 스토리지입니다.</p>
+  </li>
+  <li>
+    <p>PVC</p>
+
+    <p>PVC는 사용자가 PV에 요구하는 스펙입니다. 사용하려는 용량, 접근 모드 등을 PV에 요청합니다.</p>
+  </li>
+  <li>
+    <p>Life Cycle</p>
+
+    <p>PV와 PVC는 서로가 밀접한 만큼 라이프사이클을 통해 상태를 구분지을 수 있습니다. 아래 [그림 1]은 PV와 PVC의 라이프사이클 단계를 표현합니다.</p>
+
+    <p> </p>
+
+    <p><img src="/assets/pv-pvc-lifecycle.jpg" alt="Alt_text" /></p>
+    <center>그림 1. PV-PVC Life Cyle</center>
+
+    <p> </p>
+
+    <ul>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">프로비저닝(Provisioning)</code></p>
+
+        <p>PV를 만드는 단계입니다.<br />
+이 단계에서는 PV를 미리 만들고 사용하는 <code class="language-plaintext highlighter-rouge">정적(static)</code> 방법과 요청이 있을 때 PV를 만드는 <code class="language-plaintext highlighter-rouge">동적(dynamic)</code> 방법이 있습니다.</p>
+      </li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">바인딩(Binding)</code></p>
+
+        <p>위에서 만든 PV를 PVC와 연결하는 단계입니다.
+PVC에서 원하는 스토리지 용량과 접근 방법에 대응되는 PV와 연결되는데 대응되는 PV가 없으면 대응되는 PV가 생길 때까지 대기합니다.</p>
+
+        <p>PV와 PVC는 1:1 관계이므로, PVC 하나가 여러 개의 PV에 할당될 순 없습니다.</p>
+      </li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">사용(Using)</code></p>
+
+        <p>PVC는 파드에 설정되고 파드는 PVC를 볼륨으로 인식하여 사용하는 단계입니다.</p>
+      </li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">회수(Reclaiming)</code></p>
+
+        <p>사용이 끝난 PVC는 삭제되고 PVC가 사용하던 PV를 초기화하는 단계입니다.</p>
+
+        <p>이 과정에는 <code class="language-plaintext highlighter-rouge">유지(Retain)</code>, <code class="language-plaintext highlighter-rouge">삭제(Delete)</code>, <code class="language-plaintext highlighter-rouge">재사용(Recycle)</code>의 3가지 정책이 있습니다.</p>
+
+        <ul>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">유지(Retain)</code> : PVC가 삭제될 때 대응되는 PV 상태는 bound -&gt; Released로 바뀌며 다른 PVC가 연결될 수 없는 상태이며 PV 속 데이터는 유지합니다.</p>
+          </li>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">삭제(Delete)</code> : PVC가 삭제될 때 대응되는 PV도 같이 삭제합니다.</p>
+          </li>
+          <li>
+            <p><code class="language-plaintext highlighter-rouge">재사용(Recycle)</code> : PVC가 삭제될 때 대응되는 PV 상태는 bound -&gt; Pending으로 바뀌며 연결될 다른 PVC를 기다립니다.</p>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p> </p>
+
+<h2 id="정적-프로비저닝-실습">정적 프로비저닝 실습</h2>
+
+<ul>
+  <li>PVC YAML 파일 작성
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_pvc.yaml</span>
+  
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">PersistentVolumeClaim</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">test-pvc</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">accessModes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">ReadWriteMany</span>
+  <span class="na">resources</span><span class="pi">:</span>
+    <span class="na">requests</span><span class="pi">:</span>
+      <span class="na">storage</span><span class="pi">:</span> <span class="s">1Gi</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">test-pv</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>PVC 생성</p>
+
+    <div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">[root@master ~]#</span><span class="w"> </span>kubectl create <span class="nt">-f</span> test_pvc.yaml
+<span class="gp">[root@master ~]#</span><span class="w"> </span>kubectl get pvc
+<span class="go">NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+test-pvc        Pending                                             1Gi        RWX                                  1s
+
+</span></code></pre></div>    </div>
+  </li>
+  <li>
+    <p>PV YAML 파일 작성</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_pv.yaml</span>
+  
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">PersistentVolume</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">test-pv</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">test-pv</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">capacity</span><span class="pi">:</span>
+    <span class="na">storage</span><span class="pi">:</span> <span class="s">1Gi</span>
+  <span class="na">accessModes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">ReadWriteMany</span>
+  <span class="na">nfs</span><span class="pi">:</span>
+    <span class="na">server</span><span class="pi">:</span> <span class="s">192.168.x.x</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s">/testPath</span>
+</code></pre></div>    </div>
+  </li>
+  <li>PV 생성
+    <div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">[root@master ~]#</span><span class="w"> </span>kubectl create <span class="nt">-f</span> test-pv.yaml
+<span class="gp">[root@master ~]#</span><span class="w"> </span>kubectl get pv
+<span class="go">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                   STORAGECLASS         REASON   AGE
+test-pv                                    1Gi        RWX            Delete           Bound    default/test-pvc                                       1s
+</span><span class="gp">[root@master ~]#</span><span class="w"> </span>kubectl get pvc
+<span class="go">NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE
+test-pvc        bound    test-pv                                    1Gi        RWX                                 32s
+
+</span></code></pre></div>    </div>
+    <p> </p>
+  </li>
+</ul>
+
+<h2 id="스토리지-클래스storage-class">스토리지 클래스(Storage Class)</h2>
+
+<p>위에서 PVC를 생성하고 PVC에 맞게 정적 방법으로 PV를 생성하여 PV에 연결하는 걸 실습해봤습니다.</p>
+
+<p>자~ 이제 관리자 입장에서 생각해봅시다.</p>
+
+<p>사용자가 파드에 사용할 PVC를 생성했습니다. 이 때 관리자는 사용자가 PVC를 사용할 수 있도록 대응되는 PV를 만드는데, 사용자가 적으면 대응되는 PV를 만드는 건 어렵지 않습니다. 하지만 사용자가 많아 PVC 요청이 많고 시간이 제각각이라면 PVC에 해당되는 PV를 하나하나 만드는 것도 힘들 뿐 아니라, 24시간 항시 PVC 요청을 확인하고 만들 수도 없습니다. 또한 사용자들도 파드를 사용하기 위해 PV가 만들어지길 기다려야 하고, 그 시간이 길어지면 불만이 생길 겁니다.
+위와 같은 상황을 위해 쿠버네티스는 동적 프로비저닝을 제공합니다!!</p>
+
+<p>파드가 볼륨을 사용하기 위한 단계는 아래와 같습니다.</p>
+
+<p><img src="/assets/pod-volume.PNG" alt="Alt_text" />
+    <center>그림 2. POD Volume</center></p>
+
+<p><code class="language-plaintext highlighter-rouge">PVC 생성 -&gt; PV 확인 및 생성 -&gt; PVC-PV bound 확인 -&gt; 파드에 PVC 할당</code></p>
+
+<p>동적 프로비저닝은 관리자 개입없이 PV를 생성합니다. 쿠버네티스에서 동적 프로비저닝은 스토리지 클래스를 생성하는 것으로 사용할 수 있습니다. 스토리지 클래스에 명시되어 있는 프로비저너가 PVC 상태 모니터링, PV 생성을 담당합니다.
+스토리지 클래스에서 사용하는 프로비저너는 CSI 드라이버로 파일 시스템에 따라 다르며 쿠버네티스 인트리에 있는 CSI 드라이버를 사용하거나 외부의 CSI 드라이버를 사용할 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="csicontainer-storage-interface-드라이버">CSI(Container Storage Interface) 드라이버</h2>
+
+<p> </p>
+
+<p><img src="/assets/csi-plugin.jpg" alt="Alt_text" /></p>
+<center>그림 3. CSI Plugin</center>
+
+<p> </p>
+
+<ul>
+  <li>
+    <p>쿠버네티스 CSI 플러그인</p>
+
+    <p>쿠버네티스 CSI은 기본적으로 <code class="language-plaintext highlighter-rouge">프로비저너(Provisioner)</code>, <code class="language-plaintext highlighter-rouge">어태쳐(Attacher)</code>, <code class="language-plaintext highlighter-rouge">컨트롤러(Controller)</code>, <code class="language-plaintext highlighter-rouge">노드서버(NodeServer)</code>로 이루어져 있습니다.</p>
+
+    <ul>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">프로비저너(Provisioner)</code></strong></p>
+
+        <p><code class="language-plaintext highlighter-rouge">프로비저너</code>는 클러스터에 PVC가 생성되는 걸 모니터링하고 있다가 PVC가 생성되면 PV를 생성하는 걸 담당합니다.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">어태쳐(Attacher)</code></strong></p>
+
+        <p><code class="language-plaintext highlighter-rouge">어태처</code>는 파드가 PVC를 사용하려할 때 해당 컨테이너에서 PV를 마운트하는 걸 담당합니다.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">컨트롤러(Controller)</code></strong></p>
+
+        <p><code class="language-plaintext highlighter-rouge">컨트롤러</code>는 쿠버네티스 컨테이너에서 사용할 볼륨을 스토리지 서버에서 생성 및 삭제하는 걸 담당합니다.</p>
+      </li>
+      <li>
+        <p><strong><code class="language-plaintext highlighter-rouge">노드서버(NodeServer)</code></strong></p>
+
+        <p><code class="language-plaintext highlighter-rouge">노드서버</code>는 파드가 배포될 노드에서 스토리지 볼륨에 마운트할 수 있게 환경을 만드는 걸 담당합니다.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p> </p>
+
+<h2 id="spdk-csi-드라이버">SPDK CSI 드라이버</h2>
+
+<p>많은 CSI 드라이버 중 저번에 다뤄서 조금은 친숙한 <strong>SPDK</strong>에서 제공하는 SPDK CSI 드라이버를 알아보겠습니다.</p>
+
+<p>잠깐, <strong>SPDK</strong>가 기억이 안 나시는 분들이 있으실 수 있으니 간단하게 설명하고 CSI 드라이버로 들어가 볼게요~</p>
+
+<p><strong>SPDK</strong>는 고성능 스토리지 애플리케이션을 개발하기 위해 드라이버, 라이브러리, 애플리케이션을 모아 놓은 오픈소스 개발 키드입니다. 최신 저 지연 플래시 스토리지 미디어, 특히 NVMe SSD의 본 성능을 최대한 끌어내기 위해 디자인되었습니다.</p>
+
+<p>보다 자세한 내용은 블로그 예전 내용을 <a href="https://tech.gluesys.com/blog/2022/02/18/SPDK_1.html">참고</a>하시면 되겠습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/SPDK_CSI.png" alt="Alt_text" /></p>
+<center>그림 4. SPDK CSI 드라이버 동작 흐름</center>
+
+<p> </p>
+
+<p>[그림 4]에서 보는 것처럼 SPDK 컨트롤러는 PVC에 대응되는 PV를 만든 후 SPDK 스토리지 서버에서 동작하고 있는 HTTP Proxy 서버에 요청을 보냅니다.</p>
+
+<p>PVC가 요청한 디스크 용량을 가지고 있는 <code class="language-plaintext highlighter-rouge">Logical Volume Store</code>를 선택한 후 요청한 디스크 용량을 가지는 <code class="language-plaintext highlighter-rouge">Logical Volume</code>을 만듭니다. 만들어진 <code class="language-plaintext highlighter-rouge">Logical Volume</code>을 NVMe-oF Target을 만드는 것으로 의 일이 끝납니다.</p>
+
+<p>이후 만들어진 PVC를 사용하는 파드가 생성되거나 대기상태일 때 파드가 배포되는 워커 노드의 SPDK-CSI Node Driver가 전에 만든 NVMe-oF Target을 연결한 뒤 연결된 NVMe를 워커 노드 볼륨에 마운트하고 해당 볼륨을 파드에 마운트 시킵니다.</p>
+
+<p> </p>
+
+<h2 id="동적-프로비저닝-실습">동적 프로비저닝 실습</h2>
+
+<h3 id="spdk-스토리지-서버-설정">SPDK 스토리지 서버 설정</h3>
+
+<p>SPDK 스토리지는 SPDK 설치 및 NVMe의 커널 오너쉽은 해제된 상태입니다. SPDK 기본 설정은 <a href="https://tech.gluesys.com/blog/2022/04/19/SPDK_tutorial_1.html">링크</a>를 참고하시면 되겠습니다.</p>
+
+<ul>
+  <li>SPDK 실행</li>
+</ul>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  [root@spdk spdk]#</span><span class="w"> </span>build/bin/nvmf_tgt
+<span class="go">  [2022-05-12 15:48:15.906122] Starting SPDK v22.05-pre git sha1 68184a503 / DPDK 21.11.0 initialization...
+  [2022-05-12 15:48:15.906269] [ DPDK EAL parameters: [2022-05-12 15:48:15.906319] nvmf [2022-05-12 15:48:15.906346] --no-shconf [2022-05-12 15:48:15.906367] -c 0x1 [2022-05-12 15:48:15.906390] --huge-unlink [2022-05-12 15:48:15.906407] --log-level=lib.eal:6 [2022-05-12 15:48:15.906424] --log-level=lib.cryptodev:5 [2022-05-12 15:48:15.906443] --log-level=user1:6 [2022-05-12 15:48:15.906458] --iova-mode=pa [2022-05-12 15:48:15.906474] --base-virtaddr=0x200000000000 [2022-05-12 15:48:15.906487] --match-allocations [2022-05-12 15:48:15.906503] --file-prefix=spdk_pid28416 [2022-05-12 15:48:15.906520] ]
+  EAL: No free 2048 kB hugepages reported on node 1
+  EAL: No available 1048576 kB hugepages reported
+  TELEMETRY: No legacy callbacks, legacy socket not created
+  [2022-05-12 15:48:15.974793] app.c: 603:spdk_app_start: *NOTICE*: Total cores available: 1
+  [2022-05-12 15:48:16.134453] reactor.c: 947:reactor_run: *NOTICE*: Reactor started on core 0
+  [2022-05-12 15:48:16.134551] accel_engine.c: 842:sw_accel_engine_init: *NOTICE*: Accel framework software engine initialized.
+</span></code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Logical Volume Store 생성</p>
+
+    <p>연결되어 있는 NVMe 중 Logical Volume Store로 사용할 NVMe를 선택하여 SPDK에 등록한 뒤 Logical Volume Store를 생성합니다.</p>
+  </li>
+</ul>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  [root@spdk spdk]#</span><span class="w"> </span>lspci | <span class="nb">grep </span>SSD
+<span class="go">  10000:82:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10001:81:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10001:83:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10001:84:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10002:02:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10003:01:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10003:03:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+  10003:04:00.0 Non-Volatile memory controller: HGST, Inc. Ultrastar SN100 Series NVMe SSD (rev 05)
+</span><span class="gp">  [root@spdk spdk]#</span><span class="w"> </span><span class="nb">sudo </span>scripts/rpc.py bdev_nvme_attach_controller <span class="nt">-b</span> NVMe0 <span class="nt">-t</span> PCIe <span class="nt">-a</span> 10000:82:00.0
+<span class="go">  NVMe0n1
+</span><span class="gp">  [root@spdk spdk]#</span><span class="w"> </span><span class="nb">sudo </span>scripts/rpc.py bdev_lvol_create_lvstore NVMe0n1 lvs_1
+<span class="go">  76d6ec0d-a13f-4bc7-a248-00e4b9f87dcd
+</span></code></pre></div></div>
+
+<ul>
+  <li>SPDK HTTP Proxy 시작</li>
+</ul>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  #</span><span class="w"> </span>rpc_http_proxy.py <span class="o">[</span>spdk-server-ip] <span class="o">[</span>port] <span class="o">[</span>username] <span class="o">[</span>password]
+<span class="gp">  [root@spdk spdk]#</span><span class="w"> </span><span class="nb">sudo </span>scripts/rpc_http_proxy.py 192.168.10.118 9009 root gluesys
+<span class="go">  Started RPC http proxy server
+</span></code></pre></div></div>
+
+<p> </p>
+
+<h3 id="워커-노드-설정">워커 노드 설정</h3>
+
+<ul>
+  <li>워커 노드 전부 SPDK CSI 이미지를 생성, nvme-cli 모듈 설치</li>
+</ul>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  [root@worker1 ~]#</span><span class="w"> </span>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">-v</span> /var/run/docker.sock:/var/run/docker.sock golang:1.14 bash <span class="nt">-c</span> <span class="s2">"apt update &amp;&amp; apt install -y make git docker.io &amp;&amp; git clone https://review.spdk.io/gerrit/spdk/spdk-csi &amp;&amp; cd spdk-csi &amp;&amp; make image"</span>
+<span class="c">  ...
+  ...
+</span><span class="go">  === running docker build
+  Sending build context to Docker daemon  16.18MB
+  Step 1/6 : FROM alpine:3.8
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>c8bccc0af957
+<span class="go">  Step 2/6 : LABEL maintainers "SPDK-CSI Authors"
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>Running <span class="k">in </span>1427a677fa66
+<span class="gp">   ---&gt;</span><span class="w"> </span>ca9dbdd54a02
+<span class="go">  Removing intermediate container 1427a677fa66
+  Step 3/6 : LABEL description "SPDK-CSI Plugin"
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>Running <span class="k">in </span>d1ba6e722919
+<span class="gp">   ---&gt;</span><span class="w"> </span>0ef066ecb079
+<span class="go">  Removing intermediate container d1ba6e722919
+  Step 4/6 : COPY spdkcsi /usr/local/bin/spdkcsi
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>1293ad3ef3cd
+<span class="go">  Removing intermediate container 1fd591bb9c07
+  Step 5/6 : RUN apk add nvme-cli open-iscsi e2fsprogs xfsprogs blkid
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>Running <span class="k">in </span>a633714753e3
+<span class="go">
+  fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/main/x86_64/APKINDEX.tar.gz
+  fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/community/x86_64/APKINDEX.tar.gz
+  (1/11) Installing libuuid (2.32-r0)
+  (2/11) Installing libblkid (2.32-r0)
+  (3/11) Installing blkid (2.32-r0)
+  (4/11) Installing libcom_err (1.44.2-r2)
+  (5/11) Installing e2fsprogs-libs (1.44.2-r2)
+  (6/11) Installing e2fsprogs (1.44.2-r2)
+  (7/11) Installing nvme-cli (1.4-r0)
+  (8/11) Installing open-isns-lib (0.97-r3)
+  (9/11) Installing libmount (2.32-r0)
+  (10/11) Installing open-iscsi (2.0.874-r0)
+  (11/11) Installing xfsprogs (4.16.1-r1)
+  Executing busybox-1.28.4-r3.trigger
+  OK: 9 MiB in 24 packages
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>d55f7c1fb00a
+<span class="go">  Removing intermediate container a633714753e3
+  Step 6/6 : ENTRYPOINT /usr/local/bin/spdkcsi
+</span><span class="gp">   ---&gt;</span><span class="w"> </span>Running <span class="k">in </span>6048c9d80cb2
+<span class="gp">   ---&gt;</span><span class="w"> </span>c2f69de4cc2c
+<span class="go">  Removing intermediate container 6048c9d80cb2
+  Successfully built c2f69de4cc2c
+</span><span class="gp">  [root@worker1 ~]#</span><span class="w"> </span>docker images | <span class="nb">grep </span>spdk
+<span class="go">  spdkcsi/spdkcsi                                    canary              c2f69de4cc2c        49 seconds ago      26.2 MB
+</span><span class="gp">  [root@worker1 ~]#</span><span class="w"> </span>yum <span class="nb">install</span> <span class="nt">-y</span> nvme-cli
+<span class="gp">  [root@worker1 ~]#</span><span class="w"> </span>modprobe nvme-tcp
+</code></pre></div></div>
+
+<p> </p>
+
+<h3 id="쿠버네티스-마스터-노드-설정">쿠버네티스 마스터 노드 설정</h3>
+
+<ul>
+  <li>SPDK CSI 배포 파일 다운</li>
+</ul>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  [root@master ~]#</span><span class="w"> </span>git clone https://review.spdk.io/gerrit/spdk/spdk-csi
+<span class="gp">  [root@master ~]#</span><span class="w"> </span><span class="nb">cd </span>spdk-csi/deploy/kubernetes/
+<span class="gp">  [root@master kubernetes]#</span><span class="w"> </span><span class="nb">ls</span>
+<span class="go">  config-map.yaml  controller-rbac.yaml  controller.yaml  deploy.sh  ex_pod.yaml  node-rbac.yaml  node.yaml  secret.yaml  snapshotclass.yaml  snapshot.yaml  storageclass.yaml  test_pod.yaml  testpod.yaml  test_pvc.yaml
+</span></code></pre></div></div>
+
+<p> </p>
+
+<ul>
+  <li>Config YAML 파일 수정</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+  <span class="c1"># Copyright (c) Arm Limited and Contributors</span>
+  <span class="c1"># Copyright (c) Intel Corporation</span>
+  <span class="s">---</span>
+  <span class="s">apiVersion</span><span class="err">:</span> <span class="s">v1</span>
+  <span class="s">kind</span><span class="err">:</span> <span class="s">ConfigMap</span>
+  <span class="s">metadata</span><span class="err">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">spdkcsi-cm</span>
+  <span class="na">data</span><span class="pi">:</span>
+    <span class="c1"># rpcURL: spdk json rpc target - http://[SPDK Server IP]:[SPDK http proxy port]</span>
+    <span class="c1"># targetType: nvme-rdma, nvme-tcp, iscsi</span>
+    <span class="c1"># targetAddr: target service IP</span>
+    <span class="na">config.json</span><span class="pi">:</span> <span class="pi">|-</span>
+      <span class="s">{</span>
+        <span class="s">"nodes": [</span>
+          <span class="s">{</span>
+            <span class="s">"name": "spdk-1",</span>
+            <span class="s">"rpcURL": "http://192.168.10.118:9009",  </span>
+            <span class="s">"targetType": "nvme-tcp",</span>
+            <span class="s">"targetAddr": "192.168.10.118" # SPDK Server IP</span>
+          <span class="s">}</span>
+        <span class="s">]</span>
+      <span class="s">}</span>
+</code></pre></div></div>
+
+<p> </p>
+
+<ul>
+  <li>Secret YAML 수정</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+  <span class="c1"># Copyright (c) Arm Limited and Contributors</span>
+  <span class="c1"># Copyright (c) Intel Corporation</span>
+  <span class="s">---</span>
+  <span class="s">apiVersion</span><span class="err">:</span> <span class="s">v1</span>
+  <span class="s">kind</span><span class="err">:</span> <span class="s">Secret</span>
+  <span class="s">metadata</span><span class="err">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">spdkcsi-secret</span>
+  <span class="na">stringData</span><span class="pi">:</span>
+    <span class="c1"># Specify node specific token with item "name" matches ConfigMap.</span>
+    <span class="c1"># {</span>
+    <span class="c1">#   "name": "spdk-testnode",</span>
+    <span class="c1">#   "username": "myuser",</span>
+    <span class="c1">#   "password": "mypass"</span>
+    <span class="c1"># }</span>
+    <span class="na">secret.json</span><span class="pi">:</span> <span class="pi">|-</span>
+      <span class="s">{</span>
+        <span class="s">"rpcTokens": [</span>
+          <span class="s">{</span>
+            <span class="s">"name": "spdk-1",</span>
+            <span class="s">"username": "root",</span>
+            <span class="s">"password": "gluesys"</span>
+          <span class="s">}</span>
+        <span class="s">]</span>
+      <span class="s">}</span>
+</code></pre></div></div>
+
+<p> </p>
+
+<ul>
+  <li>SPDK CSI 드라이버 배포</li>
+</ul>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  [root@master kubernetes]#</span><span class="w"> </span>./deploy.sh
+<span class="go">  === kubectl apply -f config-map.yaml
+  configmap/spdkcsi-cm created
+  === kubectl apply -f secret.yaml
+  secret/spdkcsi-secret created
+  === kubectl apply -f controller-rbac.yaml
+  serviceaccount/spdkcsi-controller-sa created
+  clusterrole.rbac.authorization.k8s.io/spdkcsi-provisioner-role created
+  clusterrolebinding.rbac.authorization.k8s.io/spdkcsi-provisioner-binding created
+  clusterrole.rbac.authorization.k8s.io/spdkcsi-attacher-role created
+  clusterrolebinding.rbac.authorization.k8s.io/spdkcsi-attacher-binding created
+  === kubectl apply -f node-rbac.yaml
+  serviceaccount/spdkcsi-node-sa created
+  === kubectl apply -f controller.yaml
+  statefulset.apps/spdkcsi-controller created
+  === kubectl apply -f node.yaml
+  daemonset.apps/spdkcsi-node created
+  === kubectl apply -f storageclass.yaml
+  storageclass.storage.k8s.io/spdkcsi-sc created
+  === kubectl apply -f snapshotclass.yaml
+  error: unable to recognize "snapshotclass.yaml": no matches for kind "VolumeSnapshotClass" in version "snapshot.storage.k8s.io/v1beta1"
+</span><span class="gp">  [root@master kubernetes]#</span><span class="w"> </span>kubectl get pods
+<span class="go">  NAME                   READY   STATUS    RESTARTS   AGE
+  spdkcsi-controller-0   4/4     Running   0          60s
+  spdkcsi-node-jqz6w     2/2     Running   0          60s
+  spdkcsi-node-x2n72     2/2     Running   0          60s
+</span></code></pre></div></div>
+
+<p> </p>
+
+<ul>
+  <li>
+    <p>PVC &amp; PV 생성 및 확인</p>
+
+    <div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">[root@master kubernetes]#</span><span class="w"> </span>kubectl create <span class="nt">-f</span> testpod.yaml
+<span class="go">persistentvolumeclaim/spdkcsi-pvc created
+pod/spdkcsi-test created
+</span><span class="gp">[root@master kubernetes]#</span><span class="w"> </span>kubectl get pv
+<span class="go">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   REASON   AGE
+pvc-645738ac-e166-426d-9ae6-6bca7f137711   256Mi      RWO            Delete           Bound    default/spdkcsi-pvc   spdkcsi-sc              30s
+</span><span class="gp">[root@master kubernetes]#</span><span class="w"> </span>kubectl get pvc
+<span class="go">NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+spdkcsi-pvc   Bound    pvc-645738ac-e166-426d-9ae6-6bca7f137711   256Mi      RWO            spdkcsi-sc     32s
+</span><span class="gp">[root@master kubernetes]#</span><span class="w"> </span>kubectl get pods <span class="nt">-o</span> wide
+<span class="go">NAME                   READY   STATUS    RESTARTS   AGE     IP              NODE      NOMINATED NODE   READINESS GATES
+</span><span class="gp">spdkcsi-controller-0   4/4     Running   0          5m10s   192.168.10.82   worker1   &lt;none&gt;</span><span class="w">           </span>&lt;none&gt;
+<span class="gp">spdkcsi-node-jqz6w     2/2     Running   0          5m10s   192.168.10.82   worker1   &lt;none&gt;</span><span class="w">           </span>&lt;none&gt;
+<span class="gp">spdkcsi-node-x2n72     2/2     Running   0          5m10s   192.168.10.81   master    &lt;none&gt;</span><span class="w">           </span>&lt;none&gt;
+<span class="gp">spdkcsi-test           1/1     Running   0          52s     10.36.0.2       worker1   &lt;none&gt;</span><span class="w">           </span>&lt;none&gt;
+<span class="gp">[root@master kubernetes]#</span><span class="w"> </span>kubectl <span class="nb">exec</span> <span class="nt">-it</span> spdkcsi-test <span class="nt">--</span> mount | <span class="nb">grep </span>spdk
+<span class="go">/dev/disk/by-id/nvme-2a208f5b-a9fd-4dd7-933c-99783e3ddbfb_spdkcsi-sn on /spdkvol type xfs (rw,seclabel,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+</span><span class="gp">#</span>Worker Node
+<span class="gp">[root@worker1 ~]#</span><span class="w"> </span>nvme list
+<span class="go">Node             SN                   Model                                    Namespace Usage                      Format           FW Rev
+---------------- -------------------- ---------------------------------------- --------- -------------------------- ---------------- --------
+/dev/nvme0n1     spdkcsi-sn           2a208f5b-a9fd-4dd7-933c-99783e3ddbfb     1         268.44  MB / 268.44  MB    512   B +  0 B   22.05
+</span></code></pre></div>    </div>
+
+    <p> </p>
+  </li>
+</ul>
+
+<h3 id="spdk-스토리지-서버-확인">SPDK 스토리지 서버 확인</h3>
+
+<div class="language-console highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">  [root@spdk spdk]#</span><span class="w"> </span><span class="nb">sudo </span>scripts/rpc.py bdev_get_bdevs
+<span class="go">  [
+    {
+      "name": "NVMe0n1",
+      "aliases": [
+        "19eab925-666a-48fe-b633-15310bd007dd"
+      ],
+      "product_name": "NVMe disk",
+      "block_size": 512,
+      "num_blocks": 3125627568,
+      "uuid": "19eab925-666a-48fe-b633-15310bd007dd",
+      "assigned_rate_limits": {
+        "rw_ios_per_sec": 0,
+        "rw_mbytes_per_sec": 0,
+        "r_mbytes_per_sec": 0,
+        "w_mbytes_per_sec": 0
+      },
+      "claimed": true,
+      "zoned": false,
+      "supported_io_types": {
+        "read": true,
+        "write": true,
+        "unmap": true,
+        "write_zeroes": true,
+        "flush": true,
+        "reset": true,
+        "nvme_admin": true,
+        "nvme_io": true
+      },
+      "driver_specific": {
+        "nvme": [
+          {
+            "pci_address": "10000:82:00.0",
+            "trid": {
+              "trtype": "PCIe",
+              "traddr": "10000:82:00.0"
+            },
+            "ctrlr_data": {
+              "cntlid": 3,
+              "vendor_id": "0x1c58",
+              "model_number": "HUSPR3216ADP301",
+              "serial_number": "STM0001B4236",
+              "firmware_revision": "KMGNP120",
+              "oacs": {
+                "security": 0,
+                "format": 1,
+                "firmware": 1,
+                "ns_manage": 0
+              },
+              "multi_ctrlr": false,
+              "ana_reporting": false
+            },
+            "vs": {
+              "nvme_version": "1.1"
+            },
+            "ns_data": {
+              "id": 1,
+              "can_share": false
+            }
+          }
+        ],
+        "mp_policy": "active_passive"
+      }
+    },
+    {
+      "name": "2a208f5b-a9fd-4dd7-933c-99783e3ddbfb",
+      "aliases": [
+        "lvs_1/csi-eb26746f-7554-481b-8e24-957730123992"
+      ],
+      "product_name": "Logical Volume",
+      "block_size": 512,
+      "num_blocks": 524288,
+      "uuid": "2a208f5b-a9fd-4dd7-933c-99783e3ddbfb",
+      "assigned_rate_limits": {
+        "rw_ios_per_sec": 0,
+        "rw_mbytes_per_sec": 0,
+        "r_mbytes_per_sec": 0,
+        "w_mbytes_per_sec": 0
+      },
+      "claimed": true,
+      "zoned": false,
+      "supported_io_types": {
+        "read": true,
+        "write": true,
+        "unmap": true,
+        "write_zeroes": true,
+        "flush": false,
+        "reset": true,
+        "nvme_admin": false,
+        "nvme_io": false
+      },
+      "driver_specific": {
+        "lvol": {
+          "lvol_store_uuid": "76d6ec0d-a13f-4bc7-a248-00e4b9f87dcd",
+          "base_bdev": "NVMe0n1",
+          "thin_provision": true,
+          "snapshot": false,
+          "clone": false
+        }
+      }
+    }
+  ]
+</span></code></pre></div></div>
+
+<p> </p>
+
+<h2 id="마치며">마치며</h2>
+
+<p>이번 포스팅에서는 쿠버네티스에서 파드의 데이터를 영구적으로 보관하기 위한 PV, PVC 개념과 정적으로 생성하는 방법과 동적으로 생성할 때 필요한 CSI 드라이버 중 SPDK CSI 드라이버를 알아봤습니다. 다음 시간엔 CSI 드라이버를 직접 만드는 시간을 가져보겠습니다.</p>
+
+<p> </p>
+
+<h2 id="참고">참고</h2>
+
+<ul>
+  <li>쿠버네티스 PV, PVC - https://kubernetes.io/ko/docs/concepts/storage/persistent-volumes/</li>
+  <li>쿠버네티스 CSI 드라이버 - https://kubernetes-csi.github.io/docs/drivers.html</li>
+  <li>쿠버네티스 스토리지 클래스 - https://kubernetes.io/ko/docs/concepts/storage/storage-classes/</li>
+  <li>SPDK CSI 드라이버 - https://github.com/spdk/spdk-csi</li>
+</ul>
+
+<h2 id="각주">각주</h2>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p>컨테이너 : https://www.redhat.com/ko/topics/containers/containers-vs-vms <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>쿠버네티스 : https://kubernetes.io/ko/docs/concepts/overview/what-is-kubernetes/ <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p>도커 : https://www.docker.com/ <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:4" role="doc-endnote">
+      <p>Ceph : https://docs.ceph.com/en/quincy/start/intro/ <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:5" role="doc-endnote">
+      <p>오픈스택 : https://www.redhat.com/ko/openstack-35971 <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:6" role="doc-endnote">
+      <p>GlusterFS : https://docs.gluster.org/en/latest <a href="#fnref:6" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:7" role="doc-endnote">
+      <p>iSCSI : https://ko.wikipedia.org/wiki/ISCSI <a href="#fnref:7" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#Kubernetes">Kubernetes</a>,&nbsp;<a href="/tags#PV">PV</a>,&nbsp;<a href="/tags#PVC">PVC</a>,&nbsp;<a href="/tags#SC">SC</a>,&nbsp;<a href="/tags#CSI">CSI</a>,&nbsp;<a href="/tags#SPDK">SPDK</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

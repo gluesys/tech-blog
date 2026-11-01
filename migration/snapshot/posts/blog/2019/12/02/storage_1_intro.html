@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>스토리지 기초 지식 1편: DAS, SAN 그리고 NAS</title>
+  <meta name="description" content="목차">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="목차" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="스토리지 기초 지식 1편: DAS, SAN 그리고 NAS" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/server-farm-shot.jpg" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="스토리지 기초 지식 1편: DAS, SAN 그리고 NAS">
+  <meta name="twitter:description" content="목차">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/server-farm-shot.jpg">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2019/12/02/storage_1_intro.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/server-farm-shot.jpg); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">스토리지 기초 지식 1편: DAS, SAN 그리고 NAS</h1>
+      <p class="info">by <strong>박 주형 (jhpark@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">December 2, 2019</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="목차">목차</h2>
+
+<ul>
+  <li><a href="#데이터-스토리지">데이터 스토리지</a></li>
+  <li><a href="#san-storage-area-network">SAN: Storage Area Network</a></li>
+  <li><a href="#nas-network-attached-storage">NAS: Network Attached Storage</a></li>
+  <li><a href="#san과-nas의-용도">SAN과 NAS의 용도</a></li>
+  <li><a href="#유니파이드-스토리지">유니파이드 스토리지?</a></li>
+  <li><a href="#마치며">마치며</a></li>
+</ul>
+
+<p> </p>
+
+<h2 id="데이터-스토리지">데이터 스토리지</h2>
+
+<p>전세계 9000만명 이상 되는 넷플릭스 서비스 이용자들은 매주 10억 시간 이상 영화나 드라마를 시청한다고 합니다. 넷플릭스 비디오 서비스는 세계 각지의 AWS 데이터센터를 통해 끊김 없이 스트리밍 되며, 시청자들의 취향 정보를 빅데이터로 수집해 비디오 추천 서비스를 제공합니다. 사실 이러한 서비스는 21세기를 살아가는 저희에게 당연하다고도 생각될 수 있는데요, 사실 이 경지에 이르기까지는 많은 기술적 발전이 요구되었습니다. 그 중 하나가 바로 데이터 스토리지 기술의 발전입니다.</p>
+
+<p>데이터 스토리지란 말 그대로 데이터(정보)를 저장하는 공간을 말합니다. AWS나 구글 데이터센터에 무수히 꽂혀 있는 하드디스크에서 지금은 거의 사용되지 않는 플로피 디스크까지 모두 아울러 데이터 스토리지라고 할 수 있습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/storage_past_n_present.png" alt="Alt text" width="700" /></p>
+
+<center>&#60;기업용 디스크 스토리지의 과거와 현재&#62;</center>
+
+<p> </p>
+
+<p>데이터 스토리지의 종류는 기술의 발전에 따라 변화해 왔고 사용하는 방식 또한 바뀌어 왔습니다. 초창기 서버에는 저희가 아는 RAM과 하드디스크, 즉 주 기억장치(primary storage)와 보조 기억장치(secondary storage)가 구분되어 있지 않았습니다. 하지만 늘어나는 용량에 맞추다 보니 공간적인 한계에 봉착했고, 그 결과 구분된 스토리지 시스템을 가진 보조 기억장치가 탄생했습니다. 이는 저희가 아는 직접 연결 스토리지(Direct-attached Storage, 이하 DAS) 개념의 첫 사례가 됩니다. 이와 같이 서버와 스토리지를 구분함으로써 업무 효율을 위해 보다 정교하고 복잡한 아키텍처를 구성할 수 있게 되었습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/ibm350_hdd.jpg" alt="Alt text" width="700" /></p>
+
+<center>&#60;최초의 하드디스크인 IBM 350 디스크 스토리지&#62;</center>
+
+<p> </p>
+
+<h2 id="san-storage-area-network">SAN: Storage Area Network</h2>
+
+<p>하드디스크의 용량 증가와 소형화가 진행되면서 공간 효율적인 서버를 구성할 수 있게 되었지만 서버의 용량 효율이 문제였습니다. 서버의 스토리지 용량을 추가해야 할 경우, 부족분을 채우기 위해 새 디스크를 추가하거나 여유 공간이 있는 다른 서버에서 디스크를 물리적으로 빼서 추가해야 했습니다. 이러한 불편함을 해소하기 위해 스토리지 영역 네트워크(Storage Area Network, 이하 SAN)가 고안되었습니다.</p>
+
+<p> </p>
+
+<h3 id="개요">개요</h3>
+
+<p>SAN 방식은 여러 스토리지를 하나의 네트워크에 연결시키고, 이 네트워크에 서버를 연결해 스토리지에 접속한다는 개념입니다. 네트워크에 묶인 스토리지들은 가상으로 중앙화된 논리 볼륨(logical volume)을 형성하고, 필요에 따라 각 서버에 공간을 논리적으로 할당할 수 있습니다. 사용자는 LUN(Logical Unit Number)이라는 고유 번호를 통해 가상으로 할당된 디스크 드라이브에 연결됩니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/basic_san_env.png" alt="Alt text" width="700" /></p>
+
+<center>&#60;SAN 환경 기본 개념도&#62;</center>
+
+<p> </p>
+
+<h3 id="구성">구성</h3>
+
+<p>SAN 환경을 구성하기 위해서는 SAN 스위치라는 기기를 필요로 하게 됩니다. SAN 스위치는 위에서 설명 드렸던 개념을 구현하기 위해 스토리지와 서버를 중계하는 역할을 합니다. SAN 방식에서는 위 그림과 같이 각 서버와 스토리지를 광 케이블로 SAN 스위치와 연결해 데이터를 주고 받습니다.</p>
+
+<p>SAN의 주요 스토리지 프로토콜<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">1</a></sup>은 다음과 같습니다:</p>
+
+<ul>
+  <li>iSCSI (Internet Small Computer Systems Interface)</li>
+  <li>파이버 채널 (Fibre Channel)</li>
+  <li>iSER (iSCSI Extensions for RDMA)</li>
+</ul>
+
+<p> </p>
+
+<h3 id="블록-스토리지">블록 스토리지</h3>
+
+<p>SAN 환경에서는 파일을 저장하는 방식으로 블록 스토리지(block storage)라는 개념을 사용합니다. 블록 스토리지는 데이터를 블록이라는 일정한 크기의 조각으로 나누어 저장하는 것을 말합니다. 각 블록들은 저장된 위치(특정 스토리지 시스템의 특정 디스크)에 대한 주소를 가지고 있어 서버의 요청에 따라 블록들을 재구성해 하나의 데이터로 서버에 전달됩니다.</p>
+
+<p> </p>
+
+<h3 id="san의-장단점">SAN의 장단점</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">장점</th>
+      <th style="text-align: left">단점</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><ul><li>광케이블을 사용하기 때문에 데이터 접근이 빠름</ul></li></td>
+      <td style="text-align: left"><ul><li>상대적으로 비쌈</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><ul><li>필요에 따라서 성능과 용량을 확장하기가 용이함</ul></li></td>
+      <td style="text-align: left"><ul><li>이더넷 네트워크<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">2</a></sup>와 광 케이블 네트워크<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">3</a></sup>를 동시에 운영하기에 관리에 손이 많이 감</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><ul><li>LAN을 사용하지 않아 네트워크 부하를 최소화할 수 있음</ul></li></td>
+      <td style="text-align: left"><ul><li>관리하는데 전문적인 인력이 필요함</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><ul><li>가상화<sup id="fnref:2:1" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">1</a></sup> 환경을 구축하기 적합함</ul></li></td>
+      <td style="text-align: left"><ul><li>블록 백업에 스토리지 공간이 더 요구됨</ul></li></td>
+    </tr>
+  </tbody>
+</table>
+
+<p> </p>
+
+<h2 id="nas-network-attached-storage">NAS: Network Attached Storage</h2>
+
+<p>사무실의 업무 환경이 종이에서 전자문서로 넘어가기 시작하면서 업무 문서나 자료들을 동시에 공유하고 수정하는 일이 많아졌습니다. 이처럼 스토리지에 접속하는 사용자가 증가하고 공유가 필요한 자료가 많아지면서 보다 쉽고 편리하게 데이터를 공유할 방법이 필요했습니다. 이러한 배경 속에서 SAN과 함께 등장한 것이 바로 네트워크 결합 스토리지(Network-attached Storage, 이하 NAS)입니다.</p>
+
+<p> </p>
+
+<h3 id="개요-1">개요</h3>
+
+<p>NAS도 마찬가지로 네트워크를 통해 서버나 클라이언트가 스토리지와 연결하지만 SAN과는 다르게 이더넷을 통해 연결하는 방식을 취합니다. 또한 스토리지를 SAN 스위치와 연결하지 않고 이더넷 케이블을 사용해 네트워크에 연결합니다. 단적인 예로, 인터넷 공유기에 NAS를 연결하면 같은 이더넷 네트워크에 연결된 PC로 NAS에 접근할 수 있습니다. 이처럼 범용적인 네트워크를 사용하는 관계로 설치나 유지 관리가 쉽지만, 같은 이더넷에 연결된 장비들과 네트워크 자원을 공유하기 때문에 대역폭에 한계가 있을 수 있습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/basic_nas_env.png" alt="Alt text" width="700" /></p>
+
+<center>&#60;NAS 기본 개념도&#62;</center>
+
+<p> </p>
+
+<h3 id="구성-1">구성</h3>
+
+<p>NAS는 자체적으로 파일<sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote" rel="footnote">4</a></sup> 서비스를 제공하며, 대표적으로 NFS나 CIFS와 같은 스토리지 프로토콜을 사용합니다. NAS의 주요 스토리지 프로토콜은 다음과 같습니다:</p>
+
+<ul>
+  <li>NFS (Network File System)</li>
+  <li>SMB/CIFS (Server Message Block/Common Internet File System)</li>
+  <li>FTP (File Transfer Protocol)</li>
+  <li>HTTP (Hypertext Transfer Protocol)</li>
+  <li>AFP (Apple Filing Protocol)</li>
+</ul>
+
+<p> </p>
+
+<h3 id="파일-시스템">파일 시스템</h3>
+
+<p>NAS의 경우 블록보다 상위 개념인 파일(file)을 저장 단위로 하고 있습니다. 파일은 폴더에 저장되며 하나의 폴더에 여러 하위 폴더가 겹겹이 존재하는 계층적(hierarchical) 구조를 가지고 있습니다. 쉽게 생각해서 윈도우의 파일 탐색기를 떠올리면 됩니다. 각 파일은 이름과 파일에 대한 정보를 나타내는 메타데이터를 가지며, 이 메타데이터를 활용해 어느 폴더의 하위 디렉토리에 파일이 있는지 알 수 있습니다.</p>
+
+<p>NAS는 스토리지 시스템이 포함된 어플라이언스 형태와 스토리지 시스템이 포함 안 된 ‘게이트웨이’ 형태 두 가지 방식으로 구성될 수 있습니다. 게이트웨이의 경우, 스토리지 부분을 SAN과 연결해서 블록 서비스와 함께 CIFS나 NFS와 같은 파일 서비스를 제공할 수 있습니다.</p>
+
+<p> </p>
+
+<h3 id="nas의-장단점">NAS의 장단점</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">장점</th>
+      <th style="text-align: left">단점</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><ul><li>기본적으로 구축되어 있는 이더넷 네트워크에 스토리지를 연결하면 되기 때문에 인프라 구축 비용이 따로 없음</ul></li></td>
+      <td style="text-align: left"><ul><li>이더넷 케이블을 사용하기 때문에 광케이블에 비해 전송 속도가 느림</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><ul><li>단순한 시스템 아키텍처 구조로 유지 관리가 비교적 편함</ul></li></td>
+      <td style="text-align: left"><ul><li>공유 네트워크를 사용해 대역폭에 제한이 있고, 데이터를 IP 패킷으로 캡슐화<sup id="fnref:7" role="doc-noteref"><a href="#fn:7" class="footnote" rel="footnote">5</a></sup>하는 부가적인 과정으로 속도 지연이 발생함에 따라 네트워크 병목에 취약함</ul></li></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><ul><li>스케일 아웃 방식<sup id="fnref:6" role="doc-noteref"><a href="#fn:6" class="footnote" rel="footnote">6</a></sup>의 NAS는 클러스터 구성이 가능해 성능과 용량을 동시에 높일 수 있음</ul></li></td>
+      <td style="text-align: left"><ul><li>스케일 업 방식<sup id="fnref:8" role="doc-noteref"><a href="#fn:8" class="footnote" rel="footnote">7</a></sup>의 NAS는 성능과 용량 확장에 한계가 있음</ul></li></td>
+    </tr>
+  </tbody>
+</table>
+
+<p> </p>
+
+<h2 id="san과-nas의-용도">SAN과 NAS의 용도</h2>
+
+<p>이와 같이 SAN과 NAS는 각각의 장단점이 있으며 그 쓰임새 또한 다양합니다. 아래와 같이 각각의 용도를 소개해 보고자 합니다.</p>
+
+<p> </p>
+
+<h3 id="san">SAN</h3>
+
+<ul>
+  <li>데이터베이스<sup id="fnref:9" role="doc-noteref"><a href="#fn:9" class="footnote" rel="footnote">8</a></sup>: 온라인 금융 거래와 같이 빠른 속도를 요구하고 지연에 민감하며 대규모 데이터베이스를 다루는 환경에 적합합니다.</li>
+  <li>가상화 환경: 가상 머신과 호스트간 빠른 입출력 속도를 제공해야 하는 대규모 가상화 구축 환경에 적합합니다.</li>
+  <li>영상 편집: 후반 작업과 같은 영상 편집 작업에 있어서 빠른 전송 속도와 낮은 지연은 필수 불가결입니다. 이 때문에 워크스테이션을 DAS로 직접 연결해 사용하는 경우도 있지만 효율성을 위해 고성능 SAN을 사용합니다.</li>
+</ul>
+
+<p> </p>
+
+<h3 id="nas">NAS</h3>
+
+<ul>
+  <li>파일 공유: NAS의 주 용도이며, 데이터를 중앙화하고 스토리지 공간을 효율적으로 활용하는데 적합합니다. 개인용부터 중소기업, 대기업 사무실까지 광범위하게 활용됩니다.</li>
+  <li>가상화 환경: 고성능 NAS의 경우 소규모 가상화 환경을 운영하거나 가상 데스크톱 환경<sup id="fnref:10" role="doc-noteref"><a href="#fn:10" class="footnote" rel="footnote">9</a></sup>을 구축하는데 적합한 성능과 기능을 가지고 있습니다.</li>
+  <li>아카이브<sup id="fnref:11" role="doc-noteref"><a href="#fn:11" class="footnote" rel="footnote">10</a></sup>: 스토리지 공간을 필요에 따라 확장할 수 있는 스케일 아웃 NAS의 경우 단순히 데이터를 묵혀 두는 방식의 아카이브가 아닌, 필요에 따라 종종 접근이 가능한 아카이브로서 적합합니다.</li>
+</ul>
+
+<p> </p>
+
+<h2 id="유니파이드-스토리지">유니파이드 스토리지?</h2>
+
+<p>유니파이드 스토리지(멀티 프로토콜 스토리지라고도 한다)는 블록과 파일 프로토콜을 모두 지원해 말 그대로 SAN과 NAS를 합한 스토리지를 말합니다. 하나의 유니파이드 스토리지 시스템은 파일 프로토콜인 CIFS와 NFS를 지원함과 동시에 iSCSI와 파이버 채널을 포함한 블록 수준의 프로토콜도 지원합니다.</p>
+
+<p>유니파이드 스토리지의 장점은 스토리지 시스템을 도입할 때 비용과 수고를 아낄 수 있다는 점입니다. SAN이나 NAS를 따로 구매해 구축하는 것보다 멀티 프로토콜 환경을 지원하는 유니파이드 스토리지로 스토리지 시스템을 구축하는 편이 비용 효율적이기 때문에 두 방식의 스토리지 인프라를 필요로 하는 중견급 기업으로부터 수요가 많습니다. 다만 파일 입출력이 블록 입출력 성능에 영향을 끼치는 경우가 있기 때문에 고속 데이터 처리가 주 용도인 블록 스토리지로서의 성능을 제대로 발휘하기에는 한계가 있습니다.</p>
+
+<p> </p>
+
+<h2 id="마치며">마치며</h2>
+
+<p>이번 포스트에서는 DAS, SAN, NAS에 대한 기본적인 개념들을 다루어 보았습니다. 앞으로 계속 기업용 스토리지에 사용되는 기술의 소개와 동향을 조금씩 소개해 보고자 합니다. 다음 시간에는 이번 포스트에서 미흡하게 설명했던 스토리지 프로토콜들을 자세히 알아보고자 합니다.</p>
+
+<hr />
+
+<h3 id="참고">참고</h3>
+
+<p>넷플릭스 통계:</p>
+<ul>
+  <li>https://expandedramblings.com/index.php/netflix_statistics-facts/
+현재와 과거 이미지:</li>
+  <li>https://expandedramblings.com/index.php/netflix_statistics-facts/
+IBM 350:</li>
+  <li>https://www.ibm.com/ibm/history/exhibits/storage/storage_350.html
+가상화:</li>
+  <li>https://ko.wikipedia.org/wiki/%EA%B0%80%EC%83%81%ED%99%94
+이더넷:</li>
+  <li>https://ko.wikipedia.org/wiki/%EC%9D%B4%EB%8D%94%EB%84%B7
+파일:</li>
+  <li>https://ko.wikipedia.org/wiki/%EC%BB%B4%ED%93%A8%ED%84%B0_%ED%8C%8C%EC%9D%BC
+캡슐화:</li>
+  <li>https://en.wikipedia.org/wiki/Encapsulation_(networking)
+데이터베이스:</li>
+  <li>https://ko.wikipedia.org/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4</li>
+</ul>
+
+<p> </p>
+
+<h3 id="각주">각주</h3>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:2" role="doc-endnote">
+      <p>가상화: 장비나 OS를 컴퓨터상에서 가상으로 구현하는 것을 말함. <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a> <a href="#fnref:2:1" class="reversefootnote" role="doc-backlink">&#8617;<sup>2</sup></a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p>이더넷 네트워크: LAN이나 WAN 등에서 사용되는 네트워크를 말함. <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:4" role="doc-endnote">
+      <p>광 케이블 네트워크: 파이버 채널을 활용한 SAN 네트워크를 말함. <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:5" role="doc-endnote">
+      <p>파일: 데이터의 단위로서 데이터의 이름, 이용 권한, 수정 등의 기능을 수행함. 윈도우에서 볼 수 있는 데이터 단위임. <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:7" role="doc-endnote">
+      <p>캡슐화(encapsulation): 이더넷 상에서 데이터를 전송하기 위해 TCP/IP의 각 계층에 알맞게 데이터를 포장하는 것을 말함. <a href="#fnref:7" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:6" role="doc-endnote">
+      <p>스케일 아웃 방식: NAS 장비를 여려개 연결해 성능과 스토리지를 함께 증가시키는 방식. <a href="#fnref:6" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:8" role="doc-endnote">
+      <p>스케일 업 방식: 하나의 NAS 장비에 스토리지만 추가해서 용량만 증가시키는 방식. <a href="#fnref:8" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:9" role="doc-endnote">
+      <p>데이터베이스: 데이터를 표와 같이 항목과 목록으로 정리한 데이터의 집합을 말함. 데이터를 쉽게 찾을 수 있어 접근이 빠르고 데이터 중복을 최소화하는 특징을 가지고 있음. <a href="#fnref:9" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:10" role="doc-endnote">
+      <p>가상 데스크톱 환경(Virtual Desktop Infrastructure, VDI): 중앙 서버에서 PC를 가상화해 본체 없이 모니터, 키보드, 마우스를 중앙 서버에 연결해 PC처럼 사용할 수 있는 인프라를 말함. <a href="#fnref:10" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:11" role="doc-endnote">
+      <p>아카이브: 중요하지만 자주 안쓰여 묵혀둘 데이터를 저장하는 용도의 스토리지를 말함. <a href="#fnref:11" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80">스토리지</a>,&nbsp;<a href="/tags#Storage">Storage</a>,&nbsp;<a href="/tags#%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80+%EC%97%90%EC%96%B4%EB%A6%AC%EC%96%B4+%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC">스토리지 에어리어 네트워크</a>,&nbsp;<a href="/tags#SAN">SAN</a>,&nbsp;<a href="/tags#%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC+%EA%B2%B0%ED%95%A9+%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80">네트워크 결합 스토리지</a>,&nbsp;<a href="/tags#NAS">NAS</a>,&nbsp;<a href="/tags#%EC%A7%81%EC%A0%91+%EC%97%B0%EA%B2%B0+%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80">직접 연결 스토리지</a>,&nbsp;<a href="/tags#DAS">DAS</a>,&nbsp;<a href="/tags#%EC%9C%A0%EB%8B%88%ED%8C%8C%EC%9D%B4%EB%93%9C">유니파이드</a>,&nbsp;<a href="/tags#Unified+Storage">Unified Storage</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

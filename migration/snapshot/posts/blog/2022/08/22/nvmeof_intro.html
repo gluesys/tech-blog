@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>NVMe 오버 패브릭(NVMe-oF)이란?</title>
+  <meta name="description" content=" 현재 스토리지 인터페이스의 주류인 SATA/SAS 인터페이스는 플래터가 회전하면서 물리적인 디스크 판으로부터 데이터를 읽고 쓰는 하드디스크에 최적화되었기 때문에, 전기 신호로 데이터를 읽고 쓰는 플래시 타입의 SSD에 적합하지 않습니다. 하드디스크의 헤드 탐색시간이나 회전 지연 ...">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content=" 현재 스토리지 인터페이스의 주류인 SATA/SAS 인터페이스는 플래터가 회전하면서 물리적인 디스크 판으로부터 데이터를 읽고 쓰는 하드디스크에 최적화되었기 때문에, 전기 신호로 데이터를 읽고 쓰는 플래시 타입의 SSD에 적합하지 않습니다. 하드디스크의 헤드 탐색시간이나 회전 지연 ..." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="NVMe 오버 패브릭(NVMe-oF)이란?" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/nvmeof_maincover.jpg" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="NVMe 오버 패브릭(NVMe-oF)이란?">
+  <meta name="twitter:description" content=" 현재 스토리지 인터페이스의 주류인 SATA/SAS 인터페이스는 플래터가 회전하면서 물리적인 디스크 판으로부터 데이터를 읽고 쓰는 하드디스크에 최적화되었기 때문에, 전기 신호로 데이터를 읽고 쓰는 플래시 타입의 SSD에 적합하지 않습니다. 하드디스크의 헤드 탐색시간이나 회전 지연 ...">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/nvmeof_maincover.jpg">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2022/08/22/nvmeof_intro.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/nvmeof_maincover.jpg); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">NVMe 오버 패브릭(NVMe-oF)이란?</h1>
+      <p class="info">by <strong>박주형 (jhpark@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">August 22, 2022</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p> </p>
+
+<p>현재 스토리지 인터페이스의 주류인 SATA/SAS 인터페이스는 플래터가 회전하면서 물리적인 디스크 판으로부터 데이터를 읽고 쓰는 하드디스크에 최적화되었기 때문에, 전기 신호로 데이터를 읽고 쓰는 플래시 타입의 SSD에 적합하지 않습니다. 하드디스크의 헤드 탐색시간이나 회전 지연 시간 설정과 같이 물리적인 입출력 구조를 갖지 않는 SSD에서는 I/O 요청 과정에 불필요한 작업이 포함되어 있고, 명령어 큐 또한 순차적으로 처리하기 때문에 병렬 접근이 가능한 플래시의 본래 성능을 끌어내기 어려웠습니다. 여기서 등장하게 된 새로운 인터페이스가 바로 <strong>NVMe(Non-Volatile Memory Express)</strong> 입니다.</p>
+
+<p>첫 NVMe 칩셋이 등장한 2012년 8월부터<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> 정확히 10년 후인 지금, NVMe는 SSD 기술을 주도하는 핵심 프로토콜이 되었습니다. 시장조사 기관에 의하면, NVMe SSD는 이미 2018년에 기업용 SSD 시장에서 SATA나 SAS 기반의 SSD를 넘어 40%의 점유율을 기록한 바 있습니다<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup>. 이처럼 NVMe 기술은 일반 소비자 시장을 넘어 기업의 데이터센터에서도 폭 넓게 활용되고 있습니다. SSD의 가격은 날이 갈수록 낮아짐과 동시에, 현재 쓰이는 PCIe 4.0 대비 1.5배 빠른 PCIe 5.0 기반의 NVMe SSD가 공개되면서, NVMe SSD가 차세대 주류 스토리지로써 자리 잡을 날도 얼마 남지 않아 보입니다.</p>
+
+<p>초창기에는 NVMe SSD 스토리지 미디어를 직접 연결(DAS) 방식으로 사용했습니다. 하지만, NVMe 프로토콜의 이점이 스토리지 벤더의 하드웨어에 종속된 어플라이언스에만 한정되고, NVMe SSD로 구성된 고속의 스토리지를 공유 방식이 아닌 독립적으로만 사용하기에는 비용 대비 효율이 떨어진다는 문제가 있습니다. 이러한 NVMe 프로토콜을 네트워크 프로토콜로 활용하고자 <strong>NVMe over Fabrics</strong> 기술이 제시되었습니다.</p>
+
+<p> </p>
+
+<h2 id="nvme-of-소개">NVMe-oF 소개</h2>
+
+<p><strong>NVMe over Fabrics(이하 NVMe-oF)</strong>는 말 그대로 NVMe 프로토콜로 다양한 네트워크들(fabrics)을 통해 NVMe 장치들을 연결할 수 있게 해주는 네트워크 프로토콜의 개념입니다. 쉽게 말해, NVMe-oF는 네트워크를 통해 NVMe 프로토콜로 원격 장치에 접근하는 방식이라고 볼 수 있습니다. NVMe-oF는 지난 2016년, NVMe 사양을 정의한 NVM Express Inc.에서 1.0 버전을 공개했고, 가장 최근 버전인 1.1은 2019년에 NVMe 1.4 버전과 함께 공개되었습니다.</p>
+
+<p>NVMe 프로토콜은 로컬의 PCIe 스위치나 PCIe 버스를 통해 NVMe 장치들에 접근하지만, NVMe-oF 기술을 활용하면 파이버 채널이나 이더넷과 같은 네트워크를 통해 네트워크상에 존재하는 NVMe 장치에도 접근할 수 있게 됩니다. 무엇보다, NVMe-oF는 전용 네트워크가 아닌 기존의 파이버 채널과 이더넷 환경을 활용하기 때문에 별도의 네트워크 환경을 추가로 도입할 필요가 없습니다.</p>
+
+<p> </p>
+
+<h3 id="nvme-of-유형">NVMe-oF 유형</h3>
+
+<p>NVMe-oF는 파이버 채널과 이더넷 기반의 RDMA 및 TCP/IP 환경에서 활용할 수 있습니다.</p>
+
+<h4 id="nvmefc">NVMe/FC</h4>
+
+<p>파이버 채널을 활용하는 <strong>NVMe/FC</strong>는 기존에 파이버 채널이 구축된 환경에서 도입이 가능합니다. 파이버 채널은 기본적으로 SCSI와 NVMe 프로토콜을 동시에 매핑할 수 있기 때문에 파이버 채널 기반의 인프라를 보유한 데이터센터에서 스위치의 소프트웨어 업그레이드를 통해 쉽게 도입할 수 있습니다. 다만, 이더넷 기반의 인프라에 비해 외부 네트워크와의 연결이 제한적이고, 캡슐화된 SCSI 명령어를 NVMe 명령어로 변환하는 과정으로 인해 성능 저하가 발생합니다.</p>
+
+<p> </p>
+
+<h4 id="nvmerdma">NVMe/RDMA</h4>
+
+<p>이더넷을 활용하는 NVMe-oF는 기본적으로 RDMA 기술을 활용합니다. 이전 포스트인 <a href="https://tech.gluesys.com/blog/2019/12/17/storage_2_intro.html">스토리지 기초 지식 2편: 스토리지 프로토콜</a> 에서도 다루었습니다만, <strong>RDMA(Remote Direct Memory Access)</strong>는 같은 네트워크상에 있는 서버 간의 메모리에 CPU를 거치지 않고 접근할 수 있는 기술입니다. <strong>NVMe/RDMA</strong> 환경에서는 주로 <strong>RoCE(RDMA over Converged Ethernet)</strong>나 <strong>iWARP(Internet Wide-area RDMA Protocol)</strong>와 같은 네트워크 프로토콜을 통해 NVMe-oF 프로토콜 패킷을 캡슐화하여 전송합니다.</p>
+
+<p>기존에 이더넷 기반 인프라를 보유하고 있는 경우에는 네트워크 카드 추가 구축을 통해 도입이 가능하고, NVMe/RoCE의 경우에는 주로 매우 낮은 지연 시간을 목표로 물리적으로 컴퓨팅 자원과 가깝게 단일 랙 환경에서 구축합니다. 이러한 RDMA 기반의 NVMe-oF는 워크로드 유형이나 인프라 규모에 따라 비교적 낮은 CPU 사용률과 마이크로초 수준의 지연 시간(latency)을 제공하지만, 확장성에 있어서는 NVMe/FC나 NVMe/TCP에 비해 떨어지는 단점이 있습니다.</p>
+
+<p> </p>
+
+<h4 id="nvmetcp">NVMe/TCP</h4>
+
+<p>최근에는 TCP/IP를 기반으로 하는 <strong>NVMe/TCP</strong>가 주목받고 있습니다. 기존의 이더넷이나 파이버 채널 기반의 NVMe-oF를 도입하는 경우, 별도의 호스트 어댑터나 드라이버 등의 조정이 필요해, 비용 및 복잡도 문제가 있었습니다. 하지만, NVMe-oF 1.1 버전에서부터 TCP 전송 바인딩을 지원하게 되면서 TCP/IP를 통해 NVMe-oF 프로토콜 패킷을 캡슐화하여 전송할 수 있게 되었습니다.</p>
+
+<p>TCP 전송 바인딩은 어떠한 이더넷 네트워크상에서도 사용할 수 있기 때문에 어떠한 표준 이더넷 어댑터나 범용 하드웨어와도 호환된다는 이점이 있습니다. 이로 인해, NVMe-oF를 별도의 설정 없이 도입하고 확장할 수 있습니다. 특히, 기존 인프라가 파이버 채널 기반이 아니거나, RDMA를 사용하지 않는 이더넷 기반 인프라에 NVMe-oF를 도입할 수 있습니다. NVMe/TCP는 아직 파이버 채널이나 RDMA 기반 NVMe-oF 수준의 저 지연에 미치지는 못하지만, 확장성과 범용성에 있어서는 우위를 가지고 있습니다. 특히 초기에 비싼 비용으로 NVMe 기반 플래시 어레이를 도입한 기업의 경우, 별도의 추가 네트워크 구축 없이 TCP/IP 네트워크를 통해 NVMe 플래시 어레이의 NVMe 스토리지 자원을 공유할 수 있게 되었습니다.</p>
+
+<p> </p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: left">NVMe/FC</th>
+      <th style="text-align: left">NVMe/RDMA</th>
+      <th style="text-align: left">NVMe/TCP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">하드웨어 요구사항</td>
+      <td style="text-align: left">파이버 채널 환경</td>
+      <td style="text-align: left">PFC가 구성된 이더넷 환경(RoCE)이나, IP 기반의 이더넷 환경(iWARP)</td>
+      <td style="text-align: left">이더넷 환경</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">RDMA 지원 여부</td>
+      <td style="text-align: left">미지원</td>
+      <td style="text-align: left">지원</td>
+      <td style="text-align: left">미지원</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">초기 구축 비용</td>
+      <td style="text-align: left">파이버 채널 스위치 및 HBA 펌웨어/소프트웨어 업그레이드 필요</td>
+      <td style="text-align: left">이더넷 스위치에서 PFC 지원 필요</td>
+      <td style="text-align: left">없음</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">성능</td>
+      <td style="text-align: left">높음</td>
+      <td style="text-align: left">매우 높음</td>
+      <td style="text-align: left">보통</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">확장성</td>
+      <td style="text-align: left">보통</td>
+      <td style="text-align: left">낮음</td>
+      <td style="text-align: left">높음</td>
+    </tr>
+  </tbody>
+</table>
+
+<p> </p>
+
+<h3 id="nvme-of의-활용-전망">NVMe-oF의 활용 전망</h3>
+
+<p>NVMe-oF 도입의 가장 큰 목적은 바로 NVMe 기반의 분산 스토리지 네트워크를 형성해 원격의 NVMe 장치의 지연 시간을 로컬 수준으로 구현할 수 있다는 것입니다. 이로 인해 고성능 저 지연 스토리지 워크로드를 필요로 하는 대규모 데이터센터에서 수요가 있을 것으로 보입니다. 특히 AI/머신러닝 분야에서 대규모 데이터셋을 훈련 시키는 경우 GPU의 성능에 따라 병목이 발생할 수 있는데, NVMe-oF를 활용하면 GPU가 NVMe 스토리지 풀에 직접 접근할 수 있어 분석 애플리케이션이 동일 시간 내에 더욱 많은 데이터를 처리할 수 있게 됩니다. 또한, 전자상거래나 금융기관과 같이 데이터베이스에 대한 초저지연 접근을 요구하는 환경에서도 파이버 채널이나 RDMA 기반의 NVMe-oF 기술이 도입되고 있습니다.</p>
+
+<p>현재 구성된 네트워크 인프라에서 NVMe SSD가 탑재된 고성능 스토리지를 활용할 계획이 있을 경우, 다음과 같은 방법으로 접근한다면 비용 절감에 도움이 될 것 같습니다.<br />
+먼저 이더넷 환경의 경우, NVMe 스토리지를 이더넷 스위치에 연결 후 NVMe/TCP를 이용하면 스토리지 외 추가 장비 없이도 기존 서버에서 접근할 수 있습니다. 이후 NVMe 스토리지의 요구사항이 높아지게 되면 한 단계 높은 대역폭을 갖는 이더넷 네트워크로 확장하거나, 인피니밴드를 이용한 별도의 네트워크를 추가로 구성하는 방법이 있겠습니다.
+파이버 채널 환경의 경우에도 동일하게 NVMe 스토리지를 파이버 채널 스위치와 연결한 후, NVMe/FC를 이용하면 서버에서 접근할 수 있습니다. 이후 사용 빈도가 높아질 경우에는 마찬가지로 별도의 네트워크 확장을 통해 서버의 요구사항을 만족할 수 있습니다.</p>
+
+<p>NVMe-oF와 다른 오픈형 표준들과의 연계도 눈여겨볼 수 있습니다. 현재 리눅스 커널과 <strong>SPDK</strong>는 NVMe-oF 이니시에이터와 타겟 드라이버를 제공하며, RoCE와 TCP 전송을 지원하고 있습니다. 특히 SPDK는 NVMe SSD가 가진 본연의 성능을 뽑아내기 위해 디자인된 오픈소스 개발 키트로, 입출력 성능 최적화 및 CPU 리소스 절약을 구현할 수 있습니다. 또한, 성능에 영향 없이 특정 벤더 제품을 위한 NVMe 기능들을 사용할 수 있게 해주며, 기존 소프트웨어 모듈에 대한 API를 제공해 커스터마이징이 용이합니다.</p>
+
+<p><a href="https://tech.gluesys.com/blog/2021/11/15/cxl_1.html">지난 포스트</a> 에서 다룬 <strong>CXL(Compute Express Link)</strong> 인터커넥트의 경우, NVMe와 같이 PCIe를 활용하긴 하지만, 한동안은 경쟁보다는 공존할 것으로 보입니다. CXL은 호스트 프로세서와 CXL 장치 간 메모리를 공유할 수 있어 서버 내 메모리 자원의 범용성과 확장성을 제공합니다. 이러한 메모리 공유에 있어서 NVMe 프로토콜은 레거시 블록 스토리지를 지원하는 역할을 할 수 있습니다. 또한, NVMe-oF도 같은 PCIe 기반의 기술이다 보니 어느 한쪽 기술을 사용하는 데 있어서 특정 기술에 한정되는 것에 대한 우려가 적다고 볼 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="마치며">마치며</h2>
+
+<p>클라우드와 고성능 컴퓨팅 환경이 점차 보편화되면서 데이터센터 내 스토리지 성능에 대한 요구는 점점 커지고 있습니다. NVMe-oF는 NVMe 장치를 노드 바깥의 네트워크상에서 접근할 수 있게 하여 차세대 플래시 미디어의 표준이 될 NVMe 기술을 한 단계 업그레이드했다는 평가를 받고 있습니다. NVMe-oF는 아직 등장한 지 얼마 안 된 기술로, 도입 시 일부는 추가 장비나 업그레이드, 설정 작업 등이 요구되어 성능 최적화 및 비용 문제에서 완전히 벗어나지는 못했지만, 산업 전반에서의 투자와 지지를 고려하면 기술에 대한 성숙도는 점차 깊어질 것으로 보입니다.</p>
+
+<p> </p>
+
+<h2 id="참고">참고</h2>
+
+<hr />
+
+<ul>
+  <li>https://www.techtarget.com/searchstorage/definition/NVMe-over-Fabrics-Nonvolatile-Memory-Express-over-Fabrics</li>
+  <li>https://www.eetimes.eu/nvme-of-is-ready-to-go-the-distance/</li>
+  <li>https://blog.westerndigital.com/nvme-of-explained/</li>
+  <li>https://nvmexpress.org/answering-your-questions-nvme-of-1-1-specification-key-features-and-use-cases-webcast/</li>
+  <li>https://www.snia.org/sites/default/files/PM-Summit/2020/presentations/08_Perfect_Trifecta_Mittal_Shadley_final_PM_Summit_2020.pdf</li>
+  <li>https://www.computerweekly.com/feature/Five-things-you-need-to-know-about-NVMe-over-Fabrics</li>
+</ul>
+
+<p> </p>
+
+<h2 id="각주">각주</h2>
+
+<hr />
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p>https://en.wikipedia.org/wiki/NVM_Express#NVMe-oF:~:text=The%20first%20commercially%20available%20NVMe%20chipsets%20were%20released%20by%20Integrated%20Device%20Technology%20(89HF16P04AG3%20and%2089HF32P08AG3)%20in%20August%202012 <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>https://www.techtarget.com/searchstorage/news/252458395/New-NVMe-Western-Digital-SSDs-target-cloud-hyperscale-and-edge <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#NVMe">NVMe</a>,&nbsp;<a href="/tags#NVMe-oF">NVMe-oF</a>,&nbsp;<a href="/tags#NVMe+over+Fabrics">NVMe over Fabrics</a>,&nbsp;<a href="/tags#RDMA">RDMA</a>,&nbsp;<a href="/tags#Storage">Storage</a>,&nbsp;<a href="/tags#SSD">SSD</a>,&nbsp;<a href="/tags#RoCE">RoCE</a>,&nbsp;<a href="/tags#iWARP">iWARP</a>,&nbsp;<a href="/tags#%ED%8C%8C%EC%9D%B4%EB%B2%84+%EC%B1%84%EB%84%90">파이버 채널</a>,&nbsp;<a href="/tags#Fibre+Channel">Fibre Channel</a>,&nbsp;<a href="/tags#%EC%9D%B4%EB%8D%94%EB%84%B7">이더넷</a>,&nbsp;<a href="/tags#Ethernet">Ethernet</a>,&nbsp;<a href="/tags#TCP">TCP</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

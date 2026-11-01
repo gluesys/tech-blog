@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>TrueNAS SCALE의 설치부터 활용까지</title>
+  <meta name="description" content="안녕하세요?">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="안녕하세요?" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="TrueNAS SCALE의 설치부터 활용까지" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/TrueNAS/Cover.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TrueNAS SCALE의 설치부터 활용까지">
+  <meta name="twitter:description" content="안녕하세요?">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/TrueNAS/Cover.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2022/09/21/TrueNAS.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/TrueNAS/Cover.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">TrueNAS SCALE의 설치부터 활용까지</h1>
+      <p class="info">by <strong>김진서 (jskim@gluesys.com), 박재일 (jipak@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">September 21, 2022</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p>안녕하세요?</p>
+
+<p>저는 6월에 글루시스의 기술팀에 입사한 김진서입니다.</p>
+
+<p>IT 업계에 뛰어들며 다양한 분야와 장비를 접해보았지만, NAS는 알고 있으면서 익숙하지 않았던 기술이기도 했습니다.</p>
+
+<p>Synology NAS를 사용하던 중 다른 NAS도 사용해 보고자 NAS 및 운영체제를 공부하며 정리한 내용을 구독자 여러분에게 전달하고자 합니다.</p>
+
+<p>먼저 Synology는 저에게 가장 익숙했습니다. 초기 구축 비용이 높지만 하드웨어와 소프트웨어가 완성된 기성품 NAS이며 GUI 기반의 전용 OS가 설치되어 개인 사용자 또는 작은 규모의 사무실에서 사용하기에 편리한 이점이 있습니다.</p>
+
+<p>두 번째로는 Linux 기반으로 공개된 기술을 활용하여 NAS를 구축하는 방법이 있습니다.</p>
+
+<p>예를 들어 CentOS 또는 Ubuntu OS를 설치하여 필요한 환경에 맞게 FTP, SMB(CIFS), NFS 패키지를 설치하고 설정할 수 있습니다.</p>
+
+<p>마지막으로 포스트의 목적인 오픈소스 기반으로 개발되어 공개된 완전한 NAS 전용 운영체제를 사용해서 구축할 수 있습니다.</p>
+
+<p>이러한 운영체제는 Synology처럼 NAS에 필수적인 요소들이 기본으로 제공되고, 편리하고 손쉬운 인터페이스로 구축할 수 있다는 장점이 있습니다.</p>
+
+<p>오픈소스 기반의 OS는 <a href="https://www.openmediavault.org/">OpenMediaVault</a>, <a href="https://www.truenas.com/">TrueNAS</a> 등 다양하게 존재하지만, 이 포스트에서는 좀 더 다양한 기능과 활용성 그리고 안정성을 갖춘 TrueNAS를 설치해 보고 사용하면서 느꼈던 장단점들과 활용 방법을 소개하도록 하겠습니다.</p>
+
+<p> </p>
+
+<h2 id="truenas-설명">TrueNAS 설명</h2>
+
+<p>TrueNAS의 역사는 2005년부터 시작되었습니다. 당시에는 FreeNAS 라는 프로젝트로 시작되었으며, 2020년에 <a href="https://www.ixsystems.com/">iXsystems</a>에 의해 TrueNAS라는 이름으로 명맥을 이어오고 있습니다.</p>
+
+<p>TrueNAS는 일반 CORE 버전, 엔터프라이즈 SCALE 버전이 있으며, 이 포스트에서는 SCALE 버전을 사용하였습니다.</p>
+
+<p>TrueNAS CORE는 FreeBSD를 기반으로 만들어졌으며 TrueNAS SCALE은 Linux 기반으로 만들어졌습니다.</p>
+
+<p>기본 파일시스템으로 ZFS 파일시스템을 지원하고 웹 관리 인터페이스가 편리하고 직관적이라 시중에 판매되고 있는 대형 벤더들의 NAS 제품들과 견주어도 손색이 없습니다.</p>
+
+<p>오히려 Unix/Linux 운영체제에 익숙하다면 가장 강력한 NAS 운영체제라고 볼 수 있습니다.</p>
+
+<p>또한 TrueNAS는 하드웨어 RAID 컨트롤러를 사용하지 않고도 높은 성능과 안정성을 보장하는 특징이 있지만, 시스템 요구 사항이 매우 높다는 단점도 존재합니다.</p>
+
+<p> </p>
+
+<h2 id="테스트-시스템-소개">테스트 시스템 소개</h2>
+
+<p>테스트에 사용된 시스템은 <strong><a href="https://insper.co.kr">Inspur</a></strong> 사의 장비입니다.
+전체적인 사양은 아래와 같습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>사양</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CPU</td>
+      <td>Intel(R) Xeon(R) Silver 4310 CPU @ 2.10GHz * 2</td>
+    </tr>
+    <tr>
+      <td>Memory</td>
+      <td>Total 32GB</td>
+    </tr>
+    <tr>
+      <td>Power Supply</td>
+      <td>800W * 2 Unit</td>
+    </tr>
+    <tr>
+      <td>Disk</td>
+      <td>Seagate Exos 12TB HDD * 12</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="/assets/TrueNAS/01. Inspur/DashBoard.png" alt="" /></p>
+
+<p>Inspur 장비는 BMC(Baseboard Management Controller)를 통해 시스템의 전반적인 상태 확인 및 제어를 할 수 있습니다.</p>
+
+<p><img src="/assets/TrueNAS/01. Inspur/System_Information.png" alt="" /></p>
+
+<p>시스템에 장착된 주요 파트는 물론, 스토리지 디스크의 상태까지 확인 가능하며, 일부 장비의 경우 시스템이 부팅된 상태에서도 BIOS 옵션의 변경이 가능합니다.</p>
+
+<p><img src="/assets/TrueNAS/01. Inspur/Remote_Control.png" alt="" /></p>
+
+<p>BMC의 Remote Control 기능은 물리적인 KVM을 사용하지 않고 웹에서 서버의 제어가 가능합니다.</p>
+
+<p>또한 물리적인 KVM이 설치되어 있더라도 관리해야 하는 서버가 많으면 KVM 케이블을 옮겨가며 작업하는 불편함이 있지만, Remote Control KVM을 활용하면 이런 불편함이 많이 해소되고, 다중 서버를 관리하기에 매우 편리한 이점이 있습니다.</p>
+
+<h2 id="truenas-설치">TrueNAS 설치</h2>
+
+<p>이제 본격적으로 TrueNAS의 설치를 진행해 보겠습니다.</p>
+
+<p>TrueNAS 설치 이미지를 <a href="https://rufus.ie/">Rufus</a>와 같이 USB 저장 장치를 부팅 미디어로 만들어주는 도구를 사용해서 부팅하게 되면</p>
+
+<p><img src="/assets/TrueNAS/02. TrueNAS Install/Inspur_NF5280M6_BMT_Server_TrueNAS_OS_Install_1.png" alt="" /></p>
+
+<p>이런 화면이 보일 것입니다. 부팅을 위한 디스크를 선택하는 화면입니다.</p>
+
+<p><img src="/assets/TrueNAS/02. TrueNAS Install/Inspur_NF5280M6_BMT_Server_TrueNAS_OS_Install_2.png" alt="" /></p>
+
+<p>다음 화면은 루트 계정의 패스워드를 설정하는 화면입니다. 보안에 신경 써서 패스워드를 설정합니다.</p>
+
+<p><img src="/assets/TrueNAS/02. TrueNAS Install/Inspur_NF5280M6_BMT_Server_TrueNAS_OS_Install_5.png" alt="" /></p>
+
+<p>조금 기다려보면 위와 같이 설치가 완료된 화면이 보입니다.</p>
+
+<p><img src="/assets/TrueNAS/02. TrueNAS Install/Inspur_NF5280M6_BMT_Server_TrueNAS_OS_Start_2.png" alt="" /></p>
+
+<p>서버가 시작되면 위와 같은 화면이 보입니다.</p>
+
+<p>네트워크부터 차례대로 진행하고, 서버를 재시작하면 설치가 완료됩니다.</p>
+
+<h2 id="대시보드">대시보드</h2>
+
+<p><img src="/assets/TrueNAS/03. TrueNAS_Dashboard/TrueNAS_Dashboard 001.png" alt="" /></p>
+
+<p>설치가 완료되면 시스템의 상태를 한눈에 볼 수 있는 TrueNAS의 메인 화면이 나타납니다.</p>
+
+<p>시스템 관리자에게 필요한 정보를 직관적으로 제공해주고 있습니다.</p>
+
+<h2 id="스토리지-풀데이터셋-구성">스토리지 풀/데이터셋 구성</h2>
+
+<p>이제 실제 사용할 스토리지 풀(Storage Pool)과 데이터셋(Dataset)을 만들어 보겠습니다.</p>
+
+<p><img src="/assets/TrueNAS/04. TrueNAS_Pool&amp;Dataset/TrueNAS_Pool&amp;Dataset_000.png" alt="" /></p>
+
+<p>먼저 스토리지 풀을 생성합니다.</p>
+
+<p><img src="/assets/TrueNAS/04. TrueNAS_Pool&amp;Dataset/TrueNAS_Pool&amp;Dataset_001.png" alt="" /></p>
+
+<p>생성된 스토리지 풀(<code class="language-plaintext highlighter-rouge">vg</code>)의 우측의 메뉴를 열어 <code class="language-plaintext highlighter-rouge">Add Dataset</code>을 실행합니다.</p>
+
+<p><img src="/assets/TrueNAS/04. TrueNAS_Pool&amp;Dataset/TrueNAS_Pool&amp;Dataset_003.png" alt="" /></p>
+
+<p>목적에 맞게 비어있는 필드를 채워줍니다.</p>
+
+<p><img src="/assets/TrueNAS/04. TrueNAS_Pool&amp;Dataset/TrueNAS_Pool&amp;Dataset_005.png" alt="" /></p>
+
+<p>이제 <code class="language-plaintext highlighter-rouge">Share</code>로 이동, <code class="language-plaintext highlighter-rouge">Windows (SMB) Shares</code>에서 <code class="language-plaintext highlighter-rouge">Add</code>를 눌러 <code class="language-plaintext highlighter-rouge">CIFS/SMB</code> 공유를 만들어 줘야 합니다.</p>
+
+<h2 id="접근-제어acl-access-control-list">접근 제어(ACL, Access Control List)</h2>
+
+<p>그룹별/사용자별 권한을 제어해보겠습니다.</p>
+
+<p>시나리오는 아래와 같습니다.</p>
+
+<ul>
+  <li>개발팀(DEV)</li>
+  <li>영업팀(SALES)</li>
+  <li>기술팀(TECH)</li>
+</ul>
+
+<p>세 부서가 있으며, 각각 전용 디렉터리를 생성할 것입니다.</p>
+
+<p>그리고 타 부서의 전용 디렉터리는 서로 접속을 못 하도록 접근 제한을 설정해 놓습니다.</p>
+
+<p><img src="/assets/TrueNAS/05. TrueNAS_User_Group/TrueNAS_User_Group_001.png" alt="" /></p>
+
+<p>저는 DEV / SALES / TECH 라는 이름의 그룹들을 추가했습니다.</p>
+
+<p><img src="/assets/TrueNAS/05. TrueNAS_User_Group/TrueNAS_User_Group_002.png" alt="" /></p>
+
+<p>이후 SALES1 / SALES2 / DEV1 / DEV2 / TECH1 / TECH2 라는 이름의 사용자들을 추가했습니다.</p>
+
+<p><img src="/assets/TrueNAS/05. TrueNAS_User_Group/TrueNAS_User_Group_003.png" alt="" /></p>
+
+<p>사용자를 추가할 때 원하는 그룹에 종속되게 할 수 있습니다.</p>
+
+<p><img src="/assets/TrueNAS/05. TrueNAS_User_Group/TrueNAS_User_Group_004.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/05. TrueNAS_User_Group/TrueNAS_User_Group_005.png" alt="" /></p>
+
+<p>물론 모든 사용자를 다 추가한 후, 그룹 속성에서 원하는 사용자를 종속시키는 것도 가능합니다.</p>
+
+<h2 id="smbcifs-마운트">SMB/CIFS 마운트</h2>
+
+<p>이제 Windows 클라이언트에서 SMB 프로토콜을 통해 공유 디렉터리를 마운트해보겠습니다.</p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_003.png" alt="" /></p>
+
+<p>생성한 데이터셋에서 <code class="language-plaintext highlighter-rouge">View Permissions</code> 으로 들어갑니다.</p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_004.png" alt="" /></p>
+
+<p>연필 모양으로 된 <code class="language-plaintext highlighter-rouge">Edit</code> 버튼을 눌러줍니다.</p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_005.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_007.png" alt="" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">Add Item</code>을 선택하여 추가해두었던 사용자 혹은 그룹을 추가합니다.</p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_008.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_009.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/06. TrueNAS_SHARE/TrueNAS_Share_010.png" alt="" /></p>
+
+<p>권한을 제대로 설정했다면 부서별 전용 디렉터리를 만들 수 있습니다.</p>
+
+<h2 id="nfs-마운트">NFS 마운트</h2>
+
+<p>이제 Linux 클라이언트에서 NFS 프로토콜로 마운트를 해보겠습니다.</p>
+
+<p><img src="/assets/TrueNAS/07. TrueNAS_NFS_MOUNT/TrueNAS_NFS_MOUNT_001.png" alt="" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">df -h</code></p>
+
+<p>현재 시스템의 파일시스템을 확인합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">mkdir /mnt/nfs_test</code></p>
+
+<p>NFS로 마운트 할 <code class="language-plaintext highlighter-rouge">/mnt/nfs_test</code> 디렉터리를 생성합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">showmount -e 192.168.53.253</code></p>
+
+<p>TrueNAS 서버에서 마운트가 가능한 디렉터리를 확인합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">mount -t nfs 192.168.53.253:/mnt/vg/test_dev /mnt/nfs_test</code></p>
+
+<p>192.166.53.253 서버의 <code class="language-plaintext highlighter-rouge">/mnt/vg/test_dev</code> 디렉터리를 클라이언트 서버의 <code class="language-plaintext highlighter-rouge">/mnt/nfs_test</code> 디렉터리에 마운트합니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">df -h</code></p>
+
+<p>제대로 마운트가 되었는지 확인합니다.</p>
+
+<p><img src="/assets/TrueNAS/07. TrueNAS_NFS_MOUNT/TrueNAS_NFS_MOUNT_002.png" alt="" /></p>
+
+<p>마운트 후, 디렉터리가 생성되는지 시도해봅니다.</p>
+
+<p><img src="/assets/TrueNAS/07. TrueNAS_NFS_MOUNT/TrueNAS_NFS_MOUNT_003.png" alt="" /></p>
+
+<p>SMB로 마운트한 Windows 클라이언트에서도 방금 생성한 <code class="language-plaintext highlighter-rouge">new_folder</code> 디렉터리가 잘 보이는군요.</p>
+
+<h2 id="가상머신">가상머신</h2>
+
+<p>TrueNAS는 VMware와 같은 가상머신 기능을 지원하고 있습니다.</p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_001.png" alt="" /></p>
+
+<p>가상머신을 생성해 보겠습니다.</p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_002.png" alt="" /></p>
+
+<p>순서는 VMware 가상화 프로그램과 크게 다르지 않습니다.</p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_003.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_004.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_005.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_006.png" alt="" /></p>
+
+<p>미리 서버에 업로드해두었던 ISO를 사용하여 바로 OS 설치가 가능합니다.</p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_007.png" alt="" /></p>
+
+<p><img src="/assets/TrueNAS/08. TrueNAS_Virtual Machines/TrueNAS_Virtual Machines_008.png" alt="" /></p>
+
+<p>생성이 완료된 VM의 모습입니다.</p>
+
+<h2 id="미디어-서버">미디어 서버</h2>
+
+<p><img src="/assets/TrueNAS/09. Media Server/001.png" alt="" /></p>
+
+<p>개인용 NAS 활용의 가장 많은 비중을 차지하고 있는 방법이 바로 미디어 서버라고 생각합니다.</p>
+
+<p><img src="/assets/TrueNAS/09. Media Server/003.png" alt="" /></p>
+
+<p>크고 광활한 TB 규모의 스토리지에 영상, 영화, 음악, 사진 등을 업로드하여 용량의 제한에서 벗어나거나 트랜스코딩을 활용하여 4K 해상도의 고용량 영상을 모바일 디바이스에 맞게 해상도를 낮춰 재생하거나</p>
+
+<p><img src="/assets/TrueNAS/09. Media Server/000.jpg" alt="" /></p>
+
+<p>WebOS를 탑재한 스마트 TV, 프로젝터 등에서 지원하지 않는 코덱의 영상을 트랜스코딩하여 재생합니다.</p>
+
+<p><img src="/assets/TrueNAS/02. TrueNAS Install/Inspur_NF5280M6_BMT_Server_TrueNAS_Apps.png" alt="" /></p>
+
+<p>TrueNAS의 Apps에는 <a href="https://www.plex.tv/">Plex Media Server</a>가 있습니다.</p>
+
+<p><img src="/assets/TrueNAS/09. Media Server/002.png" alt="" /></p>
+
+<p>이를 설치하면 Plex가 자동으로 컨텐츠를 분류하고, 컨텐츠의 내용을 스크랩해서 포스터와 줄거리를 소개해주는 미려한 미디어 서버를 구성합니다.</p>
+
+<h2 id="스마트-홈-서버">스마트 홈 서버</h2>
+
+<p>최근에는 보안과 방범을 위해 IoT 카메라 등을 설치하는 곳이 늘어나고 있습니다.</p>
+
+<p>저 역시 IoT 장비를 작업실, 오피스텔 등 곳곳에 설치하였습니다.</p>
+
+<p>이러한 장비들은 전용 어플리케이션을 사용해야 하고, 제조업체의 클라우드 서버를 거쳐야 모니터링하거나 제어를 할 수가 있는 단점이 있습니다.</p>
+
+<p>클라우드 서버를 거침에 따라서 지연 시간과 보안의 문제점이 발생합니다.</p>
+
+<p>이러한 문제를 해결하기 위해 로컬 서버에 장비를 등록하여, 모니터링과 제어를 할 수가 있는 플랫폼을 설치할 수도 있습니다.</p>
+
+<p><img src="/assets/TrueNAS/10. Smart Home Server/001.png" alt="" /></p>
+
+<p>가상머신에 스마트홈 서버를 설치하여 구동하는 모습입니다.</p>
+
+<p>수백여곳에 달하는 IoT 장비 제조업체들이 있는데, 대부분 API를 제공하고 있기 때문에 계정 연동을 하거나, 스마트홈 서버에 바로 등록도 가능합니다.</p>
+
+<h2 id="마치며">마치며</h2>
+
+<p>이 포스트에서 다루지 못한 Docker와 수십 가지의 써드파티 플러그인들이 많이 있습니다.</p>
+
+<p>고성능 장비에 TrueNAS를 설치한다면 다재다능한 다목적 서버로 사용하기에 손색이 없다고 할 수 있습니다.</p>
+
+<p>이 포스트는 글루시스에 입사하여 처음 작성한 포스트입니다.</p>
+
+<p>처음 글을 시작했을 때는 막막했지만 선배들의 도움으로 많이 다듬어졌습니다.</p>
+
+<p>그럼에도 많이 부족하고, 아쉬움이 많이 남는 글입니다.</p>
+
+<p>다음에 기회가 된다면 Docker의 활용과 TrueNAS의 숨은 활용 방법들을 소개해보겠습니다.</p>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#TrueNAS">TrueNAS</a>,&nbsp;<a href="/tags#Linux">Linux</a>,&nbsp;<a href="/tags#ACL">ACL</a>,&nbsp;<a href="/tags#SMB">SMB</a>,&nbsp;<a href="/tags#CIFS">CIFS</a>,&nbsp;<a href="/tags#NFS">NFS</a>,&nbsp;<a href="/tags#%ED%8C%8C%EC%9D%BC%EC%84%9C%EB%B2%84">파일서버</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>
