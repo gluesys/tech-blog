@@ -18,11 +18,11 @@ def parse(path):
 class VersionsTest(unittest.TestCase):
     def test_versions_env_is_complete(self):
         env = parse(VERSIONS)
-        for key in ("HUGO_VERSION", "HUGO_SHA256", "PAGEFIND_VERSION", "PAGEFIND_SHA256"):
+        for key in ("HUGO_VERSION", "HUGO_SHA256", "PAGEFIND_VERSION", "PAGEFIND_SHA256", "ACTIONLINT_VERSION", "ACTIONLINT_SHA256"):
             self.assertIn(key, env)
-        for key in ("HUGO_VERSION", "PAGEFIND_VERSION"):
+        for key in ("HUGO_VERSION", "PAGEFIND_VERSION", "ACTIONLINT_VERSION"):
             self.assertRegex(env[key], r"^\d+\.\d+\.\d+$")
-        for key in ("HUGO_SHA256", "PAGEFIND_SHA256"):
+        for key in ("HUGO_SHA256", "PAGEFIND_SHA256", "ACTIONLINT_SHA256"):
             self.assertRegex(env[key], r"^[0-9a-f]{64}$")
 
 

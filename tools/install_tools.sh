@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-# Usage: tools/install_tools.sh <dest_dir>
+# Usage: tools/install_tools.sh <dest_dir> [--with-actionlint]
 # Installs the pinned hugo (extended) and pagefind (extended) binaries into <dest_dir>.
 # Exits non-zero if a download fails or a SHA-256 checksum does not match.
 set -euo pipefail
 
-if [ $# -ne 1 ]; then
-  echo "usage: $0 <dest_dir>" >&2
+with_actionlint=0
+if [ $# -eq 2 ] && [ "$2" = "--with-actionlint" ]; then
+  with_actionlint=1
+elif [ $# -ne 1 ]; then
+  echo "usage: $0 <dest_dir> [--with-actionlint]" >&2
   exit 2
 fi
 
@@ -38,5 +41,14 @@ fetch "https://github.com/Pagefind/pagefind/releases/download/v${PAGEFIND_VERSIO
 mkdir "$work/pagefind"
 tar -xzf "$work/$pf_name" -C "$work/pagefind"
 install -m 0755 "$work/pagefind/pagefind_extended" "$dest/pagefind"
+
+if [ "$with_actionlint" -eq 1 ]; then
+  al_name="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+  fetch "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${al_name}" \
+    "$ACTIONLINT_SHA256" "$al_name"
+  mkdir "$work/actionlint"
+  tar -xzf "$work/$al_name" -C "$work/actionlint" actionlint
+  install -m 0755 "$work/actionlint/actionlint" "$dest/actionlint"
+fi
 
 echo "Installed hugo ${HUGO_VERSION} and pagefind ${PAGEFIND_VERSION} into ${dest}"

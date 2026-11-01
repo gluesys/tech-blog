@@ -1,0 +1,84 @@
+name: pages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pinned hugo and pagefind
+        run: tools/install_tools.sh .bin
+
+      - name: Python tests
+        run: python3 -m unittest discover -s tools/tests
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: "2.9.8"
+
+      - name: Deno tests
+        run: deno test assets/ts/tests/
+
+      - name: Build site
+        run: .bin/hugo --minify --environment production
+
+      - name: Build search index
+        run: .bin/pagefind --site build
+
+      - name: Verify migration
+        run: python3 tools/verify_migration.py --build build --snapshot migration/snapshot --allow migration/allowlist.yaml
+
+      - name: Verify site
+        run: python3 tools/verify_site.py --build build --snapshot migration/snapshot --allow migration/site-allowlist.yaml
+
+      - name: Check tags
+        run: python3 tools/check_tags.py content/blog
+
+      - name: Search acceptance report (non-blocking)
+        continue-on-error: true
+        run: python3 tools/verify_search.py --build build --cases tools/search_cases.txt
+
+      - name: Upload build for review
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site
+          path: build/
+          retention-days: 7
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: build/
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
