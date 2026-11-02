@@ -22,10 +22,7 @@
     <div class="block">
       <h2 class="sec-title"><span class="hx"></span>주제별로 보기</h2>
       <div class="tags">
-        {{- range hugo.Data.featured_tags }}
-          {{- $wp := index site.Taxonomies.tags (. | lower) }}
-          {{- if $wp }}{{ partial "tag-chip.html" (dict "tag" . "count" (len $wp)) }}{{ else }}{{ errorf "featured tag %q has no tag page" . }}{{ end -}}
-        {{- end }}
+        {{- range partialCached "featured-tags.html" "all" }}{{ partial "tag-chip.html" (dict "tag" .name "count" .count "url" .term.RelPermalink) }}{{ end }}
       </div>
     </div>
     <div class="block">

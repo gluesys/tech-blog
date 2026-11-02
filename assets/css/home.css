@@ -33,7 +33,23 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .page-text { max-width: 720px; margin-left: max(24px, calc((100% - var(--content)) / 2 + 24px)); margin-right: auto; padding-left: 0; padding-right: 0; }
 .year-group h2 { font-size: 22px; margin: 36px 0 0; padding-bottom: 8px; border-bottom: 2px solid var(--ink); font-variant-numeric: tabular-nums; }
 .year-group .post:last-child { border-bottom: 0; }
-.tag-cloud { gap: 10px; margin-top: 8px; }
+.tag-cloud { gap: 10px; margin-top: 8px; align-items: center; }
+.tags-sec { margin: 8px 0 16px; font-size: 20px; }
+.topic-grid + .tags-sec { margin-top: 48px; }
+.topic-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.topic { border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 14px; background: var(--surface); }
+.topic:hover { border-color: var(--link); }
+.topic-name { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; }
+.topic-name .hx { width: 11px; height: 13px; }
+.topic-name .n { margin-left: auto; color: var(--ci-gray); font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.topic-name:hover { color: var(--link); }
+.topic ul { list-style: none; margin: 12px 0 0; padding: 0; }
+.topic li { display: flex; gap: 10px; justify-content: space-between; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14.5px; line-height: 1.45; }
+.topic li a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.topic li a:hover { color: var(--link); }
+.topic time { flex: none; color: var(--ci-gray); font-size: 13px; font-variant-numeric: tabular-nums; }
+.tag-cloud .t1 .tag { font-size: 15.5px; padding: 10px 20px; font-weight: 600; }
+.tag-cloud .t2 .tag { font-size: 14px; padding: 8px 16px; }
 .single-tags { margin-top: 40px; }
 .single-tags summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
 .single-tags .tag-cloud { margin-top: 16px; }

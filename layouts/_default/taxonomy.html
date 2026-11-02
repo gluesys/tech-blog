@@ -24,7 +24,24 @@
 {{- range .Data.Terms.ByCount }}
   {{- if ge .Count 2 }}{{ $multi = $multi | append . }}{{ else }}{{ $single = $single | append . }}{{ end }}
 {{- end }}
-<div class="tags tag-cloud">{{ range $multi }}{{ partial "tag-chip.html" (dict "tag" (index $names (.Term | lower)) "count" .Count "url" .Page.RelPermalink) }}{{ end }}</div>
+{{- /* Featured topics (featured-tags.html, same rule as the home page): a card each
+       with the post count and the two newest posts. */}}
+<h2 class="sec-title tags-sec"><span class="hx"></span>주요 주제</h2>
+<ul class="topic-grid">
+  {{- range partialCached "featured-tags.html" "all" }}
+  <li class="topic">
+    <a class="topic-name" href="{{ .term.RelPermalink }}"><span class="hx"></span>{{ .name }}<span class="n">{{ .count }}편</span></a>
+    <ul>
+      {{- range first 2 .term.Pages.ByDate.Reverse }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006.1" }}</time></li>
+      {{- end }}
+    </ul>
+  </li>
+  {{- end }}
+</ul>
+{{- /* All tags used in 2+ posts; chip size follows the post count (5+, 3-4, 2). */}}
+<h2 class="sec-title tags-sec"><span class="hx"></span>모든 태그</h2>
+<div class="tags tag-cloud">{{ range $multi }}{{ $tier := cond (ge .Count 5) "t1" (cond (ge .Count 3) "t2" "t3") }}<span class="{{ $tier }}">{{ partial "tag-chip.html" (dict "tag" (index $names (.Term | lower)) "count" .Count "url" .Page.RelPermalink) }}</span>{{ end }}</div>
 {{- if $single }}
 <details class="single-tags">
   <summary>한 편에만 쓰인 태그<span class="n">{{ len $single }}</span></summary>
