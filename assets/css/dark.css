@@ -73,8 +73,6 @@
 :root[data-theme="dark"] .search-input,
 :root[data-theme="dark"] .search-close,
 :root[data-theme="dark"] .page-search { border-color: var(--edge); }
-:root[data-theme="dark"] .brand img,
-:root[data-theme="dark"] .foot img { box-sizing: content-box; background: var(--symbol-tile); padding: 3px; border-radius: 6px; }
 :root[data-theme="dark"] .prose img { background: #fff; border-radius: 4px; }
 :root[data-theme="dark"] .theme-btn .i-sun { display: block; }
 :root[data-theme="dark"] .theme-btn .i-moon { display: none; }
@@ -86,8 +84,6 @@
   :root:not([data-theme="light"]) .search-input,
   :root:not([data-theme="light"]) .search-close,
   :root:not([data-theme="light"]) .page-search { border-color: var(--edge); }
-  :root:not([data-theme="light"]) .brand img,
-  :root:not([data-theme="light"]) .foot img { box-sizing: content-box; background: var(--symbol-tile); padding: 3px; border-radius: 6px; }
   :root:not([data-theme="light"]) .prose img { background: #fff; border-radius: 4px; }
   :root:not([data-theme="light"]) .theme-btn .i-sun { display: block; }
   :root:not([data-theme="light"]) .theme-btn .i-moon { display: none; }
