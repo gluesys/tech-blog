@@ -23,8 +23,7 @@
       {{ partial "series-box.html" . }}
       <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
       <div class="share share-m">
-        <button type="button" data-share="copy" data-url="{{ .Permalink }}">링크 복사</button>
-        <button type="button" data-share="native" data-url="{{ .Permalink }}" data-title="{{ .Title }}">공유</button>
+        <button type="button" data-share data-url="{{ .Permalink }}" data-title="{{ .Title }}">링크 복사</button>
       </div>
       {{- $all := (where site.RegularPages "Section" "blog").ByDate -}}
       {{- $prev := false -}}{{- $next := false -}}
