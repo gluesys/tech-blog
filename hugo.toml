@@ -26,6 +26,9 @@ backlinkHTML = "&#8617;"
 
 [markup.highlight]
 noClasses = false
+# Line numbers are opt-in per block: ```bash {linenos=true linenostart=10}. Inline
+# numbers (not a table) keep one <pre>, so wrapping and the copy button stay simple.
+lineNumbersInTable = false
 
 [markup.tableOfContents]
 startLevel = 2

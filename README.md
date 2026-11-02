@@ -221,6 +221,8 @@ series: "NVMe"        # optional, see below
 - Use canonical tags from `data/tag_aliases.yaml`. `python3 tools/check_tags.py content/blog` warns about unknown or non-canonical tags.
 - A series is defined by `data/series.yaml`: add the post slug (file name without the date prefix) to the series list in reading order. Membership and order come from that file; `series_order` is not required. Also set `series: "<series name>"` in front matter so the post shows its series box.
 - Images go under `static/assets/` and are referenced as `/assets/...`.
+- Code blocks can show line numbers: ```` ```bash {linenos=true} ```` numbers from 1, and ```` ```bash {linenos=true linenostart=120} ```` starts at 120. Numbers are off by default, and the copy button never copies them.
+- Do not add a hand-written table of contents: every post gets one from its h2/h3 headings (the sidebar on wide screens, a collapsed 목차 block on phones).
 
 ## CI (`.github/workflows/pages.yml`)
 
@@ -228,7 +230,7 @@ On pull requests and pushes to `master` the workflow installs the pinned tools, 
 
 ### Editing a migrated post
 
-Until the cutover, `verify_migration.py` compares the body text and headings of every migrated post with the live-site snapshot in `migration/snapshot`, so a typo fix in a migrated post fails CI. Add a narrow entry with a reason to `migration/allowlist.yaml` (see the existing entries) instead of loosening the checker. New posts are not affected: the feed check only requires the 10 newest posts and unchanged links for the migrated items still in the feed.
+Until the cutover, `verify_migration.py` compares the body text and headings of every migrated post with the live-site snapshot in `migration/snapshot`, so a typo fix in a migrated post fails CI. Add a narrow entry with a reason to `migration/allowlist.yaml` (see the existing entries) instead of loosening the checker. Such edits live only in `content/blog/`: `tools/convert_posts.py` pairs headings with the snapshot, so do not re-run it over an edited post (the allowlist entries would then go unused and the verifier fails, which is how CI catches it). New posts are not affected: the feed check only requires the 10 newest posts and unchanged links for the migrated items still in the feed.
 
 ### After the cutover
 

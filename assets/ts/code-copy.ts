@@ -16,6 +16,13 @@ async function writeClipboard(text: string): Promise<void> {
 
 export { writeClipboard };
 
+// Text of a code block without the line numbers Hugo adds for {linenos=true}.
+function codeText(pre: HTMLPreElement): string {
+  const code = (pre.querySelector("code") ?? pre).cloneNode(true) as HTMLElement;
+  code.querySelectorAll(".ln, .lnt").forEach((n) => n.remove());
+  return code.textContent ?? "";
+}
+
 export function initCodeCopy(): void {
   const root = document.querySelector(".prose");
   if (!root) return;
@@ -47,7 +54,7 @@ export function initCodeCopy(): void {
     let timer: number | undefined;
     btn.addEventListener("click", async () => {
       try {
-        await writeClipboard((pre.querySelector("code") ?? pre).textContent ?? "");
+        await writeClipboard(codeText(pre));
         btn.textContent = "복사됨";
       } catch {
         btn.textContent = "복사 실패";
