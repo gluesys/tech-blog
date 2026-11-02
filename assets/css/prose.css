@@ -152,4 +152,6 @@ dialog.zoom img { max-width: 96vw; max-height: 96dvh; width: auto; height: auto;
   .cta { flex-direction: column; align-items: flex-start; padding: 22px; }
   .cta a { margin-left: 0; }
 }
-.comments { margin-top: 40px; min-height: 1px; }
+.comments-head { margin-top: 44px; }
+.comments-head p:last-child { margin: 6px 0 0; font-size: 15px; color: var(--ink-2); }
+.comments { margin-top: 16px; min-height: 1px; }
