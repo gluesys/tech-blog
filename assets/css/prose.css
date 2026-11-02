@@ -71,6 +71,13 @@
   .toc.toc-yield { opacity: 0; pointer-events: none; }
 }
 
+/* image zoom (image-zoom.ts) */
+.prose img.zoomable { cursor: zoom-in; }
+dialog.zoom { max-width: none; max-height: none; width: 100vw; height: 100dvh; margin: 0; padding: 2vh 2vw; border: 0; background: transparent; display: none; place-items: center; cursor: zoom-out; }
+dialog.zoom[open] { display: grid; }
+dialog.zoom::backdrop { background: rgba(10, 16, 30, .88); }
+dialog.zoom img { max-width: 96vw; max-height: 96dvh; width: auto; height: auto; background: #fff; border-radius: 6px; }
+
 /* closing blocks */
 .after { margin-top: 40px; }
 .after .tags { margin-top: 28px; }
