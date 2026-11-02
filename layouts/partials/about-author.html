@@ -2,7 +2,7 @@
 <li class="author" data-name="{{ .name }}" data-last="{{ .lastDate }}" data-first="{{ .firstDate }}" data-count="{{ .count }}">
   {{- if .avatar }}<img class="avatar" src="{{ .avatar | relURL }}" alt="" width="44" height="44">{{ else }}<div class="avatar" aria-hidden="true">{{ substr (replaceRE `\s` "" .name) 0 1 }}</div>{{ end }}
   <div class="author-body">
-    <h3>{{ with .page }}<a href="{{ .RelPermalink }}">{{ $.name }}</a>{{ else }}{{ .name }}{{ end }}{{ if .former }} <span class="former">전 구성원</span>{{ end }}</h3>
+    <h3>{{ with .page }}<a href="{{ .RelPermalink }}">{{ $.name }}</a>{{ else }}{{ .name }}{{ end }}{{ if .former }} <span class="former">이전 동료</span>{{ end }}</h3>
     {{- with .page }}{{ with findRE `(?s)<p>.*?</p>` .Content 1 }}<div class="bio">{{ index . 0 | safeHTML }}</div>{{ end }}{{ end }}
     <p class="author-meta">글 {{ .count }}편 <span>{{ .first }}{{ if ne .first .last }}–{{ .last }}{{ end }}</span></p>
     {{- with .tags }}<div class="tags">{{ range . }}{{ partial "tag-chip.html" (dict "tag" .t) }}{{ end }}</div>{{ end }}

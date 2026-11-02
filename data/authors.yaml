@@ -1,6 +1,6 @@
 # Author cards keyed by email (never rendered). Optional fields: `avatar` (image
-# path) and `former: true` for people who have left (shown as 전 구성원, listed
-# after current members). A personal introduction goes in content/authors/<slug>.md.
+# path) and `former: true` for people who have left (labelled 이전 동료 in the
+# same list). A personal introduction goes in content/authors/<slug>.md.
 # One name spelling per email (Korean names without a space), so a post's
 # front-matter spelling never changes the byline.
 "gc757489@gmail.com":

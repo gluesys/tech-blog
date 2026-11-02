@@ -2,7 +2,7 @@
 {{- /* About page: intro text from content/about.md, then the authors. Authors come from
        the post front matter (`author: "이름 (email)"`, several separated by ", ") joined
        with data/authors.yaml by email; emails are never printed. `former: true` in
-       authors.yaml marks people who have left (a 전 구성원 label; they are not listed apart). */ -}}
+       authors.yaml marks people who have left (a 이전 동료 label; they are not listed apart). */ -}}
 {{- $posts := (where site.RegularPages "Section" "blog").ByDate.Reverse -}}
 {{- $by := dict -}}
 {{- range $p := $posts -}}

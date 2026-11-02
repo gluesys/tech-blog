@@ -6,7 +6,7 @@
 <div class="page-head author-head">
   {{- if $info.avatar }}<img class="avatar" src="{{ $info.avatar | relURL }}" alt="" width="56" height="56">{{ else }}<div class="avatar" aria-hidden="true">{{ substr (replaceRE `\s` "" ($info.name | default .Title)) 0 1 }}</div>{{ end }}
   <div>
-    <h1 class="sec-title">{{ $info.name | default .Title }}{{ if $info.former }} <span class="former">전 구성원</span>{{ end }}</h1>
+    <h1 class="sec-title">{{ $info.name | default .Title }}{{ if $info.former }} <span class="former">이전 동료</span>{{ end }}</h1>
     <p class="crumb"><a href="/about/">소개</a></p>
   </div>
 </div>
