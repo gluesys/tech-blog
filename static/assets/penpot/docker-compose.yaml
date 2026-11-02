@@ -139,8 +139,8 @@ services:
 
       - PENPOT_FLAGS=disable-secure-session-cookies disable-login enable-login-with-gitlab
       - PENPOT_GITLAB_BASE_URI=https://gitlab.gluesys.com/
-      - PENPOT_GITLAB_CLIENT_ID=f7b5dbcc0c1e49fc9f80ca9ebb8caa2da3c1e99feb5d7d751fd0b9a08c29a472
-      - PENPOT_GITLAB_CLIENT_SECRET=gloas-dd992afdfbb84de8c48cd7248c0b2f9f40fd718e8c78f0b0e5c3284a6017aaf8
+      - PENPOT_GITLAB_CLIENT_ID=<GITLAB_CLIENT_ID>
+      - PENPOT_GITLAB_CLIENT_SECRET=<GITLAB_CLIENT_SECRET>
       ## Penpot SECRET KEY. It serves as a master key from which other keys for subsystems
       ## (eg http sessions, or invitations) are derived.
       ##
@@ -212,8 +212,8 @@ services:
       - PENPOT_SMTP_DEFAULT_REPLY_TO=Penpot <ht518@naver.com>
       - PENPOT_SMTP_HOST=mail.gluesys.com
       - PENPOT_SMTP_PORT=25
-      - PENPOT_SMTP_USERNAME=ht518@gluesys.com
-      - PENPOT_SMTP_PASSWORD=gluesys!!1
+      - PENPOT_SMTP_USERNAME=<SMTP_USERNAME>
+      - PENPOT_SMTP_PASSWORD=<SMTP_PASSWORD>
       - PENPOT_SMTP_TLS=false
       - PENPOT_SMTP_SSL=false
 
