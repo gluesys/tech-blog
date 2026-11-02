@@ -1,6 +1,7 @@
 /* hero art: the left ~49% of hero-wide.webp (and top ~21% of hero-mobile.webp) is plain --ci-deep (#163CCF, measured exact), so no gradient is needed */
 .hero { background: var(--ci-deep) url(/brand/hero-wide.webp) no-repeat calc(100% + max(0px, 610px - 50vw)) center / auto 100%; color: #fff; }
-/* the art is ~2.84x the hero height wide (~1195px at 420px); its plain left 49% (~583px) must clear the search box (right edge ~W/2-36), so below 1220px it is pushed right and cropped */
+/* the art is ~2.84x the hero height wide (~1195px at 420px); its plain left 49% (~583px) must clear the search box (right edge ~W/2-36), so below 1220px it is pushed right and cropped.
+   The 610px shift, the 1220px/1024px breakpoints and the phone padding factor (0.66 = 0.79 plain-free share of the art height x 0.833 aspect) all derive from the current art's plain-area sizes and must be recomputed if the art is replaced. */
 .hero-in { max-width: var(--content); margin: 0 auto; padding: 72px 24px 80px; }
 .hero h1 { margin: 0; max-width: 15em; font-size: 40px; line-height: 1.38; font-weight: 700; letter-spacing: -.02em; }
 .hero p { margin: 14px 0 30px; font-size: 17px; opacity: .86; max-width: 30em; }
@@ -53,8 +54,9 @@ aside .tags { gap: 8px; margin-top: 14px; }
 }
 
 @media (max-width: 760px) {
-  .hero { background: var(--ci-deep) url(/brand/hero-mobile.webp) no-repeat center bottom / 100% auto; }
-  .hero-in { padding: 40px 16px 300px; }
+  .hero { background: var(--ci-deep) url(/brand/hero-mobile.webp) no-repeat center bottom / min(100%, 560px) auto; }
+  /* reserve the art's non-plain height (0.658 x its width) plus a 16px gap, so objects never rise under the text */
+  .hero-in { padding: 40px 16px calc(min(100vw, 560px) * 0.658 + 16px); }
   .hero h1 { font-size: 28px; }
   .hero p { font-size: 15.5px; margin-bottom: 22px; }
   .hero-search { height: 50px; }
