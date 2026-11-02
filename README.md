@@ -197,7 +197,7 @@ tools/install_tools.sh .bin     # downloads pinned Hugo and Pagefind into .bin/,
 .bin/hugo server                # live preview at http://localhost:1313/
 ```
 
-Versions and checksums live in `tools/versions.env`. Search needs the index, so for the search page run `.bin/hugo --minify && .bin/pagefind --site build` and serve `build/`.
+Versions and checksums live in `tools/versions.env`. Search needs the index, so for the search page run `.bin/hugo --minify --environment development && .bin/pagefind --site build` and serve `build/`. A plain `hugo` build is the production build and emits the Google Analytics snippet, so use `--environment development` for local builds to keep test visits out of the production property.
 
 ## Writing a post
 
@@ -217,14 +217,22 @@ series: "NVMe"        # optional, see below
 ---
 ```
 
-- Do not set `url`, `slug` or `date`. The date and the URL slug come from the file name: `content/blog/2026-12-01-new-post.md` is built as `/blog/2026/12/01/new-post.html` (a plain file, like Jekyll). If `date` is set, Hugo keeps the date prefix in the slug and `tools/verify_site.py` fails ("slug keeps the date prefix"); `slug` or `url` can override the slug when needed. Converted posts keep their explicit `url` and `date`.
+- Normally do not set `url`, `slug` or `date`. The date and the URL slug come from the file name: `content/blog/2026-12-01-new-post.md` is built as `/blog/2026/12/01/new-post.html` (a plain file, like Jekyll). If `date` is set, Hugo keeps the date prefix in the slug and `tools/verify_site.py` fails ("slug keeps the date prefix"); `slug` or `url` can override the slug when needed. Converted posts keep their explicit `url` and `date`.
 - Use canonical tags from `data/tag_aliases.yaml`. `python3 tools/check_tags.py content/blog` warns about unknown or non-canonical tags.
 - A series is defined by `data/series.yaml`: add the post slug (file name without the date prefix) to the series list in reading order. Membership and order come from that file; `series_order` is not required. Also set `series: "<series name>"` in front matter so the post shows its series box.
 - Images go under `static/assets/` and are referenced as `/assets/...`.
 
 ## CI (`.github/workflows/pages.yml`)
 
-On pull requests and pushes to `master` the workflow installs the pinned tools, runs the Python tests (`unittest`) and Deno tests for the TypeScript, builds with `hugo --minify --environment production`, builds the Pagefind index, then runs `verify_migration.py`, `verify_site.py` and `check_tags.py`. `verify_search.py` is a non-blocking report. Pull requests upload `build/` as an artifact; pushes to `master` deploy to GitHub Pages.
+On pull requests and pushes to `master` the workflow installs the pinned tools, runs the Python tests (`unittest`) and Deno tests for the TypeScript, builds with `hugo --minify --environment production`, builds the Pagefind index, then runs `verify_migration.py`, `verify_site.py` and `check_tags.py`. `verify_search.py` is a non-blocking report. `verify_migration.py` and the snapshot-based part of `verify_site.py` run only while `migration/snapshot` exists. Pull requests upload `build/` as an artifact; pushes to `master` and manual `workflow_dispatch` runs on `master` deploy to GitHub Pages.
+
+### Editing a migrated post
+
+Until the cutover, `verify_migration.py` compares the body text and headings of every migrated post with the live-site snapshot in `migration/snapshot`, so a typo fix in a migrated post fails CI. Add a narrow entry with a reason to `migration/allowlist.yaml` (see the existing entries) instead of loosening the checker. New posts are not affected: the feed check only requires the 10 newest posts and unchanged links for the migrated items still in the feed.
+
+### After the cutover
+
+The snapshot and everything that depends on it are removed together (plan Task 16 step 6): delete `migration/snapshot/`, and the workflow then skips the "Verify migration" step and runs "Verify site (snapshot absent)" by itself (both are conditioned on `migration/snapshot/urls.txt`). Delete `tools/verify_migration.py`, its tests and the snapshot steps from `pages.yml` in the same change. The remaining checks (aliases, feed, post files, static files, tag map, links, images) do not need the snapshot.
 
 ## Converter and verifiers
 

@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,11 +39,18 @@ jobs:
       - name: Build search index
         run: .bin/pagefind --site build
 
+      # Snapshot checks: only while the live-site snapshot exists (removed after cutover, plan Task 16 step 6).
       - name: Verify migration
+        if: hashFiles('migration/snapshot/urls.txt') != ''
         run: python3 tools/verify_migration.py --build build --snapshot migration/snapshot --allow migration/allowlist.yaml
 
-      - name: Verify site
+      - name: Verify site (with snapshot)
+        if: hashFiles('migration/snapshot/urls.txt') != ''
         run: python3 tools/verify_site.py --build build --snapshot migration/snapshot --allow migration/site-allowlist.yaml
+
+      - name: Verify site (snapshot absent)
+        if: hashFiles('migration/snapshot/urls.txt') == ''
+        run: python3 tools/verify_site.py --build build --allow migration/site-allowlist.yaml
 
       - name: Check tags
         run: python3 tools/check_tags.py content/blog
@@ -60,15 +68,16 @@ jobs:
           retention-days: 7
 
       - name: Upload Pages artifact
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: build/
 
   deploy:
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       pages: write
       id-token: write
