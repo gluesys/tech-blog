@@ -352,7 +352,7 @@ Copy used in the mockups:
 
 - Headline: 소프트웨어로 스토리지를 만드는 개발자들의 기술 이야기
 - Sub: 파일 시스템, NVMe, 고가용성까지 글루시스 개발자가 직접 겪고 정리한 내용을 공유합니다.
-- Search placeholder: ZFS, Lustre, 스냅샷처럼 주제로 검색
+- Search placeholder: 파일시스템, CXL, NVMe처럼 주제로 검색
 - Careers: 글루시스는 파일 시스템과 스토리지 소프트웨어를 함께 만들 개발자를 찾고 있습니다. / 채용 공고 보기
 
 ### 8.6 Hero illustration

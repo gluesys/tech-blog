@@ -2,7 +2,7 @@
 // Pagefind is loaded lazily, on first use only.
 import { type Hit, type PagefindLike, searchMerged, shouldNavigate } from "./lib/search-core.ts";
 
-const PLACEHOLDER = "ZFS, Lustre, 스냅샷처럼 주제로 검색";
+const PLACEHOLDER = "파일시스템, CXL, NVMe처럼 주제로 검색";
 const MSG_EMPTY = "검색어를 입력하세요";
 const MSG_ERROR = "검색을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
 const noResults = (q: string) => `'${q}'에 대한 글을 찾지 못했습니다. 다른 낱말로 검색해 보세요.`;
