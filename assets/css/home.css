@@ -10,7 +10,7 @@
 .hero-search button { border: 0; background: #1775FD; color: #fff; font: 700 19px "Pretendard", system-ui, sans-serif; padding: 0 24px; }
 
 /* post list */
-.post { display: grid; grid-template-columns: minmax(0, 1fr) 176px; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+.post { display: grid; grid-template-columns: minmax(0, 1fr) 176px; align-items: center; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
 .post time { font-size: 14px; color: var(--ci-gray); font-variant-numeric: tabular-nums; }
 .post h3 { margin: 4px 0 8px; font-size: 21px; line-height: 1.45; letter-spacing: -.01em; }
 .post h3 a:hover { color: var(--link); }
