@@ -1,17 +1,18 @@
 # Author cards keyed by email (never rendered). `bio` and `avatar` are optional;
-# the owner fills them in later. Name is the most frequent spelling in front matter.
+# the owner fills them in later. One spelling per email (Korean names without a space),
+# so a post's front-matter spelling never changes the byline.
 "gc757489@gmail.com":
-  name: "권 진영"
+  name: "권진영"
 "hgichon@gmail.com":
-  name: "김 경표"
+  name: "김경표"
 "hspark0582@gluesys.com":
   name: "박현승"
 "ht518@gluesys.com":
   name: "이현태"
 "jhh9977@gluesys.com":
-  name: "정 현호"
+  name: "정현호"
 "jhkim@gluesys.com":
-  name: "김 재환"
+  name: "김재환"
 "jhpark@gluesys.com":
   name: "박주형"
 "jipak@gluesys.com":
@@ -19,16 +20,16 @@
 "jskim@gluesys.com":
   name: "김진서"
 "khko@gluesys.com":
-  name: "고 경훈"
+  name: "고경훈"
 "lhj4125@gluesys.com":
   name: "이헌제"
 "plumno1@gluesys.com":
-  name: "김 성은"
+  name: "김성은"
 "qsh700@gluesys.com":
   name: "권세훈"
 "shkim3220@gluesys.com":
   name: "김성환"
 "thkim@gluesys.com":
-  name: "김 태훈"
+  name: "김태훈"
 "tmlee@gluesys.com":
-  name: "이 태민"
+  name: "이태민"
