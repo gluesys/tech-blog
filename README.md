@@ -220,7 +220,7 @@ series: "NVMe"        # optional, see below
 - Normally do not set `url`, `slug` or `date`. The date and the URL slug come from the file name: `content/blog/2026-12-01-new-post.md` is built as `/blog/2026/12/01/new-post.html` (a plain file, like Jekyll). If `date` is set, Hugo keeps the date prefix in the slug and `tools/verify_site.py` fails ("slug keeps the date prefix"); `slug` or `url` can override the slug when needed. Converted posts keep their explicit `url` and `date`.
 - Use canonical tags from `data/tag_aliases.yaml`. `python3 tools/check_tags.py content/blog` warns about unknown or non-canonical tags.
 - A series is defined by `data/series.yaml`: add the post slug (file name without the date prefix) to the series list in reading order. Membership and order come from that file; `series_order` is not required. Also set `series: "<series name>"` in front matter so the post shows its series box.
-- Images go under `static/assets/` and are referenced as `/assets/...`.
+- Images go under `static/assets/` and are referenced as `/assets/...`. The body column is 720px wide; an image whose natural width is 1080px or more spreads over the sidebar column (up to about 1016px) on wide screens. For diagrams with text, export at 1440px wide with text at least 28px tall so it stays readable (about 14px on screen).
 - Code blocks can show line numbers: ```` ```bash {linenos=true} ```` numbers from 1, and ```` ```bash {linenos=true linenostart=120} ```` starts at 120. Numbers are off by default, and the copy button never copies them.
 - Do not add a hand-written table of contents: every post gets one from its h2/h3 headings (the sidebar on wide screens, a collapsed 목차 block on phones).
 

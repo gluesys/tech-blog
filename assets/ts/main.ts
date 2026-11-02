@@ -4,6 +4,7 @@ import { initShare } from "./share.ts";
 import { initSearch } from "./search.ts";
 import { initTheme } from "./theme.ts";
 import { initGiscus } from "./giscus.ts";
+import { initWideImages } from "./wide-images.ts";
 
 // Mobile menu: the button toggles the .open class on the header bar and aria-expanded.
 const menuBtn = document.querySelector<HTMLButtonElement>(".menu-btn");
@@ -34,3 +35,4 @@ initShare();
 initSearch();
 initTheme();
 initGiscus();
+initWideImages();

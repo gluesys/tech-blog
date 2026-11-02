@@ -61,6 +61,16 @@
 .prose p > img, .prose center img, .prose figure img, .prose > img { border: 1px solid var(--line); }
 .prose hr { width: 64px; height: 3px; margin: 48px auto; border: 0; border-radius: 2px; background: var(--line); }
 
+/* Wide images (marked by wide-images.ts) spread over the sidebar column (240px + 56px gap)
+   up to their natural width; the TOC fades while one is on screen. Phones keep the column. */
+@media (min-width: 761px) {
+  .prose .wide { position: relative; z-index: 1; width: min(calc(100% + 296px), var(--nw)); max-width: none; }
+  .prose .wide img { max-width: 100%; }
+  .prose center.wide, .prose p.wide, .prose figure.wide { margin-left: 0; margin-right: 0; }
+  .toc { transition: opacity .2s; }
+  .toc.toc-yield { opacity: 0; pointer-events: none; }
+}
+
 /* closing blocks */
 .after { margin-top: 40px; }
 .after .tags { margin-top: 28px; }
