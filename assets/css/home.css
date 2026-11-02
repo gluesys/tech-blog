@@ -74,7 +74,13 @@ aside .tags { gap: 8px; margin-top: 14px; }
 /* about page: intro, one-line facts, author list */
 .about > p a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
 .about .about-facts { color: var(--ci-gray); font-size: 15px; margin: 4px 0 0; }
-.about > .sec-title { margin: 48px 0 8px; font-size: 20px; }
+.about .authors-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 48px 0 8px; }
+.about .authors-head .sec-title { margin: 0; font-size: 20px; }
+.about .sort { display: flex; flex-wrap: wrap; gap: 6px; }
+.about .sort[hidden] { display: none; }
+.about .sort button { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 5px 12px; font: 500 13.5px "Pretendard", system-ui, sans-serif; cursor: pointer; }
+.about .sort button:hover { border-color: var(--link); color: var(--link); }
+.about .sort button[aria-pressed="true"] { background: var(--ci-deep); border-color: var(--ci-deep); color: #fff; }
 .authors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
 .author { display: flex; gap: 14px; padding: 22px 0; border-bottom: 1px solid var(--line); }
 .author .avatar { width: 44px; height: 44px; font-size: 16px; }

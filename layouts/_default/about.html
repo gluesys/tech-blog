@@ -2,7 +2,7 @@
 {{- /* About page: intro text from content/about.md, then the authors. Authors come from
        the post front matter (`author: "이름 (email)"`, several separated by ", ") joined
        with data/authors.yaml by email; emails are never printed. `former: true` in
-       authors.yaml marks people who have left. */ -}}
+       authors.yaml marks people who have left (a 전 구성원 label; they are not listed apart). */ -}}
 {{- $posts := (where site.RegularPages "Section" "blog").ByDate.Reverse -}}
 {{- $by := dict -}}
 {{- range $p := $posts -}}
@@ -11,27 +11,35 @@
     {{- $by = merge $by (dict $e ((index $by $e) | default slice | append $p)) -}}
   {{- end -}}
 {{- end -}}
-{{- $current := slice -}}{{- $former := slice -}}
+{{- $authors := slice -}}
 {{- range $email, $info := hugo.Data.authors -}}
   {{- with index $by $email -}}
     {{- $tc := dict -}}
     {{- range . }}{{ range .Params.tags }}{{ $tc = merge $tc (dict . (add (index $tc . | default 0) 1)) }}{{ end }}{{ end -}}
     {{- $tags := slice -}}
     {{- range $t, $n := $tc }}{{ $tags = $tags | append (dict "t" $t "n" $n) }}{{ end -}}
-    {{- $a := dict "name" $info.name "page" (partial "author-page.html" $email) "avatar" $info.avatar "posts" . "count" (len .) "first" ((index (last 1 .) 0).Date.Year) "last" ((index . 0).Date.Year) "tags" (first 3 (sort $tags "n" "desc")) -}}
-    {{- if $info.former }}{{ $former = $former | append $a }}{{ else }}{{ $current = $current | append $a }}{{ end -}}
+    {{- $a := dict "name" $info.name "page" (partial "author-page.html" $email) "avatar" $info.avatar "posts" . "count" (len .) "first" ((index (last 1 .) 0).Date.Year) "last" ((index . 0).Date.Year) "firstDate" ((index (last 1 .) 0).Date.Format "2006-01-02") "lastDate" ((index . 0).Date.Format "2006-01-02") "former" $info.former "tags" (first 3 (sort $tags "n" "desc")) -}}
+    {{- $authors = $authors | append $a -}}
   {{- end -}}
 {{- end -}}
 {{- $first := (index (last 1 $posts) 0).Date.Year -}}
 <div class="page-head"><h1 class="sec-title"><span class="hx"></span>{{ .Title }}</h1></div>
 <div class="page-body page-text about">
   {{ .Content }}
-  <p class="about-facts">{{ $first }}년부터 {{ add (len $current) (len $former) }}명이 글 {{ len $posts }}편을 썼습니다.</p>
+  <p class="about-facts">{{ $first }}년부터 {{ len $authors }}명이 글 {{ len $posts }}편을 썼습니다.</p>
 
-  <h2 class="sec-title"><span class="hx"></span>쓴 사람들</h2>
+  <div class="authors-head">
+    <h2 class="sec-title"><span class="hx"></span>쓴 사람들</h2>
+    {{- /* Sort buttons appear only with JS (about-sort.ts); the server order is 가나다순. */}}
+    <div class="sort" role="group" aria-label="정렬" hidden>
+      <button type="button" data-sort="name" aria-pressed="true">가나다순</button>
+      <button type="button" data-sort="last" aria-pressed="false">최근 글 순</button>
+      <button type="button" data-sort="first" aria-pressed="false">처음 쓴 순</button>
+      <button type="button" data-sort="count" aria-pressed="false">글 많은 순</button>
+    </div>
+  </div>
   <ul class="authors">
-    {{- range sort (sort $current "name") "count" "desc" }}{{ partial "about-author.html" . }}{{ end }}
-    {{- range sort (sort $former "name") "count" "desc" }}{{ partial "about-author.html" (merge . (dict "former" true)) }}{{ end }}
+    {{- range sort $authors "name" }}{{ partial "about-author.html" . }}{{ end }}
   </ul>
 </div>
 {{ end }}

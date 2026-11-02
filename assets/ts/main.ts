@@ -6,6 +6,7 @@ import { initTheme } from "./theme.ts";
 import { initGiscus } from "./giscus.ts";
 import { initWideImages } from "./wide-images.ts";
 import { initImageZoom } from "./image-zoom.ts";
+import { initAboutSort } from "./about-sort.ts";
 
 // Mobile menu: the button toggles the .open class on the header bar and aria-expanded.
 const menuBtn = document.querySelector<HTMLButtonElement>(".menu-btn");
@@ -38,3 +39,4 @@ initTheme();
 initGiscus();
 initWideImages();
 initImageZoom();
+initAboutSort();
