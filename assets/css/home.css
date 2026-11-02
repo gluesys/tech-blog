@@ -7,9 +7,7 @@
 .hero p { margin: 14px 0 30px; font-size: 17px; opacity: .86; max-width: 30em; }
 .hero-search { display: flex; max-width: 520px; height: 54px; background: #fff; border-radius: 10px; overflow: hidden; }
 .hero-search input { flex: 1; min-width: 0; border: 0; background: #fff; padding: 0 18px; font: 400 16px "Pretendard", system-ui, sans-serif; color: var(--ink-fixed); }
-.hero-search input:focus-visible { outline-offset: -3px; }
 .hero-search button { border: 0; background: #1775FD; color: #fff; font: 700 19px "Pretendard", system-ui, sans-serif; padding: 0 24px; }
-.hero-search button:focus-visible { outline-color: var(--ci-cyan); outline-offset: -3px; }
 
 /* post list */
 .post { display: grid; grid-template-columns: minmax(0, 1fr) 176px; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
