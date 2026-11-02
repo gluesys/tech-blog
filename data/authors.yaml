@@ -1,6 +1,8 @@
-# Author cards keyed by email (never rendered). `bio` and `avatar` are optional;
-# the owner fills them in later. One spelling per email (Korean names without a space),
-# so a post's front-matter spelling never changes the byline.
+# Author cards keyed by email (never rendered). Optional fields: `role` (one line
+# under the name on the about page), `avatar` (image path), and `former: true` for
+# people who have left (shown as 전 구성원, listed after current members).
+# One name spelling per email (Korean names without a space), so a post's
+# front-matter spelling never changes the byline.
 "gc757489@gmail.com":
   name: "권진영"
 "hgichon@gmail.com":
