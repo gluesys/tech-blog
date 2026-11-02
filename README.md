@@ -195,6 +195,7 @@ The site is built with Hugo (extended) and searched with Pagefind. No JavaScript
 ```
 tools/install_tools.sh .bin     # downloads pinned Hugo and Pagefind into .bin/, verifies SHA-256
 .bin/hugo server                # live preview at http://localhost:1313/
+node --test assets/ts/tests/*_test.ts   # TypeScript tests (Node 22.18+ runs .ts directly)
 ```
 
 Versions and checksums live in `tools/versions.env`. Search needs the index, so for the search page run `.bin/hugo --minify --environment development && .bin/pagefind --site build` and serve `build/`. A plain `hugo` build is the production build and emits the Google Analytics snippet, so use `--environment development` for local builds to keep test visits out of the production property.
@@ -226,7 +227,7 @@ series: "NVMe"        # optional, see below
 
 ## CI (`.github/workflows/pages.yml`)
 
-On pull requests and pushes to `master` the workflow installs the pinned tools, runs the Python tests (`unittest`) and Deno tests for the TypeScript, builds with `hugo --minify --environment production`, builds the Pagefind index, then runs `verify_migration.py`, `verify_site.py` and `check_tags.py`. `verify_search.py` is a non-blocking report. `verify_migration.py` and the snapshot-based part of `verify_site.py` run only while `migration/snapshot` exists. Pull requests upload `build/` as an artifact; pushes to `master` and manual `workflow_dispatch` runs on `master` deploy to GitHub Pages.
+On pull requests and pushes to `master` the workflow installs the pinned tools, runs the Python tests (`unittest`) and the TypeScript tests (`node --test`, Node 26 runs `.ts` directly; no npm packages), builds with `hugo --minify --environment production`, builds the Pagefind index, then runs `verify_migration.py`, `verify_site.py` and `check_tags.py`. `verify_search.py` is a non-blocking report. `verify_migration.py` and the snapshot-based part of `verify_site.py` run only while `migration/snapshot` exists. Pull requests upload `build/` as an artifact; pushes to `master` and manual `workflow_dispatch` runs on `master` deploy to GitHub Pages.
 
 ### Editing a migrated post
 

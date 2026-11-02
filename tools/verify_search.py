@@ -5,7 +5,7 @@
         [--out migration/search-results.md]
 
 Each line of the cases file is `query<TAB>expected url path`. A case passes when
-the expected path is among the top 5 results. The queries run through `deno run`
+the expected path is among the top 5 results. The queries run through `node`
 of tools/verify_search.ts, which imports build/pagefind/pagefind.js and the same
 variant-merging code the site UI uses. The tool reports only: it exits 0 even
 when cases fail (spec 9.1); failures go to the site owner.
@@ -47,10 +47,10 @@ def render_table(rows):
 
 
 def run_queries(build, queries):
-    cmd = ["deno", "run", "-A", str(ROOT / "tools" / "verify_search.ts"), str(build), *queries]
+    cmd = ["node", str(ROOT / "tools" / "verify_search.ts"), str(build), *queries]
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if proc.returncode != 0:
-        raise RuntimeError(proc.stderr.strip() or f"deno exited {proc.returncode}")
+        raise RuntimeError(proc.stderr.strip() or f"node exited {proc.returncode}")
     return {d["query"]: d for d in map(json.loads, proc.stdout.splitlines())}
 
 

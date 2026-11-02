@@ -1,3 +1,4 @@
+import { test } from "node:test";
 import { giscusAttributes, giscusEnabled, giscusThemeMessage } from "../lib/giscus-core.ts";
 
 function eq(actual: unknown, expected: unknown) {
@@ -7,18 +8,18 @@ function eq(actual: unknown, expected: unknown) {
 
 const full = { repo: "gluesys/tech-blog", repoId: "R_x", category: "Comments", categoryId: "DIC_x", mapping: "pathname", lang: "ko" };
 
-Deno.test("disabled when ids are empty or missing", () => {
+test("disabled when ids are empty or missing", () => {
   eq(giscusEnabled(null), false);
   eq(giscusEnabled({ ...full, repoId: "" }), false);
   eq(giscusEnabled({ ...full, categoryId: "  " }), false);
   eq(giscusEnabled({ ...full, repo: "" }), false);
 });
 
-Deno.test("enabled when repo and both ids are set", () => {
+test("enabled when repo and both ids are set", () => {
   eq(giscusEnabled(full), true);
 });
 
-Deno.test("attributes match the agreed values", () => {
+test("attributes match the agreed values", () => {
   const a = giscusAttributes(full, "dark");
   eq(a, {
     "src": "https://giscus.app/client.js",
@@ -38,11 +39,11 @@ Deno.test("attributes match the agreed values", () => {
   });
 });
 
-Deno.test("mapping and lang default", () => {
+test("mapping and lang default", () => {
   const a = giscusAttributes({ ...full, mapping: "", lang: "" }, "light");
   eq([a["data-mapping"], a["data-lang"], a["data-theme"]], ["pathname", "ko", "light"]);
 });
 
-Deno.test("theme message shape", () => {
+test("theme message shape", () => {
   eq(giscusThemeMessage("dark"), { giscus: { setConfig: { theme: "dark" } } });
 });

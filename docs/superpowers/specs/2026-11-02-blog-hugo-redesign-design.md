@@ -75,7 +75,7 @@ Anti-goals (would make this a failure even if it builds)
   repository. All third-party GitHub Actions are pinned by commit SHA.
 - **Front-end code:** plain CSS and TypeScript. TypeScript is bundled with
   Hugo's built-in `js.Build` (esbuild). No runtime libraries. Type checking,
-  if wanted, may use `deno check` (single binary); it is optional.
+  is tested with Node's built-in test runner (`node --test`, type stripping; no npm packages). Owner decision 2026-11-02: no Deno.
 - **Helper scripts** (conversion and verification) are Python 3 using only
   the standard library.
 - **Approvals:** local commits on the migration branch are free (small,
