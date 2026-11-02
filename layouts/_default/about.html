@@ -18,7 +18,7 @@
     {{- range . }}{{ range .Params.tags }}{{ $tc = merge $tc (dict . (add (index $tc . | default 0) 1)) }}{{ end }}{{ end -}}
     {{- $tags := slice -}}
     {{- range $t, $n := $tc }}{{ $tags = $tags | append (dict "t" $t "n" $n) }}{{ end -}}
-    {{- $a := dict "name" $info.name "role" $info.role "avatar" $info.avatar "posts" . "count" (len .) "first" ((index (last 1 .) 0).Date.Year) "last" ((index . 0).Date.Year) "tags" (first 3 (sort $tags "n" "desc")) -}}
+    {{- $a := dict "name" $info.name "page" (partial "author-page.html" $email) "avatar" $info.avatar "posts" . "count" (len .) "first" ((index (last 1 .) 0).Date.Year) "last" ((index . 0).Date.Year) "tags" (first 3 (sort $tags "n" "desc")) -}}
     {{- if $info.former }}{{ $former = $former | append $a }}{{ else }}{{ $current = $current | append $a }}{{ end -}}
   {{- end -}}
 {{- end -}}

@@ -81,7 +81,16 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .author-body { min-width: 0; }
 .author h3 { margin: 0; font-size: 17px; line-height: 1.4; }
 .author .former { display: inline-block; margin-left: 6px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 4px; color: var(--ci-gray); font-size: 12px; font-weight: 500; vertical-align: 2px; }
-.author .role { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); }
+.author h3 a:hover { color: var(--link); }
+.author .bio p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.author-head { display: flex; align-items: center; gap: 16px; }
+.author-head .avatar { width: 56px; height: 56px; font-size: 20px; }
+.author-head .former { font-size: 13px; font-weight: 500; color: var(--ci-gray); border: 1px solid var(--line); border-radius: 4px; padding: 2px 7px; }
+.author-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.author-list li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15.5px; line-height: 1.5; }
+.author-list a:hover { color: var(--link); }
+.author-list time { color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
+.byline .who b a:hover { color: var(--link); }
 .author-meta { margin: 4px 0 10px; font-size: 14px; color: var(--ci-gray); font-variant-numeric: tabular-nums; }
 .author-meta span { margin-left: 8px; }
 .author-posts { list-style: none; margin: 10px 0 0; padding: 0; font-size: 14.5px; line-height: 1.5; }
