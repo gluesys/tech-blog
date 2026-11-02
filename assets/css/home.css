@@ -1,5 +1,6 @@
-/* hero (interim art from the approved mockup; final art arrives with Task 14) */
-.hero { background: linear-gradient(90deg, var(--ci-deep) 0%, var(--ci-deep) 42%, rgba(22,60,207,.55) 58%, rgba(22,60,207,0) 72%), url(/brand/hero_wide.png) no-repeat right center / auto 100%, var(--ci-deep); color: #fff; }
+/* hero art: the left ~49% of hero-wide.webp (and top ~21% of hero-mobile.webp) is plain --ci-deep (#163CCF, measured exact), so no gradient is needed */
+.hero { background: var(--ci-deep) url(/brand/hero-wide.webp) no-repeat calc(100% + max(0px, 610px - 50vw)) center / auto 100%; color: #fff; }
+/* the art is ~2.84x the hero height wide (~1195px at 420px); its plain left 49% (~583px) must clear the search box (right edge ~W/2-36), so below 1220px it is pushed right and cropped */
 .hero-in { max-width: var(--content); margin: 0 auto; padding: 72px 24px 80px; }
 .hero h1 { margin: 0; max-width: 15em; font-size: 40px; line-height: 1.38; font-weight: 700; letter-spacing: -.02em; }
 .hero p { margin: 14px 0 30px; font-size: 17px; opacity: .86; max-width: 30em; }
@@ -45,8 +46,14 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .series-group li a:hover { color: var(--ci-bright); }
 .series-group li time { margin-left: auto; color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
 
+@media (min-width: 761px) and (max-width: 1023px) {
+  /* tablet: not enough room beside the text, so the portrait art sits below it */
+  .hero { background-image: url(/brand/hero-mobile.webp); background-position: center bottom; background-size: 560px auto; }
+  .hero-in { padding-bottom: 400px; }
+}
+
 @media (max-width: 760px) {
-  .hero { background: linear-gradient(180deg, var(--ci-deep) 0%, var(--ci-deep) 48%, rgba(22,60,207,0) 72%), url(/brand/hero_mobile.png) no-repeat center bottom / 100% auto, var(--ci-deep); }
+  .hero { background: var(--ci-deep) url(/brand/hero-mobile.webp) no-repeat center bottom / 100% auto; }
   .hero-in { padding: 40px 16px 300px; }
   .hero h1 { font-size: 28px; }
   .hero p { font-size: 15.5px; margin-bottom: 22px; }
