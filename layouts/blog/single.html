@@ -18,7 +18,8 @@
     {{- if ge (len (findRE `<a ` .TableOfContents)) 2 }}
     <details class="toc-m" data-pagefind-ignore><summary>목차</summary>{{ replace .TableOfContents ` id="TableOfContents"` "" | safeHTML }}</details>
     {{- end }}
-    <div class="prose" data-pagefind-body>{{ .Content }}</div>
+    {{- /* Jekyll-era posts use empty <p>&nbsp;</p> as spacers; drop them so spacing comes from the stylesheet. */}}
+    <div class="prose" data-pagefind-body>{{ .Content | replaceRE `<p>(?:\s|&nbsp;|&#160;|\x{00a0})*</p>\s*` "" | safeHTML }}</div>
     <div class="after" data-pagefind-ignore>
       {{ partial "series-box.html" . }}
       <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>

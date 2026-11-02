@@ -28,7 +28,7 @@
 .prose center { display: block; text-align: center; color: var(--ci-gray); font-size: 14.5px; line-height: 1.6; margin: 10px 0 28px; }
 .prose center img { display: block; margin: 0 auto 10px; }
 .prose blockquote { margin: 24px 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--ci-bright); color: var(--ink-2); }
-.prose blockquote p:last-child { margin-bottom: 0; }
+.prose blockquote > :last-child { margin-bottom: 0; }
 .prose :not(pre) > code { font: .88em ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; background: var(--soft); border-radius: 4px; padding: .12em .4em; word-break: break-word; }
 .prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 24px 0; font-size: 15.5px; line-height: 1.6; }
 .prose th, .prose td { border: 1px solid var(--line); padding: 8px 12px; vertical-align: top; }
@@ -37,6 +37,29 @@
 .prose .footnotes { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; color: var(--ink-2); }
 .prose .footnotes ol { padding-left: 1.4em; }
 .prose sup a { text-decoration: none; }
+
+/* Article presentation: lead paragraph, marked section headings, CI list markers,
+   callout quotes, open tables, framed images. Overrides the plain defaults above. */
+.prose > p:first-child { font-size: 18.5px; line-height: 1.8; color: var(--ink); }
+.prose h2 { position: relative; margin-top: 64px; padding-top: 20px; }
+.prose h2::before { content: ""; position: absolute; top: 0; left: 0; width: 28px; height: 4px; border-radius: 2px; background: var(--ci-bright); }
+.prose > h2:first-child { margin-top: 0; }
+.prose h3 { color: var(--link); }
+.prose ul { list-style: none; padding-left: 1.4em; }
+.prose ul > li { position: relative; }
+.prose ul > li::before { content: ""; position: absolute; left: -1.1em; top: .68em; width: 7px; height: 8px; background: var(--ci-bright); clip-path: var(--hex-pt); }
+.prose ul ul > li::before { background: var(--ci-gray); }
+.prose ol > li::marker { color: var(--link); font-weight: 600; font-variant-numeric: tabular-nums; }
+.prose blockquote { padding: 14px 18px; border-left: 4px solid var(--ci-bright); border-radius: 0 8px 8px 0; background: var(--soft); color: var(--ink); }
+.prose table { width: max-content; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 8px; }
+.prose th, .prose td { border: 0; border-bottom: 1px solid var(--line); padding: 10px 14px; }
+.prose tr:last-child > td { border-bottom: 0; }
+.prose th { font-weight: 600; }
+.prose details { margin: 0 0 20px; }
+.prose summary { cursor: pointer; font-weight: 600; }
+.prose img { border-radius: 6px; }
+.prose p > img, .prose center img, .prose figure img, .prose > img { border: 1px solid var(--line); }
+.prose hr { width: 64px; height: 3px; margin: 48px auto; border: 0; border-radius: 2px; background: var(--line); }
 
 /* closing blocks */
 .after { margin-top: 40px; }
@@ -104,7 +127,8 @@
   .toc { display: none; }
   .toc-m { display: block; }
   .share-m { display: flex; }
-  .prose h2 { font-size: 23px; margin-top: 40px; }
+  .prose h2 { font-size: 23px; margin-top: 48px; }
+  .prose > p:first-child { font-size: 17.5px; }
   .prose h3 { font-size: 19px; }
   .pn { grid-template-columns: 1fr; }
   .pn a[rel="next"] { grid-column: auto; }
