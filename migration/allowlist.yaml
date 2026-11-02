@@ -9,7 +9,7 @@
 
 - url: "/blog/2019/12/02/storage_1_intro.html"
   check: body_text
-  reason: "kramdown labels the second backlink of a twice-referenced footnote as an arrow plus a superscript 2; Goldmark renders a plain second arrow. Only that one '2' differs."
+  reason: "kramdown labels the second backlink of a twice-referenced footnote as an arrow plus a superscript 2; Goldmark renders a plain second arrow, so that one '2' differs. The hand-written '목차' list at the top was also removed (owner decision 2026-11-02): the page TOC (sidebar, or a collapsed block on phones) replaces it."
 
 - url: "/blog/2022/07/22/lustre_GPU_Direct_Storage.html"
   check: footnotes
@@ -42,3 +42,23 @@
 - url: "/blog/2024/07/31/penpot.html"
   check: body_text
   reason: "Same live list misrender: live shows literal '- ', backtick fences and image syntax as text and swallowed '<client-id>'-style placeholders as HTML tags; Goldmark renders proper list items, code blocks and images."
+
+- url: "/blog/2019/12/02/storage_1_intro.html"
+  check: heading_ids
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2025/11/28/Lustre_Changelog_DR.html"
+  check: heading_ids
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2026/06/24/OpenZFS-PR18611.html"
+  check: heading_ids
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2025/11/28/Lustre_Changelog_DR.html"
+  check: body_text
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2026/06/24/OpenZFS-PR18611.html"
+  check: body_text
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."

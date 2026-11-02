@@ -64,6 +64,15 @@
 .cta p { margin: 0; font-size: 17px; line-height: 1.6; }
 .cta a { margin-left: auto; background: #fff; color: var(--ci-deep); font-weight: 600; padding: 11px 18px; border-radius: 8px; white-space: nowrap; }
 
+/* collapsed TOC for phones (the sidebar TOC is hidden there) */
+.toc-m { display: none; margin: 0 0 28px; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); font-size: 15px; }
+.toc-m summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+.toc-m nav { padding: 0 16px 12px; }
+.toc-m ul { list-style: none; margin: 0; padding: 0; }
+.toc-m ul ul { padding-left: 14px; }
+.toc-m li a { display: block; padding: 6px 0; color: var(--toc-ink); line-height: 1.5; }
+.toc-m li a:hover { color: var(--link); }
+
 /* sticky TOC and share */
 .toc { position: sticky; top: 24px; align-self: start; font-size: 14.5px; max-height: calc(100vh - 48px); overflow-y: auto; padding-left: 10px; margin-left: -10px; }
 .toc b { display: block; font-size: 15px; margin-bottom: 12px; }
@@ -93,6 +102,7 @@
   .article-head h1 { font-size: 28px; }
   .article { grid-template-columns: minmax(0, 1fr); padding-top: 28px; }
   .toc { display: none; }
+  .toc-m { display: block; }
   .share-m { display: flex; }
   .prose h2 { font-size: 23px; margin-top: 40px; }
   .prose h3 { font-size: 19px; }

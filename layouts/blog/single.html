@@ -14,6 +14,10 @@
       {{- with (.Params.main | default .Params.cover) }}<span data-pagefind-meta="image">{{ . }}</span>{{ end }}
       {{- range .Params.tags }}<span data-pagefind-filter="tag">{{ . }}</span>{{ end }}
     </div>
+    {{- /* Phones hide the sidebar TOC, so the same list opens from a collapsed block above the body. */}}
+    {{- if ge (len (findRE `<a ` .TableOfContents)) 2 }}
+    <details class="toc-m" data-pagefind-ignore><summary>목차</summary>{{ replace .TableOfContents ` id="TableOfContents"` "" | safeHTML }}</details>
+    {{- end }}
     <div class="prose" data-pagefind-body>{{ .Content }}</div>
     <div class="after" data-pagefind-ignore>
       {{ partial "series-box.html" . }}

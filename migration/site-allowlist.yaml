@@ -23,7 +23,3 @@
 - page: "/blog/2024/06/03/LVM-Plugin.html"
   href: "####%204.%20%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%9E%A5%EC%95%A0%20%EB%B3%B5%EA%B5%AC"
   reason: "Dead on live too: the author's table-of-contents link keeps the Markdown heading marks ('#### 4. ...'), so it never matched the heading id 4-메타데이터-장애-복구."
-
-- page: "/blog/2026/06/24/OpenZFS-PR18611.html"
-  href: "#%EC%84%B8-%EA%B0%80%EC%A7%80-%EC%9E%A0%EA%B8%88,-%ED%95%9C%EB%88%88%EC%97%90-%EB%B3%B4%EA%B8%B0"
-  reason: "Dead on live too: the author's table-of-contents link keeps a comma that the generated heading id (세-가지-잠금-한눈에-보기) does not have; the href is percent-encoded in the build, raw on live."
