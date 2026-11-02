@@ -79,8 +79,7 @@ term = ["html"]
 page = ["html"]
 
 [params]
-# Placeholder until the owner provides the real careers URL.
-careersURL = "https://gluesys.com/"
+careersURL = "https://gluesys.com/company/recruit/"
 description = "소프트웨어로 스토리지를 만드는 개발자들의 기술 이야기. 글루시스 기술 블로그 TECH-G"
 
 # giscus comments. The owner fills repoId and categoryId at cutover, after
