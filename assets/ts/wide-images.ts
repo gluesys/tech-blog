@@ -1,6 +1,6 @@
 // Wide images (natural width >= 1080px) are shrunk hard by the 720px body column,
 // so on screens with the sidebar they spread into the sidebar's space (CSS: .wide).
-// While a wide image is on screen the sticky TOC fades out instead of covering it.
+// The sticky TOC fades out only while a wide image actually overlaps it.
 const MIN_NATURAL = 1080;
 
 function widen(img: HTMLImageElement): HTMLElement | null {
@@ -28,12 +28,30 @@ export function initWideImages(): void {
   const toc = document.querySelector<HTMLElement>(".toc");
   if (!prose) return;
   const onScreen = new Set<Element>();
+  let frame = 0;
+  // The TOC keeps its box while faded (opacity), so its rect is valid either way.
+  const update = () => {
+    frame = 0;
+    if (!toc) return;
+    const t = toc.getBoundingClientRect();
+    let hit = false;
+    for (const el of onScreen) {
+      const r = el.getBoundingClientRect();
+      if (r.right > t.left && r.left < t.right && r.bottom > t.top && r.top < t.bottom) { hit = true; break; }
+    }
+    toc.classList.toggle("toc-yield", hit);
+  };
+  const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
   const io = toc
     ? new IntersectionObserver((entries) => {
       for (const e of entries) e.isIntersecting ? onScreen.add(e.target) : onScreen.delete(e.target);
-      toc.classList.toggle("toc-yield", onScreen.size > 0);
+      schedule();
     })
     : null;
+  if (toc) {
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+  }
   prose.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
     const apply = () => {
       const box = widen(img);
