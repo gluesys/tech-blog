@@ -66,7 +66,7 @@ aside .tags { gap: 8px; margin-top: 14px; }
   .page-head { padding: 32px 16px 0; }
   .page-head .sec-title { font-size: 24px; }
   .page-body { padding: 16px 16px 56px; }
-  .page-text { margin-left: 16px; padding: 0; }
+  .page-text { margin-left: 16px; margin-right: 16px; padding: 0; }
   .series-group li { flex-wrap: wrap; }
   .series-group li time { margin-left: calc(1.6em + 12px); width: 100%; }
 }
@@ -81,7 +81,10 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .about .sort button { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 5px 12px; font: 500 13.5px "Pretendard", system-ui, sans-serif; cursor: pointer; }
 .about .sort button:hover { border-color: var(--link); color: var(--link); }
 .about .sort button[aria-pressed="true"] { background: var(--ci-deep); border-color: var(--ci-deep); color: #fff; }
-.authors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+/* The intro keeps the 720px text column; the author list and its heading use the
+   full content width (the about page has no sidebar), 3 per row on wide screens. */
+.about .authors-head, .about .authors { width: min(calc(var(--content) - 48px), calc(100vw - 48px)); }
+.authors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0 32px; }
 .author { display: flex; gap: 14px; padding: 22px 0; border-bottom: 1px solid var(--line); }
 .author .avatar { width: 44px; height: 44px; font-size: 16px; }
 .author-body { min-width: 0; }
@@ -103,5 +106,6 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .author-posts li + li { margin-top: 4px; }
 .author-posts a:hover { color: var(--link); }
 @media (max-width: 760px) {
+  .about .authors-head, .about .authors { width: auto; }
   .authors { grid-template-columns: 1fr; }
 }
