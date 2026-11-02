@@ -25,6 +25,7 @@
   --ink-2: #B9C6D6;
   --ci-gray: #A3B3C6;
   --ci-bright: #6FA8FF;
+  --link: var(--ci-bright);
   --tag-ink: #D2DCE8;
   --tag-hover-bg: #243F63;
   --tag-hover-ink: #A9CBFF;
@@ -48,6 +49,7 @@
     --ink-2: #B9C6D6;
     --ci-gray: #A3B3C6;
     --ci-bright: #6FA8FF;
+    --link: var(--ci-bright);
     --tag-ink: #D2DCE8;
     --tag-hover-bg: #243F63;
     --tag-hover-ink: #A9CBFF;

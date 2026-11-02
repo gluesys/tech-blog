@@ -1,6 +1,10 @@
+/* Light-theme contrast (WCAG 2.x): --link #163CCF on #fff 8.13, on --soft #F4F6FB 7.52;
+   #1775FD on #fff is 4.20 so it is never used for normal-size text; white on #1775FD 4.20
+   passes only as large text (hero button, 19px/700, needs 3:1); white on --ci-deep buttons 8.13. */
 :root {
   --ci-deep: #163CCF;   /* hero and call-to-action background, avatar */
-  --ci-bright: #1775FD; /* links, buttons, current TOC item, hexagon markers */
+  --ci-bright: #1775FD; /* non-text accents only: hexagon markers, borders, hero button fill (4.20:1 on white) */
+  --link: var(--ci-deep); /* text accent: links, current TOC item, active nav (8.13:1 on white) */
   --ci-gray: #6A6E7F;   /* dates, secondary text */
   --ci-navy: #274B6B;   /* code block background */
   --ci-cyan: #00C3D2;   /* keyboard focus ring, code accents only */
@@ -15,7 +19,7 @@
   --tag-hover-ink: var(--ci-deep);
   --toc-ink: #555c70;
   --ink-fixed: #1C2233;     /* text on always-light surfaces; not themed */
-  --btn-bg: var(--ci-bright);
+  --btn-bg: var(--ci-deep);
   --scrim: rgba(28, 34, 51, .55);
   --shadow: rgba(28, 34, 51, .3);
   --mark: rgba(0, 195, 210, .22);

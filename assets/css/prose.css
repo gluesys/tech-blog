@@ -18,7 +18,7 @@
 .prose h4 { font-size: 18px; line-height: 1.5; margin: 28px 0 8px; scroll-margin-top: 24px; }
 .prose > :first-child { margin-top: 0; }
 .prose p { margin: 0 0 20px; }
-.prose a { color: var(--ci-bright); text-decoration: underline; text-underline-offset: 3px; }
+.prose a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
 .prose ul, .prose ol { margin: 0 0 20px; padding-left: 1.5em; }
 .prose li { margin: 4px 0; }
 .prose li > ul, .prose li > ol { margin: 4px 0 0; }
@@ -46,11 +46,11 @@
 .series-title .n, .series-box li .n { color: var(--ci-gray); font-size: 13.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .series-box ol { list-style: none; margin: 0; padding: 0; }
 .series-box li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.5; }
-.series-box li[aria-current] { color: var(--ci-bright); font-weight: 600; }
-.series-box a:hover { color: var(--ci-bright); }
+.series-box li[aria-current] { color: var(--link); font-weight: 600; }
+.series-box a:hover { color: var(--link); }
 .pn { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
 .pn a { border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
-.pn a:hover { border-color: var(--ci-bright); }
+.pn a:hover { border-color: var(--link); }
 .pn a span { display: block; font-size: 13.5px; color: var(--ci-gray); }
 .pn a b { font-weight: 600; font-size: 16px; line-height: 1.5; }
 .pn a[rel="next"] { text-align: right; grid-column: 2; }
@@ -58,7 +58,7 @@
 .related ul { list-style: none; margin: 0; padding: 0; }
 .related li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15.5px; line-height: 1.5; }
 .related li:last-child { border-bottom: 1px solid var(--line); }
-.related a:hover { color: var(--ci-bright); }
+.related a:hover { color: var(--link); }
 .related time { color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
 .cta { margin-top: 28px; background: var(--ci-deep); color: #fff; border-radius: 10px; padding: 26px 28px; display: flex; align-items: center; gap: 24px; }
 .cta p { margin: 0; font-size: 17px; line-height: 1.6; }
@@ -73,14 +73,14 @@
 .toc li { position: relative; margin: 0; padding: 0; line-height: 1.5; }
 .toc li > a { display: block; padding: 6px 0 6px 16px; color: var(--toc-ink); }
 .toc li > ul > li > a { font-size: 13.5px; }
-.toc a:hover { color: var(--ci-bright); }
-.toc li[aria-current] > a { color: var(--ci-bright); font-weight: 600; }
+.toc a:hover { color: var(--link); }
+.toc li[aria-current] > a { color: var(--link); font-weight: 600; }
 .toc li[aria-current]::before { content: ""; position: absolute; left: -8px; top: 12px; width: 12px; height: 14px; background: var(--ci-bright); clip-path: var(--hex-pt); }
 .toc ul ul li[aria-current]::before { left: -22px; }
 .share { margin-top: 28px; display: flex; gap: 8px; }
 .toc .toc-nav + .share { margin-top: 28px; }
 .share button { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 12px; font: 500 13.5px "Pretendard", system-ui, sans-serif; color: var(--ink); }
-.share button:hover { border-color: var(--ci-bright); color: var(--ci-bright); }
+.share button:hover { border-color: var(--link); color: var(--link); }
 .share-m { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {

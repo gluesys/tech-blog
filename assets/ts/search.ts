@@ -58,8 +58,8 @@ function render(view: View, q: string, found: { hits: Hit[]; total: number } | "
     ex.innerHTML = h.excerpt; // Pagefind escapes the text and only adds <mark>
     a.append(ex);
     if (h.tags.length) {
-      const t = el("span", "sr-tags");
-      h.tags.slice(0, 3).forEach((tag) => t.append(el("span", "sr-tag", tag)));
+      const t = el("span", "sr-tags tags");
+      h.tags.slice(0, 3).forEach((tag) => t.append(el("span", "tag", tag)));
       a.append(t);
     }
     li.append(a);

@@ -6,7 +6,7 @@ html.search-open { overflow: hidden; }
 .search-head { display: flex; gap: 8px; padding: 14px; border-bottom: 1px solid var(--line); }
 .search-input { flex: 1; min-width: 0; height: 46px; border: 1px solid var(--line); border-radius: 8px; padding: 0 14px; font: 400 16px "Pretendard", system-ui, sans-serif; color: var(--ink); background: var(--surface); }
 .search-close { flex: none; height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ci-gray); font: 500 14px "Pretendard", system-ui, sans-serif; }
-.search-close:hover { color: var(--ci-bright); }
+.search-close:hover { color: var(--link); }
 .search-panel .sr-body { overflow-y: auto; padding: 4px 14px 14px; }
 
 .sr-status { margin: 12px 0; font-size: 14px; color: var(--ci-gray); }
@@ -16,11 +16,11 @@ html.search-open { overflow: hidden; }
 .sr-link { display: block; padding: 12px; }
 .sr-date { display: block; font-size: 13px; color: var(--ci-gray); font-variant-numeric: tabular-nums; }
 .sr-title { display: block; margin: 2px 0 4px; font-size: 17px; font-weight: 600; line-height: 1.45; color: var(--ink); }
-.sr-link:hover .sr-title, .sr-item.active .sr-title { color: var(--ci-bright); }
+.sr-link:hover .sr-title, .sr-item.active .sr-title { color: var(--link); }
 .sr-excerpt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14.5px; line-height: 1.65; color: var(--ink-2); }
 .sr-excerpt mark { background: var(--mark); color: inherit; border-radius: 2px; }
-.sr-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.sr-tag { font-size: 12.5px; color: var(--ci-gray); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; }
+.sr-tags { margin-top: 8px; }
+.sr-item.active .tag { background: var(--surface); } /* chips would vanish on the --soft highlight */
 
 .page-search { display: flex; max-width: 520px; height: 50px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
 .page-search input { flex: 1; min-width: 0; border: 0; background: var(--surface); padding: 0 16px; font: 400 16px "Pretendard", system-ui, sans-serif; color: var(--ink); }
