@@ -1,23 +1,31 @@
 #!/usr/bin/env python3
 """Check that every old URL still works in the Hugo build (stdlib only).
 
-    python3 tools/verify_site.py --build build --snapshot migration/snapshot \
+    python3 tools/verify_site.py --build build [--snapshot migration/snapshot] \
         [--allow migration/site-allowlist.yaml]
     python3 tools/verify_site.py --live https://tech.gluesys.com \
         --snapshot migration/snapshot
 
 Build mode checks:
-  * every path in <snapshot>/urls.txt exists in the build;
   * /blog/ and /page2/ .. /page6/ exist and redirect to /posts/;
-  * /feed.xml is RSS 2.0 with 10 items whose links equal the snapshot feed's;
-  * every URL in the snapshot sitemap is in the new sitemap (redirect pages
-    are exempt: they are not canonical, /posts/ stands in for them);
+  * /feed.xml is RSS 2.0 with exactly 10 items that are the 10 newest blog
+    posts in date-descending order (post dates come from the built
+    /blog/Y/M/D/<slug>.html paths, so they are the UTC dates in the URLs);
+  * every internal <img src> / srcset entry resolves to a file (percent-decoded,
+    case-sensitive);
   * CNAME, the Search Console file and favicon.ico match the SHA-256 values
     pinned in migration/static-baseline.txt (Jekyll baseline 5605f21);
   * the /tags/ page carries the tag lookup JSON for the old /tags#<tag> links,
     and it covers every alias in data/tag_aliases.yaml whose tag page exists;
   * every internal <a href> in build/**/*.html resolves to a file and, with a
     fragment (other than #:~:text=), to an existing id or name.
+Snapshot checks run only when --snapshot is given (a missing or empty snapshot
+then fails the run); without it they are skipped and reported as such:
+  * every path in <snapshot>/urls.txt exists in the build;
+  * every snapshot feed item that is still in the new feed (matched by title)
+    keeps its exact link, so new posts may push old items out of the feed;
+  * every URL in the snapshot sitemap is in the new sitemap (redirect pages
+    are exempt: they are not canonical, /posts/ stands in for them).
 Known broken internal links go in the site allow-list `{page, href, reason}`
 (page "*" matches any page); an entry that matches nothing fails the run.
 
@@ -56,8 +64,8 @@ SITE_ALLOW_KEYS = ("page", "href", "reason")
 
 # ---------------------------------------------------------------- feed
 
-def feed_links(text):
-    """Return (rss version, [item links]) or raise ValueError."""
+def feed_items(text):
+    """Return (rss version, [(title, link)]) or raise ValueError."""
     try:
         root = ET.fromstring(text)
     except ET.ParseError as e:
@@ -65,29 +73,68 @@ def feed_links(text):
     if root.tag != "rss":
         raise ValueError(f"root element is <{root.tag}>, not <rss>")
     items = root.findall("./channel/item")
-    return root.get("version"), [(i.findtext("link") or "").strip() for i in items]
+    return root.get("version"), [((i.findtext("title") or "").strip(),
+                                  (i.findtext("link") or "").strip()) for i in items]
 
 
-def check_feed(feed_text, snapshot_feed_text):
+def post_paths(build):
+    """URL paths of every built post page, /blog/Y/M/D/<slug>.html."""
+    root = Path(build) / "blog"
+    if not root.is_dir():
+        return []
+    return ["/" + f.relative_to(build).as_posix() for f in sorted(root.rglob("*.html"))
+            if len(f.relative_to(root).parts) == 4]
+
+
+def _post_date(path):
+    m = re.match(r"^/blog/(\d{4})/(\d{2})/(\d{2})/", path)
+    return m.groups() if m else None
+
+
+def check_feed(feed_text, posts=None, snapshot_feed_text=None):
+    """Check the feed structure, its content and, optionally, the snapshot.
+
+    posts: URL paths of all built posts (None skips the newest-posts rule).
+    The feed must hold the 10 newest posts, newest first. Dates are the Y/M/D
+    of the URL (UTC date for migrated posts); posts of the same day may come in
+    any order, but no omitted post may be newer than the oldest feed item.
+    snapshot_feed_text: every snapshot item whose title is still in the feed
+    must keep its link.
+    """
     try:
-        version, links = feed_links(feed_text)
+        version, items = feed_items(feed_text)
     except ValueError as e:
         return [f"feed.xml: {e}"]
+    links = [l for _, l in items]
     out = []
     if version != "2.0":
         out.append(f"feed.xml: RSS version {version!r}, expected '2.0'")
     if len(links) != FEED_ITEMS:
         out.append(f"feed.xml: {len(links)} items, expected {FEED_ITEMS}")
-    try:
-        want = feed_links(snapshot_feed_text)[1]
-    except ValueError as e:
-        return out + [f"snapshot feed.xml: {e}"]
-    if links != want:
-        for i, (a, b) in enumerate(zip(links, want), 1):
-            if a != b:
-                out.append(f"feed.xml: item {i} link {a!r}, snapshot has {b!r}")
-        if len(links) != len(want) and len(links) == FEED_ITEMS:
-            out.append(f"feed.xml: snapshot feed has {len(want)} items")
+    if posts is not None:
+        paths = [urlsplit(l).path for l in links]
+        known = set(posts)
+        dates = []
+        for l, p in zip(links, paths):
+            if p not in known:
+                out.append(f"feed.xml: item {l!r} is not a built blog post")
+            dates.append(_post_date(p) or ())
+        if dates != sorted(dates, reverse=True):
+            out.append("feed.xml: items are not in date-descending order")
+        rest = [_post_date(p) for p in known - set(paths)]
+        if dates and rest and max(d for d in rest if d) > min(dates):
+            out.append("feed.xml: a newer post is missing from the feed items")
+        if len(links) != min(FEED_ITEMS, len(known)):
+            out.append(f"feed.xml: {len(links)} items for {len(known)} posts")
+    if snapshot_feed_text is not None:
+        try:
+            old = feed_items(snapshot_feed_text)[1]
+        except ValueError as e:
+            return out + [f"snapshot feed.xml: {e}"]
+        now = dict(items)
+        for title, link in old:
+            if title in now and now[title] != link:
+                out.append(f"feed.xml: {title!r} link {now[title]!r}, snapshot has {link!r}")
     return out
 
 
@@ -250,12 +297,19 @@ class _Anchors(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.hrefs = []
+        self.srcs = []
         self.ids = set()
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if a.get("id"):
             self.ids.add(a["id"])
+        if tag == "img" or tag == "source":
+            if a.get("src"):
+                self.srcs.append(a["src"])
+            for cand in (a.get("srcset") or "").split(","):
+                if cand.strip():
+                    self.srcs.append(cand.split()[0])
         if tag == "a":
             if a.get("name"):
                 self.ids.add(a["name"])
@@ -330,6 +384,25 @@ def check_links(build, allow=()):
     return failures, unused
 
 
+def check_images(build):
+    """Every internal <img src> (and srcset entry) must resolve to a file."""
+    build = Path(build)
+    failures, cache, seen, scanned = [], {}, set(), 0
+    for html in sorted(build.rglob("*.html")):
+        page_url = "/" + html.relative_to(build).as_posix()
+        for src in _scan(html, cache).srcs:
+            scanned += 1
+            if src.strip().startswith("data:"):
+                continue
+            target = _internal(src, f"https://{SITE_HOST}{page_url}")
+            if target is None:
+                continue
+            if not (build / target[0].lstrip("/")).is_file() and (page_url, src) not in seen:
+                seen.add((page_url, src))
+                failures.append(f"image {page_url}: {src!r}: no such file {target[0]}")
+    return failures, scanned
+
+
 def load_site_allowlist(path):
     """Parse a YAML list of `page`, `href`, `reason` scalar mappings."""
     entries, cur = [], None
@@ -376,32 +449,42 @@ def url_to_file(build, url):
 
 
 def run_build(build, snapshot, allow, static_baseline=DEFAULT_BASELINE):
+    """snapshot None: skip the snapshot checks; a given snapshot must be usable."""
     failures, notes = [], []
     build = Path(build)
-    urls = read_urls(snapshot)
-    if not urls:
-        return [f"no URLs in {Path(snapshot) / 'urls.txt'}"], notes
+    skipped = 3 if snapshot is None else 0   # urls, feed links, sitemap
+    if snapshot is not None:
+        urls = read_urls(snapshot)
+        if not urls:
+            return [f"no URLs in {Path(snapshot) / 'urls.txt'}"], notes
     if not build.is_dir():
         return [f"build directory {build} not found"], notes
 
-    missing = [u for u in urls if not url_to_file(build, u).is_file()]
-    failures += [f"url {u}: missing from build" for u in missing]
-    notes.append(f"urls: {len(urls) - len(missing)}/{len(urls)} present")
+    if snapshot is not None:
+        missing = [u for u in urls if not url_to_file(build, u).is_file()]
+        failures += [f"url {u}: missing from build" for u in missing]
+        notes.append(f"urls: {len(urls) - len(missing)}/{len(urls)} present")
 
     alias_fail = check_aliases(build)
     failures += alias_fail
     notes.append(f"aliases: {len(ALIAS_PATHS) - len(alias_fail)}/{len(ALIAS_PATHS)} ok")
 
-    feed, snap_feed = build / "feed.xml", Path(snapshot) / "feed.xml"
-    if not feed.is_file() or not snap_feed.is_file():
+    feed = build / "feed.xml"
+    snap_feed = Path(snapshot) / "feed.xml" if snapshot is not None else None
+    if not feed.is_file() or (snap_feed is not None and not snap_feed.is_file()):
         failures.append("feed.xml: missing from build or snapshot")
     else:
-        f = check_feed(feed.read_text(encoding="utf-8"), snap_feed.read_text(encoding="utf-8"))
+        f = check_feed(feed.read_text(encoding="utf-8"), post_paths(build),
+                       snap_feed.read_text(encoding="utf-8") if snap_feed else None)
         failures += f
         notes.append(f"feed: {'ok' if not f else str(len(f)) + ' problems'}")
 
-    sm, snap_sm = build / "sitemap.xml", Path(snapshot) / "sitemap.xml"
-    if not sm.is_file() or not snap_sm.is_file():
+    sm = build / "sitemap.xml"
+    snap_sm = Path(snapshot) / "sitemap.xml" if snapshot is not None else None
+    if snap_sm is None:
+        if not sm.is_file():
+            failures.append("sitemap.xml: missing from build")
+    elif not sm.is_file() or not snap_sm.is_file():
         failures.append("sitemap.xml: missing from build or snapshot")
     else:
         exempt = set(ALIAS_PATHS) if not alias_fail else set()
@@ -425,9 +508,14 @@ def run_build(build, snapshot, allow, static_baseline=DEFAULT_BASELINE):
     link_fail, unused = check_links(build, allow)
     failures += link_fail
     failures += [f"unused site allow-list entry {e['page']} {e['href']!r}" for e in unused]
+    img_fail, imgs = check_images(build)
+    failures += img_fail
+    notes.append(f"images: {imgs} srcs checked, {len(img_fail)} missing")
     pages = sum(1 for _ in build.rglob("*.html"))
     notes.append(f"links: {pages} pages scanned, {len(link_fail)} broken, "
                  f"{len(allow) - len(unused)} allowed")
+    if skipped:
+        notes.append(f"snapshot absent: skipped {skipped} checks (urls, feed links, sitemap)")
     return failures, notes
 
 
@@ -463,7 +551,8 @@ def run_live(base, snapshot, fetch=_get):
     elif not snap_feed.is_file():
         failures.append("feed.xml missing from snapshot")
     else:
-        f = check_feed(body.decode("utf-8", "replace"), snap_feed.read_text(encoding="utf-8"))
+        f = check_feed(body.decode("utf-8", "replace"), None,
+                       snap_feed.read_text(encoding="utf-8"))
         failures += f
         notes.append(f"feed: {'ok' if not f else str(len(f)) + ' problems'}")
     return failures, notes
@@ -472,7 +561,7 @@ def run_live(base, snapshot, fetch=_get):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--snapshot", required=True)
+    ap.add_argument("--snapshot", help="live-site snapshot (required with --live)")
     ap.add_argument("--build", help="build directory (default mode)")
     ap.add_argument("--live", metavar="BASE", help="check a running site instead of --build")
     ap.add_argument("--baseline", default=str(DEFAULT_BASELINE),
@@ -481,6 +570,8 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if bool(a.build) == bool(a.live):
         ap.error("give exactly one of --build and --live")
+    if a.live and not a.snapshot:
+        ap.error("--live needs --snapshot")
 
     if a.live:
         failures, notes = run_live(a.live, a.snapshot)

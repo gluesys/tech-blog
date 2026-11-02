@@ -13,8 +13,10 @@ import verify_site as vs  # noqa: E402
 BASE = "https://tech.gluesys.com"
 
 
-def rss(links):
-    items = "".join(f"<item><title>t</title><link>{l}</link></item>" for l in links)
+def rss(links, titles=None):
+    titles = titles or [f"t{i}" for i in range(len(links))]
+    items = "".join(f"<item><title>{t}</title><link>{l}</link></item>"
+                    for t, l in zip(titles, links))
     return ('<?xml version="1.0"?><rss version="2.0" '
             'xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>x</title>'
             f"{items}</channel></rss>")
@@ -44,24 +46,69 @@ class Site:
         self._tmp.cleanup()
 
 
-class FeedTests(unittest.TestCase):
-    LINKS = [f"{BASE}/blog/2020/01/{d:02d}/p.html" for d in range(1, 11)]
+def post_url(y, m, d, slug="p"):
+    return f"{BASE}/blog/{y}/{m:02d}/{d:02d}/{slug}.html"
 
-    def test_feed_item_links_match(self):
-        self.assertEqual(vs.check_feed(rss(self.LINKS), rss(self.LINKS)), [])
+
+class FeedTests(unittest.TestCase):
+    # 12 posts, newest first; the feed holds the first 10
+    ALL = [post_url(2020, 1, d) for d in range(12, 0, -1)]
+    PATHS = [l[len(BASE):] for l in ALL]
+    LINKS = ALL[:10]
+    TITLES = [f"post {d}" for d in range(12, 0, -1)]
+
+    def test_newest_ten_in_order_pass(self):
+        self.assertEqual(vs.check_feed(rss(self.LINKS), self.PATHS), [])
 
     def test_feed_order_mismatch_fails(self):
         swapped = [self.LINKS[1], self.LINKS[0]] + self.LINKS[2:]
-        self.assertTrue(vs.check_feed(rss(swapped), rss(self.LINKS)))
+        self.assertTrue(vs.check_feed(rss(swapped), self.PATHS))
+
+    def test_feed_missing_newer_post_fails(self):
+        older = self.ALL[1:11]
+        self.assertTrue(vs.check_feed(rss(older), self.PATHS))
+
+    def test_feed_item_not_a_post_fails(self):
+        bad = self.LINKS[:9] + [post_url(2020, 1, 20, "ghost")]
+        self.assertTrue(vs.check_feed(rss(bad), self.PATHS))
 
     def test_feed_wrong_count_fails(self):
-        self.assertTrue(vs.check_feed(rss(self.LINKS[:9]), rss(self.LINKS)))
+        self.assertTrue(vs.check_feed(rss(self.LINKS[:9]), self.PATHS))
+
+    def test_fewer_than_ten_posts_is_not_required(self):
+        self.assertTrue(vs.check_feed(rss(self.LINKS[:9]), self.PATHS[:9]))  # 9 != 10 items
 
     def test_feed_not_xml_or_not_rss2_fails(self):
-        self.assertTrue(vs.check_feed("<rss", rss(self.LINKS)))
+        self.assertTrue(vs.check_feed("<rss", self.PATHS))
         self.assertTrue(vs.check_feed(
-            rss(self.LINKS).replace('version="2.0"', 'version="0.91"'),
-            rss(self.LINKS)))
+            rss(self.LINKS).replace('version="2.0"', 'version="0.91"'), self.PATHS))
+
+    def test_new_posts_push_old_items_out(self):
+        snap = rss(self.LINKS, self.TITLES[:10])
+        new = [post_url(2021, 1, d, "new") for d in (3, 2, 1)]
+        paths = self.PATHS + [l[len(BASE):] for l in new]
+        feed = new + self.LINKS[:7]
+        titles = ["n3", "n2", "n1"] + self.TITLES[:7]
+        self.assertEqual(vs.check_feed(rss(feed, titles), paths, snap), [])
+
+    def test_migrated_item_with_changed_link_fails(self):
+        snap = rss(self.LINKS, self.TITLES[:10])
+        changed = list(self.LINKS)
+        changed[4] = changed[4].replace("p.html", "p2.html")
+        paths = self.PATHS + [changed[4][len(BASE):]]
+        out = vs.check_feed(rss(changed, self.TITLES[:10]), paths, snap)
+        self.assertTrue(any("post 8" in m for m in out), out)
+
+    def test_same_day_posts_may_swap(self):
+        links = [post_url(2020, 1, 12 - i, "x") for i in range(8)] + \
+                [post_url(2020, 1, 3, "a"), post_url(2020, 1, 3, "b")]
+        paths = [l[len(BASE):] for l in links]
+        self.assertEqual(vs.check_feed(rss(links), paths), [])
+        swapped = links[:8] + [links[9], links[8]]
+        self.assertEqual(vs.check_feed(rss(swapped), paths), [])
+
+    def test_unparseable_snapshot_feed_fails_without_traceback(self):
+        self.assertTrue(vs.check_feed(rss(self.LINKS), self.PATHS, "<rss"))
 
 
 class PostFileTests(unittest.TestCase):
@@ -236,10 +283,6 @@ class StaticAndSitemapTests(unittest.TestCase):
         self.assertTrue(vs.check_sitemap(new, "<urlset/>", set()))
         self.assertTrue(vs.check_sitemap(new, "<urlset", set()))
 
-    def test_unparseable_snapshot_feed_fails_without_traceback(self):
-        links = FeedTests.LINKS
-        self.assertTrue(vs.check_feed(rss(links), "<rss"))
-
 
 class MainTests(unittest.TestCase):
     def test_empty_inputs_fail(self):
@@ -254,6 +297,52 @@ class MainTests(unittest.TestCase):
                             "--allow", str(site.root / "allow.yaml")])
         self.assertEqual(code, 1)
         self.assertIn("RESULT: FAIL", buf.getvalue())
+
+
+class ImageTests(unittest.TestCase):
+    def setUp(self):
+        self.site = Site()
+        self.addCleanup(self.site.cleanup)
+
+    def test_existing_images_pass_case_and_korean(self):
+        for rel in ("assets/a/Shot.PNG", "assets/a/한글 사진.jpg", "assets/b.png"):
+            p = self.site.root / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_bytes(b"x")
+        self.site.write("blog/2020/01/01/p.html", page(
+            '<img src="/assets/a/Shot.PNG"><img src="/assets/a/%ED%95%9C%EA%B8%80%20%EC%82%AC%EC%A7%84.jpg">'
+            '<img src="/assets/b.png" srcset="/assets/b.png 1x, /assets/a/Shot.PNG 2x">'
+            '<img src="https://example.com/x.png"><img src="data:image/gif;base64,AAAA">'))
+        self.assertEqual(vs.check_images(self.site.root), ([], 7))
+
+    def test_missing_image_and_wrong_case_fail(self):
+        (self.site.root / "assets").mkdir()
+        (self.site.root / "assets" / "a.png").write_bytes(b"x")
+        self.site.write("index.html", page(
+            '<img src="/assets/gone.png"><img src="/assets/A.png">'
+            '<img src="/assets/a.png" srcset="/assets/a.png 1x, /assets/nope.png 2x">'))
+        fails, _ = vs.check_images(self.site.root)
+        self.assertEqual(len(fails), 3, fails)
+
+
+class SnapshotOptionalTests(unittest.TestCase):
+    def test_build_without_snapshot_skips_snapshot_checks(self):
+        site = Site()
+        self.addCleanup(site.cleanup)
+        for d in ALIAS_DIRS:
+            site.write(f"{d}/index.html", refresh(f"{BASE}/posts/"))
+        failures, notes = vs.run_build(site.root, None, [])
+        self.assertTrue(any("snapshot absent: skipped 3 checks" in n for n in notes), notes)
+        self.assertFalse([f for f in failures if f.startswith(("url ", "sitemap", "feed")) and "missing" not in f])
+
+    def test_given_snapshot_missing_still_fails(self):
+        site = Site()
+        self.addCleanup(site.cleanup)
+        failures, _ = vs.run_build(site.root, site.root / "nosnap", [])
+        self.assertTrue(failures)
+
+
+ALIAS_DIRS = ("blog", "page2", "page3", "page4", "page5", "page6")
 
 
 class AllowlistParseTests(unittest.TestCase):
