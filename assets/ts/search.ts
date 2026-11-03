@@ -1,6 +1,7 @@
 // Site search: header overlay (press "/" or click the button) and the /search/ page.
 // Pagefind is loaded lazily, on first use only.
 import { type Hit, type PagefindLike, searchMerged, shouldNavigate } from "./lib/search-core.ts";
+import { attachPlaceholderMarquee } from "./placeholder-marquee.ts";
 
 const PLACEHOLDER = "파일 시스템, NVMe, CXL, 고가용성처럼 주제로 검색";
 const MSG_EMPTY = "검색어를 입력하세요";
@@ -190,6 +191,7 @@ function initOverlay(): void {
     if (!ov) {
       ov = buildOverlay();
       ov.root.addEventListener("search-close", close);
+      attachPlaceholderMarquee(ov.input);
     }
     if (!ov.root.hidden) return;
     returnTo = from && from !== document.body ? from : trigger;

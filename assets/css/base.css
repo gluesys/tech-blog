@@ -20,3 +20,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .skip-link { position: absolute; left: 12px; top: -64px; z-index: 100; padding: 10px 16px; background: var(--ci-deep); color: #fff; font-weight: 600; }
 .skip-link:focus-visible { top: 12px; }
 main:focus { outline: none; }
+
+/* search hint that scrolls sideways when it does not fit (placeholder-marquee.ts) */
+.ph-host { position: relative; }
+.ph-scroll::placeholder { color: transparent; }
+.ph-marquee { position: absolute; box-sizing: border-box; display: flex; align-items: center; overflow: hidden; white-space: nowrap; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--ph-fade), #000 calc(100% - var(--ph-fade)), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 var(--ph-fade), #000 calc(100% - var(--ph-fade)), transparent); }
+.ph-marquee.ph-off { visibility: hidden; }
+.ph-track { display: inline-block; animation: ph-scroll 9s linear 1.2s 3; } /* duration set per field by the script */
+.ph-host:hover .ph-track { animation-play-state: paused; }
+/* while the header search overlay is open, only its own field moves */
+.search-open .ph-host:not(.search-head) .ph-track { animation-play-state: paused; }
+@keyframes ph-scroll { to { transform: translateX(var(--ph-shift)); } }
+@media (prefers-reduced-motion: reduce) { .ph-track { animation: none; } }
