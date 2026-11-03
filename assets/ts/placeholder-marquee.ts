@@ -31,10 +31,18 @@ export function attachPlaceholderMarquee(input: HTMLInputElement) {
   box.append(track);
   host.append(box);
 
-  let text = "";
-  const layout = () => {
-    text = input.placeholder;
+  // The placeholder colour follows the theme; reading it never touches the animation.
+  const paint = () => {
+    const scrolling = input.classList.contains("ph-scroll");
     input.classList.remove("ph-scroll"); // read the real placeholder colour, not the transparent one
+    box.style.color = getComputedStyle(input, "::placeholder").color;
+    input.classList.toggle("ph-scroll", scrolling);
+  };
+  // Geometry and text. The cycles restart only when the text or the scroll distance changes,
+  // so a theme switch or an unrelated resize leaves a running animation where it is.
+  let planned = "";
+  const layout = () => {
+    const text = input.placeholder;
     const cs = getComputedStyle(input);
     const padL = parseFloat(cs.paddingLeft), padR = parseFloat(cs.paddingRight);
     box.style.left = `${input.offsetLeft + input.clientLeft + padL - FADE_PX}px`;
@@ -44,18 +52,25 @@ export function attachPlaceholderMarquee(input: HTMLInputElement) {
     box.style.padding = `0 ${FADE_PX}px`;
     box.style.setProperty("--ph-fade", `${FADE_PX}px`);
     box.style.font = cs.font;
-    box.style.color = getComputedStyle(input, "::placeholder").color;
-    track.textContent = text;
-    const plan = marqueePlan(track.scrollWidth, box.clientWidth - 2 * FADE_PX);
+    const probe = document.createElement("span");
+    probe.textContent = text;
+    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap";
+    box.append(probe);
+    const plan = marqueePlan(probe.offsetWidth, box.clientWidth - 2 * FADE_PX);
+    probe.remove();
+    const key = plan ? `${text}|${plan.shift}` : "";
+    if (key === planned) return;
+    planned = key;
+    paint();
     input.classList.toggle("ph-scroll", plan !== null);
-    if (!plan) { track.textContent = ""; return; }
+    track.textContent = "";
+    if (!plan) return;
     const second = document.createElement("span");
     second.textContent = text;
     second.style.paddingLeft = `${GAP_PX}px`;
-    track.append(second);
+    track.append(text, second);
     track.style.setProperty("--ph-shift", `-${plan.shift}px`);
     track.style.animationDuration = `${plan.seconds}s`;
-    // restart the cycles whenever the layout changes
     track.style.animationName = "none";
     void track.offsetWidth;
     track.style.animationName = "";
@@ -65,10 +80,9 @@ export function attachPlaceholderMarquee(input: HTMLInputElement) {
   input.addEventListener("input", sync);
   new ResizeObserver(layout).observe(input);
   new MutationObserver(layout).observe(input, { attributes: true, attributeFilter: ["placeholder"] });
-  // the placeholder colour can change with the theme
-  new MutationObserver(layout).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", layout);
+  document.addEventListener("themechange", paint); // theme.ts: effective theme changed
   document.fonts?.ready.then(layout);
+  paint();
   layout();
   sync();
 }
