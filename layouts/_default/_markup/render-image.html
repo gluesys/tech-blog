@@ -1,0 +1,11 @@
+{{- /* Markdown images. An author picks the alignment with a fragment on the path:
+       ![alt](/assets/x.png#center), #left or #right. The fragment only becomes a class
+       (align-center/left/right, prose.css); without one the output is Hugo's default <img>. */ -}}
+{{- $src := .Destination -}}
+{{- $align := "" -}}
+{{- with findRESubmatch `^(.*)#(left|right|center)$` .Destination -}}
+  {{- $src = index (index . 0) 1 -}}
+  {{- $align = index (index . 0) 2 -}}
+{{- end -}}
+<img src="{{ $src | safeURL }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ with $align }} class="align-{{ . }}"{{ end }}>
+{{- /* no trailing newline */ -}}

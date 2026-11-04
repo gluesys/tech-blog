@@ -37,6 +37,11 @@
 .prose figcaption { text-align: center; color: var(--ci-gray); font-size: 14.5px; margin-top: 10px; }
 .prose center { display: block; text-align: center; color: var(--ci-gray); font-size: 14.5px; line-height: 1.6; margin: 10px 0 28px; }
 .prose center img { display: block; margin: 0 auto 10px; }
+/* author-chosen alignment for Markdown images (render-image.html: ![alt](/x.png#right)) */
+.prose img.align-left, .prose img.align-center, .prose img.align-right { display: block; }
+.prose img.align-left { margin-right: auto; }
+.prose img.align-center { margin-left: auto; margin-right: auto; }
+.prose img.align-right { margin-left: auto; }
 .prose blockquote { margin: 24px 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--ci-bright); color: var(--ink-2); }
 .prose blockquote > :last-child { margin-bottom: 0; }
 .prose :not(pre) > code { font: .88em ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; background: var(--soft); border-radius: 4px; padding: .12em .4em; word-break: break-word; }
