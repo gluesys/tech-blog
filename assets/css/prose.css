@@ -166,3 +166,15 @@ dialog.zoom img { max-width: 96vw; max-height: 96dvh; width: auto; height: auto;
 .comments-head { margin-top: 44px; }
 .comments-head p:last-child { margin: 6px 0 0; font-size: 15px; color: var(--ink-2); }
 .comments { margin-top: 16px; min-height: 1px; }
+
+/* Mermaid diagrams (diagrams.ts, pele): colours follow the site tokens, so both themes work */
+.prose .diagram { margin: 0 0 24px;
+  --pele-bg: var(--bg); --pele-fg: var(--ink); --pele-muted: var(--ci-gray); --pele-line: var(--ink-2);
+  --pele-surface: var(--soft); --pele-surface-alt: var(--surface); --pele-border: var(--ci-bright);
+  --pele-accent: var(--link); --pele-error: #c62828; }
+.prose .diagram > svg { display: block; margin: 0 auto; }
+/* PlantUML comes back as an SVG with a white background */
+.prose img.plantuml { background: #fff; }
+/* block math scrolls sideways instead of overflowing the column on phones */
+.prose .math-block { margin: 0 0 20px; overflow-x: auto; overflow-y: hidden; }
+.prose math { font-size: 1.05em; }

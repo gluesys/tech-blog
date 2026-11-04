@@ -21,6 +21,14 @@ title = true
 # kramdown never autolinked bare URLs.
 linkify = false
 
+[markup.goldmark.extensions.passthrough]
+# Math reaches render-passthrough.html untouched by Markdown.
+enable = true
+[markup.goldmark.extensions.passthrough.delimiters]
+# \[ \] is left out: older posts escape citation brackets as \[1\].
+block = [["$$", "$$"]]
+inline = [["$", "$"], ['\(', '\)']]
+
 [markup.goldmark.extensions.footnote]
 enable = true
 # kramdown's backlink is a bare U+21A9 without the text variation selector.

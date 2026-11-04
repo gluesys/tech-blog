@@ -1,0 +1,10 @@
+{{- /* Math between $…$ or \(…\) (inline) and $$…$$ (block), rendered at build time by
+       Hugo's KaTeX as MathML, which browsers draw themselves: no script, stylesheet or font. */ -}}
+{{- $block := eq .Type "block" -}}
+{{- with try (transform.ToMath .Inner (dict "output" "mathml" "displayMode" $block "throwOnError" true)) -}}
+  {{- with .Err -}}
+    {{- errorf "math in %s: %s" $.Page.File.Path . -}}
+  {{- else -}}
+    {{- if $block }}<div class="math-block">{{ .Value }}</div>{{ else }}{{ .Value }}{{ end -}}
+  {{- end -}}
+{{- end -}}

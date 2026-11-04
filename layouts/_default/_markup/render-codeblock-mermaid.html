@@ -1,0 +1,4 @@
+{{- /* ```mermaid blocks. The source stays readable as a code block until pele draws it
+       (diagrams.ts); baseof.html loads pele only on pages that have one. */ -}}
+{{- .Page.Store.Set "hasMermaid" true -}}
+<div class="diagram" data-mermaid><pre>{{ .Inner }}</pre></div>
