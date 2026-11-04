@@ -1,6 +1,9 @@
 # Author cards keyed by email (never rendered). Optional fields: `avatar` (image
-# path) and `former: true` for people who have left (labelled 이전 동료 in the
-# same list). A personal introduction goes in content/authors/<slug>.md.
+# path), `github` (account name, for its picture), `gravatar: false` (never use
+# their Gravatar) and `former: true` for people who have left (labelled 이전 동료
+# in the same list; their Gravatar is not used). Picture order: `avatar` in the
+# personal page, `avatar` here, GitHub, Gravatar, else the name's first letter
+# (layouts/partials/author-avatar.html). A personal introduction goes in content/authors/<slug>.md.
 # One name spelling per email (Korean names without a space), so a post's
 # front-matter spelling never changes the byline.
 "gc757489@gmail.com":

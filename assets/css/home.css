@@ -111,6 +111,14 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .about .authors-head, .about .authors { width: min(calc(var(--content) - 48px), calc(100vw - 48px)); }
 .authors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0 32px; }
 .author { display: flex; gap: 14px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+/* the whole card opens the author's page: the name link's click area covers the card, and the
+   links inside it (tags, recent posts) sit above that area so they stay their own links */
+.author { position: relative; border-radius: 8px; transition: background-color .15s; }
+.author h3 a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.author .tags, .author .author-posts { position: relative; z-index: 1; }
+.author:hover { background: var(--soft); }
+.author:has(h3 a:focus-visible) { outline: 2px solid var(--ci-cyan); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .author { transition: none; } }
 .author .avatar { width: 44px; height: 44px; font-size: 16px; }
 .author-body { min-width: 0; }
 .author h3 { margin: 0; font-size: 17px; line-height: 1.4; }

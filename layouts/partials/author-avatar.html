@@ -1,0 +1,46 @@
+{{- /* An author's picture URL, or "" (callers then show the name's first letter in the hexagon).
+       Usage: partialCached "author-avatar.html" $email $email
+       First match wins:
+       1. a chosen image: `avatar` in the author's own page (content/authors/<slug>.md), as a site
+          path such as /assets/authors/me.jpg or the name of an image beside it in a page bundle;
+          then `avatar` in data/authors.yaml;
+       2. their GitHub picture, when the page or authors.yaml names the account (`github: user`);
+       3. their Gravatar, skipped for `former: true` (people who have left never agreed to a new
+          photo) and for `gravatar: false`.
+       GitHub and Gravatar pictures are fetched while the site builds and published as site files,
+       so pages carry no email hash and readers never contact either service. A missing picture or
+       no network during the build just means the next choice. */ -}}
+{{- $email := lower (strings.TrimSpace (. | default "")) -}}
+{{- $info := index hugo.Data.authors . | default dict -}}
+{{- $name := $info.name | default "author" -}}
+{{- $page := partial "author-page.html" $email -}}
+{{- $url := "" -}}
+{{- $github := $info.github -}}
+{{- with $page -}}
+  {{- with .Params.github }}{{ $github = . }}{{ end -}}
+  {{- with .Params.avatar -}}
+    {{- if hasPrefix . "/" }}{{ $url = . }}{{ else }}{{ with $page.Resources.Get . }}{{ $url = .RelPermalink }}{{ end }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $url }}{{ with $info.avatar }}{{ $url = . }}{{ end }}{{ end -}}
+
+{{- $remotes := slice -}}
+{{- with $github }}{{ $remotes = $remotes | append (printf "https://github.com/%s.png?size=128" (urlquery .)) }}{{ end -}}
+{{- if and $email (not $info.former) (ne $info.gravatar false) -}}
+  {{- $remotes = $remotes | append (printf "https://gravatar.com/avatar/%s?s=128&d=404" (sha256 $email)) -}}
+{{- end -}}
+{{- range $remotes -}}
+  {{- if not $url -}}
+    {{- with try (resources.GetRemote .) -}}
+      {{- with .Err -}}
+        {{- warnf "avatar for %s: %s" $name . -}}
+      {{- else with .Value -}}
+        {{- if eq .MediaType.MainType "image" -}}
+          {{- $ext := cond (eq .MediaType.SubType "png") "png" "jpg" -}}
+          {{- $url = (resources.Copy (printf "authors/avatar-%s.%s" (substr (md5 $name) 0 10) $ext) .).RelPermalink -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return (cond (ne $url "") ($url | relURL) "") -}}

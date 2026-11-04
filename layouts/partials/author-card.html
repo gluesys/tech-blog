@@ -10,7 +10,7 @@
     {{- $email = index (index . 0) 2 | strings.TrimSpace -}}
   {{- end -}}
   {{- $info := dict "name" $name -}}
-  {{- with $email }}{{ with index hugo.Data.authors . }}{{ $info = merge $info . }}{{ end }}{{ with partial "author-page.html" . }}{{ $info = merge $info (dict "url" .RelPermalink) }}{{ end }}{{ end -}}
+  {{- with $email }}{{ with index hugo.Data.authors . }}{{ $info = merge $info . }}{{ end }}{{ $info = merge $info (dict "avatar" (partialCached "author-avatar.html" . .)) }}{{ with partial "author-page.html" . }}{{ $info = merge $info (dict "url" .RelPermalink) }}{{ end }}{{ end -}}
   {{- if $name }}{{ $authors = $authors | append $info }}{{ end -}}
 {{- end -}}
 <div class="byline">
