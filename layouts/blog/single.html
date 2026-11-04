@@ -1,6 +1,6 @@
 {{ define "main" }}
 {{- /* `cover` is the post banner: the head sits on it, under a navy scrim. `main` is the list
-       thumbnail (post-card.html), falling back to `cover`. A post without `cover` gets a plain head. */}}
+       thumbnail (post-card.html); the two are separate and neither stands in for the other. A post without `cover` gets a plain head. */}}
 {{- with .Params.cover }}<div class="article-banner"><img src="{{ . | relURL }}" alt="" fetchpriority="high">{{ end }}
 <div class="article-head" data-pagefind-ignore>
   <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
@@ -15,7 +15,7 @@
     <div hidden>
       <span data-pagefind-meta="title">{{ .Title }}</span>
       <span data-pagefind-meta="date">{{ .Date.Format "2006-01-02" }}</span>
-      {{- with (.Params.main | default .Params.cover) }}<span data-pagefind-meta="image">{{ . }}</span>{{ end }}
+      {{- with .Params.main }}<span data-pagefind-meta="image">{{ . }}</span>{{ end }}
       {{- range .Params.tags }}<span data-pagefind-filter="tag">{{ . }}</span>{{ end }}
     </div>
     {{- /* Phones hide the sidebar TOC, so the same list opens from a collapsed block above the body. */}}

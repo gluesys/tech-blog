@@ -8,7 +8,7 @@
   {{- $summary = substr $t 0 120 | strings.TrimSpace -}}
   {{- if gt (strings.RuneCount $t) 120 }}{{ $summary = printf "%s…" $summary }}{{ end -}}
 {{- end -}}
-{{- $thumb := .Params.main | default .Params.cover -}}
+{{- $thumb := .Params.main -}}
 <article class="post">
   <div>
     <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006년 1월 2일" }}</time>
