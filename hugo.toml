@@ -9,6 +9,11 @@ enableEmoji = true
 [markup.goldmark.renderer]
 unsafe = true
 
+[markup.goldmark.parser]
+# A paragraph holding only an image reaches render-image.html as a block (.IsBlock),
+# which centres it by default; the hook writes the <p> back itself.
+wrapStandAloneImageWithinParagraph = false
+
 [markup.goldmark.parser.attribute]
 title = true
 
