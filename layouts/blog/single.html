@@ -1,9 +1,13 @@
 {{ define "main" }}
+{{- /* `cover` is the post banner: the head sits on it, under a navy scrim. `main` is the list
+       thumbnail (post-card.html), falling back to `cover`. A post without `cover` gets a plain head. */}}
+{{- with .Params.cover }}<div class="article-banner"><img src="{{ . | relURL }}" alt="" fetchpriority="high">{{ end }}
 <div class="article-head" data-pagefind-ignore>
   <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
   <h1>{{ .Title }}</h1>
   {{ partial "author-card.html" . }}
 </div>
+{{- if .Params.cover }}</div>{{ end }}
 
 <div class="article">
   <div class="article-main">
