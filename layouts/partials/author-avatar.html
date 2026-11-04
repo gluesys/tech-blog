@@ -8,7 +8,7 @@
        3. their Gravatar, skipped for `former: true` (people who have left never agreed to a new
           photo) and for `gravatar: false`.
        GitHub and Gravatar pictures are fetched while the site builds and published as site files,
-       so pages carry no email hash and readers never contact either service. A missing picture or
+       so readers' browsers never contact either service (no reader IP or page view leaves the site). A missing picture or
        no network during the build just means the next choice. */ -}}
 {{- $email := lower (strings.TrimSpace (. | default "")) -}}
 {{- /* authors.yaml keys are matched without regard to case, so a post that spells the address
