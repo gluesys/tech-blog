@@ -61,22 +61,17 @@
 .prose p > img, .prose center img, .prose figure img, .prose > img { border: 1px solid var(--line); }
 .prose hr { width: 64px; height: 3px; margin: 48px auto; border: 0; border-radius: 2px; background: var(--line); }
 
-/* Wide images (marked by wide-images.ts) spread over the sidebar column (240px + 56px gap)
-   up to their natural width; the TOC fades while one is on screen. Phones keep the column. */
-@media (min-width: 761px) {
-  .prose .wide { position: relative; z-index: 1; width: min(calc(100% + 296px), var(--nw)); max-width: none; }
-  .prose .wide img { max-width: 100%; }
-  .prose center.wide, .prose p.wide, .prose figure.wide { margin-left: 0; margin-right: 0; }
-  .toc { transition: opacity .2s; }
-  .toc.toc-yield { opacity: 0; pointer-events: none; }
-}
-
 /* image zoom (image-zoom.ts) */
 .prose img.zoomable { cursor: zoom-in; }
 dialog.zoom { max-width: none; max-height: none; width: 100vw; height: 100dvh; margin: 0; padding: 2vh 2vw; border: 0; background: transparent; display: none; place-items: center; cursor: zoom-out; }
 dialog.zoom[open] { display: grid; }
 dialog.zoom::backdrop { background: rgba(10, 16, 30, .88); }
 dialog.zoom img { max-width: 96vw; max-height: 96dvh; width: auto; height: auto; background: #fff; border-radius: 6px; }
+/* the magnifier: shows only with a mouse (image-zoom.ts sets size, image and offset) */
+.zoom-lens { position: fixed; z-index: 50; border-radius: 50%; border: 2px solid #fff; background: #fff no-repeat;
+  box-shadow: 0 0 0 1px rgba(10, 16, 30, .25), 0 8px 24px rgba(10, 16, 30, .28); pointer-events: none; opacity: 0; transition: opacity .12s; }
+.zoom-lens.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .zoom-lens { transition: none; } }
 
 /* closing blocks */
 .after { margin-top: 40px; }
