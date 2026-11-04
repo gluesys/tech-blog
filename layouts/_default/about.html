@@ -30,9 +30,11 @@
 
   <div class="authors-head">
     <h2 class="sec-title"><span class="hx"></span>쓴 사람들</h2>
-    {{- /* Sort buttons appear only with JS (about-sort.ts); the server order is 가나다순. */}}
+    {{- /* Sort buttons appear only with JS (about-sort.ts), which opens the list in random order;
+           the server order (no JS) is 가나다순. */}}
     <div class="sort" role="group" aria-label="정렬" hidden>
-      <button type="button" data-sort="name" aria-pressed="true">가나다순</button>
+      <button type="button" data-sort="random" aria-pressed="true">무작위</button>
+      <button type="button" data-sort="name" aria-pressed="false">가나다순</button>
       <button type="button" data-sort="last" aria-pressed="false">최근 글 순</button>
       <button type="button" data-sort="first" aria-pressed="false">처음 쓴 순</button>
     </div>
