@@ -11,13 +11,21 @@
        so pages carry no email hash and readers never contact either service. A missing picture or
        no network during the build just means the next choice. */ -}}
 {{- $email := lower (strings.TrimSpace (. | default "")) -}}
-{{- $info := index hugo.Data.authors . | default dict -}}
+{{- /* authors.yaml keys are matched without regard to case, so a post that spells the address
+       differently still gets that entry's settings (former, gravatar: false). */ -}}
+{{- $info := dict -}}
+{{- $known := false -}}
+{{- range $k, $v := hugo.Data.authors }}{{ if eq (lower $k) $email }}{{ $info = $v }}{{ $known = true }}{{ end }}{{ end -}}
 {{- $name := $info.name | default "author" -}}
 {{- $page := partial "author-page.html" $email -}}
 {{- $url := "" -}}
 {{- $github := $info.github -}}
+{{- $former := $info.former -}}
+{{- $gravatar := ne $info.gravatar false -}}
 {{- with $page -}}
   {{- with .Params.github }}{{ $github = . }}{{ end -}}
+  {{- if .Params.former }}{{ $former = true }}{{ end -}}
+  {{- if eq .Params.gravatar false }}{{ $gravatar = false }}{{ end -}}
   {{- with .Params.avatar -}}
     {{- if hasPrefix . "/" }}{{ $url = . }}{{ else }}{{ with $page.Resources.Get . }}{{ $url = .RelPermalink }}{{ end }}{{ end -}}
   {{- end -}}
@@ -26,7 +34,8 @@
 
 {{- $remotes := slice -}}
 {{- with $github }}{{ $remotes = $remotes | append (printf "https://github.com/%s.png?size=128" (urlquery .)) }}{{ end -}}
-{{- if and $email (not $info.former) (ne $info.gravatar false) -}}
+{{- /* fail closed: no Gravatar for an address that has no authors.yaml entry */ -}}
+{{- if and $known $email (not $former) $gravatar -}}
   {{- $remotes = $remotes | append (printf "https://gravatar.com/avatar/%s?s=128&d=404" (sha256 $email)) -}}
 {{- end -}}
 {{- range $remotes -}}
@@ -37,7 +46,8 @@
       {{- else with .Value -}}
         {{- if eq .MediaType.MainType "image" -}}
           {{- $ext := cond (eq .MediaType.SubType "png") "png" "jpg" -}}
-          {{- $url = (resources.Copy (printf "authors/avatar-%s.%s" (substr (md5 $name) 0 10) $ext) .).RelPermalink -}}
+          {{- /* named after the picture's own bytes: unique per picture, and says nothing about the email */ -}}
+          {{- $url = (resources.Copy (printf "authors/avatar-%s.%s" (substr (sha256 .Content) 0 16) $ext) .).RelPermalink -}}
         {{- end -}}
       {{- end -}}
     {{- end -}}
