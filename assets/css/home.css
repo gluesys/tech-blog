@@ -1,7 +1,17 @@
-/* hero art: the left ~49% of hero-wide.webp (and top ~21% of hero-mobile.webp) is plain --ci-deep (#163CCF, measured exact), so no gradient is needed */
-.hero { background: var(--ci-deep) url(/brand/hero-wide.webp) no-repeat calc(100% + max(0px, 610px - 50vw)) center / auto 100%; color: #fff; }
-/* the art is ~2.84x the hero height wide (~1195px at 420px); its plain left 49% (~583px) must clear the search box (right edge ~W/2-36), so below 1220px it is pushed right and cropped.
-   The 610px shift, the 1220px/1024px breakpoints and the phone padding factor (0.66 = 0.79 plain-free share of the art height x 0.833 aspect) all derive from the current art's plain-area sizes and must be recomputed if the art is replaced. */
+/* hero: one image fills the whole hero (cover). The wide art (2880x840) is flat --ci-deep on its left
+   ~45% and the text sits there, so it needs no scrim. It is pinned left and drawn at least 1440px
+   wide (fills the 420px-tall hero) and 108% of the hero: the art's edge starts at 46.6% of its width
+   and the centred text grows with the screen, so this keeps 40px or more between the search box and
+   the art at any width. Phones get their own art (1080x1200) under the text, so a
+   navy scrim (--ci-deep's shade) goes over it there. Keep white text at 4.5:1 or more; when swapping
+   the art, give the files new names, since browsers keep the old image under the same URL. */
+.hero {
+  --hero-art: url(/brand/hero-bg-wide.webp);
+  --hero-scrim: linear-gradient(transparent, transparent);
+  background: var(--hero-scrim), var(--hero-art) left center / cover no-repeat var(--ci-deep);
+  background-size: auto, max(1440px, 108%) auto;
+  color: #fff;
+}
 .hero-in { max-width: var(--content); margin: 0 auto; padding: 72px 24px 80px; }
 .hero h1 { margin: 0; max-width: 15em; font-size: 40px; line-height: 1.38; font-weight: 700; letter-spacing: -.02em; }
 .hero p { margin: 14px 0 30px; font-size: 17px; opacity: .86; max-width: 30em; }
@@ -61,16 +71,15 @@ aside .tags { gap: 8px; margin-top: 14px; }
 .series-group li a:hover { color: var(--link); }
 .series-group li time { margin-left: auto; color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
 
-@media (min-width: 761px) and (max-width: 1023px) {
-  /* tablet: not enough room beside the text, so the portrait art sits below it */
-  .hero { background-image: url(/brand/hero-mobile.webp); background-position: center bottom; background-size: 560px auto; }
-  .hero-in { padding-bottom: 400px; }
-}
-
 @media (max-width: 760px) {
-  .hero { background: var(--ci-deep) url(/brand/hero-mobile.webp) no-repeat center bottom / min(100%, 560px) auto; }
-  /* reserve the art's non-plain height (0.658 x its width) plus a 16px gap, so objects never rise under the text */
-  .hero-in { padding: 40px 16px calc(min(100vw, 560px) * 0.658 + 16px); }
+  /* the text spans the art on phones; the scrim is darkest at the top, where the headline is */
+  .hero {
+    --hero-art: url(/brand/hero-bg-mobile.webp);
+    --hero-scrim: linear-gradient(180deg, rgba(9, 22, 92, .60) 0%, rgba(9, 22, 92, .52) 60%, rgba(9, 22, 92, .45) 100%);
+    background-position: 0 0, center;
+    background-size: auto, cover;
+  }
+  .hero-in { padding: 44px 16px 52px; }
   .hero h1 { font-size: 28px; }
   .hero p { font-size: 15.5px; margin-bottom: 22px; }
   .hero-search { height: 50px; }
