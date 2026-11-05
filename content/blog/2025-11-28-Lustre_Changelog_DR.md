@@ -6,7 +6,7 @@ author: "김 재환 (jhkim@gluesys.com)"
 tags: ["Lustre", "Changelog", "재해 복구", "rsync", "sync", "Redis", "gRPC", "RPO", "RTO", "AI 스토리지"]
 legacy_tags: [Lustre, Changelog, DR, rsync, sync, 재해 복구, Redis, gRPC, RPO, RTO, AI Storage]
 cover: "/assets/changelog_main.png"
-main: "/assets/changelog_main.png"
+main: "/assets/thumbs/2025-11-28-Lustre_Changelog_DR.webp"
 ---
 
 ## 인사말 {#인사말}

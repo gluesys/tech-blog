@@ -6,7 +6,7 @@ author: "이헌제 (lhj4125@gluesys.com)"
 tags: ["스냅샷", "스토리지", "LVM", "씬 프로비저닝", "장애", "메타데이터", "디스크 덤프"]
 legacy_tags: [스냅샷, 스토리지, LVM, Thin Provisioning, 장애, Storage, Metadata, 디스크 덤프]
 cover: "/assets/Snapshot1intro_maincover.png"
-main: "/assets/Snapshot1intro_maincover.png"
+main: "/assets/thumbs/2024-06-03-LVM-Plugin.webp"
 ---
 
 장애 복구나 유실된 데이터 복원을 위해서 AnyStor는 이전부터 스냅샷 기능을 지원하였습니다. 그러나 스냅샷 생성과 확인은 가능할 뿐, 실제로 복원 등에 사용하기 위해서는 관리자가 CLI 명령어를 사용하여 데이터를 복원할 수밖에 없었습니다. 실제 복원 시에는 고객 서비스에 영향이 없도록 진행되어야 했기에 도입하기 까다로웠던 점도 있었습니다. 이번에 스냅샷 기능을 재편하게 되었는데, 스냅샷을 안정적으로 도입하기 위해서 거쳤던 테스트와 이슈 대응 방안에 대해서 살펴보겠습니다.

@@ -6,7 +6,7 @@ author: "박주형 (jhpark@gluesys.com)"
 tags: ["pNFS", "NFS", "병렬 파일 시스템", "고성능", "스토리지"]
 legacy_tags: [pNFS, NFS, 병렬 파일시스템, Parallel File System, 고성능, High Performance, Storage, 스토리지]
 cover: "/assets/pnfsintro_maincover.jpg"
-main: "/assets/pnfsintro_maincover.jpg"
+main: "/assets/thumbs/2024-06-10-pnfsintro.webp"
 ---
 
 AI 서비스의 정확도는 AI 모델의 정교함에 달려 있고, AI 모델의 정교함은 데이터셋을 얼마나 많이 학습했는지에 따라 고도화됩니다. 그리고 학습 시간과 비용을 줄이기 위해서는 데이터셋을 보다 빠르게 처리할 수 있는 컴퓨팅 자원과 데이터를 빠르게 주입해 주는 고성능 스토리지가 필요합니다. 하지만 스토리지는 고성능 컴퓨팅 환경에서 항상 병목의 근원으로 지목되어 왔습니다.  
