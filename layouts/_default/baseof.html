@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+{{ partial "header.html" . }}
+<main id="main" tabindex="-1">
+{{ block "main" . }}{{ end }}
+</main>
+{{ partial "footer.html" . }}
+{{ with resources.Get "ts/main.ts" | js.Build (dict "minify" true "target" "es2020") | fingerprint }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{ end }}
+{{- /* after "main": the Markdown hooks have run, so .Store knows what this page needs */}}
+{{- if .Store.Get "hasMermaid" }}
+<script src="/third-party/pele-1.12.0/pele.global.js" defer></script>
+{{- with resources.Get "ts/diagrams.ts" | js.Build (dict "minify" true "target" "es2020") | fingerprint }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{- end }}
+{{- end }}
+</body>
+</html>

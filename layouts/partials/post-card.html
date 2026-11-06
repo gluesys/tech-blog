@@ -1,0 +1,20 @@
+{{- /* One post in a list: date, title, summary, up to 3 tag chips, thumbnail.
+       Usage: partial "post-card.html" $page */ -}}
+{{- $summary := .Params.summary -}}
+{{- if not $summary -}}
+  {{- /* Plain text of the first paragraphs (skips the repeated H1 and any table of contents), first 120 runes. */ -}}
+  {{- $paras := findRE `(?s)<p[^>]*>.*?</p>` .Content 4 -}}
+  {{- $t := delimit $paras " " | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
+  {{- $summary = substr $t 0 120 | strings.TrimSpace -}}
+  {{- if gt (strings.RuneCount $t) 120 }}{{ $summary = printf "%s…" $summary }}{{ end -}}
+{{- end -}}
+{{- $thumb := .Params.main -}}
+<article class="post">
+  <div>
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006년 1월 2일" }}</time>
+    <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    <p>{{ $summary }}</p>
+    <div class="tags">{{ range first 3 (.Params.tags | default slice) }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
+  </div>
+  {{ with $thumb }}<a class="thumb" href="{{ $.RelPermalink }}" style="{{ printf "background-image:url('%s')" . | safeCSS }}" aria-hidden="true" tabindex="-1"></a>{{ else }}<a class="thumb" href="{{ .RelPermalink }}" aria-hidden="true" tabindex="-1"></a>{{ end }}
+</article>

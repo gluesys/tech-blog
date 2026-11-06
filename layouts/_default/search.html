@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="page-head"><h1 class="sec-title"><span class="hx"></span>{{ .Title }}</h1></div>
+<div class="page-body" id="search-page">
+  <form class="page-search" action="/search/" method="get" role="search">
+    <input type="search" name="q" placeholder="파일 시스템, NVMe, CXL, 고가용성처럼 주제로 검색" aria-label="글 검색" autocomplete="off">
+    <button type="submit">검색</button>
+  </form>
+  <div data-results></div>
+  <noscript><p class="sr-status">검색에는 JavaScript가 필요합니다.</p></noscript>
+</div>
+{{ end }}

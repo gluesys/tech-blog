@@ -1,0 +1,4 @@
+{{- /* The personal page (content/authors/<slug>.md) for an email, or nothing. Usage: partial "author-page.html" $email */ -}}
+{{- $found := false -}}
+{{- with site.GetPage "/authors" }}{{ range .RegularPages }}{{ if eq (lower .Params.email) (lower $) }}{{ $found = . }}{{ end }}{{ end }}{{ end -}}
+{{- return $found -}}

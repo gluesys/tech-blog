@@ -1,0 +1,25 @@
+# Internal links known to be broken in the Hugo build. Read by
+# tools/verify_site.py. One entry per (page, href); page "*" matches any page.
+# Entries must be exact: one that no longer matches a broken link makes the
+# verifier fail. Unless noted, each link is also dead on the live site
+# (checked against migration/snapshot). Values are JSON double-quoted strings.
+
+- page: "/blog/2021/03/03/NVMe_1.html"
+  href: "#flash_memory"
+  reason: "Dead on live too: the live page has the same link and no element with this id (the author never added the anchor)."
+
+- page: "/blog/2021/03/03/NVMe_1.html"
+  href: "#SLC_MLC"
+  reason: "Dead on live too: the live page has the same link and no element with this id (the author never added the anchor)."
+
+- page: "/blog/2021/11/15/cxl_1.html"
+  href: "https://tech.gluesys.com/blog/2021/10/22/composableinfra.html"
+  reason: "Dead on live too: the author's link says 10/22, the post is at /blog/2021/10/26/composableinfra.html; live answers 404."
+
+- page: "/blog/2021/12/23/genz.html"
+  href: "https://tech.gluesys.com/blog/2021/10/22/composableinfra.html"
+  reason: "Dead on live too: the author's link says 10/22, the post is at /blog/2021/10/26/composableinfra.html; live answers 404."
+
+- page: "/blog/2024/06/03/LVM-Plugin.html"
+  href: "####%204.%20%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%9E%A5%EC%95%A0%20%EB%B3%B5%EA%B5%AC"
+  reason: "Dead on live too: the author's table-of-contents link keeps the Markdown heading marks ('#### 4. ...'), so it never matched the heading id 4-메타데이터-장애-복구."

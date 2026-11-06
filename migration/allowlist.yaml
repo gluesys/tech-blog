@@ -1,0 +1,64 @@
+# Known, explained differences between the Hugo build and the live snapshot.
+# Read by tools/verify_migration.py. One entry per (url, check); an entry that
+# no longer matches a difference makes the verifier fail, so keep this list
+# exact. Values are plain scalars or JSON double-quoted strings.
+
+- url: "/blog/2019/12/02/storage_1_intro.html"
+  check: footnotes
+  reason: "kramdown builds footnote ids from the author's labels (first note referenced is [^2] -> fn:2, a second reference to it is fnref:2:1, last is fn:11); Goldmark numbers by reference order (fn:1..fn:10, repeat ref fnref1:1). Same 10 notes, same order, in-page links resolve."
+
+- url: "/blog/2019/12/02/storage_1_intro.html"
+  check: body_text
+  reason: "kramdown labels the second backlink of a twice-referenced footnote as an arrow plus a superscript 2; Goldmark renders a plain second arrow, so that one '2' differs. The hand-written '목차' list at the top was also removed (owner decision 2026-11-02): the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2022/07/22/lustre_GPU_Direct_Storage.html"
+  check: footnotes
+  reason: "kramdown keeps author labels as ids, and [^8] is referenced 4th, so live order is fn:1,2,3,8,4,...,9,11,10; Goldmark numbers by reference order (fn:1..fn:11). Same 11 ids, in-page links resolve."
+
+- url: "/blog/2022/07/22/lustre_GPU_Direct_Storage.html"
+  check: body_text
+  reason: "A bare Wikipedia URL in the references contains '_(...)_'; kramdown took the intraword underscores as emphasis and dropped them (live shows a broken URL with <em>), CommonMark keeps them literal. Hugo shows the correct URL."
+
+- url: "/blog/2022/04/19/SPDK_tutorial_1.html"
+  check: img_srcs
+  reason: "Emoji shortcodes :clap: and :wave: render as GitHub emoji <img> on live (jemoji); Hugo enableEmoji renders Unicode characters, so the 4 githubassets emoji images disappear."
+
+- url: "/blog/2022/04/19/SPDK_tutorial_1.html"
+  check: body_text
+  reason: "Same emoji shortcodes: Hugo adds the Unicode characters (3x U+1F44F, 1x U+1F44B) where live had images with no text."
+
+- url: "/blog/2024/06/03/LVM-Plugin.html"
+  check: img_srcs
+  reason: "Emoji shortcode :bulb: (2x) renders as a GitHub emoji <img> on live (jemoji) and as Unicode U+1F4A1 in Hugo."
+
+- url: "/blog/2024/06/03/LVM-Plugin.html"
+  check: body_text
+  reason: "Same :bulb: shortcodes: Hugo adds 2x U+1F4A1 where live had images with no text."
+
+- url: "/blog/2024/07/31/penpot.html"
+  check: img_srcs
+  reason: "kramdown misrendered a nested list with fenced code on live: images_7.JPG and images_13.JPG appear as literal '![...](...)' text there. Goldmark renders them as images (2 more than live)."
+
+- url: "/blog/2024/07/31/penpot.html"
+  check: body_text
+  reason: "Same live list misrender: live shows literal '- ', backtick fences and image syntax as text and swallowed '<client-id>'-style placeholders as HTML tags; Goldmark renders proper list items, code blocks and images."
+
+- url: "/blog/2019/12/02/storage_1_intro.html"
+  check: heading_ids
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2025/11/28/Lustre_Changelog_DR.html"
+  check: heading_ids
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2026/06/24/OpenZFS-PR18611.html"
+  check: heading_ids
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2025/11/28/Lustre_Changelog_DR.html"
+  check: body_text
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."
+
+- url: "/blog/2026/06/24/OpenZFS-PR18611.html"
+  check: body_text
+  reason: "Hand-written '목차' heading and list at the top removed (owner decision 2026-11-02); the page TOC (sidebar, or a collapsed block on phones) replaces it."

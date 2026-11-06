@@ -1,0 +1,19 @@
+{{- /* Featured topics, computed at build time: tags whose post count is at least the
+       mean count of the tags used in 2 or more posts (one-off tags would pull the mean
+       below 2 and feature everything). Returns a slice of dicts {name, term, count}
+       sorted by count, most first, then by name. Usage: partialCached "featured-tags.html" "all" */ -}}
+{{- $names := partialCached "tag-names.html" "all" -}}
+{{- $multi := slice -}}{{- $sum := 0 -}}
+{{- range site.Taxonomies.tags.ByCount -}}
+  {{- if ge .Count 2 }}{{ $multi = $multi | append . }}{{ $sum = add $sum .Count }}{{ end -}}
+{{- end -}}
+{{- $out := slice -}}
+{{- with $multi -}}
+  {{- $mean := div (float $sum) (len .) -}}
+  {{- range . -}}
+    {{- if ge (float .Count) $mean -}}
+      {{- $out = $out | append (dict "name" (index $names (.Term | lower)) "term" .Page "count" .Count) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return sort (sort $out "name") "count" "desc" -}}

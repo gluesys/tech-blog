@@ -1,0 +1,25 @@
+{{- /* Byline: hexagon avatar(s), author name(s), date, reading time. Emails (the
+       data/authors.yaml keys) are only used for lookup and never printed.
+       Usage: partial "author-card.html" $page */ -}}
+{{- $authors := slice -}}
+{{- range split (.Params.author | default "") ", " -}}
+  {{- $name := strings.TrimSpace . -}}
+  {{- $email := "" -}}
+  {{- with findRESubmatch `^\s*(.+?)\s*\(([^)]+)\)\s*$` . -}}
+    {{- $name = index (index . 0) 1 -}}
+    {{- $email = index (index . 0) 2 | strings.TrimSpace -}}
+  {{- end -}}
+  {{- $info := dict "name" $name -}}
+  {{- with $email }}{{ with index hugo.Data.authors . }}{{ $info = merge $info . }}{{ end }}{{ $info = merge $info (dict "avatar" (partialCached "author-avatar.html" . .)) }}{{ with partial "author-page.html" . }}{{ $info = merge $info (dict "url" .RelPermalink) }}{{ end }}{{ end -}}
+  {{- if $name }}{{ $authors = $authors | append $info }}{{ end -}}
+{{- end -}}
+<div class="byline">
+  {{- range first 3 $authors }}
+  {{- if .avatar }}<img class="avatar" src="{{ .avatar | relURL }}" alt="" width="38" height="38">{{ else }}<div class="avatar" aria-hidden="true">{{ substr (replaceRE `\s` "" .name) 0 1 }}</div>{{ end }}
+  {{- end }}
+  <div class="who">
+    <b>{{ range $i, $a := $authors }}{{ if $i }}, {{ end }}{{ with $a.url }}<a href="{{ . }}">{{ $a.name }}</a>{{ else }}{{ $a.name }}{{ end }}{{ end }}</b>
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006년 1월 2일" }}</time>
+    <span>{{ partial "reading-time.html" . }}분 분량</span>
+  </div>
+</div>

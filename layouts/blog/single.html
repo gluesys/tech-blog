@@ -1,0 +1,62 @@
+{{ define "main" }}
+{{- /* `cover` is the post banner: the head sits on it, under a navy scrim. `main` is the list
+       thumbnail (post-card.html); the two are separate and neither stands in for the other. A post without `cover` gets a plain head. */}}
+{{- with .Params.cover }}<div class="article-banner"><img src="{{ . | relURL }}" alt="" fetchpriority="high">{{ end }}
+<div class="article-head" data-pagefind-ignore>
+  <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
+  <h1>{{ .Title }}</h1>
+  {{ partial "author-card.html" . }}
+</div>
+{{- if .Params.cover }}</div>{{ end }}
+
+<div class="article">
+  <div class="article-main">
+    {{- /* Search metadata: Pagefind reads these hidden nodes; they sit outside .prose so the indexed body stays the article text. */}}
+    <div hidden>
+      <span data-pagefind-meta="title">{{ .Title }}</span>
+      <span data-pagefind-meta="date">{{ .Date.Format "2006-01-02" }}</span>
+      {{- with .Params.main }}<span data-pagefind-meta="image">{{ . }}</span>{{ end }}
+      {{- range .Params.tags }}<span data-pagefind-filter="tag">{{ . }}</span>{{ end }}
+    </div>
+    {{- /* Phones hide the sidebar TOC, so the same list opens from a collapsed block above the body. */}}
+    {{- if ge (len (findRE `<a ` .TableOfContents)) 2 }}
+    <details class="toc-m" data-pagefind-ignore><summary>목차</summary>{{ replace .TableOfContents ` id="TableOfContents"` "" | safeHTML }}</details>
+    {{- end }}
+    {{- /* Jekyll-era posts use empty <p>&nbsp;</p> as spacers; drop them so spacing comes from the stylesheet. */}}
+    <div class="prose" data-pagefind-body>{{ .Content | replaceRE `<p>(?:\s|&nbsp;|&#160;|\x{00a0})*</p>\s*` "" | safeHTML }}</div>
+    <div class="after" data-pagefind-ignore>
+      {{ partial "series-box.html" . }}
+      <div class="tags">{{ range .Params.tags }}{{ partial "tag-chip.html" (dict "tag" .) }}{{ end }}</div>
+      <div class="share share-m">
+        <button type="button" data-share data-url="{{ .Permalink }}" data-title="{{ .Title }}">링크 복사</button>
+      </div>
+      {{- $all := (where site.RegularPages "Section" "blog").ByDate -}}
+      {{- $prev := false -}}{{- $next := false -}}
+      {{- range $i, $p := $all }}{{ if eq $p.Permalink $.Permalink }}
+        {{- if gt $i 0 }}{{ $prev = index $all (sub $i 1) }}{{ end }}
+        {{- if lt (add $i 1) (len $all) }}{{ $next = index $all (add $i 1) }}{{ end }}
+      {{- end }}{{ end }}
+      {{- if or $prev $next }}
+      <nav class="pn" aria-label="이전 글, 다음 글">
+        {{ with $prev }}<a href="{{ .RelPermalink }}" rel="prev"><span>이전 글</span><b>{{ .Title }}</b></a>{{ else }}<span></span>{{ end }}
+        {{ with $next }}<a href="{{ .RelPermalink }}" rel="next"><span>다음 글</span><b>{{ .Title }}</b></a>{{ else }}<span></span>{{ end }}
+      </nav>
+      {{- end }}
+      {{- $related := first 3 (where (.Site.RegularPages.Related .) "Section" "blog") -}}
+      {{- with $related }}
+      <section class="related" aria-label="관련 글">
+        <p class="series-title"><span class="hx"></span><b>관련 글</b></p>
+        <ul>
+          {{- range . }}
+          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006년 1월 2일" }}</time></li>
+          {{- end }}
+        </ul>
+      </section>
+      {{- end }}
+      {{ partial "cta.html" . }}
+      {{ partial "comments.html" . }}
+    </div>
+  </div>
+  {{ partial "toc.html" . }}
+</div>
+{{ end }}

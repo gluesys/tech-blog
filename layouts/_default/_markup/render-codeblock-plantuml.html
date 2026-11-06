@@ -1,0 +1,3 @@
+{{- /* ```plantuml blocks, drawn as SVG by the public PlantUML server. The source goes in the
+       URL hex-encoded (the server's ~h form), so nothing is compressed at build time. */ -}}
+<p><img class="align-center plantuml" src="https://www.plantuml.com/plantuml/svg/~h{{ printf "%x" .Inner }}" alt="{{ with .Attributes.alt }}{{ . }}{{ else }}PlantUML 다이어그램{{ end }}" loading="lazy"></p>

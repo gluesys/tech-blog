@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Lustre의 파일 create & open 과정 분석 - 1</title>
+  <meta name="description" content="들어가기 앞서이번 블로그에서 설명할 내용은 러스터를 활용하고 있는 환경에서 사용자가 새로운 파일을 생성하면, 내부적으로 이루어지는 과정을 분석한 내용을 담고 있습니다. 본 내용은 러스터의 전반적인 구조에 대해 기본적으로 알고 있는 것으로 가정하고 기술하고 있어서, 러스터의 구조가 ...">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="들어가기 앞서이번 블로그에서 설명할 내용은 러스터를 활용하고 있는 환경에서 사용자가 새로운 파일을 생성하면, 내부적으로 이루어지는 과정을 분석한 내용을 담고 있습니다. 본 내용은 러스터의 전반적인 구조에 대해 기본적으로 알고 있는 것으로 가정하고 기술하고 있어서, 러스터의 구조가 ..." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="Lustre의 파일 create & open 과정 분석 - 1" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/FID_thumbnail.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lustre의 파일 create & open 과정 분석 - 1">
+  <meta name="twitter:description" content="들어가기 앞서이번 블로그에서 설명할 내용은 러스터를 활용하고 있는 환경에서 사용자가 새로운 파일을 생성하면, 내부적으로 이루어지는 과정을 분석한 내용을 담고 있습니다. 본 내용은 러스터의 전반적인 구조에 대해 기본적으로 알고 있는 것으로 가정하고 기술하고 있어서, 러스터의 구조가 ...">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/FID_thumbnail.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2025/03/13/Lustre_FID_1.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/FID_thumbnail.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">Lustre의 파일 create & open 과정 분석 - 1</h1>
+      <p class="info">by <strong>김성환 (shkim3220@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">March 13, 2025</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h1 id="들어가기-앞서">들어가기 앞서</h1>
+<p>이번 블로그에서 설명할 내용은 러스터를 활용하고 있는 환경에서 사용자가 새로운 파일을 생성하면, 내부적으로 이루어지는 과정을 분석한 내용을 담고 있습니다.
+ 본 내용은 러스터의 전반적인 구조에 대해 기본적으로 알고 있는 것으로 가정하고 기술하고 있어서, 러스터의 구조가 궁금하신 분들은 <code class="language-plaintext highlighter-rouge">Lustre 파일시스템과 GPUDirect Storage 소개</code>[1] 글을 참고하실 수 있습니다.
+<br /></p>
+
+<p>또한 러스터에서 새로운 파일의 생성은 다양한 컴포넌트들의 상호작용에 의해 이루어지기 때문에, 총 2편에 걸쳐 설명할 예정입니다.
+1편에서는 전체적인 흐름을 간략하게 소개하기 위해 러스터의 software stack 및 분석에 활용될 러스터 디버그 시스템에 대한 소개 후, 러스터 클라이언트에서
+러스터 서버로 요청을 보내는 부분까지 서술할 예정입니다. 그리고 이어서 2편에서는 러스터 서버에서의 처리 과정과, 서버에서 처리한 내용을 바탕으로 실제
+데이터가 쓰일 <code class="language-plaintext highlighter-rouge">OST(Object Storage Target)</code>에 접근하는 과정을 서술할 예정입니다.</p>
+
+<h2 id="lustre-software-stack">Lustre software stack</h2>
+<p>러스터 소프트웨어 스택은 아래 그림과 같이 여러 계층으로 구성되어 있습니다. 해당 그림에서 화살표는 클라이언트에서 러스터 서버로의 요청 흐름을 나타냅니다.
+최초 클라이언트에서 실행된 POSIX  시스템 콜은 <code class="language-plaintext highlighter-rouge">VFS</code> 계층을 거쳐 러스터의 <code class="language-plaintext highlighter-rouge">LLITE(Lustre LITE)</code> 계층으로 이동합니다.<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">LLITE</code>는 해당 요청이 메타데이터에 대한 접근이 필요한 경우 먼저 <code class="language-plaintext highlighter-rouge">LMV(Logical Metadata Volume)</code> 계층으로 요청을 보냅니다. <code class="language-plaintext highlighter-rouge">LMV</code> 계층은 단일 <code class="language-plaintext highlighter-rouge">MDT(Meta Data Target)</code> 구조일 경우에는
+별다른 역할을 수행하지 않지만, 하나 이상의 <code class="language-plaintext highlighter-rouge">MDT</code>를 사용하는 구조에서는 사용자의 요청을 분산하는 역할을 수행합니다.<br /></p>
+
+<p>이후 직접적으로 러스터 서버의 <code class="language-plaintext highlighter-rouge">MDS(Meta Data Server)</code>와 통신하는  <code class="language-plaintext highlighter-rouge">MDC(Metadata Client)</code>로 요청이 보내지고, 최종적으로 <code class="language-plaintext highlighter-rouge">MDC</code>가 러스터 서버의 <code class="language-plaintext highlighter-rouge">MDS</code>에 요청하게 됩니다. <br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">LLITE</code>에 들어온 요청이 메타데이터가 아니고 데이터에 대한 요청이라면, 해당 요청을 어느 <code class="language-plaintext highlighter-rouge">OST</code>로 보낼지 선택하는 <code class="language-plaintext highlighter-rouge">LOV(Logical Object Volume)</code> 계층으로 전달됩니다. 
+<code class="language-plaintext highlighter-rouge">LOV</code>는 현재 러스터에 존재하는 클라이언트 수만큼 <code class="language-plaintext highlighter-rouge">OSC(Object Storage Client)</code>를 보유하고, 각 <code class="language-plaintext highlighter-rouge">OSC</code>를 통해 해당하는 <code class="language-plaintext highlighter-rouge">OST</code>에 접근이 가능합니다.</p>
+
+<p><img src="/assets/lustre_software_stack.png" alt="Alt text" /></p>
+<center>&#60; 러스터의 전체적인 software stack &#62;</center>
+
+<p>만약 클라이언트에서 파일을 열고 내용을 읽으려고 한다면, 먼저 POSIX를 통해 <code class="language-plaintext highlighter-rouge">OPEN</code> 시스템 콜이 호출됩니다.
+<code class="language-plaintext highlighter-rouge">LLITE</code>는 해당 파일을 열기 위해서는 <code class="language-plaintext highlighter-rouge">MDS</code>에 정보를 요청해야 하므로, <code class="language-plaintext highlighter-rouge">LMV</code>,<code class="language-plaintext highlighter-rouge">MDC</code>를 통해 <code class="language-plaintext highlighter-rouge">MDS</code>와 통신해 <code class="language-plaintext highlighter-rouge">Layout EA</code> 정보를 받아오게 됩니다.<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">Layout EA</code>는 <code class="language-plaintext highlighter-rouge">Layout Extended Attributes</code>의 약자로, 러스터에서 파일의 레이아웃을 관리하기 위한 자료구조입니다. 이 자료구조는 파일을 식별하기 위한 <code class="language-plaintext highlighter-rouge">FID(File Identifiers)</code> 정보와
+어느 <code class="language-plaintext highlighter-rouge">OST</code>에 존재하는지에 대한 정보가 존재합니다. <code class="language-plaintext highlighter-rouge">MDS</code>로 받은 <code class="language-plaintext highlighter-rouge">Layout EA</code>를 통해 클라이언트는 <code class="language-plaintext highlighter-rouge">LOV</code>,<code class="language-plaintext highlighter-rouge">OSC</code>를 거쳐
+최종적으로 해당 데이터 블럭이 존재하는 <code class="language-plaintext highlighter-rouge">OST</code>에 접근해 데이터를 읽거나 쓰게 됩니다.</p>
+
+<p>다음 내용부터는 러스터에서 새로운 파일을 생성할 때, 위의 software stack에서 어떠한 작업이 이루어지는지를 추적할 방법을 소개한 다음, 클라이언트에서부터 과정을 서술할 예정입니다.</p>
+
+<h2 id="how-to-lustre-debugging">How to lustre debugging</h2>
+<p>본격적인 내용에 앞서, 해당 내용은 러스터에서 제공하는 디버그 메세지를 바탕으로 작성되었습니다.
+실제 러스터를 구축하고, 본문의 내용을 검증하고자 할 때 활용할 수 있도록, 간단히 소개하겠습니다.<br /></p>
+
+<h3 id="debug-설정">debug 설정</h3>
+<p>러스터에서는 다양한 디버그 메세지들을 분류해 두었기 때문에, 원하는 분류의 메세지만 출력하도록 설정하는 것이 가능합니다.
+현재 설정 가능한 분류는 다음과 같습니다.<br /></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>trace inode super iotrace malloc cache info ioctl neterror net warning buffs other
+dentry nettrace page dlmtrace error emerg ha rpctrace vfstrace reada mmap config console quota sec lfsck hsm snapshot layout
+</code></pre></div></div>
+
+<p>설정 방법은 <code class="language-plaintext highlighter-rouge">lctl</code>명령어를 활용하여 설정이 가능하며, 다음과 같습니다.<br /></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 단일 분류 설정</span>
+lctl set_param <span class="nv">debug</span><span class="o">=</span>+inode
+
+<span class="c"># 복수 분류 설정</span>
+lctl set_param <span class="nv">debug</span><span class="o">=</span>+inode,iotrace, ...
+
+<span class="c"># 모든 분류 설정</span>
+lctl set_param <span class="nv">debug</span><span class="o">=</span>+all
+</code></pre></div></div>
+
+<p>한 번에 모든 설정들을 제거하고자 할 때는  <code class="language-plaintext highlighter-rouge">+all</code> 대신 <code class="language-plaintext highlighter-rouge">-all</code>로 설정해 주면 됩니다.
+설정이 잘 적용되었는지는 <code class="language-plaintext highlighter-rouge">lctl get_param debug</code>로 가능하며, <code class="language-plaintext highlighter-rouge">-all</code>로 모든 설정들을 제거하여도
+ 몇 가지 기본적인 설정들을 제외한 나머지가 제거됩니다. 기본 설정 리스트는 다음과 같습니다.<br /></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>warning error emerg console
+</code></pre></div></div>
+
+<h3 id="subsystem-별-debug-설정">subsystem 별 debug 설정</h3>
+<p>러스터는 메세지뿐만 아니라 <code class="language-plaintext highlighter-rouge">subsystem</code> 별로 디버그 메세지의 분류가 가능합니다.
+<code class="language-plaintext highlighter-rouge">subsystem</code>은 몇 가지를 제외하면 커널 내의 러스터 모듈들을 의미합니다. 
+따라서 원하는 모듈만 선택적으로 디버깅이 가능합니다. 러스터에서 지원하는 <code class="language-plaintext highlighter-rouge">subsystem</code>은 다음과 같습니다.<br /></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>all_subs, undefined, mdc, mds, osc, ost, class, log, llite, rpc, mgmt, lnet, lnd, pinger, filter, libcfs, echo, ldlm, lov, lquota, osd, lfsck, snapshot, lmv, sec, gss, mgc, mgs, fid, fld
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">subsystem</code> 설정도 <code class="language-plaintext highlighter-rouge">lctl</code> 명령어로 가능하며, 방법은 다음과 같습니다.<br /></p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 단일 subsystem 설정</span>
+lctl set_param <span class="nv">subsystem_debug</span><span class="o">=</span><span class="s2">"mds"</span>
+
+<span class="c"># 복수 subsystem 설정</span>
+lctl set_param <span class="nv">subsystem_debug</span><span class="o">=</span><span class="s2">"mds mdc ost llite ..."</span>
+
+<span class="c"># 모든 subsystem 설정</span>
+lctl set_param <span class="nv">subsystem_debug</span><span class="o">=</span><span class="nt">-1</span>
+</code></pre></div></div>
+
+<p>모든 <code class="language-plaintext highlighter-rouge">subsystem</code>을 비활성화하려면  <code class="language-plaintext highlighter-rouge">-1</code> 대신 <code class="language-plaintext highlighter-rouge">0</code>으로 설정하시면 됩니다.
+ 설정이 잘 되었는지는 <code class="language-plaintext highlighter-rouge">lctl get_param subsystem_debug</code> 명령어로 가능하며, <code class="language-plaintext highlighter-rouge">0</code>으로 설정했을 경우 <code class="language-plaintext highlighter-rouge">subsystem_debug=0</code>으로 결과가 출력됩니다. <br /></p>
+
+<h1 id="클라이언트의-최초-처리-과정">클라이언트의 최초 처리 과정</h1>
+<p>러스터는 <code class="language-plaintext highlighter-rouge">LLITE</code> 계층을 활용해 POSIX로 들어온 요청을 러스터에 맞게 변환해서 활용하고 있습니다.
+<code class="language-plaintext highlighter-rouge">VFS</code> 계층은 실제 <code class="language-plaintext highlighter-rouge">Underlying</code> 파일 시스템에 맞는 <code class="language-plaintext highlighter-rouge">Open</code> 함수를 호출하는데, 아래 코드 블럭에서 <code class="language-plaintext highlighter-rouge">atomic_open</code>의 <code class="language-plaintext highlighter-rouge">dir-&gt;i_op-&gt;atomic_open</code> 입니다.<br /></p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// fs/namei.c</span>
+<span class="cm">/* Handle the last step of open() */</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">do_last</span><span class="p">(</span><span class="k">struct</span> <span class="n">nameidata</span> <span class="o">*</span><span class="n">nd</span><span class="p">,</span>
+                   <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="n">open_flags</span> <span class="o">*</span><span class="n">op</span><span class="p">,</span>
+                   <span class="kt">int</span> <span class="o">*</span><span class="n">opened</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">lookup_open</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">got_write</span><span class="p">,</span> <span class="n">opened</span><span class="p">);</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">lookup_open</span><span class="p">(</span><span class="k">struct</span> <span class="n">nameidata</span> <span class="o">*</span><span class="n">nd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">path</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span>
+                        <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span>
+                        <span class="k">const</span> <span class="k">struct</span> <span class="n">open_flags</span> <span class="o">*</span><span class="n">op</span><span class="p">,</span>
+                        <span class="n">bool</span> <span class="n">got_write</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">opened</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="p">....</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dir_inode</span><span class="o">-&gt;</span><span class="n">i_op</span><span class="o">-&gt;</span><span class="n">atomic_open</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">atomic_open</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">dentry</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">open_flag</span><span class="p">,</span>
+                            <span class="n">mode</span><span class="p">,</span> <span class="n">opened</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">error</span> <span class="o">==</span> <span class="o">-</span><span class="n">ENOENT</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">create_error</span><span class="p">)</span>
+             <span class="n">error</span> <span class="o">=</span> <span class="n">create_error</span><span class="p">;</span>
+         <span class="k">return</span> <span class="n">error</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="p">....</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">atomic_open</span><span class="p">(</span><span class="k">struct</span> <span class="n">nameidata</span> <span class="o">*</span><span class="n">nd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">dentry</span><span class="p">,</span>
+                        <span class="k">struct</span> <span class="n">path</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span> <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span>
+                        <span class="k">const</span> <span class="k">struct</span> <span class="n">open_flags</span> <span class="o">*</span><span class="n">op</span><span class="p">,</span>
+                        <span class="kt">int</span> <span class="n">open_flag</span><span class="p">,</span> <span class="n">umode_t</span> <span class="n">mode</span><span class="p">,</span>
+                        <span class="kt">int</span> <span class="o">*</span><span class="n">opened</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="k">const</span> <span class="n">DENTRY_NOT_SET</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="o">-</span><span class="mi">1UL</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">dir</span> <span class="o">=</span>  <span class="n">nd</span><span class="o">-&gt;</span><span class="n">path</span><span class="p">.</span><span class="n">dentry</span><span class="o">-&gt;</span><span class="n">d_inode</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">error</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="o">~</span><span class="n">open_flag</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">O_EXCL</span> <span class="o">|</span> <span class="n">O_CREAT</span><span class="p">)))</span> <span class="cm">/* both O_EXCL and O_CREAT */</span>
+                <span class="n">open_flag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">O_TRUNC</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">nd</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">LOOKUP_DIRECTORY</span><span class="p">)</span>
+                <span class="n">open_flag</span> <span class="o">|=</span> <span class="n">O_DIRECTORY</span><span class="p">;</span>
+
+        <span class="n">file</span><span class="o">-&gt;</span><span class="n">f_path</span><span class="p">.</span><span class="n">dentry</span> <span class="o">=</span> <span class="n">DENTRY_NOT_SET</span><span class="p">;</span>
+        <span class="n">file</span><span class="o">-&gt;</span><span class="n">f_path</span><span class="p">.</span><span class="n">mnt</span> <span class="o">=</span> <span class="n">nd</span><span class="o">-&gt;</span><span class="n">path</span><span class="p">.</span><span class="n">mnt</span><span class="p">;</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">dir</span><span class="o">-&gt;</span><span class="n">i_op</span><span class="o">-&gt;</span><span class="n">atomic_open</span><span class="p">(</span><span class="n">dir</span><span class="p">,</span> <span class="n">dentry</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span>
+                                       <span class="n">open_to_namei_flags</span><span class="p">(</span><span class="n">open_flag</span><span class="p">),</span>
+                                       <span class="n">mode</span><span class="p">,</span> <span class="n">opened</span><span class="p">);</span>
+        <span class="n">d_lookup_done</span><span class="p">(</span><span class="n">dentry</span><span class="p">);</span>
+<span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>이 코드가 수행되면 아래의 코드와 같이 러스터 <code class="language-plaintext highlighter-rouge">LLITE</code> 계층의 <code class="language-plaintext highlighter-rouge">ll_dir_inode_operations</code>에 정의된 함수인 <code class="language-plaintext highlighter-rouge">ll_atomic_open</code>이 호출됩니다.<br /></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/llite/namei.c</span>
+<span class="k">const</span> <span class="k">struct</span> <span class="n">inode_operations</span> <span class="n">ll_dir_inode_operations</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">mknod</span>          <span class="o">=</span> <span class="n">ll_mknod</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">atomic_open</span>    <span class="o">=</span> <span class="n">ll_atomic_open</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">lookup</span>         <span class="o">=</span> <span class="n">ll_lookup_nd</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">create</span>         <span class="o">=</span> <span class="n">ll_create_nd</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">mkdir</span>          <span class="o">=</span> <span class="n">ll_mkdir</span><span class="p">,</span>
+    <span class="p">....</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Open</code> 과정에서 <code class="language-plaintext highlighter-rouge">LLITE</code>의 시작 지점은 <code class="language-plaintext highlighter-rouge">ll_atomic_open</code> 함수입니다.  <code class="language-plaintext highlighter-rouge">ll_atomic_open</code> 함수부터는 <code class="language-plaintext highlighter-rouge">inode</code>나 <code class="language-plaintext highlighter-rouge">dentry</code>와 같이
+일반적인 파일 시스템에 관한 메타데이터 대신 러스터에서 활용하는 메타데이터들로 요청을 처리합니다.
+여러 종류의 메타데이터가 존재하지만,  제일 먼저 활용되는 메타데이터는 앞서 언급된 <code class="language-plaintext highlighter-rouge">FID</code> 입니다.<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">FID</code>는 러스터에서 파일이나 디렉토리를 식별하기 위한 메타데이터로, 다음과 같이 정의되어 있습니다.</p>
+
+<pre><code class="language-C">// lustre/include/uapi/linux/lustre/lustre_user.h
+struct lu_fid {
+       /**
+        * FID sequence. Sequence is a unit of migration: all files (objects)
+        * with FIDs from a given sequence are stored on the same server.
+        * Lustre should support 2^64 objects, so even if each sequence
+        * has only a single object we can still enumerate 2^64 objects.
+        **/
+        __u64 f_seq;
+        /* FID number within sequence. */
+        __u32 f_oid;
+        /**
+         * FID version, used to distinguish different versions (in the sense
+         * of snapshots, etc.) of the same file system object. Not currently
+         * used.
+         **/
+        __u32 f_ver;
+} __attribute__((packed));
+</code></pre>
+
+<p><code class="language-plaintext highlighter-rouge">FID</code>의 구성은 sequence 번호(<code class="language-plaintext highlighter-rouge">f_seq</code>), object id(<code class="language-plaintext highlighter-rouge">f_oid</code>), version(<code class="language-plaintext highlighter-rouge">f_ver</code>)으로 구성되어 있습니다.
+sequence 번호는 <code class="language-plaintext highlighter-rouge">MDS</code>로부터 부여받고,  object id는 동일한 sequence 번호에 새로운 파일이 생성되면 순차적으로 증가하며,
+version은 버전 관리를 위해 부여되는데 코드 내 주석에서 현재 쓰이지 않는다고 되어있습니다.<br /></p>
+
+<p>아래 디버그 메세지의 <code class="language-plaintext highlighter-rouge">fid</code>(<code class="language-plaintext highlighter-rouge">0x200000bd2:0x1:0x0</code>)를 예로 들면 <code class="language-plaintext highlighter-rouge">f_seq = 0x200000bd2</code>, <code class="language-plaintext highlighter-rouge">f_oid = 0x1</code>, <code class="language-plaintext highlighter-rouge">f_ver = 0x0</code>이 됩니다.<br /></p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">VFS</span> <span class="n">Op</span><span class="o">:</span><span class="n">name</span><span class="o">=</span><span class="n">drunk</span><span class="p">,</span> <span class="n">dir</span><span class="o">=</span><span class="p">[</span><span class="mh">0x200000bd2</span><span class="o">:</span><span class="mh">0x1</span><span class="o">:</span><span class="mh">0x0</span><span class="p">](</span><span class="mo">00000000</span><span class="n">c19f0c4c</span><span class="p">),</span> <span class="n">file</span> <span class="mo">0000000027</span><span class="n">a7ccd5</span><span class="p">,</span> <span class="n">open_flags</span> <span class="mi">8941</span><span class="p">,</span> <span class="n">mode</span> <span class="mi">81</span><span class="n">b6</span> <span class="n">opened</span> <span class="mi">0</span>
+</code></pre></div></div>
+<p>이 메세지는 <code class="language-plaintext highlighter-rouge">drunk</code>라는 파일을 열고자 할 때, <code class="language-plaintext highlighter-rouge">ll_atomic_open</code> 함수에서 기록되는 러스터 디버그 메세지입니다.
+<code class="language-plaintext highlighter-rouge">0x200000bd2:0x1:0x0</code> 라는 <code class="language-plaintext highlighter-rouge">FID</code>를 가진 디렉토리의 하위에서 <code class="language-plaintext highlighter-rouge">drunk</code> 라는 파일을 열려고 하고 있습니다. 이때의 <code class="language-plaintext highlighter-rouge">FID</code>는
+아직 새로운 파일에 대한 <code class="language-plaintext highlighter-rouge">FID</code>가 아직 할당되지 않았기 때문에, <code class="language-plaintext highlighter-rouge">drunk</code>에 대한 <code class="language-plaintext highlighter-rouge">FID</code>는 아직 존재하지 않습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ll_atomic_open</code> 함수가 <code class="language-plaintext highlighter-rouge">VFS</code>로부터 요청을 넘겨 받으면 먼저 파일을 단순히 열기만 하는지, 아니면 새로운 파일을 생성하고 여는지 확인합니다.
+단순 파일 열기라면 <code class="language-plaintext highlighter-rouge">IT_OPEN</code> 플래그만 설정하고, 그게 아니라 파일 생성 후에 여는 작업이라면 <code class="language-plaintext highlighter-rouge">O_CREAT</code> 플래그 값까지 설정합니다.<br /></p>
+
+<p>이 후 수행하는 작업은 크게 2가지 입니다. 첫 번째는 <code class="language-plaintext highlighter-rouge">ll_lookup_it</code> 이고 두 번째는 <code class="language-plaintext highlighter-rouge">ll_create_it</code> 입니다.<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">ll_lookup_it</code>는 <code class="language-plaintext highlighter-rouge">MDS</code>에 해당 파일이 존재하는지 찾고, 없다면 관련 메타데이터 생성까지 요청한 후, <code class="language-plaintext highlighter-rouge">ll_create_it</code> 에서 쓸 <code class="language-plaintext highlighter-rouge">layout EA</code> 메타데이터를 요청하는 작업까지 수행합니다.
+그리고 <code class="language-plaintext highlighter-rouge">ll_create_it</code>는 <code class="language-plaintext highlighter-rouge">ll_lookup_it</code>의 수행 결과로 받은 <code class="language-plaintext highlighter-rouge">layout EA</code> 를 가지고, <code class="language-plaintext highlighter-rouge">OST</code>에 실제 파일을 만드는 작업을 수행합니다.<br /></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// lustre/llite/namei.c</span>
+<span class="cm">/*
+ * For cached negative dentry and new dentry, handle lookup/create/open
+ * together.
+ */</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">ll_atomic_open</span><span class="p">(</span><span class="k">struct</span> <span class="n">inode</span> <span class="o">*</span><span class="n">dir</span><span class="p">,</span> <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">dentry</span><span class="p">,</span>
+                          <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">open_flags</span><span class="p">,</span>
+                          <span class="n">umode_t</span> <span class="n">mode</span> <span class="n">ll_last_arg</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">struct</span> <span class="n">lookup_intent</span> <span class="o">*</span><span class="n">it</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="n">dentry</span> <span class="o">*</span><span class="n">de</span><span class="p">;</span>
+        <span class="kt">long</span> <span class="kt">long</span> <span class="n">lookup_flags</span> <span class="o">=</span> <span class="n">LOOKUP_OPEN</span><span class="p">;</span>
+        <span class="kt">void</span> <span class="o">*</span><span class="n">secctx</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="p">...</span>
+        <span class="n">it</span><span class="o">-&gt;</span><span class="n">it_op</span> <span class="o">=</span> <span class="n">IT_OPEN</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">open_flags</span> <span class="o">&amp;</span> <span class="n">O_CREAT</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">it</span><span class="o">-&gt;</span><span class="n">it_op</span> <span class="o">|=</span> <span class="n">IT_CREAT</span><span class="p">;</span>
+                <span class="n">lookup_flags</span> <span class="o">|=</span> <span class="n">LOOKUP_CREATE</span><span class="p">;</span>
+
+<span class="p">...</span>
+
+        <span class="cm">/* Dentry added to dcache tree in ll_lookup_it */</span>
+        <span class="n">de</span> <span class="o">=</span> <span class="n">ll_lookup_it</span><span class="p">(</span><span class="n">dir</span><span class="p">,</span> <span class="n">dentry</span><span class="p">,</span> <span class="n">it</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">secctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">secctxlen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pca</span><span class="p">,</span> <span class="n">encrypt</span><span class="p">,</span>
+                          <span class="o">&amp;</span><span class="n">encctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">encctxlen</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">IS_ERR</span><span class="p">(</span><span class="n">de</span><span class="p">))</span>
+                <span class="n">rc</span> <span class="o">=</span> <span class="n">PTR_ERR</span><span class="p">(</span><span class="n">de</span><span class="p">);</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">de</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+                <span class="n">dentry</span> <span class="o">=</span> <span class="n">de</span><span class="p">;</span>
+
+        <span class="n">CFS_FAIL_TIMEOUT</span><span class="p">(</span><span class="n">OBD_FAIL_LLITE_CREATE_FILE_PAUSE</span><span class="p">,</span> <span class="n">cfs_fail_val</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">rc</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">it_disposition</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">DISP_OPEN_CREATE</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="cm">/* Dentry instantiated in ll_create_it. */</span>
+                        <span class="n">rc</span> <span class="o">=</span> <span class="n">ll_create_it</span><span class="p">(</span><span class="n">dir</span><span class="p">,</span> <span class="n">dentry</span><span class="p">,</span> <span class="n">it</span><span class="p">,</span> <span class="n">secctx</span><span class="p">,</span> <span class="n">secctxlen</span><span class="p">,</span>
+                                          <span class="n">encrypt</span><span class="p">,</span> <span class="n">encctx</span><span class="p">,</span> <span class="n">encctxlen</span><span class="p">,</span>
+                                          <span class="n">open_flags</span><span class="p">);</span>
+                        <span class="n">ll_security_release_secctx</span><span class="p">(</span><span class="n">secctx</span><span class="p">,</span> <span class="n">secctxlen</span><span class="p">);</span>
+                        <span class="n">llcrypt_free_ctx</span><span class="p">(</span><span class="n">encctx</span><span class="p">,</span> <span class="n">encctxlen</span><span class="p">);</span>
+<span class="p">...</span>
+
+<span class="nl">out_release:</span>
+        <span class="n">ll_intent_release</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+        <span class="n">OBD_FREE</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">));</span>
+
+        <span class="n">RETURN</span><span class="p">(</span><span class="n">rc</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">ll_atomic_open</code>의 첫 번째 처리 과정인 <code class="language-plaintext highlighter-rouge">ll_lookup_it</code> 함수를 살펴보기 전에, 먼저 함수 이름에 사용된 <code class="language-plaintext highlighter-rouge">it</code>에 대해 간단히 설명하고 넘어가도록 하겠습니다.
+함수 명의 <code class="language-plaintext highlighter-rouge">it</code>는 <code class="language-plaintext highlighter-rouge">intent</code>를 의미합니다. 러스터에서는 클라이언트의 요청이 네트워크를 통해 <code class="language-plaintext highlighter-rouge">MDS</code>로 전달되어 처리가 되기 때문에,
+네트워크 요청을 최소화하기 위해서 한번 요청에 필요한 여러 작업을 전달하려고 이와 같은 방식을 쓰고 있습니다.<br /></p>
+
+<p>다시 <code class="language-plaintext highlighter-rouge">ll_lookup_it</code>로 돌아오면, 현재 <code class="language-plaintext highlighter-rouge">drunk</code>라는 파일은 새로 생성하려는 파일이므로 아래와 같은 디버그 메세지가 출력 됩니다.
+<code class="language-plaintext highlighter-rouge">ll_atomic_open</code> 함수에서의 디버그 메세지와 동일하게 생성하려는 파일명, 부모 디렉토리의 <code class="language-plaintext highlighter-rouge">FID</code> 가 출력되었고, 수행할 작업(<code class="language-plaintext highlighter-rouge">intent</code>)이 추가로 출력되어 있습니다.<br /></p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">VFS</span> <span class="n">Op</span><span class="o">:</span><span class="n">name</span><span class="o">=</span><span class="n">drunk</span><span class="p">,</span> <span class="n">dir</span><span class="o">=</span><span class="p">[</span><span class="mh">0x200000bd2</span><span class="o">:</span><span class="mh">0x1</span><span class="o">:</span><span class="mh">0x0</span><span class="p">](</span><span class="mo">00000000</span><span class="n">c19f0c4c</span><span class="p">),</span> <span class="n">intent</span><span class="o">=</span><span class="n">open</span><span class="o">|</span><span class="n">creat</span>
+</code></pre></div></div>
+
+<p>이와 같이 <code class="language-plaintext highlighter-rouge">MDS</code>에서 수행할 <code class="language-plaintext highlighter-rouge">intent</code>가 구성되면, <code class="language-plaintext highlighter-rouge">LLITE</code> 계층에서 <code class="language-plaintext highlighter-rouge">LMV</code> 계층으로 넘어가게 됩니다.
+<code class="language-plaintext highlighter-rouge">LMV</code>에서는 먼저 동시성을 위해 <code class="language-plaintext highlighter-rouge">MDS</code>에 보낼 <code class="language-plaintext highlighter-rouge">Lock</code>에 관한 요청 작업을 처리하는데, 여기에 앞선 파일 열기에 관한 <code class="language-plaintext highlighter-rouge">intent</code>를 포함 시킵니다.
+이렇게 요청을 만들면, 클라이언트에서 하나의 요청만으로 <code class="language-plaintext highlighter-rouge">MDS</code>가 수행이 필요한 모든 작업을 요청할 수 있게 됩니다.<br /></p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">INTENT</span> <span class="n">LOCK</span> <span class="err">'</span><span class="n">open</span><span class="o">|</span><span class="n">creat</span><span class="err">'</span> <span class="k">for</span> <span class="p">[</span><span class="mh">0x0</span><span class="o">:</span><span class="mh">0x0</span><span class="o">:</span><span class="mh">0x0</span><span class="p">]</span> <span class="err">'</span><span class="n">drunk</span><span class="err">'</span> <span class="n">on</span> <span class="p">[</span><span class="mh">0x200000bd2</span><span class="o">:</span><span class="mh">0x1</span><span class="o">:</span><span class="mh">0x0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>이후 <code class="language-plaintext highlighter-rouge">LMV</code>에서는 <code class="language-plaintext highlighter-rouge">drunk</code> 파일을 위한 <code class="language-plaintext highlighter-rouge">FID</code>를 할당받은 다음  <code class="language-plaintext highlighter-rouge">MDS</code>로 요청을 보내기 위해 <code class="language-plaintext highlighter-rouge">MDC</code> 계층으로 전달합니다.<br /></p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cli</span><span class="o">-</span><span class="n">cli</span><span class="o">-</span><span class="n">ClstAuto</span><span class="o">-</span><span class="n">MDT0000</span><span class="o">-</span><span class="n">mdc</span><span class="o">-</span><span class="n">ffff8e6499843800</span><span class="o">:</span> <span class="n">Allocated</span> <span class="n">FID</span> <span class="p">[</span><span class="mh">0x200000bd2</span><span class="o">:</span><span class="mh">0x3fe</span><span class="o">:</span><span class="mh">0x0</span><span class="p">]</span>
+<span class="n">OPEN_INTENT</span> <span class="n">with</span> <span class="n">fid1</span><span class="o">=</span><span class="p">[</span><span class="mh">0x200000bd2</span><span class="o">:</span><span class="mh">0x1</span><span class="o">:</span><span class="mh">0x0</span><span class="p">],</span> <span class="n">fid2</span><span class="o">=</span><span class="p">[</span><span class="mh">0x200000bd2</span><span class="o">:</span><span class="mh">0x3fe</span><span class="o">:</span><span class="mh">0x0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="err">'</span><span class="n">drunk</span><span class="err">'</span> <span class="o">-&gt;</span> <span class="n">mds</span> <span class="err">#</span><span class="mi">0</span> 
+</code></pre></div></div>
+
+<p>최종적으로 위와 같은 요청이 클라이언트의 <code class="language-plaintext highlighter-rouge">MDC</code>에서 서버의 <code class="language-plaintext highlighter-rouge">MDS</code>로 전달되게 됩니다. 로그에 대해 간단히 설명하면,
+<code class="language-plaintext highlighter-rouge">ClstAuto</code>는 현재 러스터의 클러스터 볼륨명을 의미합니다. <code class="language-plaintext highlighter-rouge">MDT0000</code> 은 클라이언트의 요청이 <code class="language-plaintext highlighter-rouge">index</code>가 0인 <code class="language-plaintext highlighter-rouge">MDT</code>에 전달되는 것을 의미하고,
+<code class="language-plaintext highlighter-rouge">mdc</code>는 이 요청은 클라이언트의 <code class="language-plaintext highlighter-rouge">mdc</code>가 보냄을 의미합니다.<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">drunk</code> 파일은  <code class="language-plaintext highlighter-rouge">[0x200000bd2:0x3fe:0x0]</code> 이라는 <code class="language-plaintext highlighter-rouge">FID</code>를 할당받았고,
+<code class="language-plaintext highlighter-rouge">MDS</code> 쪽에  이 <code class="language-plaintext highlighter-rouge">FID</code>에 관해 요청한 것은 <code class="language-plaintext highlighter-rouge">OPEN_INTENT</code> 입니다. <code class="language-plaintext highlighter-rouge">fid1</code>은 <code class="language-plaintext highlighter-rouge">drunk</code> 파일의 부모 디렉토리의 <code class="language-plaintext highlighter-rouge">FID</code>이고, <code class="language-plaintext highlighter-rouge">fid2</code>는 <code class="language-plaintext highlighter-rouge">drunk</code> 자신의 <code class="language-plaintext highlighter-rouge">FID</code> 입니다.<br /></p>
+
+<p><code class="language-plaintext highlighter-rouge">MDC</code>의 요청은 <code class="language-plaintext highlighter-rouge">PTLRPC</code> 계층을 거쳐 <code class="language-plaintext highlighter-rouge">MDS</code>로 보내지고, 러스터 서버측의 <code class="language-plaintext highlighter-rouge">PTLRPC</code> 계층의 데몬이 이를 받아서 <code class="language-plaintext highlighter-rouge">MDS</code> 계층에게 넘겨주게 됩니다.<br /></p>
+
+<p>이렇게 create &amp; open 의 시작 부분인 클라이언트의 첫 처리 과정을 코드 레벨로 살펴보았습니다. 이후 <code class="language-plaintext highlighter-rouge">MDC</code>의 요청을 받아 <code class="language-plaintext highlighter-rouge">MDS</code>에서 처리하는 과정 및 <code class="language-plaintext highlighter-rouge">OST</code> 연동 내용은 2편에 이어서 진행하도록 하겠습니다.</p>
+
+<h2 id="참고-링크-및-자료">참고 링크 및 자료</h2>
+
+<ul>
+  <li>[1] <a href="https://tech.gluesys.com/blog/2022/07/22/lustre_GPU_Direct_Storage.html">Lustre 파일시스템과 GPUDirect Storage 소개</a></li>
+  <li>[2] <a href="https://doc.lustre.org/lustre_manual.xhtml">Lustre Software Release 2.x</a></li>
+  <li>[3] Braam, Peter., “The Lustre storage architecture.”, arXiv preprint arXiv:1903.01955, 2019</li>
+  <li>[4] Understanding Lustre Internals, https://wiki.lustre.org/Understanding_Lustre_Internals</li>
+  <li>[5] <a href="https://github.com/lustre/lustre-release.git">Lustre github</a></li>
+</ul>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#Lustre">Lustre</a>,&nbsp;<a href="/tags#File">File</a>,&nbsp;<a href="/tags#Metadata">Metadata</a>,&nbsp;<a href="/tags#Data">Data</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

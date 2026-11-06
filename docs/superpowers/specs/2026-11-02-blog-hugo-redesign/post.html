@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pNFS 시안</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="#"><img src="symbol.png" alt="글루시스"><span class="txt"><span class="name">TECH-G</span><span class="by">글루시스 기술 블로그</span></span></a>
+    <nav class="nav"><a href="#" aria-current="page">글</a><a href="#">태그</a><a href="#">소개</a><a href="#">채용</a></nav>
+    <div class="nav-search">글 검색<kbd>/</kbd></div>
+    <button class="menu-btn" aria-label="메뉴">☰</button>
+  </div>
+</header>
+
+<div class="article-head">
+  <div class="tags"><a class="tag" href="#">pNFS</a><a class="tag" href="#">NFS</a><a class="tag" href="#">병렬 파일 시스템</a><a class="tag" href="#">고성능</a></div>
+  <h1>병렬 네트워크 파일 시스템 pNFS의 재조명</h1>
+  <div class="byline">
+    <div class="avatar">박</div>
+    <div class="who"><b>박주형</b><span>2024년 6월 10일</span><span>8분 분량</span></div>
+  </div>
+</div>
+
+<div class="article">
+  <div class="prose">
+    <p>AI 서비스의 정확도는 AI 모델의 정교함에 달려 있고, AI 모델의 정교함은 데이터셋을 얼마나 많이 학습했는지에 따라 고도화됩니다. 그리고 학습 시간과 비용을 줄이기 위해서는 데이터셋을 보다 빠르게 처리할 수 있는 컴퓨팅 자원과 데이터를 빠르게 주입해 주는 고성능 스토리지가 필요합니다.</p>
+    <p>이러한 스토리지 병목 문제를 해결하기 위해 다양한 접근법이 연구되고 있는데, 그중 하나가 기존 NFS(Network File System)의 한계를 극복하고자 등장했던 <b>병렬 NFS(parallel NFS, 이하 pNFS)</b>입니다.<span class="fn">1</span></p>
+    <h2 id="pnfs-구조">pNFS의 구조</h2>
+    <p>pNFS의 아키텍처는 크게 클라이언트와 <b>메타데이터 서버(Metadata Server, 이하 MDS)</b>, <b>데이터 서버(Data Server, 이하 DS)</b>로 구성됩니다. NFS 서버였던 MDS는 메타데이터 및 접근 관리 역할을 수행하며, <b>레이아웃(layout)</b>이라는 메타데이터에 따라 각 파일의 데이터를 DS에 분산 저장합니다.</p>
+    <figure><div class="img" style="background-image:url(https://tech.gluesys.com/assets/pNFSarchitecture.png)"></div><figcaption>pNFS 구조</figcaption></figure>
+    <p>클라이언트에서 pNFS가 켜져 있는지는 마운트 옵션과 커널 통계로 확인할 수 있습니다.</p>
+    <div class="code"><span class="lang">console</span><button class="copy">복사</button><span class="c"># NFSv4.1 이상으로 마운트해야 pNFS 레이아웃을 받을 수 있습니다</span>
+$ <span class="k">mount</span> -t nfs -o <span class="s">vers=4.1</span> mds01:/export /mnt/pnfs
+$ <span class="k">grep</span> LAYOUTGET /proc/self/mountstats
+        LAYOUTGET: 128 128 0 23040 19456 3 412 418 0</div>
+    <div class="after">
+      <div class="tags"><a class="tag" href="#">pNFS</a><a class="tag" href="#">NFS</a><a class="tag" href="#">병렬 파일 시스템</a><a class="tag" href="#">고성능</a><a class="tag" href="#">스토리지</a></div>
+      <div class="pn">
+        <a href="#"><span>이전 글</span><b>LVM 스냅샷 관리 기능 개발 후기 (1)</b></a>
+        <a href="#"><span>다음 글</span><b>디자인 도구 Penpot 설치부터 활용까지</b></a>
+      </div>
+      <div class="cta"><p>글루시스는 파일 시스템과 스토리지 소프트웨어를<br>함께 만들 개발자를 찾고 있습니다.</p><a href="#">채용 공고 보기</a></div>
+    </div>
+  </div>
+  <aside class="toc">
+    <b>목차</b>
+    <ol>
+      <li>기존 NFS와 병렬 파일 시스템</li>
+      <li>pNFS 소개</li>
+      <li aria-current="true">pNFS의 구조</li>
+      <li>Flex Files</li>
+      <li>고집적 워크로드에 특화된 pNFS</li>
+      <li>마치며</li>
+    </ol>
+    <div class="share"><button>링크 복사</button><button>공유</button></div>
+  </aside>
+</div>
+</body>
+</html>

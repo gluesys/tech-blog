@@ -1,0 +1,45 @@
+# Author cards keyed by email (never rendered). Optional fields: `avatar` (image
+# path), `github` (account name, for its picture), `gravatar: false` (never use
+# their Gravatar) and `former: true` for people who have left (labelled 이전 동료
+# in the same list; their Gravatar is not used). Picture order: `avatar` in the
+# personal page, `avatar` here, GitHub, Gravatar, else the name's first letter
+# (layouts/partials/author-avatar.html). A personal introduction goes in content/authors/<slug>.md.
+# One name spelling per email (Korean names without a space), so a post's
+# front-matter spelling never changes the byline.
+"gc757489@gmail.com":
+  name: "권진영"
+"hgichon@gmail.com":
+  name: "김경표"
+"hspark0582@gluesys.com":
+  name: "박현승"
+"ht518@gluesys.com":
+  name: "이현태"
+"jhh9977@gluesys.com":
+  name: "정현호"
+  former: true
+"jhkim@gluesys.com":
+  name: "김재환"
+"jhpark@gluesys.com":
+  name: "박주형"
+"jipak@gluesys.com":
+  name: "박재일"
+  former: true
+"jskim@gluesys.com":
+  name: "김진서"
+  former: true
+"khko@gluesys.com":
+  name: "고경훈"
+  former: true
+"lhj4125@gluesys.com":
+  name: "이헌제"
+"plumno1@gluesys.com":
+  name: "김성은"
+"qsh700@gluesys.com":
+  name: "권세훈"
+"shkim3220@gluesys.com":
+  name: "김성환"
+"thkim@gluesys.com":
+  name: "김태훈"
+"tmlee@gluesys.com":
+  name: "이태민"
+  former: true

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>메타 객체 프로토콜(Meta Object Protocol)에 대하여</title>
+  <meta name="description" content="메타 객체 프로토콜 (Meta Object Protocol)">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="메타 객체 프로토콜 (Meta Object Protocol)" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="메타 객체 프로토콜(Meta Object Protocol)에 대하여" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/MOP/MOP_cover.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="메타 객체 프로토콜(Meta Object Protocol)에 대하여">
+  <meta name="twitter:description" content="메타 객체 프로토콜 (Meta Object Protocol)">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/MOP/MOP_cover.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2022/01/10/MOP.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/MOP/MOP_cover.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">메타 객체 프로토콜(Meta Object Protocol)에 대하여</h1>
+      <p class="info">by <strong>권 진영 (gc757489@gmail.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">January 10, 2022</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h3 id="메타-객체-프로토콜-meta-object-protocol">메타 객체 프로토콜 (Meta Object Protocol)</h3>
+
+<p>오늘은 메타 객체 프로토콜(Meta Object Protocol, 이하 MOP)에 대해서 공유해보려고 합니다.</p>
+
+<h4 id="mop란">MOP란?</h4>
+
+<p>객체에서 객체 자체를 참조해야 할 필요성 때문에 나타난 개념입니다.
+우리는 일반적으로 클래스에 의해 생성된 것을 객체로 알고 있는데요.
+MOP 개념에서는 클래스나 메서드, 속성 모두 다 메타 클래스에 의해 생성된 객체입니다.
+(다른 관점에서 보면 클래스가 객체가 되기 때문에 클래스라는 객체의 클래스라고 볼 수 있습니다.)</p>
+
+<p><img src="/assets/MOP/instanceof.png" alt="Alt text" width="700" /></p>
+
+<p>그림으로 표현하면 위와 같은 형태로 볼 수 있습니다.</p>
+
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">package</span> <span class="nv">Sample</span><span class="p">;</span>					<span class="o">----&gt;</span> <span class="nv">metaclass</span>
+
+<span class="nv">has</span> <span class="p">'</span><span class="s1">test</span><span class="p">'</span> <span class="o">=&gt;</span> <span class="p">(</span>					<span class="o">----&gt;</span> <span class="nv">metaclass</span>
+    <span class="s">is</span>      <span class="o">=&gt;</span> <span class="p">'</span><span class="s1">ro</span><span class="p">',</span>
+    <span class="s">isa</span>     <span class="o">=&gt;</span> <span class="p">'</span><span class="s1">Str</span><span class="p">',</span>
+    <span class="s">default</span> <span class="o">=&gt;</span> <span class="k">sub </span><span class="p">{</span> <span class="o">[]</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">);</span>
+
+<span class="k">sub </span><span class="nf">method</span>					<span class="err">----&gt;</span> <span class="nf">metaclass</span>
+<span class="p">{</span>
+    <span class="k">my</span> <span class="nv">$self</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">%args</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+
+<span class="nv">__PACKAGE__</span><span class="o">-&gt;</span><span class="nv">meta</span><span class="o">-&gt;</span><span class="nv">make_immutable</span><span class="p">();</span>
+<span class="mi">1</span><span class="p">;</span>
+
+</code></pre></div></div>
+<p>위 샘플 코드에서 <code class="language-plaintext highlighter-rouge">package</code>는 클래스, <code class="language-plaintext highlighter-rouge">has</code>는 속성, <code class="language-plaintext highlighter-rouge">sub</code>는 메서드입니다. Java로 따지면 각각 클래스, 필드, 메서드가 되겠네요.
+그리고 <code class="language-plaintext highlighter-rouge">package</code>는 <code class="language-plaintext highlighter-rouge">Mouse::Meta::Class</code>, <code class="language-plaintext highlighter-rouge">has</code>는 <code class="language-plaintext highlighter-rouge">Mouse::Meta::Attribute</code>, <code class="language-plaintext highlighter-rouge">sub</code>는 <code class="language-plaintext highlighter-rouge">Mouse::Meta::Method</code>가 각각의 메타 클래스입니다.</p>
+
+<ul>
+  <li>클래스 (<code class="language-plaintext highlighter-rouge">package Sample</code>) : <code class="language-plaintext highlighter-rouge">Mouse::Meta::Class</code></li>
+  <li>속성 (<code class="language-plaintext highlighter-rouge">has 'test'</code>) : <code class="language-plaintext highlighter-rouge">Mouse::Meta::Attribute</code></li>
+  <li>메서드 (<code class="language-plaintext highlighter-rouge">sub method</code>) : <code class="language-plaintext highlighter-rouge">Mouse::Meta::Method</code></li>
+</ul>
+
+<p>위의 메타클래스는 <code class="language-plaintext highlighter-rouge">lib/Mouse/Meta/</code> 경로 아래에 있습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>메타 클래스</th>
+      <th>경로</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Mouse::Meta::Class</code></td>
+      <td><code class="language-plaintext highlighter-rouge">lib/Mouse/Meta/Class.pm</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Mouse::Meta::Atttribute</code></td>
+      <td><code class="language-plaintext highlighter-rouge">lib/Mouse/Meta/Attribute.pm</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">Mouse::Meta::Method</code></td>
+      <td><code class="language-plaintext highlighter-rouge">lib/Mouse/Meta/Method.pm</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>그러면 메타 클래스들은 어떤 역할을 할까요?<br />
+메타 클래스는 클래스, 속성, 메서드의 구조나 동작을 변경하기도 하고 새로운 클래스를 만들거나 삭제하기도 합니다.</p>
+
+<p>MOP에 관련된 내용을 Perl의 객체 지향 프로그래밍(Object-Oriented Programming)을 지원하기 위한 객체 시스템 중 경량화 버전인 <a href="https://metacpan.org/pod/Mouse">Mouse</a>를 사용해서 설명해보려고 합니다.
+이 글의 MOP 예시는 p5-Mouse version v2.5.10을 기준으로 작성하였습니다.</p>
+
+<p>많은 키워드가 있겠지만 속성과 메서드를 예시로 보면서 MOP에 대해서 알아보려고 합니다.</p>
+
+<p>속성을 선언하거나 혹은 메서드를 수정할 때 <code class="language-plaintext highlighter-rouge">has</code>, <code class="language-plaintext highlighter-rouge">around</code>, <code class="language-plaintext highlighter-rouge">override</code> 같은 예약어를 사용합니다.
+이 예약어들도 자세히 보면 각각의 하나의 메서드로 작성되어 있습니다.</p>
+
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">has</span> <span class="p">'</span><span class="s1">test</span><span class="p">'</span> <span class="o">=&gt;</span> <span class="p">(</span>
+    <span class="s">is</span>      <span class="o">=&gt;</span> <span class="p">'</span><span class="s1">ro</span><span class="p">',</span>
+    <span class="s">isa</span>     <span class="o">=&gt;</span> <span class="p">'</span><span class="s1">Str</span><span class="p">',</span>
+    <span class="s">default</span> <span class="o">=&gt;</span> <span class="k">sub </span><span class="p">{</span> <span class="o">[]</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>Mouse를 사용하여 클래스의 속성을 선언할 때에는 <code class="language-plaintext highlighter-rouge">has</code> 키워드를 사용합니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">has</code>     : 속성을 선언하기 위한 예약어</li>
+  <li><code class="language-plaintext highlighter-rouge">is</code>      : 속성의 Read, Write, ReadOnly 등을 설정하기 위한 키워드</li>
+  <li><code class="language-plaintext highlighter-rouge">isa</code>     : 속성의 타입 지정</li>
+  <li><code class="language-plaintext highlighter-rouge">default</code> : 속성의 기본값 지정</li>
+</ul>
+
+<p>위에서 <code class="language-plaintext highlighter-rouge">has</code>라는 예약어가 하나의 메서드로 작성되어 있다고 했는데 관련 내용은 어디에 있을까요?<br />
+일반적으로 <code class="language-plaintext highlighter-rouge">has</code>는 예약어라고 생각할 것 같습니다.
+하지만 위에서 설명했듯이 <code class="language-plaintext highlighter-rouge">has</code>는 단순히 예약어가 아니라 <code class="language-plaintext highlighter-rouge">has</code>라는 이름의 메서드입니다.</p>
+
+<p>그러면 이 <code class="language-plaintext highlighter-rouge">has</code>를 예약어처럼 사용할 수 있게 해주는 부분은 어떤 것일까요?<br />
+아래는 <code class="language-plaintext highlighter-rouge">lib/Mouse.pm</code>의 코드입니다. 그중 일부를 보면 <code class="language-plaintext highlighter-rouge">setup_import_methods</code>라는 함수가 있습니다.</p>
+
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Mouse::</span><span class="nv">Exporter</span><span class="o">-&gt;</span><span class="nv">setup_import_methods</span><span class="p">(</span>
+    <span class="s">as_is</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="sx">qw(
+        extends with
+        has
+        before after around
+        override super
+        augment  inner
+    )</span><span class="p">,</span>
+        <span class="o">\</span><span class="nv">&amp;</span><span class="nn">Scalar::Util::</span><span class="nv">blessed</span><span class="p">,</span>
+        <span class="o">\</span><span class="nv">&amp;</span><span class="nn">Carp::</span><span class="nv">confess</span><span class="p">,</span>
+   <span class="p">],</span>
+<span class="p">);</span>
+</code></pre></div></div>
+<p>위 코드는 <code class="language-plaintext highlighter-rouge">lib/Mouse.pm</code> 코드인데 <a href="https://metacpan.org/pod/Exporter">Exporter</a> 패키지의 <code class="language-plaintext highlighter-rouge">setup_import_methods</code> 함수를 사용하여 사용자가 지정한 <code class="language-plaintext highlighter-rouge">import</code> 메서드나 <code class="language-plaintext highlighter-rouge">unimport</code> 메서드를 빌드합니다.
+위에서는 Mouse 내부적으로 작성되었지만 같은 함수를 사용하면 각자의 시스템에서도 필요한 키워드를 예약어처럼 사용할 수 있습니다.</p>
+
+<p>다시 돌아와서 <code class="language-plaintext highlighter-rouge">has</code>라는 예약어는 <code class="language-plaintext highlighter-rouge">setup_import_methods</code>를 사용하여 만들어졌다는 것은 알게 되었습니다.
+그럼 <code class="language-plaintext highlighter-rouge">has</code>라는 메서드는 어떻게 작성되어 있는지 확인해봅시다.</p>
+
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sub </span><span class="nf">has</span> <span class="p">{</span>
+    <span class="k">my</span> <span class="nv">$meta</span> <span class="o">=</span> <span class="nn">Mouse::Meta::</span><span class="nv">Class</span><span class="o">-&gt;</span><span class="nv">initialize</span><span class="p">(</span><span class="nb">scalar</span> <span class="nb">caller</span><span class="p">);</span>
+    <span class="k">my</span> <span class="nv">$name</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
+    <span class="nv">$meta</span><span class="o">-&gt;</span><span class="nv">throw_error</span><span class="p">(</span><span class="sx">q{Usage: has 'name' =&gt; ( key =&gt; value, ... )}</span><span class="p">)</span>
+        <span class="k">if</span> <span class="err">@</span><span class="nv">_</span> <span class="o">%</span> <span class="mi">2</span><span class="p">;</span> <span class="c1"># odd number of arguments</span>
+
+    <span class="k">for</span> <span class="k">my</span> <span class="nv">$n</span><span class="p">(</span><span class="nb">ref</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span> <span class="p">?</span> <span class="nv">@</span><span class="p">{</span><span class="nv">$name</span><span class="p">}</span> <span class="p">:</span> <span class="nv">$name</span><span class="p">){</span>
+        <span class="nv">$meta</span><span class="o">-&gt;</span><span class="nv">add_attribute</span><span class="p">(</span><span class="nv">$n</span> <span class="o">=&gt;</span> <span class="err">@</span><span class="nv">_</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>위처럼 <code class="language-plaintext highlighter-rouge">has</code> 예약어는 실제로 메서드로 작성이 되어 있습니다.
+<code class="language-plaintext highlighter-rouge">has</code> 메서드를 보면 <code class="language-plaintext highlighter-rouge">Meta::Class</code>의 <code class="language-plaintext highlighter-rouge">initialize</code> 함수를 호출하는 것을 알 수 있습니다. 순서대로 의미 있는 부분을 추적해보면,</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">Meta::Class-&gt;initialize</code>
+    <div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sub </span><span class="nf">initialize</span> <span class="p">{</span>
+ <span class="k">my</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="nv">$package_name</span><span class="p">,</span> <span class="nv">@args</span><span class="p">)</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+
+ <span class="p">(</span><span class="nv">$package_name</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">ref</span><span class="p">(</span><span class="nv">$package_name</span><span class="p">))</span>
+     <span class="o">||</span> <span class="nv">$class</span><span class="o">-&gt;</span><span class="nv">throw_error</span><span class="p">("</span><span class="s2">You must pass a package name and it cannot be blessed</span><span class="p">");</span>
+
+ <span class="k">return</span> <span class="nv">$METAS</span><span class="p">{</span><span class="nv">$package_name</span><span class="p">}</span>
+     <span class="o">||=</span> <span class="nv">$class</span><span class="o">-&gt;</span><span class="nv">_construct_meta</span><span class="p">(</span><span class="s">package</span> <span class="o">=&gt;</span> <span class="nv">$package_name</span><span class="p">,</span> <span class="nv">@args</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+    <p><code class="language-plaintext highlighter-rouge">initialize</code>에서 패키지 이름을 체크한 이후에 <code class="language-plaintext highlighter-rouge">_construct_meta</code>를 호출합니다.</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">class-&gt;_construct_meta</code>
+    <div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sub </span><span class="nf">_construct_meta</span> <span class="p">{</span>
+ <span class="k">my</span><span class="p">(</span><span class="nv">$class</span><span class="p">,</span> <span class="nv">%args</span><span class="p">)</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+
+ <span class="nv">$args</span><span class="p">{</span><span class="nv">attributes</span><span class="p">}</span> <span class="o">=</span> <span class="p">{};</span>
+ <span class="nv">$args</span><span class="p">{</span><span class="nv">methods</span><span class="p">}</span>    <span class="o">=</span> <span class="p">{};</span>
+ <span class="nv">$args</span><span class="p">{</span><span class="nv">roles</span><span class="p">}</span>      <span class="o">=</span> <span class="o">[]</span><span class="p">;</span>
+
+ <span class="nv">$args</span><span class="p">{</span><span class="nv">superclasses</span><span class="p">}</span> <span class="o">=</span> <span class="k">do</span> <span class="p">{</span>
+     <span class="nb">no</span> <span class="nv">strict</span> <span class="p">'</span><span class="s1">refs</span><span class="p">';</span>
+     <span class="o">\</span><span class="nv">@</span><span class="p">{</span> <span class="nv">$args</span><span class="p">{</span><span class="nb">package</span><span class="p">}</span> <span class="o">.</span> <span class="p">'</span><span class="s1">::ISA</span><span class="p">'</span> <span class="p">};</span>
+ <span class="p">};</span>
+
+ <span class="k">my</span> <span class="nv">$self</span> <span class="o">=</span> <span class="nb">bless</span> <span class="o">\</span><span class="nv">%args</span><span class="p">,</span> <span class="nb">ref</span><span class="p">(</span><span class="nv">$class</span><span class="p">)</span> <span class="o">||</span> <span class="nv">$class</span><span class="p">;</span>
+ <span class="k">if</span><span class="p">(</span><span class="nb">ref</span><span class="p">(</span><span class="nv">$self</span><span class="p">)</span> <span class="ow">ne</span> <span class="nv">__PACKAGE__</span><span class="p">){</span>
+     <span class="nv">$self</span><span class="o">-&gt;</span><span class="nv">meta</span><span class="o">-&gt;</span><span class="nv">_initialize_object</span><span class="p">(</span><span class="nv">$self</span><span class="p">,</span> <span class="o">\</span><span class="nv">%args</span><span class="p">);</span>
+ <span class="p">}</span>
+ <span class="k">return</span> <span class="nv">$self</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+    <p><code class="language-plaintext highlighter-rouge">_construct_meta</code>에서는 <code class="language-plaintext highlighter-rouge">do</code> 코드 블록에 있는 내용을 꾸며서 변수에 넣어 주고 <code class="language-plaintext highlighter-rouge">_initialize_object</code>를 호출합니다.</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">_initialize_object</code>
+    <div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">sub </span><span class="nf">_initialize_object</span> <span class="p">{</span>
+ <span class="k">my</span><span class="p">(</span><span class="nv">$self</span><span class="p">,</span> <span class="nv">$object</span><span class="p">,</span> <span class="nv">$args</span><span class="p">,</span> <span class="nv">$is_cloning</span><span class="p">)</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+ <span class="c1"># The initializer, which is used everywhere, must be clear</span>
+ <span class="c1"># when an attribute is added. See Mouse::Meta::Class::add_attribute.</span>
+ <span class="k">my</span> <span class="nv">$initializer</span> <span class="o">=</span> <span class="nv">$self</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">_mouse_cache</span><span class="p">}{</span><span class="nv">_initialize_object</span><span class="p">}</span> <span class="o">||=</span>
+     <span class="nn">Mouse::Util::</span><span class="nv">load_class</span><span class="p">(</span><span class="nv">$self</span><span class="o">-&gt;</span><span class="nv">constructor_class</span><span class="p">)</span>
+         <span class="o">-&gt;</span><span class="nv">_generate_initialize_object</span><span class="p">(</span><span class="nv">$self</span><span class="p">);</span>
+ <span class="nb">goto</span> <span class="nv">&amp;</span><span class="p">{</span><span class="nv">$initializer</span><span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+    <p><code class="language-plaintext highlighter-rouge">_initialize_object</code>에서는 <code class="language-plaintext highlighter-rouge">_generate_initialize_object</code>를 호출합니다.</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">_generate_initialize_object</code>
+    <div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span><span class="err">중략</span>
+         <span class="k">if</span> <span class="p">(</span><span class="nv">$attr</span><span class="o">-&gt;</span><span class="nv">has_trigger</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">...</span><span class="err">중략</span>
+     <span class="k">if</span> <span class="p">(</span><span class="nv">$attr</span><span class="o">-&gt;</span><span class="nv">has_default</span> <span class="o">||</span> <span class="nv">$attr</span><span class="o">-&gt;</span><span class="nv">has_builder</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">unless</span> <span class="p">(</span><span class="nv">$attr</span><span class="o">-&gt;</span><span class="nv">is_lazy</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">...</span><span class="err">중략</span>
+     <span class="k">elsif</span> <span class="p">(</span><span class="nv">$attr</span><span class="o">-&gt;</span><span class="nv">is_required</span><span class="p">)</span> <span class="p">{</span>
+<span class="o">...</span><span class="err">중략</span>
+ <span class="k">my</span> <span class="nv">$source</span> <span class="o">=</span> <span class="nb">sprintf</span> <span class="o">&lt;&lt;</span><span class="p">'</span><span class="s1">EOT</span><span class="p">',</span> <span class="nv">__FILE__</span><span class="p">,</span> <span class="nv">$metaclass</span><span class="o">-&gt;</span><span class="nv">name</span><span class="p">,</span> <span class="nb">join</span> <span class="p">"</span><span class="se">\n</span><span class="p">",</span> <span class="nv">@res</span><span class="p">;</span>
+<span class="c1">#line 1 "%s"</span>
+ <span class="nb">package</span> <span class="nv">%s</span><span class="p">;</span>
+ <span class="k">sub </span><span class="p">{</span>
+     <span class="k">my</span><span class="p">(</span><span class="nv">$meta</span><span class="p">,</span> <span class="nv">$instance</span><span class="p">,</span> <span class="nv">$args</span><span class="p">,</span> <span class="nv">$is_cloning</span><span class="p">)</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+     <span class="nv">%s</span><span class="p">;</span>
+     <span class="k">return</span> <span class="nv">$instance</span><span class="p">;</span>
+ <span class="p">}</span>
+<span class="nv">EOT</span>
+ <span class="nb">warn</span> <span class="nv">$source</span> <span class="k">if</span> <span class="nv">_MOUSE_DEBUG</span><span class="p">;</span>
+ <span class="k">my</span> <span class="nv">$body</span><span class="p">;</span>
+ <span class="k">my</span> <span class="nv">$e</span> <span class="o">=</span> <span class="k">do</span> <span class="p">{</span>
+     <span class="nb">local</span> <span class="vg">$@</span><span class="p">;</span>
+     <span class="nv">$body</span> <span class="o">=</span> <span class="nb">eval</span> <span class="nv">$source</span><span class="p">;</span>
+     <span class="vg">$@</span><span class="p">;</span>
+ <span class="p">};</span>
+ <span class="nb">die</span> <span class="nv">$e</span> <span class="k">if</span> <span class="nv">$e</span><span class="p">;</span>
+ <span class="k">return</span> <span class="nv">$body</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+    <p>마지막 <code class="language-plaintext highlighter-rouge">_generate_initialize_object</code> 함수에서는 객체를 생성합니다.
+코드 일부를 보면 <code class="language-plaintext highlighter-rouge">has</code>로 속성을 선언하면서 사용한 옵션들(<code class="language-plaintext highlighter-rouge">has_default</code>, <code class="language-plaintext highlighter-rouge">is_lazy</code> 등)을 체크하고 코드를 변경합니다.
+그리고 <code class="language-plaintext highlighter-rouge">eval $source</code> 부분을 통해 코드를 생성해 반환합니다.
+이런 형태로 클래스, 속성, 메서드 모두 필요한 정보를 체크하여 코드를 반환합니다.</p>
+  </li>
+</ol>
+
+<p>코드를 반환한다고 했을 때 인라인에 대해 떠오르시는 분이 많을 것 같습니다.
+Mouse에서 클래스 마지막에 <code class="language-plaintext highlighter-rouge">__PACKAGE__-&gt;meta-&gt;make_immutable</code> 또는 <code class="language-plaintext highlighter-rouge">__PACKAGE__-&gt;meta-&gt;make_immutable(inline_constructor =&gt; 0)</code>을 작성하는데요.
+여기서도 <code class="language-plaintext highlighter-rouge">inline_constuctor</code>라는 키워드를 사용합니다.
+그럼 Mouse에서는 인라인 생성자는 어떻게 동작할까요?<br />
+인라인 생성자가 동작하는 형태를 간단히 도식화하면 아래 그림처럼 될 것 같습니다.
+<img src="https://plantuml.io/plantuml/png/SoWkIImgAStDuSfDp4wDpypDBIr9JCf9LT2rKuXFJyrBBKeiIOrFpiyhBYagJIx9B-B2AeggF3ClioGpCIUpAZK-FoahDRc42u-SWYukgnIi5Dwqx7YzhU7DWiOtStSelDaxvVNaEGfl5cvuis0gTdU03KFpYPN2wvLJthJC0UfzCts2mklbyrvtJO4Pzdh3ZBSpPs3nV69AIdnkQaP9Veg25LJLwmsptynjWEfylNGFchcJDxvUE9VB8JKl1HYS0000" alt="class_diagram" />
+시작점이 조금 다르긴 하지만 위의 <code class="language-plaintext highlighter-rouge">has</code> 메서드가 동작하는 것과 크게 다르지 않네요.</p>
+
+<h4 id="mop의-활용">MOP의 활용</h4>
+
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Mouse::</span><span class="nv">Exporter</span><span class="o">-&gt;</span><span class="nv">setup_import_methods</span><span class="p">(</span>
+    <span class="s">also</span>  <span class="o">=&gt;</span> <span class="p">'</span><span class="s1">Mouse</span><span class="p">',</span>
+    <span class="s">as_is</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="sx">qw/
+            etcd_root
+            etcd_keygen
+            api_status
+            get_gms_message
+            upgrade_attrs
+            /</span>
+    <span class="p">],</span>
+<span class="p">);</span>
+
+<span class="k">sub </span><span class="nf">etcd_root</span>
+<span class="p">{</span>
+	<span class="k">my</span> <span class="nv">$meta</span> <span class="o">=</span> <span class="nb">caller</span><span class="o">-&gt;</span><span class="nv">meta</span><span class="p">;</span>
+	<span class="o">...</span><span class="err">중략</span>
+<span class="p">}</span>
+
+<span class="k">sub </span><span class="nf">init_meta</span>
+<span class="p">{</span>
+    <span class="k">my</span> <span class="nv">$self</span> <span class="o">=</span> <span class="nb">shift</span><span class="p">;</span>
+    <span class="k">my</span> <span class="nv">%args</span> <span class="o">=</span> <span class="nv">@_</span><span class="p">;</span>
+
+    <span class="k">my</span> <span class="nv">$for_class</span> <span class="o">=</span> <span class="nv">$args</span><span class="p">{</span><span class="nv">for_class</span><span class="p">};</span>
+    <span class="k">my</span> <span class="nv">$meta</span>      <span class="o">=</span> <span class="nv">find_meta</span><span class="p">(</span><span class="nv">$for_class</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$meta</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$meta</span> <span class="o">=</span> <span class="nv">Mouse</span><span class="o">-&gt;</span><span class="nv">init_meta</span><span class="p">(</span><span class="nv">$for_class</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="nv">$meta</span> <span class="o">=</span> <span class="nn">Mouse::Util::MetaRole::</span><span class="nv">apply_metaroles</span><span class="p">(</span>
+        <span class="k">for</span>             <span class="o">=&gt;</span> <span class="nv">$for_class</span><span class="p">,</span>
+        <span class="s">class_metaroles</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="s">class</span>       <span class="o">=&gt;</span> <span class="p">['</span><span class="s1">GMS::Model::Meta::Class</span><span class="p">'],</span>
+            <span class="s">attribute</span>   <span class="o">=&gt;</span> <span class="p">['</span><span class="s1">GMS::Model::Meta::Attribute</span><span class="p">'],</span>
+            <span class="s">constructor</span> <span class="o">=&gt;</span> <span class="p">['</span><span class="s1">GMS::Model::Meta::Method::Constructor</span><span class="p">'],</span>
+            <span class="s">destructor</span>  <span class="o">=&gt;</span> <span class="p">['</span><span class="s1">GMS::Model::Meta::Method::Destructor</span><span class="p">'],</span>
+        <span class="p">},</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$meta</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>위의 예제는 사내 제품의 코드 중 일부입니다.
+<code class="language-plaintext highlighter-rouge">lib/Mouse.pm</code>에서 예약어를 빌드한 것처럼 필요한 키워드를 <code class="language-plaintext highlighter-rouge">setup_import_methods</code>를 사용하여 빌드하였습니다.</p>
+<div class="language-perl highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">etcd_root</span> <span class="k">sub </span><span class="p">{'</span><span class="s1">/test</span><span class="p">'};</span>
+<span class="nv">etcd_keygen</span> <span class="k">sub </span><span class="p">{</span> <span class="s">test</span> <span class="o">=&gt;</span> <span class="nb">shift</span><span class="p">;</span> <span class="p">};</span>
+</code></pre></div></div>
+<p>이렇게 빌드한 예약어는 해당 메서드 사용 방식에 맞춰서 사용할 수 있습니다.</p>
+
+<p>그리고 아랫부분의 <code class="language-plaintext highlighter-rouge">init_meta</code> 메서드를 보면 <code class="language-plaintext highlighter-rouge">apply_metaroles</code>를 사용하여 기존의 메타 클래스의 역할을 변경할 수 있습니다.
+내부적으로는 객체가 생성될 때 관련 속성값들이 etcd랑 연동이 되도록 변경하여 사용하고 있습니다.</p>
+
+<p><img src="https://www.plantuml.com/plantuml/png/fLDBQiCm4Dth55wscFW08fYKjdGLACa1pCGQ71DzZ3IYBKdlNds2IOq8XQwIqRmtxyt76qTWoIl9UWdELM_RFUTR8r1MPyRgKO_KAIHuU6JVZ4tGds302gaNrNhz0WG7SDYs0Rn8Tmx9JvqrdaQD0Rp3da0FCgENQk472JZV6OcSFn7PyU0fygAwDP5sPdMgVC8llYUxi9TprXWAmGmSKCVGJuC5WHqGMPTxkU_WEMKBwadXAk-GeaOK6EQ_nTBlQ9tHLQYXGM6Yro24HUToC1sDpkypVskym-pgjv-KZePOhU24tQYK3ukGcDGBxEKyRoje_4YqGFp3DYvDKwwChD3kl-6fQrOOHDDSslkxO_StkrgrwKmNuthzd8mbj74o-O175LxIaHsDk9xE0inv2PeaRatCnygAhmbV-79ubMAsGIsyaZy0" alt="class_diagram" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">Mouse::Exporter-&gt;setup_import_methods()</code>에서 <code class="language-plaintext highlighter-rouge">GMS::Model-&gt;init_meta()</code>를 호출하면서 각 클래스들이 모델을 통해 etcd를 핸들링할 수 있도록 설정합니다.
+<code class="language-plaintext highlighter-rouge">GMS::Model::Person</code>이라는 클래스는 <code class="language-plaintext highlighter-rouge">Mouse::Meta::Class</code>와 <code class="language-plaintext highlighter-rouge">Mouse::Meta::Attribute</code>에 의해 생성될 텐데 <code class="language-plaintext highlighter-rouge">apply_metaroles</code>를 사용해서 역할을 변경했기 때문에 각각 <code class="language-plaintext highlighter-rouge">GMS::Model::Meta::Role::Class</code>와 <code class="language-plaintext highlighter-rouge">GMS::Model::Meta::Role::Attribute</code>를 호출합니다. 그 중 <code class="language-plaintext highlighter-rouge">GMS::Model::Meta::Role::Class</code>를 통해서 클래스의 속성을 <code class="language-plaintext highlighter-rouge">set_key</code>메서드나 <code class="language-plaintext highlighter-rouge">get_key</code> 메서드를 통해서 실제 etcd에 접근합니다.</p>
+
+<p>여기서 <code class="language-plaintext highlighter-rouge">Role</code>(이하 역할)이라는 개념이 새로 등장했는데요, 역할은 클래스 간에 공유할 수 있는 동작이나 상태를 캡슐화하는 개념입니다.
+역할은 클래스가 아니라 상속하거나 인스턴스화를 할 수 없고 Java의 인터페이스와 비슷한 개념이라고 생각하시면 될 것 같습니다.</p>
+
+<p>역할도 마찬가지로 메타 역할이 있기 때문에 내부 코드에서는 메타 역할을 수정하는 방식을 사용하였습니다.</p>
+
+<h4 id="마치며">마치며</h4>
+
+<p>이번 포스트는 MOP에 대한 개념만 알고 있다가 코드 레벨에서 분석할 기회가 생겨서 공유하면 좋을 것 같아 작성하였습니다.
+MOP가 사용되는 언어는 <a href="https://github.com/jboss-javassist/javassist">Java(Javassist)</a>, <a href="http://joose.it">JS(Joose)</a>, <a href="https://metacpan.org/pod/Moose">Perl(Moose)</a>, <a href="https://chibash.github.io/public/opencxx/">오픈 C++</a>, <a href="https://en.wikipedia.org/wiki/OJ_(programming_tool)">오픈 Java</a> 등이 있습니다.
+Perl을 기준으로 설명해 드렸지만 각자 자신이 사용하고 있는 언어에서 MOP를 사용할 수 있다면 메타 클래스를 상황에 맞게 변경하여 사용해 보시길 바랍니다.
+조금 두서없는 글일 수 있지만, MOP에 대해서 모르시던 분들에 대한 소개 및 간단한 가이드라인이 됐으면 합니다.<br />
+차후에는 Mouse에서 메타 클래스의 기본 정의가 어떻게 이루어지는지, 어떻게 동작하는지 등에 대해서 좀 더 자세히 다루어 보고 단계적으로 메타 클래스를 활용하는 방법에 대해서 좀 더 세부적으로 공유해 드리도록 하겠습니다. 시간이 되시는 분들은 <a href="https://metacpan.org/pod/Class::MOP"><code class="language-plaintext highlighter-rouge">Class::MOP</code></a>나 <a href="https://perldoc.perl.org/perlxs"><code class="language-plaintext highlighter-rouge">perlxs</code></a>를 미리 읽어보시면 좋을 것 같습니다.<br />
+감사합니다.</p>
+
+<hr />
+
+<h2 id="참고">참고</h2>
+
+<ul>
+  <li>https://wiki.tcl-lang.org/page/Meta-object+Protocol</li>
+  <li>https://www.gnu.org/software/guile/manual/html_node/The-Metaobject-Protocol.html</li>
+  <li>https://en.wikipedia.org/wiki/Metaobject</li>
+  <li>https://metacpan.org/pod/Class::MOP</li>
+  <li>https://metacpan.org/pod/Mouse::Meta</li>
+  <li>https://metacpan.org/pod/Mouse::Util::MetaRole</li>
+  <li>https://perldoc.perl.org/perlxs</li>
+</ul>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#MOP">MOP</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

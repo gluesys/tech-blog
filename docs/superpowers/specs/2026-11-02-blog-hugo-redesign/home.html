@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TECH-G 시안</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="bar">
+    <a class="brand" href="#"><img src="symbol.png" alt="글루시스"><span class="txt"><span class="name">TECH-G</span><span class="by">글루시스 기술 블로그</span></span></a>
+    <nav class="nav"><a href="#" aria-current="page">글</a><a href="#">태그</a><a href="#">소개</a><a href="#">채용</a></nav>
+    <div class="nav-search">글 검색<kbd>/</kbd></div>
+    <button class="menu-btn" aria-label="메뉴">☰</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <h1>소프트웨어로 스토리지를 만드는 개발자들의 기술 이야기</h1>
+    <p>파일 시스템, NVMe, 고가용성까지 글루시스 개발자가 직접 겪고 정리한 내용을 공유합니다.</p>
+    <form class="hero-search" onsubmit="return false"><input placeholder="ZFS, Lustre, 스냅샷처럼 주제로 검색" aria-label="글 검색"><button>검색</button></form>
+  </div>
+</section>
+
+<div class="wrap">
+  <main>
+    <h2 class="sec-title"><span class="hx"></span>최근 글</h2>
+
+    <article class="post">
+      <div>
+        <time>2024년 7월 31일</time>
+        <h3><a href="#">디자인 도구 Penpot(펜팟) 설치부터 활용까지</a></h3>
+        <p>오픈소스 디자인 도구 Penpot을 Docker와 WSL 환경에 직접 설치하고, 목업을 만들어 팀과 공유하는 과정까지 단계별로 정리했습니다.</p>
+        <div class="tags"><a class="tag" href="#">Penpot</a><a class="tag" href="#">오픈소스</a><a class="tag" href="#">Docker</a></div>
+      </div>
+      <a class="thumb" href="#" style="background-image:url(https://tech.gluesys.com/assets/penpot/penpot_maincover.JPG)" aria-label="Penpot 글"></a>
+    </article>
+
+    <article class="post">
+      <div>
+        <time>2024년 6월 10일</time>
+        <h3><a href="#">병렬 네트워크 파일 시스템 pNFS의 재조명</a></h3>
+        <p>AI 학습 환경에서 스토리지 병목을 줄이기 위해 다시 주목받는 pNFS의 구조와 Flex Files 레이아웃, 고집적 워크로드에서의 장점을 살펴봅니다.</p>
+        <div class="tags"><a class="tag" href="#">pNFS</a><a class="tag" href="#">NFS</a><a class="tag" href="#">병렬 파일 시스템</a></div>
+      </div>
+      <a class="thumb" href="#" style="background-image:url(https://tech.gluesys.com/assets/pnfsintro_maincover.jpg)" aria-label="pNFS 글"></a>
+    </article>
+
+    <article class="post">
+      <div>
+        <time>2024년 6월 3일</time>
+        <h3><a href="#">LVM 스냅샷 관리 기능 개발 후기 (1)</a></h3>
+        <p>씬 프로비저닝 볼륨의 스냅샷 관리 기능을 개발하면서 마주친 메타데이터 장애와, 디스크 덤프로 원인을 추적한 과정을 기록했습니다.</p>
+        <div class="tags"><a class="tag" href="#">LVM</a><a class="tag" href="#">스냅샷</a><a class="tag" href="#">Thin Provisioning</a></div>
+      </div>
+      <a class="thumb" href="#" style="background-image:url(https://tech.gluesys.com/assets/Snapshot1intro_maincover.png)" aria-label="LVM 스냅샷 글"></a>
+    </article>
+
+    <article class="post">
+      <div>
+        <time>2024년 1월 22일</time>
+        <h3><a href="#">CXL 3.1 소개와 스토리지</a></h3>
+        <p>CXL 3.1 표준에서 달라진 점과, 캐시 일관성을 갖춘 인터커넥트가 스토리지 구조에 가져올 변화를 정리합니다.</p>
+        <div class="tags"><a class="tag" href="#">CXL</a><a class="tag" href="#">인터커넥트</a><a class="tag" href="#">PCIe</a></div>
+      </div>
+      <a class="thumb" href="#" style="background-image:url(https://tech.gluesys.com/assets/CXL31intro_maincover.jpg)" aria-label="CXL 글"></a>
+    </article>
+
+    <a class="more" href="#">전체 글 보기</a>
+  </main>
+
+  <aside>
+    <div class="block">
+      <h2 class="sec-title"><span class="hx"></span>주제별로 보기</h2>
+      <div class="tags">
+        <a class="tag" href="#">스토리지<span class="n">23</span></a>
+        <a class="tag" href="#">NVMe<span class="n">9</span></a>
+        <a class="tag" href="#">고가용성<span class="n">2</span></a>
+        <a class="tag" href="#">백업<span class="n">4</span></a>
+        <a class="tag" href="#">CXL<span class="n">4</span></a>
+        <a class="tag" href="#">RAID<span class="n">4</span></a>
+        <a class="tag" href="#">SPDK<span class="n">4</span></a>
+        <a class="tag" href="#">LVM<span class="n">3</span></a>
+        <a class="tag" href="#">오픈소스<span class="n">5</span></a>
+        <a class="tag" href="#">스냅샷<span class="n">3</span></a>
+      </div>
+    </div>
+    <div class="block">
+      <h2 class="sec-title"><span class="hx"></span>연재</h2>
+      <ul class="series">
+        <li><a href="#">스토리지 기초 지식</a><span>11편</span></li>
+        <li><a href="#">NVMe와 NVMe 2.0</a><span>3편</span></li>
+        <li><a href="#">스토리지 이중화</a><span>2편</span></li>
+        <li><a href="#">NVMe 시대의 RAID</a><span>2편</span></li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="foot">
+    <img src="symbol.png" alt="" width="26">
+    <span>© 2026 Gluesys Co., Ltd.</span>
+    <div class="links"><a href="#">회사 소개</a><a href="#">채용</a><a href="#">RSS</a><a href="#">GitHub</a></div>
+  </div>
+</footer>
+</body>
+</html>

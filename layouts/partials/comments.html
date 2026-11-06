@@ -1,0 +1,10 @@
+{{- /* giscus mount point with a short note that readers can react (the reaction bar is giscus'). Renders nothing until the owner fills repoId and categoryId in hugo.toml. */ -}}
+{{- with site.Params.giscus }}
+{{- if and .repo .repoId .categoryId }}
+<div class="comments-head">
+  <p class="series-title"><span class="hx"></span><b>반응과 댓글</b></p>
+  <p>글이 도움이 되었다면 아래에서 반응(👍 등)을 남겨 주세요. 반응과 댓글은 GitHub 계정으로 남길 수 있습니다.</p>
+</div>
+<section class="comments" id="comments" aria-label="반응과 댓글" data-giscus="{{ dict "repo" .repo "repoId" .repoId "category" .category "categoryId" .categoryId "mapping" .mapping "lang" .lang | jsonify }}"></section>
+{{- end }}
+{{- end }}

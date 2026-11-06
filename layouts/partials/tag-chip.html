@@ -1,0 +1,3 @@
+{{- /* Usage: partial "tag-chip.html" (dict "tag" $name "count" $n "url" $u); count and url are optional. */ -}}
+{{- $page := site.GetPage (printf "/tags/%s" (urlize .tag)) -}}
+<a class="tag" href="{{ with .url }}{{ . }}{{ else }}{{ with $page }}{{ .RelPermalink }}{{ else }}{{ printf "/tags/%s/" (urlize .tag) }}{{ end }}{{ end }}">{{ .tag }}{{ with .count }}<span class="n">{{ . }}</span>{{ end }}</a>

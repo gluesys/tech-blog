@@ -1,0 +1,23 @@
+{{- $posts := first 10 (where site.RegularPages "Section" "blog").ByDate.Reverse -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.Title }}</title>
+    <description>{{ site.Params.description }}</description>
+    <link>{{ site.Home.Permalink }}</link>
+    <language>{{ site.Language.Locale }}</language>
+    <atom:link href="{{ (.OutputFormats.Get "feed").Permalink }}" rel="self" type="application/rss+xml"/>
+    {{- with index $posts 0 }}
+    <lastBuildDate>{{ .Date.UTC.Format "Mon, 02 Jan 2006 15:04:05 +0000" | safeHTML }}</lastBuildDate>
+    {{- end }}
+    {{- range $posts }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <guid isPermaLink="true">{{ .Permalink }}</guid>
+      <pubDate>{{ .Date.UTC.Format "Mon, 02 Jan 2006 15:04:05 +0000" | safeHTML }}</pubDate>
+      <description>{{ .Content | transform.XMLEscape | safeHTML }}</description>
+    </item>
+    {{- end }}
+  </channel>
+</rss>

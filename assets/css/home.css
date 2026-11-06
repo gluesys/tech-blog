@@ -1,0 +1,144 @@
+/* hero: one image fills the whole hero (cover). The wide art (2880x840) is flat --ci-deep on its left
+   ~45% and the text sits there, so it needs no scrim. It is pinned left and drawn at least 1440px
+   wide (fills the 420px-tall hero) and 108% of the hero: the art's edge starts at 46.6% of its width
+   and the centred text grows with the screen, so this keeps 40px or more between the search box and
+   the art at any width. Phones get their own art (1080x1200) under the text, so a
+   navy scrim (--ci-deep's shade) goes over it there. Keep white text at 4.5:1 or more; when swapping
+   the art, give the files new names, since browsers keep the old image under the same URL. */
+.hero {
+  --hero-art: url(/brand/hero-bg-wide.webp);
+  --hero-scrim: linear-gradient(transparent, transparent);
+  background: var(--hero-scrim), var(--hero-art) left center / cover no-repeat var(--ci-deep);
+  background-size: auto, max(1440px, 108%) auto;
+  color: #fff;
+}
+.hero-in { max-width: var(--content); margin: 0 auto; padding: 72px 24px 80px; }
+.hero h1 { margin: 0; max-width: 15em; font-size: 40px; line-height: 1.38; font-weight: 700; letter-spacing: -.02em; }
+.hero p { margin: 14px 0 30px; font-size: 17px; opacity: .86; max-width: 30em; }
+.hero-search { display: flex; max-width: 520px; height: 54px; background: #fff; border-radius: 10px; overflow: hidden; }
+.hero-search input { flex: 1; min-width: 0; border: 0; background: #fff; padding: 0 18px; font: 400 16px "Pretendard", system-ui, sans-serif; color: var(--ink-fixed); }
+.hero-search button { border: 0; background: #1775FD; color: #fff; font: 700 19px "Pretendard", system-ui, sans-serif; padding: 0 24px; }
+
+/* post list */
+.post { display: grid; grid-template-columns: minmax(0, 1fr) 176px; align-items: center; gap: 28px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+.post time { font-size: 14px; color: var(--ci-gray); font-variant-numeric: tabular-nums; }
+.post h3 { margin: 4px 0 8px; font-size: 21px; line-height: 1.45; letter-spacing: -.01em; }
+.post h3 a:hover { color: var(--link); }
+.post p { margin: 0 0 14px; font-size: 15.5px; line-height: 1.7; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.post .thumb { aspect-ratio: 16 / 10; border-radius: 6px; background: var(--soft) center / cover; }
+
+aside .block { margin-bottom: 44px; }
+aside .tags { gap: 8px; margin-top: 14px; }
+.series { list-style: none; margin: 14px 0 0; padding: 0; }
+.series li { padding: 12px 0; border-top: 1px solid var(--line); font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+.series li a:hover { color: var(--link); }
+.series li span { color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
+
+/* inner pages: archive, tags, series, about */
+.page-head { max-width: var(--content); margin: 0 auto; padding: 48px 24px 0; }
+.page-head .sec-title { font-size: 28px; margin: 0; }
+.page-head .sec-title .n, .year-group h2 .n, .series-group h2 .n, .single-tags summary .n { color: var(--ci-gray); font-size: 15px; font-weight: 500; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.page-head .crumb { margin: 8px 0 0; font-size: 14.5px; color: var(--link); }
+.page-body { max-width: var(--content); margin: 0 auto; padding: 24px 24px 72px; }
+.page-text { max-width: 720px; margin-left: max(24px, calc((100% - var(--content)) / 2 + 24px)); margin-right: auto; padding-left: 0; padding-right: 0; }
+.year-group h2 { font-size: 22px; margin: 36px 0 0; padding-bottom: 8px; border-bottom: 2px solid var(--ink); font-variant-numeric: tabular-nums; }
+.year-group .post:last-child { border-bottom: 0; }
+.tag-cloud { gap: 10px; margin-top: 8px; align-items: center; }
+.tags-sec { margin: 8px 0 16px; font-size: 20px; }
+.topic-grid + .tags-sec { margin-top: 48px; }
+.topic-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.topic { border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 14px; background: var(--surface); }
+.topic:hover { border-color: var(--link); }
+.topic-name { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; }
+.topic-name .hx { width: 11px; height: 13px; }
+.topic-name .n { margin-left: auto; color: var(--ci-gray); font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.topic-name:hover { color: var(--link); }
+.topic ul { list-style: none; margin: 12px 0 0; padding: 0; }
+.topic li { display: flex; gap: 10px; justify-content: space-between; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14.5px; line-height: 1.45; }
+.topic li a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.topic li a:hover { color: var(--link); }
+.topic time { flex: none; color: var(--ci-gray); font-size: 13px; font-variant-numeric: tabular-nums; }
+.tag-cloud .t1 .tag { font-size: 15.5px; padding: 10px 20px; font-weight: 600; }
+.tag-cloud .t2 .tag { font-size: 14px; padding: 8px 16px; }
+.single-tags { margin-top: 40px; }
+.single-tags summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+.single-tags .tag-cloud { margin-top: 16px; }
+.series-group { margin-top: 36px; }
+.series-group h2 { font-size: 21px; margin: 0 0 8px; }
+.series-group ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.series-group li { counter-increment: s; display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.series-group li::before { content: counter(s); color: var(--ci-gray); width: 1.6em; font-variant-numeric: tabular-nums; flex: none; }
+.series-group li a:hover { color: var(--link); }
+.series-group li time { margin-left: auto; color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
+
+@media (max-width: 760px) {
+  /* the text spans the art on phones; the scrim is darkest at the top, where the headline is */
+  .hero {
+    --hero-art: url(/brand/hero-bg-mobile.webp);
+    --hero-scrim: linear-gradient(180deg, rgba(9, 22, 92, .60) 0%, rgba(9, 22, 92, .52) 60%, rgba(9, 22, 92, .45) 100%);
+    background-position: 0 0, center;
+    background-size: auto, cover;
+  }
+  .hero-in { padding: 44px 16px 52px; }
+  .hero h1 { font-size: 28px; }
+  .hero p { font-size: 15.5px; margin-bottom: 22px; }
+  .hero-search { height: 50px; }
+  .hero-search button { padding: 0 18px; }
+  .post { grid-template-columns: minmax(0, 1fr) 96px; gap: 16px; padding: 22px 0; }
+  .post h3 { font-size: 18px; }
+  .post p { display: none; }
+  .post .thumb { aspect-ratio: 1; }
+  .page-head { padding: 32px 16px 0; }
+  .page-head .sec-title { font-size: 24px; }
+  .page-body { padding: 16px 16px 56px; }
+  .page-text { margin-left: 16px; margin-right: 16px; padding: 0; }
+  .series-group li { flex-wrap: wrap; }
+  .series-group li time { margin-left: calc(1.6em + 12px); width: 100%; }
+}
+
+/* about page: intro, one-line facts, author list */
+.about > p a { color: var(--link); text-decoration: underline; text-underline-offset: 3px; }
+.about .about-facts { color: var(--ci-gray); font-size: 15px; margin: 4px 0 0; }
+.about .authors-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 48px 0 8px; }
+.about .authors-head .sec-title { margin: 0; font-size: 20px; }
+.about .sort { display: flex; flex-wrap: wrap; gap: 6px; }
+.about .sort[hidden] { display: none; }
+.about .sort button { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 5px 12px; font: 500 13.5px "Pretendard", system-ui, sans-serif; cursor: pointer; }
+.about .sort button:hover { border-color: var(--link); color: var(--link); }
+.about .sort button[aria-pressed="true"] { background: var(--ci-deep); border-color: var(--ci-deep); color: #fff; }
+/* The intro keeps the 720px text column; the author list and its heading use the
+   full content width (the about page has no sidebar), 3 per row on wide screens. */
+.about .authors-head, .about .authors { width: min(calc(var(--content) - 48px), calc(100vw - 48px)); }
+.authors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0 32px; }
+.author { display: flex; gap: 14px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+/* the whole card opens the author's page: the name link's click area covers the card, and the
+   links inside it (tags, recent posts) sit above that area so they stay their own links */
+.author { position: relative; border-radius: 8px; transition: background-color .15s; }
+.author h3 a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.author .tags, .author .author-posts { position: relative; z-index: 1; }
+.author:hover { background: var(--soft); }
+.author:has(h3 a:focus-visible) { outline: 2px solid var(--ci-cyan); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .author { transition: none; } }
+.author .avatar { width: 44px; height: 44px; font-size: 16px; }
+.author-body { min-width: 0; }
+.author h3 { margin: 0; font-size: 17px; line-height: 1.4; }
+.author .former { display: inline-block; margin-left: 6px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 4px; color: var(--ci-gray); font-size: 12px; font-weight: 500; vertical-align: 2px; }
+.author h3 a:hover { color: var(--link); }
+.author .bio p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.author-head { display: flex; align-items: center; gap: 16px; }
+.author-head .avatar { width: 56px; height: 56px; font-size: 20px; }
+.author-head .former { font-size: 13px; font-weight: 500; color: var(--ci-gray); border: 1px solid var(--line); border-radius: 4px; padding: 2px 7px; }
+.author-list { list-style: none; margin: 8px 0 0; padding: 0; }
+.author-list li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 15.5px; line-height: 1.5; }
+.author-list a:hover { color: var(--link); }
+.author-list time { color: var(--ci-gray); font-size: 13.5px; white-space: nowrap; }
+.byline .who b a:hover { color: var(--link); }
+.author-meta { margin: 4px 0 10px; font-size: 14px; color: var(--ci-gray); font-variant-numeric: tabular-nums; }
+.author-meta span { margin-left: 8px; }
+.author-posts { list-style: none; margin: 10px 0 0; padding: 0; font-size: 14.5px; line-height: 1.5; }
+.author-posts li + li { margin-top: 4px; }
+.author-posts a:hover { color: var(--link); }
+@media (max-width: 760px) {
+  .about .authors-head, .about .authors { width: auto; }
+  .authors { grid-template-columns: 1fr; }
+}

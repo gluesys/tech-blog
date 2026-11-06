@@ -1,0 +1,48 @@
+/* header */
+.site-header { border-bottom: 1px solid var(--line); background: var(--surface); }
+.bar { max-width: var(--content); margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 28px; position: relative; }
+/* Lockup rules: symbol >= 24px high, clear space >= 1/4 of symbol height. */
+.brand { display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 0; }
+.brand img { width: 34px; height: auto; display: block; }
+/* the symbol tile (white in dark mode, transparent in light) sits in a 3px pad that a -3px margin cancels, so the logo and wordmark never move when the theme changes */
+.brand img, .foot img { box-sizing: content-box; padding: 3px; margin: -3px; background: var(--symbol-tile); border-radius: 6px; }
+.brand .name { font-family: "Saira", sans-serif; font-stretch: 125%; font-weight: 700; font-size: 21px; letter-spacing: .02em; color: var(--ink); line-height: 1; }
+.brand .txt { display: flex; flex-direction: column; gap: 5px; }
+.brand .by { white-space: nowrap; font-size: 12.5px; color: var(--ci-gray); line-height: 1; }
+.nav { display: flex; gap: 26px; font-size: 15.5px; font-weight: 500; margin-left: auto; }
+.nav a[aria-current] { color: var(--link); }
+.nav a:hover { color: var(--link); }
+.nav-search { width: 220px; height: 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); display: flex; align-items: center; padding: 0 12px; color: var(--ci-gray); font-size: 14px; gap: 8px; text-align: left; }
+.nav-search kbd { margin-left: auto; font: 500 11.5px/1 "Pretendard", system-ui, sans-serif; border: 1px solid var(--line); border-radius: 4px; padding: 3px 5px; }
+.menu-btn { display: none; margin-left: auto; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font-size: 18px; line-height: 1; }
+
+.theme-btn { width: 38px; height: 38px; margin-left: -14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); display: grid; place-items: center; padding: 0; color: var(--ink); }
+.theme-btn svg { grid-area: 1 / 1; }
+.theme-btn .i-sun { display: none; }
+
+/* page layout */
+.wrap { max-width: var(--content); margin: 0 auto; padding: 56px 24px 72px; display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 72px; }
+
+/* footer */
+.site-footer { background: var(--soft); border-top: 1px solid var(--line); }
+.foot { max-width: var(--content); margin: 0 auto; padding: 36px 24px; display: flex; gap: 32px; align-items: center; font-size: 14px; color: var(--ci-gray); }
+.foot img { display: block; }
+.foot .links { display: flex; gap: 20px; margin-left: auto; }
+.foot .links a:hover { color: var(--link); }
+
+@media (max-width: 760px) {
+  .bar { height: 60px; padding: 0 16px; gap: 0; }
+  .nav { display: none; }
+  .nav-search { width: 40px; height: 40px; padding: 0; justify-content: center; margin-left: auto; }
+  .nav-search .lbl, .nav-search kbd { display: none; }
+  .theme-btn { width: 40px; height: 40px; margin-left: 8px; }
+  .menu-btn { display: grid; place-items: center; margin-left: 8px; }
+  .brand img { width: 30px; }
+  .brand .name { font-size: 19px; }
+  .bar.open .nav { display: flex; flex-direction: column; gap: 0; position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--line); padding: 8px 16px 12px; z-index: 10; }
+  .bar.open .nav a { padding: 12px 0; border-top: 1px solid var(--line); }
+  .bar.open .nav a:first-child { border-top: 0; }
+  .wrap { grid-template-columns: 1fr; padding: 36px 16px 56px; gap: 24px; }
+  .foot { flex-direction: column; align-items: flex-start; padding: 28px 16px; }
+  .foot .links { margin-left: 0; }
+}

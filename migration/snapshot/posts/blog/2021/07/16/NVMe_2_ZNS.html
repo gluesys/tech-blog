@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>NVMe 2.0: Zoned Namespace 명령어 집합</title>
+  <meta name="description" content="NVMe 2.0 버전이 출시되면서 ZNS(Zoned Namespace)라는 새로운 개념이 도입되었습니다. NVMe 입장에서만 새로운 개념이지, 비슷한 개념으로 이미 SMR(Shingled Magnetic Recording) HDD에 도입된 ZBC(Zoned Block Command...">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="NVMe 2.0 버전이 출시되면서 ZNS(Zoned Namespace)라는 새로운 개념이 도입되었습니다. NVMe 입장에서만 새로운 개념이지, 비슷한 개념으로 이미 SMR(Shingled Magnetic Recording) HDD에 도입된 ZBC(Zoned Block Command..." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="NVMe 2.0: Zoned Namespace 명령어 집합" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/Flash_memory_NVMe.jpg" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="NVMe 2.0: Zoned Namespace 명령어 집합">
+  <meta name="twitter:description" content="NVMe 2.0 버전이 출시되면서 ZNS(Zoned Namespace)라는 새로운 개념이 도입되었습니다. NVMe 입장에서만 새로운 개념이지, 비슷한 개념으로 이미 SMR(Shingled Magnetic Recording) HDD에 도입된 ZBC(Zoned Block Command...">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/Flash_memory_NVMe.jpg">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2021/07/16/NVMe_2_ZNS.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/Flash_memory_NVMe.jpg); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">NVMe 2.0: Zoned Namespace 명령어 집합</h1>
+      <p class="info">by <strong>정 현호 (jhh9977@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">July 16, 2021</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p>NVMe 2.0 버전이 출시되면서 ZNS(Zoned Namespace)라는 새로운 개념이 도입되었습니다. NVMe 입장에서만 새로운 개념이지, 비슷한 개념으로 이미 SMR(Shingled Magnetic Recording) HDD에 도입된 ZBC(Zoned Block Command)가 존재합니다. ZNS는 이러한 개념을 기반으로 NVMe 2.0 스펙에 새롭게 추가된 것입니다. 그럼 먼저 ZNS가 무엇인지에 대해 알아보도록 하겠습니다.</p>
+
+<h2 id="zns란">ZNS란?</h2>
+
+<p>ZNS는 Zoned Namespace의 약자로 연관성 있는 데이터 그룹을 Zone이라는 이름 공간으로 추상화한 것입니다. 즉 기존 데이터 저장 단위인 블록들을 기존 SSD의 임의 쓰기(Random Write) 방식이 아닌, 특정 Zone에 유사한 데이터 스트림을 <strong>순차 쓰기(Sequential Write)</strong> 하는 것이 특징입니다.</p>
+
+<p>그렇다면 왜 NVMe에 ZNS 개념이 도입되었을까요?</p>
+
+<p> </p>
+
+<h2 id="nvme에-zns가-도입된-이유는">NVMe에 ZNS가 도입된 이유는?</h2>
+
+<p><img src="/assets/ZNS_FIG1.png" alt="Alt text" width="1000" /></p>
+<center>&#60;기존 SSD와 ZNS SSD의 데이터 저장 구조&#62;</center>
+
+<p> </p>
+
+<p>위 그림처럼 <strong>기존 SSD</strong>와 <strong>ZNS SSD</strong>는 데이터 저장 방식에 있어서 차이가 있습니다.</p>
+
+<p><strong>기존 SSD</strong>는 단일 블록에 여러 종류의 데이터를 입력하는 <strong>임의 쓰기(Random Write)</strong> 방식을 사용했습니다. 문제는 데이터를 삭제할 때 발생하는데, 플래시 메모리(Flash Memory)로 구성된 SSD의 덮어쓰기가 불가능하다는 특성 때문입니다. 데이터 삭제 시, 삭제된 데이터에 해당하는 페이지는 재사용될 수 없는 페이지로 표시되어 공간을 차지하게 됩니다.</p>
+
+<p>이에 대한 해결책으로 기존 SSD는 재사용될 수 없는 페이지들을 효율적으로 관리하기 위해 <strong>가비지 컬렉션(Garbage Collection)</strong> 방식을 사용했습니다. 하지만, 이는 재사용될 수 없는 페이지가 포함된 블록 내에서 유효 데이터를 찾기 위한 <strong>읽기</strong> 및 다른 블록으로 옮겨 쓰기 위한 <strong>쓰기</strong> 작업 유발시킵니다. 즉 불필요한 I/O인 쓰기 증폭이 발생합니다. 그만큼 SSD의 수명이 짧아질 수밖에 없는데, 이러한 단점을 보완하기 위해 ZNS가 도입되었습니다.</p>
+
+<p><strong>ZNS SSD</strong>는 특정 Zone에 대한 <strong>순차 쓰기</strong> 방식을 사용합니다. 호스트에 의해 관리되며, 데이터의 삭제 단위가 <strong>Zone</strong>으로 기존 SSD에서 발생했던 문제인 가비지 컬렉션으로 인한 불필요한 I/O가 발생하지 않습니다. 이로 인해 <strong>쓰기 증폭</strong>의 발생이 줄어들며, SSD 내부 저장 공간 관리의 필요성이 적어지므로 <strong>오버 프로비저닝</strong>의 비율을 줄일 수 있습니다.</p>
+
+<p> </p>
+
+<h3 id="오버-프로비저닝이란">오버 프로비저닝이란?</h3>
+
+<p>덮어쓰기가 불가능한 SSD는 가용 공간이 적을 때 특정 셀에 데이터의 쓰기가 집중될 수 있습니다. 오버 프로비저닝은 이러한 현상을 방지하기 위해, SSD에 용량의 일정 부분을 여분 공간으로 할당하는 기술입니다.</p>
+
+<p>ZNS가 어떻게 기존 SSD의 단점을 보완할 수 있는지에 대해 ZNS 세부 스펙을 통해 알아볼까요?</p>
+
+<p> </p>
+
+<h2 id="zone-specification">Zone Specification</h2>
+
+<p>ZNS 스펙에 대해 알아보기에 앞서, NVMe 프로토콜은 적합한 I/O 명령어 집합을 어떻게 식별하여 사용할까요?</p>
+
+<p> </p>
+
+<h3 id="io-command-interpretation">I/O Command Interpretation</h3>
+
+<p>아래 그림은 NVMe에서 사용하는 공통 명령어 형식입니다.</p>
+
+<p><img src="/assets/ZNS_FIG2.png" alt="Alt text" width="700" /></p>
+<center>&#60;NVMe 명령어 집합 포맷&#62;</center>
+
+<p> </p>
+
+<p>컨트롤러는<code class="language-plaintext highlighter-rouge">CID(Command Identifier)</code> 필드를 통해 어떤 명령어 집합을 사용할 것인지 식별합니다. 그리고 <code class="language-plaintext highlighter-rouge">NSID</code> 필드의 값에 따라 특정 이름 공간에 대한 명령어 집합을 사용할 수 있습니다. 최종 식별된 명령어 집합의 명령어는 <code class="language-plaintext highlighter-rouge">Opcode</code> 필드로 구분하여 사용할 수 있습니다.</p>
+
+<p> </p>
+
+<h3 id="zns-명령어-집합">ZNS 명령어 집합</h3>
+
+<p>ZNS 명령어 집합에 대해 알아보기에 앞서, ZNS 명령어 집합이 어떤 속성을 사용하여 Zone을 핸들링 하는지 알아보겠습니다.</p>
+
+<p> </p>
+
+<h4 id="zone-attributes">Zone Attributes</h4>
+
+<p>Zone Attributes는 Zone 명령어 집합 필드에 사용되는 속성들입니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Zone Type</code><br />
+Zone에 데이터 I/O를 위한 룰로, <strong>2h</strong> 값이면 순차 쓰기가 요구됨을 의미합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Zone State</code><br />
+각 Zone은 상태 집합으로 구성된 상태 시스템과 연결되어 있으며, 해당 Zone의 작동 특성을 정의합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">WP(Write Pointer)</code><br />
+해당 Zone에서 <code class="language-plaintext highlighter-rouge">write</code> 할 수 있는 논리 블록 주소의 포인터를 정의합니다.</li>
+  <li>ZSLBA(Zone Start Logical Block Address)<br />
+각 Zone의 가장 낮은 논리 블록 주소를 정의합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Zone Capacity</code><br />
+각 Zone의 <code class="language-plaintext highlighter-rouge">write</code> 할 수 있는 논리 블록의 총량을 정의합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Zone Descriptor Extension Valid</code><br />
+해당 Zone과 연결된 유효 데이터가 있는지를 정의합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Reset Zone Recommended</code><br />
+컨트롤러가 해당 Zone을 리셋하도록 정의합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Finish Zone Recommended</code><br />
+컨트롤러가 해당 Zone을 완료하도록 권장함을 정의합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Zone Finished by Controller</code><br />
+해당 Zone이 완료되었음을 정의합니다.</li>
+</ul>
+
+<p> </p>
+
+<p>ZNS 명령어는 위의 속성들을 사용하여 Zone을 핸들링합니다. 그렇다면 어떤 ZNS 명령어가 있는지 알아보겠습니다. ZNS 명령어의 종류는 <strong>Zone Append, Zone Management Send, Zone Management Receive</strong>의 총 3가지가 있습니다.</p>
+
+<p> </p>
+
+<h4 id="1-zone-append">1. Zone Append</h4>
+
+<p><strong>Zone Append</strong> 명령어는 Zone의 <strong>ZSLBA(Zone Start Logical Block Address)</strong> 필드에 표시된 I/O 컨트롤러에 데이터 및 메타데이터를 기록하는 명령어입니다. 즉 데이터를 기록할 때, 해당 Zone의 가장 낮은 논리 블록 주소를 WP로 지정하는 방식입니다. WP는 자동으로 조정되며, 이는 여러 개의 쓰기 작업이 동시에 실행될 수 있음을 의미합니다. 쓰기가 완료되면 컨트롤러는 명령 CQE(Completion Queue Entry)를 I/O 완료 대기열에 게시합니다. 최종적으로 명령이 성공적으로 완료되면, 데이터가 포함된 가장 낮은 LBA가 반환됩니다.</p>
+
+<p>기존 NVMe SSD 방식에서 활용된 데이터를 기록 방법인 Write 명령어 방식은 WP를 명시적으로 알려줘야 했습니다. 쓰기 명령 제출 시, WP의 싱크가 맞지 않으면 순차 쓰기 요구사항 위반으로 오류가 발생할 수 있습니다. Zone Append 명령어를 통해 이러한 문제점을 보완할 수 있습니다.</p>
+
+<p>그럼 실제로 데이터가 저장될 때, <strong>Write</strong> 및 <strong>Zone Append</strong> 방식은 어떻게 데이터를 처리하는지에 대해 예시를 통해 한 번 알아볼까요?</p>
+
+<p><img src="/assets/ZNS_FIG4.png" alt="Alt text" width="700" /></p>
+<center>&#60;Write &amp; Zone Append 예시&#62;</center>
+
+<p> </p>
+
+<p>위 그림은 <strong>Write</strong> 방식과 <strong>Zone Append</strong> 방식의 동작을 잘 보여주는 예시로, 데이터는 <strong>A -&gt; B -&gt; C</strong> 순차적으로 입력된다고 가정합니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Single Queue</code><br />
+<strong>Write</strong> 및 <strong>Zone Append</strong> 두 방식 모두 안전한 쓰기 작업이 가능합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Multi Queue</code><br />
+ WP를 명시적으로 입력 받는 <strong>Write</strong> 방식은 입력된 데이터의 WP가 현재 가리키고 있는 WP가 아닐 경우, 다른 데이터가 쓰여질 때까지 대기해야합니다. 이러한 문제로 인해, 실행 오버헤드가 발생할 수 있습니다.<br />
+ 반면, <strong>Zone Append</strong> 방식은 입력된 데이터의 WP를 Zone의 가장 낮은 논리 블록 주소로 지정합니다. 장치 컨트롤러에 의해 WP는 자동 조정되며, 여러 개의 쓰기 작업이 동시에 실행될 수 있습니다. 하지만 순차적으로 입력된 데이터는 순서대로 Zone에 쓰여지지 않을 수 있습니다.</li>
+</ul>
+
+<p> </p>
+
+<h4 id="2-zone-management-send">2. Zone Management Send</h4>
+
+<p><code class="language-plaintext highlighter-rouge">Zone Management Send</code> 명령어는 여러 Zone의 action 수행에 대한 제어를 요청하는 작업을 정의합니다. 여기서 action 수행은 <strong>Zone Send Action</strong> 필드가 담당합니다. 여기서 action 수행을 통해 Zone 상태가 변환되는데요, 그렇다면 <code class="language-plaintext highlighter-rouge">Zone 상태 기계</code>에 대해 먼저 알아보도록 하겠습니다.</p>
+
+<p> </p>
+
+<h5 id="zone-상태-기계">Zone 상태 기계</h5>
+
+<p>아래 그림은 데이터가 Zone에 쓰일 때, 시스템에 의해 변화하는 각 Zone의 상태들을 나타냅니다.
+<img src="/assets/ZNS_FIG3.png" alt="Alt text" width="1000" /></p>
+<center>&#60;Zone 상태 기계&#62;</center>
+
+<p> </p>
+
+<p>Zone의 상태를 크게 활성 Zone, 비활성 Zone의 2가지 상태 집합으로 분류하여 정리해봤습니다.</p>
+
+<p> </p>
+
+<ol>
+  <li>
+    <p>비활성 Zone 상태들</p>
+
+    <p>모든 Zone의 초기 상태는 <code class="language-plaintext highlighter-rouge">ZSE:Empty</code>이며, 나머지는 Zone의 활동에 따라 변하는 고유 상태입니다.</p>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">ZSE:Empty</code><br />
+Zone에 데이터가 비어있음을 의미하고 WP(Write Pointer)는 해당 Zone의 첫 번째 LBA입니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">ZSF:Full</code><br />
+Zone에 데이터가 가득 찼음을 의미하고, WP(Write Pointer)는 해당 Zone의 마지막 LBA입니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">ZSRO:ReadOnly</code><br />
+수명이 다한 상태로, Zone 용량 중 일부가 작동을 중지한 후에도 호스트가 해당 Zone에 대한 이름 공간을 계속 사용할 수 있습니다<br />
+(ex: copy, <code class="language-plaintext highlighter-rouge">ZSO:Offline</code>로의 상태 전환)</li>
+      <li><code class="language-plaintext highlighter-rouge">ZSO:Offline</code><br />
+수명이 다한 상태로, 더 이상의 상태 전환이 발생할 수 없습니다.</li>
+    </ul>
+  </li>
+  <li>
+    <p>활성 Zone 상태들</p>
+
+    <p>최대 활성화될 수 있는 리소스는 제한되며, 다음과 같은 상태가 있습니다.</p>
+
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">ZSIO:Implicitly Opened</code><br />
+<code class="language-plaintext highlighter-rouge">Write</code> 명령어를 실행하여 암시적으로 오픈된 상태이며, 오픈 할 수 있는 리소스가 포화 상태일 경우, 호스트의 <code class="language-plaintext highlighter-rouge">Open Zone</code> 명령어에 의해 우선순위가 밀려 닫힐 수 있습니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">ZSEO:Explicitly Opened</code><br />
+open 명령어를 명시적으로 실행하여 오픈된 상태이며, 호스트 소프트웨어에 의한 Close 명령어를 통해서만 닫힐 수 있습니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">ZSC:Closed</code><br />
+암시적 오픈을 통한 해당 Zone의 쓰기 용량이 모두 채워졌거나, Close 명령어를 통한 리소스 해제되었음을 의미합니다.</li>
+    </ul>
+  </li>
+</ol>
+
+<p> </p>
+
+<p>Zone은 <code class="language-plaintext highlighter-rouge">Zone 상태 기계</code>를 기반으로 상태가 변환되는데요, Zone의 action 수행을 통해 Zone의 상태를 변환시키는 명령어에 대해 분석해보겠습니다.</p>
+
+<p> </p>
+
+<h5 id="zsazone-send-action">ZSA(Zone Send Action)</h5>
+
+<p>Zone의 실질적인 action 수행을 위한 작업으로, Zone 상태 전환을 위해 직접적으로 사용되는 Byte 필드입니다. ZSA는 Zone의 상태를 어떻게 변환시킬까요? ZSA가 수행하는 Zone의 첫 번째 논리 블록 주소(SLBA - Start Logical Block Address)이 명시된 경우만 한 번 살펴보겠습니다.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Close Zone</code><br />
+해당 Zone이 Open 상태라면, Zone을 <code class="language-plaintext highlighter-rouge">ZSC:Close</code> 상태로 전환시킵니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Finish Zone</code><br />
+수명이 남아 있다면, 해당 Zone을 <code class="language-plaintext highlighter-rouge">ZSF:Full</code> 상태로 전환시킵니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Open Zone</code><br />
+명시 Open 명령어로, 수명이 남아 있다면 <code class="language-plaintext highlighter-rouge">ZSEO:Explicitly Opened</code> 상태로 전환시킵니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Reset Zone</code><br />
+수명이 남아있다면, 해당 Zone은 <code class="language-plaintext highlighter-rouge">ZSE:Empty</code> 상태로 전환시킵니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Offline Zone</code><br />
+<code class="language-plaintext highlighter-rouge">ZSRO:ReadOnly</code> 상태라면, <code class="language-plaintext highlighter-rouge">ZSO:Offline</code> 상태로 전환시킵니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Set Zone Descriptor Extension</code><br />
+<code class="language-plaintext highlighter-rouge">ZSE:Empty</code> 상태라면, <code class="language-plaintext highlighter-rouge">ZSC:Closed</code> 상태로 전환시킵니다.</li>
+</ul>
+
+<p> </p>
+
+<p>그렇다면, 위의 상태도에 따라 실제로 드라이브에 데이터가 쓰여질 때 Zone의 상태는 어떻게 변할까요?</p>
+
+<p> </p>
+
+<h5 id="상태-전환-사이클-예시">상태 전환 사이클 예시</h5>
+
+<ol>
+  <li>일반적으로 새 드라이브의 초기 상태는 <code class="language-plaintext highlighter-rouge">ZSE:Empty</code> 상태입니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">ZSE:Empty</code> 상태에서 <code class="language-plaintext highlighter-rouge">Write</code> 명령어와 같은 쓰기 명령어를 통해 Zone이 <code class="language-plaintext highlighter-rouge">Open</code>되는 경우, 자동으로 <code class="language-plaintext highlighter-rouge">ZSIO:Implicitly Opened</code> 상태로 전환됩니다.<br />
+호스트에 의한 <code class="language-plaintext highlighter-rouge">Open Zone</code> 명령어를 통해, <code class="language-plaintext highlighter-rouge">ZSE:Empty</code>, <code class="language-plaintext highlighter-rouge">ZSIO:Implicitly Opened</code> 상태는 <code class="language-plaintext highlighter-rouge">ZSEO:Explicitly Opened</code> 상태로 전환될 수도 있습니다.<br />
+Open 명령어를 통한 명시 오픈 상태인 <code class="language-plaintext highlighter-rouge">ZSEO:Explicitly Opened</code>는 호스트에 의한 <code class="language-plaintext highlighter-rouge">Close Zone</code> 명령어를 통해서만 <code class="language-plaintext highlighter-rouge">ZSC:Closed</code> 상태로 전환될 수 있습니다.</li>
+  <li>용량이 모두 채워지면, 자동으로 <code class="language-plaintext highlighter-rouge">ZSC:Closed</code> 상태로 전환됩니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">ZSC:Closed</code> 상태는 Zone Send Action의 <code class="language-plaintext highlighter-rouge">Finish Zone</code> 명령 또는 <code class="language-plaintext highlighter-rouge">Zone Active Excursion</code>의 <code class="language-plaintext highlighter-rouge">Finish Zone Recommended</code> 속성에 의해 <code class="language-plaintext highlighter-rouge">ZSF:Full</code> 상태로 전환되어 최종 완료 처리됩니다.</li>
+</ol>
+
+<p> </p>
+
+<h4 id="3-zone-management-receive">3. Zone Management Receive</h4>
+
+<p>Zone Management Receive 명령어는 Zone에 대한 정보(Zone Type, Zone State, Zone Attributes 등)가 포함된 데이터 버퍼를 반환합니다. 반환된 데이터를 통해 해당 Zone에 대한 정보를 알 수 있습니다. 주로 호스트가 Zone의 상태 전환을 결정하기 위해 이 명령어를 사용합니다. 또한, <strong>Zone Receive Action</strong> 필드를 통해 Zone의 어떤 정보를 불러올지에 대해 선택할 수 있습니다.</p>
+
+<h5 id="zrazone-receive-action">ZRA(Zone Receive Action)</h5>
+
+<p>해당 필드는 위에 설명한 <strong>Zone Descriptor Attributes</strong> 데이터 구조를 포함한 모든 Zone 대한 <strong>Descriptor</strong>에 접근할 수 있도록 설정할 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="마무리">마무리</h2>
+
+<p>지금까지 ZNS 명령어 집합에 대하여 자세히 알아보았는데요, NVMe ZNS 기술은 우리가 사용해왔던 SSD에 안정성 및 효율성을 제공합니다. 앞으로 더 좋은 기술이 나오기를 고대하며 포스팅을 마무리하겠습니다.</p>
+
+<p> </p>
+
+<h2 id="출처">출처</h2>
+
+<ul>
+  <li><a href="https://nvmexpress.org/wp-content/uploads/NVM-Express-Zoned-Namespace-Command-Set-Specification-1.1-2021.06.02-Ratified-1.pdf">Zoned Namespace PDF</a></li>
+  <li><a href="https://zonedstorage.io/introduction/zns/">Zonedstorage Document</a></li>
+  <li><a href="https://snia.org/sites/default/files/SDC/2020/154-Martin-Hands-NVMe-2.0-Specification-Preview.pdf">SNIA: NVMe2.0 preview PDF</a></li>
+</ul>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#NVMe">NVMe</a>,&nbsp;<a href="/tags#SSD">SSD</a>,&nbsp;<a href="/tags#ZNS">ZNS</a>,&nbsp;<a href="/tags#PCIe">PCIe</a>,&nbsp;<a href="/tags#LBA">LBA</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

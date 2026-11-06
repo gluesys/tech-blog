@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Lustre Changelog DR</title>
+  <meta name="description" content="목차">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="목차" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="Lustre Changelog DR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/changelog_main.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lustre Changelog DR">
+  <meta name="twitter:description" content="목차">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/changelog_main.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2025/11/28/Lustre_Changelog_DR.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/changelog_main.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">Lustre Changelog DR</h1>
+      <p class="info">by <strong>김 재환 (jhkim@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">November 28, 2025</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="목차">목차</h2>
+
+<ul>
+  <li><a href="#인사말">인사말</a></li>
+  <li><a href="#전통적인-rsync-방식의-한계와-파일-히스토리-기반-dr">전통적인 rsync 방식의 한계와 파일 히스토리 기반 DR</a></li>
+  <li><a href="#lustre-changelog">Lustre Changelog</a>
+    <ul>
+      <li><a href="#changelog의-동작-원리">Changelog의 동작 원리</a></li>
+      <li><a href="#changelog-활성화-및-확인">Changelog 활성화 및 확인</a></li>
+      <li><a href="#changelog_mask-이벤트-타입">changelog_mask 이벤트 타입</a></li>
+      <li><a href="#changelog-읽기">Changelog 읽기</a></li>
+    </ul>
+  </li>
+  <li><a href="#글루시스-dr-솔루션">글루시스 DR 솔루션</a>
+    <ul>
+      <li><a href="#주요-특징">주요 특징</a></li>
+      <li><a href="#시스템-구성">시스템 구성</a></li>
+      <li><a href="#시스템-아키텍처">시스템 아키텍처</a>
+        <ul>
+          <li><a href="#컴포넌트별-상세-기능">컴포넌트별 상세 기능</a></li>
+        </ul>
+      </li>
+      <li><a href="#동작-원리">동작 원리</a>
+        <ul>
+          <li><a href="#1-이벤트-수집-단계">1. 이벤트 수집 단계</a></li>
+          <li><a href="#2-동기화-처리-단계">2. 동기화 처리 단계</a></li>
+          <li><a href="#3-이벤트-처리-상태-관리">3. 이벤트 처리 상태 관리</a></li>
+          <li><a href="#4-예상치-못한-종료-시-복구-메커니즘">4. 예상치 못한 종료 시 복구 메커니즘</a></li>
+          <li><a href="#5-오류-처리-및-재시도-메커니즘">5. 오류 처리 및 재시도 메커니즘</a></li>
+        </ul>
+      </li>
+      <li><a href="#dr-솔루션-등급-기준-및-시장-요구사항">DR 솔루션 등급 기준 및 시장 요구사항</a></li>
+      <li><a href="#글루시스-dr-솔루션-테스트-결과">글루시스 DR 솔루션 테스트 결과</a></li>
+      <li><a href="#테스트-결과-기반-rpo--rto-평가">테스트 결과 기반 RPO / RTO 평가</a></li>
+    </ul>
+  </li>
+  <li><a href="#마치며">마치며</a></li>
+</ul>
+
+<p> </p>
+
+<h2 id="인사말">인사말</h2>
+
+<p>2022년 10월 15일 발생한 SK C&amp;C 데이터센터 화재와 2025년 9월 26일 국가정보자원관리원 데이터센터 화재 사례에서 보듯이, 예기치 못한 재난 상황에서도 시스템이 정상적으로 운영되기 위해서는 데이터 손실을 최소화할 수 있는 효율적인 백업 및 복구 전략이 필수적입니다.</p>
+
+<p>데이터센터에서의 재해 복구(Disaster Recovery) 계획에서 RPO(Recovery Point Objective)<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>는 가장 중요한 지표 중 하나로, RPO가 짧을수록 재난 발생 시 보호할 수 있는 데이터의 범위가 넓어져 비즈니스 연속성을 보다 안정적으로 보장할 수 있습니다.</p>
+
+<p>하지만 Lustre와 같은 대용량 분산 파일시스템 환경에서는 전체 데이터를 주기적으로 동기화하는 기존 방식이 많은 시간과 자원을 요구한다는 한계가 있습니다. 이러한 제약을 극복하기 위해 변경된 데이터만을 추적하고 동기화하는 방식을 적용하면, 동기화 시간을 크게 줄이고 RPO를 최소화할 수 있습니다.</p>
+
+<p>이번 블로그에서는 Lustre 파일시스템에서 파일 생성, 수정, 삭제와 같은 모든 메타데이터 변경 이벤트를 기록하는 Changelog<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> 기능과, 이를 기반으로 구현한 글루시스의 DR 솔루션을 소개합니다.</p>
+
+<p>이전에 제가 작성한 블로그 <a href="https://tech.gluesys.com/blog/2025/03/13/Lustre_FID_1.html">Lustre_FID_1</a>과 <a href="https://tech.gluesys.com/blog/2025/09/01/Lustre_FID_2.html">Lustre_FID_2</a>에서 Lustre의 파일 생성 방식과 파일의 고유한 FID(File Identifier)로 관리하는 방식에 대해 다루었습니다. 해당 내용은 이번 블로그에서 설명하는 Changelog와 DR 솔루션의 동작 원리를 이해하는 데 도움이 되니 참고해 주시기 바랍니다.</p>
+
+<p> </p>
+
+<h2 id="전통적인-rsync-방식의-한계와-파일-히스토리-기반-dr">전통적인 rsync 방식의 한계와 파일 히스토리 기반 DR</h2>
+
+<p>DR을 구현하기 위해 전통적으로 사용되는 방식은 rsync<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>를 활용한 전체 스캔 기반 동기화입니다. 이 방식은 SSH 명령어 또는 SSH 데몬을 통해 실행할 수 있으며, 파일시스템 전체를 주기적으로 스캔하여 변경된 파일을 식별한 뒤 이를 동기화합니다.</p>
+
+<p>그러나 rsync 기반 동기화 방식은 파일시스템 전체를 스캔한 이후에야 동기화가 이루어지기 때문에, 파일시스템의 규모가 커질수록 스캔 시간이 선형적으로 증가하는 한계를 가집니다. 특히 Lustre와 같은 대규모 파일시스템에서는 동기화에 수십 시간이 소요될 수 있으며, 동기화 주기가 스캔 주기에 의존하게 되어 RPO를 최소화하는 데에도 제약이 발생합니다. 이러한 이유로, 대규모 파일시스템 환경에서 실시간에 가까운 DR을 구현하기에는 전통적인 rsync 방식만으로는 한계가 있습니다.</p>
+
+<p>이러한 한계를 극복하기 위한 대안으로, 파일 히스토리를 기반으로 한 DR 방식을 고려할 수 있습니다. 해당 방식은 파일시스템에서 발생한 변경 이력을 기반으로 수정된 파일 목록만 선별하여 동기화함으로써, 전체 파일시스템을 반복적으로 스캔하는 rsync 방식에 비해 스캔에 소요되는 시간을 크게 줄일 수 있습니다. 더 나아가 파일시스템 모니터링을 통해 변경된 파일 정보를 실시간에 가깝게 수집할 수 있다면, RPO를 최소화하는 고효율 DR 환경을 구현할 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="lustre-changelog">Lustre Changelog</h2>
+
+<p>Lustre Changelog는 Lustre 파일시스템에서 발생하는 모든 메타데이터 변경 사항을 기록하는 기능입니다.<br />
+  파일 생성, 수정, 삭제, 권한 변경, 디렉토리 구조 변경 등과 같은 이벤트들이 시간 순서대로 기록되며, 이를 통해 파일시스템의 변경 이력을 추적할 수 있습니다.</p>
+
+<p><img src="/assets/changelog_2.png" alt="Alt text" /></p>
+
+<p><strong>Changelog 동작 흐름:</strong></p>
+
+<ol>
+  <li>
+    <p><strong>Changelog 등록</strong>: Lustre 관리자가 <code class="language-plaintext highlighter-rouge">changelog_register</code>로 MDT(Metadata Target)에 Changelog를 등록합니다. 이 과정을 통해 해당 MDT에서 발생하는 메타데이터 변경 이벤트를 기록할 수 있습니다.</p>
+  </li>
+  <li>
+    <p><strong>클라이언트 I/O 발생</strong>: 클라이언트가 파일 생성, 수정, 삭제 등의 I/O 작업을 Lustre 파일시스템에 요청합니다.</p>
+  </li>
+  <li>
+    <p><strong>Changelog 저장</strong>: MDS(Metadata Server)가 클라이언트의 I/O 작업을 확인하고 처리한 후, 해당 이벤트를 Changelog로 MDT에 저장합니다. 각 이벤트는 타임스탬프, FID, 이벤트 타입 등의 정보와 함께 순차적으로 기록됩니다.</p>
+  </li>
+  <li>
+    <p><strong>Changelog 읽기 요청</strong>: Changelog Reader(<code class="language-plaintext highlighter-rouge">lfs changelog</code> 명령어 또는 <code class="language-plaintext highlighter-rouge">llapi_changelog_recv()</code> API)가 Changelog 내용을 확인하기 위해 읽기 요청을 보냅니다.</p>
+  </li>
+  <li>
+    <p><strong>Changelog 조회</strong>: MDS가 MDT에서 Changelog를 가져와 읽기 요청에 대응할 데이터를 준비합니다.</p>
+  </li>
+  <li>
+    <p><strong>Changelog 전달</strong>: MDS가 조회한 Changelog 내용을 Changelog Reader에게 전달합니다. Reader는 이 정보를 활용하여 파일시스템 변경 이벤트를 실시간으로 추적하고 처리할 수 있습니다.</p>
+  </li>
+</ol>
+
+<h3 id="changelog의-동작-원리">Changelog의 동작 원리</h3>
+
+<p>Changelog는 MDS에서 관리되며, 각 MDT별로 독립적으로 기록됩니다.<br />
+  클라이언트에서 메타데이터 변경 작업이 발생하면, MDS는 해당 작업을 처리한 후 Changelog에 이벤트를 기록합니다.</p>
+
+<p>Changelog는 내부적으로 순차적인 로그 파일 형태로 저장되며, 각 로그 엔트리는 다음과 같은 정보를 포함합니다:</p>
+
+<ul>
+  <li><strong>타임스탬프</strong>: 이벤트 발생 시간</li>
+  <li><strong>FID</strong>: 변경된 파일 또는 디렉토리의 FID</li>
+  <li><strong>이벤트 타입</strong>: CREAT, UNLINK, RENME, SETATTR 등의 작업 유형</li>
+  <li><strong>부가 정보</strong>: 작업과 관련된 추가 메타데이터</li>
+</ul>
+
+<p>Changelog는 비동기적으로 기록되기 때문에 일반적인 파일시스템 작업 성능에는 거의 영향을 주지 않습니다. 다만, 활성화된 이벤트 타입이 많을수록 디스크 사용량이 증가할 수 있으므로, 실제로 필요한 이벤트만 선택적으로 활성화하는 것이 좋습니다.</p>
+
+<h3 id="changelog-활성화-및-확인">Changelog 활성화 및 확인</h3>
+
+<p>Changelog 기능을 사용하려면 먼저 MDS에서 Changelog를 활성화해야 합니다.<br />
+Changelog는 기본적으로 비활성화되어 있으며, 다음과 같이 활성화할 수 있습니다:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 1. Changelog 등록 (changelog_register)</span>
+lctl changelog_register &lt;MDT_device&gt;
+
+<span class="c"># 2. Changelog 활성화 및 이벤트 타입 설정</span>
+lctl set_param mdd.<span class="k">*</span>.changelog_mask<span class="o">=</span><span class="s2">"CREAT UNLINK RENME SETATTR"</span>
+
+<span class="c"># 3. Changelog 상태 확인</span>
+lctl get_param mdd.<span class="k">*</span>.changelog_mask
+</code></pre></div></div>
+
+<p>먼저 <code class="language-plaintext highlighter-rouge">changelog_register</code>를 통해 MDT에 Changelog를 등록한 후, <code class="language-plaintext highlighter-rouge">changelog_mask</code> 파라미터를 통해 기록할 이벤트 타입을 선택적으로 지정할 수 있습니다. 필요한 이벤트만 기록하도록 설정하면 디스크 사용량을 절약할 수 있습니다.</p>
+
+<h4 id="changelog_mask-이벤트-타입">changelog_mask 이벤트 타입</h4>
+
+<p><code class="language-plaintext highlighter-rouge">changelog_mask</code>에서 사용할 수 있는 주요 이벤트 타입은 다음과 같습니다:</p>
+
+<p><strong>파일 및 디렉토리 작업:</strong></p>
+<ul>
+  <li><strong>CREAT</strong>: 파일 또는 디렉토리 생성</li>
+  <li><strong>UNLINK</strong>: 파일 또는 디렉토리 삭제</li>
+  <li><strong>MKDIR</strong>: 디렉토리 생성</li>
+  <li><strong>RMDIR</strong>: 디렉토리 삭제</li>
+  <li><strong>RENME</strong>: 파일 또는 디렉토리 이름 변경</li>
+</ul>
+
+<p><strong>파일 속성 및 메타데이터:</strong></p>
+<ul>
+  <li><strong>SETATTR</strong>: 파일 속성 변경 (권한, 소유자, 그룹 등)</li>
+  <li><strong>SATTR</strong>: 파일 속성 설정 (SETATTR과 유사하지만 세부 동작이 다름)</li>
+  <li><strong>XATTR</strong>: 확장 속성(Extended Attribute) 설정 또는 변경</li>
+  <li><strong>TRUNCATE</strong>: 파일 크기 변경</li>
+</ul>
+
+<p><strong>파일 접근:</strong></p>
+<ul>
+  <li><strong>OPEN</strong>: 파일 열기</li>
+  <li><strong>CLOSE</strong>: 파일 닫기</li>
+</ul>
+
+<p><strong>HSM 관련:</strong></p>
+<ul>
+  <li><strong>HSM</strong>: HSM(Hierarchical Storage Management) 관련 작업 (파일 아카이빙, 복원 등)</li>
+</ul>
+
+<p><strong>기타:</strong></p>
+<ul>
+  <li><strong>MARK</strong>: 마커 이벤트 (특정 시점을 표시하기 위한 이벤트)</li>
+  <li><strong>ATIME</strong>: 접근 시간 변경 (기본적으로 비활성화)</li>
+  <li><strong>GXATR</strong>: 확장 속성 접근 (기본적으로 비활성화)</li>
+  <li><strong>NOPEN</strong>: 파일 열기 거부 (기본적으로 비활성화)</li>
+</ul>
+
+<p>일부 이벤트 타입(ATIME, GXATR, NOPEN 등)은 기본적으로 비활성화되어 있으며, 이러한 이벤트를 기록하려면 명시적으로 mask에 포함시켜야 합니다.<br />
+다만, 이러한 이벤트는 빈번하게 발생할 수 있어 디스크 사용량이 크게 증가할 수 있으므로 신중하게 선택해야 합니다.</p>
+
+<h3 id="changelog-읽기">Changelog 읽기</h3>
+
+<p>Changelog를 읽기 위해서는 <code class="language-plaintext highlighter-rouge">lfs changelog</code> 명령어를 사용합니다:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 특정 MDT의 Changelog 읽기</span>
+lfs changelog &lt;MDT_device&gt;
+
+<span class="c"># 특정 시점 이후의 Changelog 읽기</span>
+lfs changelog &lt;MDT_device&gt; &lt;start_record&gt;
+
+<span class="c"># 실시간으로 Changelog 모니터링</span>
+lfs changelog &lt;MDT_device&gt; <span class="nt">--follow</span>
+</code></pre></div></div>
+
+<p>Changelog는 순차적인 레코드 번호를 가지며, 특정 레코드 번호부터 읽어올 수 있습니다. 각 레코드는 다음과 같은 형식으로 출력됩니다:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>12345 08/01/2025 14:30:25 CREAT [0x200000007:0x1:0x0] /lustre/test/file.txt
+12346 08/01/2025 14:30:26 MODIFY [0x200000007:0x1:0x1] /lustre/test/file.txt
+12347 08/01/2025 14:30:27 UNLINK [0x200000007:0x1:0x1] /lustre/test/file.txt
+</code></pre></div></div>
+
+<p>각 레코드는 레코드 번호, 타임스탬프, 이벤트 타입, FID, 그리고 파일 경로(가능한 경우)를 포함합니다. 이 정보를 활용하여 특정 시점 이후의 변경 사항만 추출하거나, 특정 파일의 변경 이력을 추적할 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="글루시스-dr-솔루션">글루시스 DR 솔루션</h2>
+
+<p>지금까지 Lustre의 Changelog 기능에 대해 소개해 보았는데요, 글루시스에서도 Lustre의 Changelog 기능을 적용한 DR 솔루션을 제공하고 있습니다.<br />
+  글루시스 DR 솔루션은 실시간으로 파일시스템 내 변경 사항을 추적해 원격 사이트에 동기화하는 기능을 제공합니다. <br />
+  <code class="language-plaintext highlighter-rouge">rsync</code>와 같은 전통적인 동기화 방식과 달리, 변경된 파일만 효율적으로 추적하고 복제하기 때문에 네트워크 트래픽과 처리 시간을 크게 절감할 수 있습니다.</p>
+
+<h3 id="주요-특징">주요 특징</h3>
+
+<h4 id="효율적인-증분-동기화">효율적인 증분 동기화</h4>
+
+<p>전체 파일시스템을 스캔하는 대신, Changelog를 통해 변경된 파일만 식별하여 동기화합니다. 이를 통해 대규모 파일시스템에서도 빠른 동기화가 가능하며, 네트워크 트래픽을 효율적으로 활용할 수 있습니다.</p>
+
+<h4 id="실시간-동기화">실시간 동기화</h4>
+
+<p>이벤트 발생 즉시 처리되므로, 재해 발생 시 최신 데이터까지 복구할 수 있습니다. 또한 Changelog Index를 추적하여 시스템 재시작 후에도 중복 처리나 누락 없이 동기화를 계속할 수 있습니다.</p>
+
+<h4 id="안정적인-오류-처리">안정적인 오류 처리</h4>
+
+<p>동기화 실패 시 상세한 오류 정보를 기록하고, 재시도 가능한 작업은 자동으로 재시도 큐에 추가하여 처리합니다. 실패한 파일 목록을 추적하여 관리자가 수동으로 처리할 수 있도록 지원합니다.</p>
+
+<h4 id="파일-필터링-시스템">파일 필터링 시스템</h4>
+
+<p>설정 파일의 <code class="language-plaintext highlighter-rouge">excludePatterns</code>를 통해 불필요한 파일, 확장자를 동기화 대상에서 제외할 수 있습니다. 기본적으로 Vim 임시 파일(.swp, .swo, .swx)과 백업 파일(~)이 제외됩니다.</p>
+
+<h3 id="시스템-구성">시스템 구성</h3>
+
+<p>글루시스 DR 솔루션은 다음과 같은 기술 스택으로 구성됩니다</p>
+
+<ol>
+  <li>
+    <p><strong>모니터링</strong><br />
+ 실시간성이 중요한 모니터링 작업을 위해, 해당 컴포넌트는 C 언어로 구현되어 Lustre API를 직접 호출하여 이벤트를 수집합니다. <br />
+ 이는 <code class="language-plaintext highlighter-rouge">lfs changelog</code>와 같은 사용자 레벨 도구를 통해 간접적으로 Changelog를 조회하는 방식보다, 호출-응답 지연을 최소화하고 불필요한 프로세스 오버헤드를 줄일 수 있어 성능과 리소스 효율 측면에서 유리하기 때문입니다.</p>
+  </li>
+  <li>
+    <p><strong>이벤트 큐</strong><br />
+    Redis Stream<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup>을 사용하여 이벤트를 비동기적으로 전달합니다.</p>
+  </li>
+  <li>
+    <p><strong>원격 통신</strong><br />
+    gRPC<sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote" rel="footnote">5</a></sup>를 사용하여 타겟 서버와 통신합니다.<br />
+    gRPC는 google이 개발한 HTTP/2 기반의 고성능 RPC(Remote Procedure Call) 프레임워크로, 타입 안전성과 효율적인 직렬화를 제공합니다.</p>
+  </li>
+  <li>
+    <p><strong>파일 동기화</strong><br />
+    SSH 기반 rsync를 사용하여 안전하고 효율적으로 파일을 전송합니다.<br />
+    rsync는 증분 동기화에 최적화된 도구로, 변경된 부분만 전송하여 네트워크 대역폭을 절약합니다. SSH를 통해 암호화된 안전한 전송을 보장합니다.</p>
+  </li>
+  <li>
+    <p><strong>설정 관리</strong><br />
+    가독성이 좋고 다양한 프로그래밍 언어에서 쉽게 파싱할 수 있는 JSON 파일로 관리합니다.</p>
+  </li>
+</ol>
+
+<h3 id="시스템-아키텍처">시스템 아키텍처</h3>
+
+<p><img src="/assets/changelog_DR.png" alt="Alt text" /></p>
+
+<p>글루시스 DR 솔루션은 세 가지 주요 컴포넌트로 구성됩니다:</p>
+
+<ol>
+  <li>
+    <p><strong>모니터링 컴포넌트</strong><br />
+  Lustre Changelog를 실시간으로 모니터링하고 이벤트를 수집합니다.</p>
+  </li>
+  <li>
+    <p><strong>소스 서버 컴포넌트</strong><br />
+  소스 서버에서 실행되며, 수집된 이벤트를 처리하고 동기화 작업을 수행합니다.</p>
+  </li>
+  <li>
+    <p><strong>타겟 서버 컴포넌트</strong><br />
+  타겟 서버에서 실행되며, 원격에서 전송된 파일 작업 요청을 처리합니다.</p>
+  </li>
+</ol>
+
+<p>이 세 컴포넌트는 Redis Stream을 통해 이벤트를 전달하고, gRPC를 통해 원격 파일 작업을 수행합니다.</p>
+
+<h4 id="컴포넌트별-상세-기능">컴포넌트별 상세 기능</h4>
+
+<p><strong>모니터링 컴포넌트</strong></p>
+<ul>
+  <li>MDT가 여러 개인 경우, 각 MDT별로 독립적인 프로세스로 동작합니다.</li>
+  <li>메인 스레드 1개와 서브 스레드 2개로 이루어진 멀티 스레드 구조입니다.
+    <ul>
+      <li>메인 스레드: MDT 상태를 모니터링하고 코드 내 리소스를 관리합니다.</li>
+      <li>모니터링 스레드: Lustre Changelog 이벤트를 수집합니다.</li>
+      <li>필터 스레드: 설정 파일에 정의된 필터링을 이용하여 Redis에 저장합니다.</li>
+    </ul>
+  </li>
+  <li>Lustre Changelog 이벤트는 원본, create_modify, rename_delete 세 그룹으로 분류하여 저장합니다.</li>
+</ul>
+
+<p><strong>소스 서버 컴포넌트</strong></p>
+<ul>
+  <li>Redis Stream에서 이벤트를 가져와 처리합니다.
+    <ul>
+      <li>rsync를 통한 동기화 작업은 create_modify 그룹을 가져옵니다.</li>
+      <li>gRPC를 통한 동기화 작업은 rename_delete 그룹을 가져옵니다.</li>
+    </ul>
+  </li>
+  <li>MDT별 Changelog Index와 동기화 체크포인트를 관리합니다.</li>
+</ul>
+
+<p><strong>타겟 서버 컴포넌트</strong></p>
+<ul>
+  <li>rename_delete 그룹에 속한 파일 목록에 있는 파일을 동기화합니다.</li>
+</ul>
+
+<h3 id="동작-원리">동작 원리</h3>
+
+<h4 id="1-이벤트-수집-단계">1. 이벤트 수집 단계</h4>
+
+<p>모니터링 컴포넌트는 Lustre의 <code class="language-plaintext highlighter-rouge">llapi_changelog_recv()</code> API를 사용하여 파일시스템 변경 이벤트를 <strong>실시간으로 수집</strong>합니다.<br />
+각 MDT(Metadata Target)별로 <strong>독립적인 프로세스</strong>로 동작하며, 수집된 이벤트는 Redis Stream에 저장됩니다.</p>
+
+<p>이 과정에서 불필요한 파일(예: Vim 임시 파일, 백업 파일 등)은 설정 파일의 <code class="language-plaintext highlighter-rouge">excludePatterns</code>를 통해 필터링되어 동기화 대상에서 제외됩니다.<br />
+또한 시스템 재시작 시 <strong>중복 처리를 방지</strong>하기 위해, Redis에 저장된 마지막 처리 Changelog Index를 로드하여 해당 지점부터 이벤트 수집을 재개합니다.</p>
+
+<p>Lustre에서 수집되는 이벤트 타입은 내부적으로 <strong>두 개의 그룹</strong>으로 분류하여 처리합니다.</p>
+
+<ul>
+  <li><strong>create_modify</strong>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">CREAT</code>, <code class="language-plaintext highlighter-rouge">MKDIR</code>, <code class="language-plaintext highlighter-rouge">CLOSE</code>, <code class="language-plaintext highlighter-rouge">TRUNC</code>, <code class="language-plaintext highlighter-rouge">SATTR</code>, <code class="language-plaintext highlighter-rouge">MTIME</code></li>
+    </ul>
+  </li>
+  <li><strong>rename_delete</strong>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">RMDIR</code>, <code class="language-plaintext highlighter-rouge">RENME</code>, <code class="language-plaintext highlighter-rouge">UNLINK</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>왜 Redis Stream인가?</strong></p>
+
+<p>실시간 DR 솔루션에서 이벤트 큐로 Redis Stream을 선택한 이유는 다음과 같습니다.</p>
+
+<ol>
+  <li>
+    <p><strong>순서 보장의 중요성</strong><br />
+실시간 동기화 환경에서는 이벤트가 발생한 순서대로 처리되는 것이 매우 중요합니다.<br />
+예를 들어, 파일 생성 → 수정 → 삭제 순서가 뒤바뀔 경우 데이터 불일치가 발생할 수 있습니다.<br />
+Redis Stream은 시간 순으로 정렬된 로그 구조를 제공하여, 이벤트의 <strong>순차적 처리</strong>를 보장합니다.</p>
+  </li>
+  <li>
+    <p><strong>빈번한 이벤트 처리 성능</strong><br />
+대규모 Lustre 파일시스템 환경에서는 초당 수천 건 이상의 파일 변경 이벤트가 발생할 수 있습니다.<br />
+Redis Stream은 메모리 기반의 고성능 데이터 구조로, 이러한 빈번한 이벤트를 빠르게 수집하고 처리할 수 있습니다.</p>
+  </li>
+  <li>
+    <p><strong>대량 이벤트 저장 및 관리</strong><br />
+파일시스템 변경 이벤트는 지속적으로 누적되며, 동기화 처리 지연 시 대량의 이벤트가 일시적으로 적재될 수 있습니다.<br />
+Redis Stream은 수백만 건 이상의 엔트리를 효율적으로 저장·관리할 수 있어, 피크 시간대의 이벤트 폭주 상황에서도 안정적인 처리가 가능합니다.</p>
+  </li>
+  <li>
+    <p><strong>Consumer Group을 통한 안전한 이벤트 처리</strong><br />
+Redis Stream의 Consumer Group 기능을 활용하면, 여러 소비자가 동일한 스트림을 안전하게 읽고 처리할 수 있습니다.<br />
+이를 통해 이벤트의 <strong>중복 처리나 누락 없이</strong>, 작업을 여러 소비자에게 분산할 수 있습니다.</p>
+  </li>
+  <li>
+    <p><strong>비동기 처리 및 버퍼링</strong><br />
+이벤트를 수집하는 모니터링 컴포넌트와 이를 처리하는 소스 서버 컴포넌트 간에는 처리 속도 차이가 발생할 수 있습니다.<br />
+Redis Stream은 이러한 속도 차이를 효과적으로 버퍼링하여, <strong>이벤트 손실 없는 안정적인 비동기 처리 구조</strong>를 제공합니다.</p>
+  </li>
+</ol>
+
+<p><strong>Redis Stream 구조</strong></p>
+
+<p>수집된 이벤트는 처리 목적과 동기화 방식에 따라 여러 개의 Redis Stream으로 분리하여 관리됩니다. 이를 통해 이벤트 처리 흐름을 명확히 구분하고, 동기화 실패 시에도 효율적으로 재처리할 수 있도록 설계했습니다.</p>
+
+<ol>
+  <li>
+    <p><strong>원본 이벤트 스트림</strong><br />
+Lustre Changelog를 통해 수집한 파일 생성, 수정, 삭제 등의 이벤트를 <strong>가공 없이 그대로 저장</strong>하는 스트림입니다.</p>
+  </li>
+  <li>
+    <p><strong>rsync 동기화 이벤트 스트림</strong><br />
+원본 이벤트 스트림(1)에서 선별된 이벤트 중 <strong>rsync 기반 동기화 대상 이벤트 그룹</strong>을 저장하는 스트림입니다.</p>
+  </li>
+  <li>
+    <p><strong>gRPC 동기화 이벤트 스트림</strong><br />
+원본 이벤트 스트림(1)에서 선별된 이벤트 중 <strong>gRPC 기반 동기화 대상 이벤트 그룹</strong>을 저장하는 스트림입니다.</p>
+  </li>
+  <li>
+    <p><strong>rsync 재동기화 이벤트 스트림</strong><br />
+rsync 동기화 이벤트 스트림(2)에서 <strong>동기화에 실패한 이벤트 중 재처리가 필요한 이벤트</strong>를 저장하는 스트림입니다.</p>
+  </li>
+  <li>
+    <p><strong>gRPC 재동기화 이벤트 스트림</strong><br />
+gRPC 동기화 이벤트 스트림(3)에서 <strong>동기화에 실패한 이벤트 중 재처리가 필요한 이벤트</strong>를 저장하는 스트림입니다.</p>
+  </li>
+</ol>
+
+<p><strong>전체 구조 요약</strong></p>
+
+<ul>
+  <li>event: 이벤트 타입 (CREATE, MODIFY, MKDIR, DELETE, RENAME)</li>
+  <li>path: 파일/디렉토리 절대 경로 (RENAME 시 원본 경로)</li>
+  <li>to_path: RENME 이벤트 시 변경될 경로</li>
+  <li>mdt: MDT 이름</li>
+  <li>index: Lustre Changelog index</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Redis
+│
+├── Streams (Redis Stream)
+│   ├── rsync 동기화 이벤트 스트림
+│   │   └── Entry: {event, path, mdt, index}
+│   │
+│   ├── gRPC 동기화 이벤트 스트림
+│   │   └── Entry: {event, path, to_path, mdt, index}
+│   │
+│   ├── 원본 이벤트 스트림
+│   │   └── Entry: {event, path, mdt, index}
+│   │
+│   ├── rsync 재동기화 이벤트 스트림
+│   │   └── Entry: {event, path, mdt, index}
+│   │
+│   └── gRPC 재동기화 이벤트 스트림
+│       └── Entry: {event, path, to_path, mdt, index}
+│
+├── Checkpoints (String)
+│   ├── 마지막 처리된 rsync 동기화 이벤트 스트림 ID를 저장하는 Hash
+│   │   └── Value: "1234567890124-0" 
+│   │
+│   └── 마지막 처리된 gRPC 동기화 이벤트 스트림 ID를 저장하는 Hash
+│       └── Value: "1234567890126-0" 
+│
+└── Indexes (String)
+    ├── 마지막 처리 이벤트의 Lustre Changelog Index를 저장하는 Hash
+        └── Value: "12350"
+</code></pre></div></div>
+<p><strong>1. 원본 이벤트 스트림 구조</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌─────────────────────────────────────────────────────────────┐
+│  Entry ID: 1234567890123-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "CREATE"                               │    │
+│  │ path       │ "/lustre/file.txt"                     │    │
+│  │ mdt        │ "MDT0000"                              │    │
+│  │ index      │ "12345"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div></div>
+
+<p><strong>2. rsync 동기화 이벤트 스트림 구조</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌─────────────────────────────────────────────────────────────┐
+│  Entry ID: 1234567890123-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "CREATE" / "MODIFY" / "MKDIR"          │    │
+│  │ path       │ "/lustre/file.txt"                     │    │
+│  │ mdt        │ "MDT0000"                              │    │
+│  │ index      │ "12345"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  Entry ID: 1234567890124-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "MODIFY"                               │    │
+│  │ path       │ "/lustre/file2.txt"                    │    │
+│  │ mdt        │ "MDT0001"                              │    │
+│  │ index      │ "12346"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div></div>
+
+<p><strong>3. gRPC 동기화 이벤트 스트림 구조</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌─────────────────────────────────────────────────────────────┐
+│  Entry ID: 1234567890125-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "RENAME"                               │    │
+│  │ path       │ "/lustre/old.txt"                      │    │
+│  │ to_path    │ "/lustre/new.txt"                      │    │
+│  │ mdt        │ "MDT0000"                              │    │
+│  │ index      │ "12347"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  Entry ID: 1234567890126-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    |
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "DELETE"                               │    │
+│  │ path       │ "/lustre/file.txt"                     │    │
+│  │ to_path    │ ""                                     │    │
+│  │ mdt        │ "MDT0000"                              │    │
+│  │ index      │ "12348"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div></div>
+
+<p><strong>4. rsync 재동기화 이벤트 스트림</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌─────────────────────────────────────────────────────────────┐
+│  Entry ID: 1234567890127-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "CREATE"                               │    │
+│  │ path       │ "/lustre/retry_file.txt"               │    │
+│  │ mdt        │ "MDT0000"                              │    │
+│  │ index      │ "12349"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div></div>
+
+<p><strong>5. gRPC 재동기화 이벤트 스트림</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌─────────────────────────────────────────────────────────────┐
+│  Entry ID: 1234567890128-0                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │ Field      │ Value                                  │    │
+│  ├─────────────────────────────────────────────────────┤    │
+│  │ event      │ "RENAME"                               │    │
+│  │ path       │ "/lustre/old_retry.txt"                │    │
+│  │ to_path    │ "/lustre/new_retry.txt"                │    │
+│  │ mdt        │ "MDT0000"                              │    │
+│  │ index      │ "12350"                                │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div></div>
+
+<h4 id="2-동기화-처리-단계">2. 동기화 처리 단계</h4>
+
+<p>소스 서버 컴포넌트는 Redis Stream에서 이벤트를 읽어 이벤트 타입에 따라 적절한 동기화 방법을 선택하여 처리합니다.<br />
+  동기화는 이벤트 타입에 따라 두 가지 방식으로 나뉩니다:</p>
+
+<p><strong>rsync를 통한 동기화</strong></p>
+
+<p>파일 생성이나 수정 이벤트의 경우, 대용량 데이터 전송에 최적화된 <code class="language-plaintext highlighter-rouge">rsync</code>를 사용합니다. 소스 서버 컴포넌트는 변경된 파일 목록을 수집하고, SSH를 통해 타겟 서버로 파일을 복사합니다. 이 방식은 파일의 실제 데이터를 효율적으로 전송하는 데 적합합니다.</p>
+
+<p>동기화 과정은 다음과 같이 진행됩니다:</p>
+
+<ol>
+  <li><strong>이벤트 수집</strong>: Redis Stream의 rsync 동기화 스트림에서 배치 크기만큼 가져와서 동기화 파일 목록을 생성합니다.</li>
+  <li><strong>파일 존재 확인</strong>: 각 파일의 존재 여부를 사전 확인하여 존재하지 않는 파일은 동기화 파일 목록에서 제거합니다.</li>
+  <li><strong>임시 파일 생성</strong>: 존재하는 파일들의 상대 경로를 rsync 동기화에 사용할 임시 파일에 추가합니다.</li>
+  <li><strong>rsync 실행</strong>: 생성된 임시 파일을 이용하여 rsync 동기화를 실행합니다.</li>
+  <li><strong>결과 확인</strong>: rsync 실행 후 실패 파일, 추가 변경 파일을 확인하여 재동기화가 필요한 파일들은 재동기화 스트림에 저장합니다.</li>
+  <li><strong>Index 업데이트</strong>: 동기화 완료 후 Changelog Index를 업데이트합니다.</li>
+</ol>
+
+<p><strong>gRPC를 통한 동기화</strong></p>
+
+<p>파일명 변경이나 삭제 이벤트의 경우, <code class="language-plaintext highlighter-rouge">gRPC</code>를 통해 타겟 서버 컴포넌트에 직접 요청합니다.<br />
+  타겟 서버 컴포넌트는 gRPC 요청을 받아 파일 이동, 삭제 등의 작업을 수행하며, 소스 서버와 타겟 서버 간의 경로 차이를 자동으로 변환하여 올바른 위치에 동기화합니다.</p>
+
+<p>gRPC를 통한 동기화 과정은 다음과 같습니다:</p>
+
+<ol>
+  <li><strong>이벤트 수집</strong>: Redis Stream의 gRPC 동기화 스트림에서 배치 크기만큼 가져와서 동기화 파일 목록을 생성합니다.</li>
+  <li><strong>gRPC 요청 전송</strong>: 타겟 서버의 API를 호출하여 작업을 수행합니다.</li>
+  <li><strong>파일 작업 실행</strong>: 타겟 서버에서 파일 이동 또는 삭제를 수행합니다.</li>
+  <li><strong>결과 반환</strong>: 성공/실패 여부와 상세 오류 정보를 소스 서버에 반환합니다.</li>
+  <li><strong>결과 확인</strong>: 실패 파일 목록 중에서 재동기화가 필요한 파일들을 재동기화 스트림에 저장합니다.</li>
+  <li><strong>Index 업데이트</strong>: 성공한 작업에 대해서만 Changelog Index를 업데이트합니다.</li>
+</ol>
+
+<h4 id="3-이벤트-처리-상태-관리">3. 이벤트 처리 상태 관리</h4>
+
+<p>시스템 재시작이나 예기치 않은 장애 상황에서도 이벤트의 중복 처리나 누락을 방지하기 위해, 글루시스 DR 솔루션은 이벤트 처리 상태를 체계적으로 추적·관리합니다.
+  이를 위해 두 가지 레벨의 상태 관리 메커니즘을 적용하여, 수집 단계부터 동기화 단계까지 안정적인 처리가 가능하도록 설계했습니다.</p>
+
+<p><strong>MDT별 Changelog Index 관리</strong></p>
+
+<p>각 MDT에서 마지막으로 처리된 Changelog Index는 Redis에 해시(Hash) 형태로 저장되며, 해당 값은 MDT별로 독립적으로 관리됩니다.</p>
+
+<p>모니터링 컴포넌트는 시작 시 Redis에 저장된 각 MDT의 마지막 Changelog Index를 로드한 뒤, 해당 지점 이후부터 Changelog를 읽기 시작합니다. 예를 들어 MDT0000의 마지막 처리 Index가 12350인 경우, 다음 이벤트인 12351부터 Changelog를 읽어 이벤트 수집을 재개합니다.</p>
+
+<p>이와 같은 방식으로 동작함으로써, 시스템이 예기치 않게 종료되더라도 각 MDT별로 정확한 처리 지점부터 이벤트 수집을 재개할 수 있어, 중복 처리나 이벤트 누락 없이 안정적인 모니터링이 가능합니다.</p>
+
+<p><strong>동기화 인덱스 관리</strong></p>
+
+<p>소스 서버 컴포넌트는 Redis Stream에서 이벤트를 읽어 처리할 때, 마지막으로 처리된 Stream Entry ID를 체크포인트로 저장합니다.<br />
+  동기화 작업이 완료될 때마다 체크포인트는 갱신되며, 다음 동기화 작업 시 이 체크포인트 이후의 이벤트만 읽어 처리합니다.<br />
+  이를 통해 동기화 작업 중 장애가 발생하더라도, 재시작 시 이전에 처리된 이벤트를 다시 처리하지 않고 정확한 지점부터 동기화를 재개할 수 있습니다.</p>
+
+<h4 id="4-예상치-못한-종료-시-복구-메커니즘">4. 예상치 못한 종료 시 복구 메커니즘</h4>
+
+<p>시스템 크래시, 네트워크 장애, 프로세스 강제 종료와 같은 <strong>예상치 못한 상황</strong>으로 프로그램이 중단되더라도, 사전에 저장된 인덱스 정보를 활용하여 <strong>이전 작업을 이어서 수행할 수 있도록</strong> 복구 메커니즘을 설계했습니다.</p>
+
+<ul>
+  <li>
+    <p><strong>모니터링 컴포넌트 재시작</strong><br />
+MDT별로 저장된 인덱스를 로드하여, <strong>마지막으로 처리된 Changelog Index 이후의 이벤트만 수집</strong>합니다.<br />
+이미 수집되어 Redis Stream에 저장된 이벤트는 다시 저장되지 않으므로, <strong>이벤트 중복 수집이 발생하지 않습니다.</strong></p>
+  </li>
+  <li>
+    <p><strong>소스 서버 컴포넌트 재시작</strong><br />
+Redis Stream에 저장된 <strong>동기화 체크포인트(Stream Entry ID)</strong> 를 로드하여, 마지막으로 처리된 Entry ID 이후의 이벤트만 읽어 처리합니다.<br />
+동기화가 완료되지 않은 이벤트는 자동으로 재처리되어, 작업의 연속성이 보장됩니다.</p>
+  </li>
+  <li>
+    <p><strong>타겟 서버 컴포넌트 재시작</strong><br />
+gRPC 서버가 재시작되더라도, 소스 서버에서 재시도 요청을 전달하면 해당 요청을 정상적으로 처리할 수 있도록 설계되어 있습니다.</p>
+  </li>
+</ul>
+
+<p>이와 같은 <strong>이중 인덱스 관리 구조(MDT별 Changelog Index + Redis Stream 체크포인트)</strong> 를 통해, 시스템이 어떤 단계에서 중단되더라도 <strong>정확한 처리 지점부터 이벤트 수집과 동기화를 재개</strong>할 수 있습니다.<br />
+  이를 통해 중복 처리나 이벤트 누락 없이, 안정적인 DR 동작을 보장합니다.</p>
+
+<h4 id="5-오류-처리-및-재시도-메커니즘">5. 오류 처리 및 재시도 메커니즘</h4>
+
+<p>동기화 과정에서 발생하는 오류를 효율적으로 처리하기 위해 재시도 메커니즘을 구현했습니다.<br />
+  동기화에 실패한 파일 목록을 분석하여, 재시도 가능한 오류와 재시도 불가능한 오류를 구분합니다.</p>
+
+<p><strong>재시도 스트림을 통한 누락 방지</strong></p>
+
+<p>동기화 과정에서 실패한 이벤트는 재시도 가능 여부를 판단하여 적절히 처리됩니다.<br />
+  재시도 가능한 오류(일시적인 네트워크 오류, 파일 잠금, 타임아웃 등)는 rsync 재동기화 스트림과 gRPC 재동기화 스트림에 저장됩니다.</p>
+
+<p>다음 동기화 작업 시 일반 스트림과 재동기화 스트림의 이벤트를 함께 처리하여, 일시적인 문제로 실패한 파일들도 정상적으로 동기화됩니다.<br />
+  재동기화 스트림의 이벤트도 동일한 체크포인트 메커니즘을 통해 관리되므로, 재동기화 과정에서도 중복 처리가 발생하지 않습니다.</p>
+
+<p><strong>재시도 불가능한 오류 처리</strong></p>
+
+<p>재시도 불가능한 오류(예: 파일이 존재하지 않음, 권한 오류 등)는 상세한 오류 정보와 함께 로그에 기록되어 관리자가 수동으로 처리할 수 있도록 합니다.<br />
+  각 실패 이벤트에는 오류 메시지, 오류 코드, 재시도 가능 여부 등의 정보가 포함되어 있어 문제 진단이 용이합니다.</p>
+
+<hr />
+
+<h3 id="dr-솔루션-등급-기준-및-시장-요구사항">DR 솔루션 등급 기준 및 시장 요구사항</h3>
+
+<p>아래 표는 시장에서 일반적으로 요구되는 <strong>재해 복구(DR) 솔루션의 등급 기준</strong>을 정리한 것입니다.<br />
+본 기준은 RPO(Recovery Point Object)와 RTO(Recovery Time Object)<sup id="fnref:6" role="doc-noteref"><a href="#fn:6" class="footnote" rel="footnote">6</a></sup>를 포함한 복구 목표 수준에 따라 업무 중요도를 구분하며,<br />
+이후 글루시스 DR 솔루션의 테스트 결과를 해당 기준에 대입하여 등급을 평가합니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">구분</th>
+      <th style="text-align: center">Platinum</th>
+      <th style="text-align: center">Gold</th>
+      <th style="text-align: center">Silver</th>
+      <th style="text-align: center">Bronze</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">대상 업무</td>
+      <td style="text-align: center">기업의 생산, 판매 및 영업활동에 직접적인 영향을 주는 업무</td>
+      <td style="text-align: center">기업의 대고객 서비스에 영향을 주는 업무</td>
+      <td style="text-align: center">기업의 내부 운영에 영향을 주는 업무</td>
+      <td style="text-align: center">기업의 내부 업무 지원을 위한 개발, 테스트 업무</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">RPO</td>
+      <td style="text-align: center">0에 근접</td>
+      <td style="text-align: center">0에 근접</td>
+      <td style="text-align: center">&lt; 2일</td>
+      <td style="text-align: center">&lt; 2일</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">RTO</td>
+      <td style="text-align: center">&lt; 3시간</td>
+      <td style="text-align: center">&lt; 24시간</td>
+      <td style="text-align: center">&lt; 7일</td>
+      <td style="text-align: center">&lt; 30일</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">권장 거리</td>
+      <td style="text-align: center">근거리 + 장거리</td>
+      <td style="text-align: center">근거리, 장거리</td>
+      <td style="text-align: center">근거리, 장거리</td>
+      <td style="text-align: center">근거리, 장거리</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">권장 DR 형태</td>
+      <td style="text-align: center">≤ 3 x 데이터센터</td>
+      <td style="text-align: center">2 x 데이터센터</td>
+      <td style="text-align: center">2 x 데이터센터</td>
+      <td style="text-align: center">2 x 데이터센터</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">권장 DR 솔루션</td>
+      <td style="text-align: center">디스크 복제</td>
+      <td style="text-align: center">디스크 복제</td>
+      <td style="text-align: center">소프트웨어 복제</td>
+      <td style="text-align: center">소프트웨어 복제, 백업</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">업무 성능 저하 허용 여부</td>
+      <td style="text-align: center">불가</td>
+      <td style="text-align: center">불가</td>
+      <td style="text-align: center">허용</td>
+      <td style="text-align: center">허용</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="글루시스-dr-솔루션-테스트-결과">글루시스 DR 솔루션 테스트 결과</h3>
+
+<p>아래 표는 <strong>글루시스 DR 솔루션의 실제 테스트 결과</strong>를 정리한 것입니다.<br />
+본 솔루션은 동기화 시 파일을 개별 처리하지 않고, <strong>여러 파일을 하나의 배치로 묶어 처리하는 배치 기반 동기화 방식</strong>을 사용합니다.</p>
+
+<ul>
+  <li><strong>동기화 평균 시간</strong>: 배치(파일 300개 기준)에 포함된 파일들을 실제로 동기화하는 데 소요된 시간</li>
+  <li><strong>배치 대기 시간</strong>: 파일 변경을 감지한 시점부터 동기화가 시작되기까지의 대기 시간</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">구분</th>
+      <th style="text-align: center">파일 평균 사이즈</th>
+      <th style="text-align: center">파일 수</th>
+      <th style="text-align: center">처리 속도</th>
+      <th style="text-align: center">동기화 평균 시간 (배치당 300개 파일 기준)</th>
+      <th style="text-align: center">배치 대기 시간</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">큰 파일</td>
+      <td style="text-align: center">55MB</td>
+      <td style="text-align: center">10,000</td>
+      <td style="text-align: center">412 MB/s</td>
+      <td style="text-align: center">39s</td>
+      <td style="text-align: center">19m 40s</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">작은 파일</td>
+      <td style="text-align: center">314KB</td>
+      <td style="text-align: center">10,000</td>
+      <td style="text-align: center">24.2 MB/s</td>
+      <td style="text-align: center">0.32s</td>
+      <td style="text-align: center">2m 42s</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h3 id="테스트-결과-기반-rpo--rto-평가">테스트 결과 기반 RPO / RTO 평가</h3>
+
+<p><strong>파일 동기화</strong>는 재해 복구 과정에서 <strong>가장 먼저 안정적으로 동작해야 하는 핵심 단계</strong>입니다.<br />
+테스트 결과를 살펴보면, 글루시스 DR 솔루션은 데이터 변경을 실시간으로 감지하고 배치 단위로 동기화를 수행하여, 아래와 같은 시간 내에 동기화가 완료되는 것을 확인할 수 있습니다.</p>
+
+<ul>
+  <li><strong>작은 파일 중심의 업무 환경</strong>에서는 약 <strong>3분 이내</strong></li>
+  <li><strong>대용량 파일이 주로 생성되는 업무 환경</strong>에서도 약 <strong>20분 이내</strong></li>
+</ul>
+
+<p>이는 장애 발생 시 데이터 손실이 거의 발생하지 않는 수준으로, <strong>실질적인 RPO가 0에 가깝게 유지됨</strong>을 의미합니다.</p>
+
+<p>RTO는 기업의 시스템 구성과 운영 환경에 따라 차이가 있을 수 있으나, 실제 운영 시나리오를 기준으로 볼 때 <strong>수 시간에서 최대 하루 이내에 서비스 복구가 가능한 수준</strong>으로 판단됩니다.</p>
+
+<p>앞서 정리한 시장 요구사항 등급 기준과 비교해보면, 글루시스 DR 솔루션은 <strong>Platinum 또는 Gold 등급 수준의 요구사항을 충족하는 DR 솔루션</strong>에 해당한다고 볼 수 있습니다.</p>
+
+<p> </p>
+
+<h2 id="마치며">마치며</h2>
+
+<p>이번 글에서는 대규모 Lustre 환경에서 전통적인 rsync 기반 DR 방식이 갖는 한계를 짚어보고, Lustre Changelog를 활용해 변경 이벤트를 추적·동기화하는 글루시스 DR 솔루션의 구조와 동작 원리를 소개했습니다. 또한 테스트 결과를 통해 배치 기반 동기화 환경에서도 RPO를 낮게 유지할 수 있음을 확인했습니다.</p>
+
+<p>다음 글에서는 ZFS의 스냅샷/복제 기능을 활용한 DR 방식과 Lustre 기반 접근 방식의 차이점을 비교해보겠습니다.</p>
+
+<p> </p>
+
+<p><strong>각주</strong></p>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p>RPO : 재해 복구에서 허용 가능한 최대 데이터 손실 시간 <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p>Changelog : https://doc.lustre.org/lustre_manual.xhtml#lustre_changelogs <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p>rsync : Unix/Linux 시스템에서 파일과 디렉토리를 효율적으로 동기화하는 유틸리티 - https://rsync.samba.org/ <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:4" role="doc-endnote">
+      <p>Redis Stream : Redis 5.0에서 도입된 데이터 구조로, 시간 순서대로 정렬된 로그 형태의 메시지 큐 - https://redis.io/docs/data-types/streams/ <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:5" role="doc-endnote">
+      <p>gRPC : Google에서 개발한 고성능 오픈소스 RPC 프레임워크 - https://grpc.io/ <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:6" role="doc-endnote">
+      <p>RTO : 업무의 복구 목표 시간 <a href="#fnref:6" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#Lustre">Lustre</a>,&nbsp;<a href="/tags#Changelog">Changelog</a>,&nbsp;<a href="/tags#DR">DR</a>,&nbsp;<a href="/tags#rsync">rsync</a>,&nbsp;<a href="/tags#sync">sync</a>,&nbsp;<a href="/tags#%EC%9E%AC%ED%95%B4+%EB%B3%B5%EA%B5%AC">재해 복구</a>,&nbsp;<a href="/tags#Redis">Redis</a>,&nbsp;<a href="/tags#gRPC">gRPC</a>,&nbsp;<a href="/tags#RPO">RPO</a>,&nbsp;<a href="/tags#RTO">RTO</a>,&nbsp;<a href="/tags#AI+Storage">AI Storage</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

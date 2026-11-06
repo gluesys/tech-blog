@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>LVM 스냅샷 관리 기능 개발 후기 (1)</title>
+  <meta name="description" content="장애 복구나 유실된 데이터 복원을 위해서 AnyStor는 이전부터 스냅샷 기능을 지원하였습니다. 그러나 스냅샷 생성과 확인은 가능할 뿐, 실제로 복원 등에 사용하기 위해서는 관리자가 CLI 명령어를 사용하여 데이터를 복원할 수밖에 없었습니다. 실제 복원 시에는 고객 서비스에 영향이...">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="장애 복구나 유실된 데이터 복원을 위해서 AnyStor는 이전부터 스냅샷 기능을 지원하였습니다. 그러나 스냅샷 생성과 확인은 가능할 뿐, 실제로 복원 등에 사용하기 위해서는 관리자가 CLI 명령어를 사용하여 데이터를 복원할 수밖에 없었습니다. 실제 복원 시에는 고객 서비스에 영향이..." />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="LVM 스냅샷 관리 기능 개발 후기 (1)" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/Snapshot1intro_maincover.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="LVM 스냅샷 관리 기능 개발 후기 (1)">
+  <meta name="twitter:description" content="장애 복구나 유실된 데이터 복원을 위해서 AnyStor는 이전부터 스냅샷 기능을 지원하였습니다. 그러나 스냅샷 생성과 확인은 가능할 뿐, 실제로 복원 등에 사용하기 위해서는 관리자가 CLI 명령어를 사용하여 데이터를 복원할 수밖에 없었습니다. 실제 복원 시에는 고객 서비스에 영향이...">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/Snapshot1intro_maincover.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2024/06/03/LVM-Plugin.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link">
+<a href="/about/">소개</a>
+          
+        
+          
+          </li>
+<li class="nav-link">
+<a href="/blog/">블로그</a>
+          
+        
+          
+          </li>
+<li class="nav-link">
+<a href="/tags/">태그</a>
+          
+        
+      </li>
+</ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/Snapshot1intro_maincover.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">LVM 스냅샷 관리 기능 개발 후기 (1)</h1>
+      <p class="info">by <strong>이헌제 (lhj4125@gluesys.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">June 3, 2024</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <p>장애 복구나 유실된 데이터 복원을 위해서 AnyStor는 이전부터 스냅샷 기능을 지원하였습니다. 그러나 스냅샷 생성과 확인은 가능할 뿐, 실제로 복원 등에 사용하기 위해서는 관리자가 CLI 명령어를 사용하여 데이터를 복원할 수밖에 없었습니다. 실제 복원 시에는 고객 서비스에 영향이 없도록 진행되어야 했기에 도입하기 까다로웠던 점도 있었습니다. 이번에 스냅샷 기능을 재편하게 되었는데, 스냅샷을 안정적으로 도입하기 위해서 거쳤던 테스트와 이슈 대응 방안에 대해서 살펴보겠습니다.</p>
+
+<p> </p>
+
+<h3 id="배경-설명">배경 설명</h3>
+
+<p>본 제품에서는 LVM 볼륨을 주로 다룹니다. LVM 볼륨의 프로비저닝 정책에 따라서 스냅샷의 종류도 나뉘게 되는데, 우선 볼륨의 프로비저닝 종류에 대해서 간략히 설명해 보겠습니다.</p>
+
+<ul>
+  <li>
+    <p><strong>씬 프로비저닝(Thin Provisioning)된 볼륨</strong> : 사용자에게 필요한 만큼의 스토리지 공간을 할당하되, 실제로는 사용한 만큼의 공간만 실제 스토리지에서 차지하는 방식입니다.</p>
+  </li>
+  <li>
+    <p><strong>씩 프로비저닝(Thick Provisioning)된 볼륨</strong> : 미리 정해진 크기의 스토리지 공간을 사용자에게 할당하는 방식입니다. 이 공간은 사용자가 실제로 사용하지 않더라도 할당된 크기만큼 스토리지에서 차지합니다. 스토리지 공간을 확보하는 데 있어서 보다 안정적이지만, 사용하지 않는 공간이 발생할 수 있어 스토리지 공간의 사용이 비효율적일 수 있습니다.</p>
+  </li>
+</ul>
+
+<p>프로비저닝 된 볼륨에 따라서 스냅샷의 저장 방식도 바뀝니다.</p>
+
+<blockquote>
+  <p>씬 프로비저닝된 볼륨과 씩 프로비저닝된 볼륨에 대해서 약칭으로 각각 Thin 볼륨, Thick 볼륨으로 변경하여 설명하겠습니다.</p>
+</blockquote>
+
+<ul>
+  <li>
+    <p><strong>Thin 볼륨의 스냅샷</strong>: 원본 볼륨의 데이터를 공유하며, 자체 메타데이터 영역을 가지고 있습니다. 메타데이터 영역에는 스냅샷의 논리적 익스텐트와 물리적 익스텐트 간의 매핑이 저장되어 있습니다. 이를 통해 스냅샷은 원본 볼륨의 상태를 보존하고, 변경 사항을 추적하게 됩니다.</p>
+  </li>
+  <li>
+    <p><strong>Thick 볼륨의 스냅샷</strong> : 원본 볼륨의 데이터를 복사하여 새로운 공간에 저장합니다. 원본 데이터의 완전한 복사본을 제공하지만, 스토리지 공간을 더 많이 차지하게 됩니다.</p>
+  </li>
+</ul>
+
+<p>여기까지만 살펴봤을 때 차이점이 여럿 보입니다. Thin 볼륨은 저장 방식이 다르기 때문에, 스냅샷 또한 저장하는 방법이 다르게 보입니다. 실제로 Thin 볼륨은 스냅샷을 다음과 같은 구조로 저장합니다.</p>
+
+<p> </p>
+
+<blockquote>
+  <p><img class="emoji" title=":bulb:" alt=":bulb:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20"> NOTE <br>
+물리적 익스텐트(Physical Extents: PE): 디스크의 섹터로 매핑된 물리적 할당 단위<br>
+논리적 익스텐트(Logical Extents: LE): 물리적 익스텐트로 매핑된 논리적 할당 단위</p>
+</blockquote>
+
+<p> </p>
+
+<p><img src="/assets/Snapshot1intro_maincover.png" alt="Thin 볼륨 구조" width="700"></p>
+<center>&lt; Thin 볼륨 구조 &gt;</center>
+
+<p> </p>
+
+<p>위 구조를 보게 되면 Thin 볼륨과 스냅샷 볼륨은 공통의 데이터 볼륨을 공유합니다. 그렇기 때문에 많은 스냅샷을 생성할 수 있지만, 스냅샷을 삭제하더라도 여유 공간이 추가로 확보되지 않을 수도 있습니다. 데이터 볼륨 말고도 메타데이터 볼륨도 보이는데, 메타데이터 볼륨에서는 각 Thin 볼륨에 속한 데이터 볼륨을 추적합니다. 볼륨 그룹 별로 여러 씬 풀(Thin Pool)이 생성 될 수 있는데, 예비 메타데이터로 불리는<code class="language-plaintext highlighter-rouge">pmspare</code> 는 볼륨 그룹에 대해서 하나만 생성됩니다. 이 pmspare 는 볼륨 그룹 내의 모든 씬 풀(Thin Pool)의 메타데이터를 복구하기 위해서 사용됩니다.</p>
+
+<blockquote>
+  <p>씬 풀(Thin Pool) 은 약칭으로 Thin 풀로 변경하여 설명하겠습니다.</p>
+</blockquote>
+
+<p> </p>
+
+<h3 id="스냅샷-도입-전-테스트">스냅샷 도입 전 테스트</h3>
+
+<p>스냅샷을 도입하기 전에 몇 가지 스냅샷 기능에 관한 테스트를 진행하였습니다. 진행하면서 있었던 고려 사항들을 공유드리고자 합니다.</p>
+
+<p> </p>
+
+<h4 id="1-thin-풀-데이터-볼륨-저장-공간-확보">1. Thin 풀 데이터 볼륨 저장 공간 확보</h4>
+
+<p>Thin 볼륨의 파일 시스템에서 파일을 삭제하면 일반적으로 씬 풀에 Free 블록을 다시 추가하지 않습니다. 파일 시스템에서는 삭제되었지만, 씬 풀에 적용되지 않은 경우, <code class="language-plaintext highlighter-rouge">fstrim</code> 을 통해서 물리적 공간을 Thin 풀에 복원할 수 있습니다. 비슷한 효과를 마운트 시에 옵션으로 처리할 수도 있는데, 마운트시에 <code class="language-plaintext highlighter-rouge">discard</code> 옵션으로 Thin 풀의 데이터 공간에 대한 자동 해제 옵션을 추가하여 데이터 볼륨의 저장 공간을 확보할 수 있었습니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Thin 볼륨 데이터 쌓기</span>
+<span class="nb">dd </span><span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/<span class="o">{</span>mount_path<span class="o">}</span>/fileN <span class="nv">bs</span><span class="o">=</span>4096 <span class="nv">count</span><span class="o">=</span>1000000<span class="p">;</span>
+
+<span class="c"># 용량 확인 </span>
+lvs
+  LV           VG        Attr       LSize   Pool         Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root         anystor-e <span class="nt">-wi-ao----</span> &lt;44.00g                      
+  swap         anystor-e <span class="nt">-wi-ao----</span>   5.00g                          
+  ThinLV       thinvpool Vwi-aotz--  60.00g tp_thinvpool        58.33  
+  tp_thinvpool thinvpool twi---tz--  40.00g                     87.51  3.28 
+
+<span class="c"># 데이터 삭제 후 재 마운트</span>
+<span class="c"># mount 시에 `-o discard` 추가</span>
+mount <span class="nt">-o</span> discard /dev/mapper/thinvpool-ThinLV /<span class="o">{</span>mount_path<span class="o">}</span>
+
+<span class="c"># Thin 볼륨 데이터 쌓기</span>
+<span class="nb">dd </span><span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/<span class="o">{</span>mount_path<span class="o">}</span>/fileN <span class="nv">bs</span><span class="o">=</span>4096 <span class="nv">count</span><span class="o">=</span>1000000<span class="p">;</span>
+
+<span class="c"># 용량 확인</span>
+lvs
+  LV           VG        Attr       LSize   Pool         Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root         anystor-e <span class="nt">-wi-ao----</span> &lt;44.00g                                
+  swap         anystor-e <span class="nt">-wi-ao----</span>   5.00g                                      
+  ThinLV       thinvpool Vwi-aotz--  60.00g tp_thinvpool        1.78             
+  tp_thinvpool thinvpool twi---tz--  40.00g                     2.67   1.64 
+</code></pre></div></div>
+
+<p> </p>
+
+<h4 id="2-thin-데이터-볼륨-공간-부족">2. Thin 데이터 볼륨 공간 부족</h4>
+
+<p>자동 확장을 설정한 경우 데이터 공간이 부족해지기 전에 설정값에 따라서 씬 풀의 데이터 공간이 확장됩니다. 하지만 확장할 공간이 없고 씬 풀의 데이터 공간이 이미 100%인 경우에도 추가로 디스크를 증설해 준다면 이후에 수동으로 확장할 수 있습니다. 만약 자동 확장 시 볼륨의 물리적인 용량이 부족한 경우 확장에 실패하여 데이터 볼륨이 가득 차게 되는 경우가 있는데, 그 경우의 쓰기 동작을 설정할 수 있습니다.</p>
+
+<p>데이터 볼륨에 여유 공간이 없는 경우, 큐 버퍼에 쓰기 명령을 넣었다가 확장이 완료되면 버퍼를 사용합니다. 기본 타임아웃(60초)이 지난 경우에는, 모든 쓰기 명령이 <code class="language-plaintext highlighter-rouge">error</code> 를 반환하게 됩니다. Thin 풀에서는 <code class="language-plaintext highlighter-rouge">--errorwhenfull</code> 옵션으로 Thin 풀이 가득 찼을 때, 큐 버퍼 사용 유무를 지정할 수 있습니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Thin 풀의 데이터 볼륨이 가득 찬 경우</span>
+lvs
+  LV           VG        Attr       LSize   Pool         Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root         anystor-e <span class="nt">-wi-ao----</span> &lt;44.00g          
+  swap         anystor-e <span class="nt">-wi-ao----</span>   5.00g           
+  ThinLV       thinvpool Vwi-aotz--  60.00g tp_thinvpool        66.67   
+  tp_thinvpool thinvpool twi---tzD-  40.00g                     100.00 3.53 
+
+<span class="c"># Thin 풀의 errorwhenfull 옵션으로 파일 시스템의 동작 결정</span>
+lvchange <span class="nt">--errorwhenfull</span> <span class="o">(</span>y/n<span class="o">)</span> thinvpool/tp_thinvpool
+</code></pre></div></div>
+
+<p> </p>
+
+<p>Thin 풀이 가득 찼을 때 파일 시스템의 동작을 결정했다면, 다음으로는 Thin 풀의 수동 확장으로 용량을 확장할 수 있습니다. Thin 풀만 확장해 준다면, Thin 볼륨은 자동으로 확장됩니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lvextend <span class="nt">-L</span>+<span class="o">{</span>size<span class="o">}</span> thinvpool/tp_thinvpool
+</code></pre></div></div>
+
+<p> </p>
+
+<h4 id="3-thin-풀-메타데이터-볼륨-공간-부족">3. Thin 풀 메타데이터 볼륨 공간 부족</h4>
+
+<p>Thin 풀 메타데이터의 볼륨이 작고, 스냅샷이 많은 경우 메타데이터 볼륨이 부족할 수 있습니다. 만약 Thin 풀 메타데이터의 볼륨이 가득 찬 경우 메타데이터의 볼륨이 손상될 수 있습니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lvcreate <span class="nt">-s</span> <span class="nt">-n</span> snap1 vg1/thinvol
+...
+lvcreate <span class="nt">-s</span> <span class="nt">-n</span> snap600 vg1/thinvol
+
+lvs                                         
+  thinvol       vg1 Vwi-aotz--  10.00g tp_thinpool        82.70       
+  tp_thinpool   vg1 twi-aotzM-  10.00g                    84.81  100.00                          
+</code></pre></div></div>
+
+<p>메타데이터를 확인하고 복구하는 것은 파일 시스템에서 <code class="language-plaintext highlighter-rouge">fsck/repair</code> 를 실행하는 것과 유사합니다.  Thin 풀의 메타데이터를 복구하는 방법 중 하나는 <code class="language-plaintext highlighter-rouge">lvconvert --repair {vg}/{thinpool}</code>  를 실행하는 것입니다, 이 동작에서는 pmspare 로 복구 메타데이터를 생성하고, 메타데이터를 교체할 수 있도록 유도합니다.</p>
+
+<p>단순히 공간이 더 필요한 경우는 메타데이터 확장을 시도해 볼 수 있습니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#lvs -a</span>
+  LV                 VG Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+
+  thinlv             vg Vwi-aotz--  10.00g thinpool     82.70                
+  thinpool           vg twi-aotzM-  10.00g              84.81  100.00        
+  <span class="o">[</span>thinpool_tdata]   vg Twi-ao----  10.00g                                   
+  <span class="o">[</span>thinpool_tmeta]   vg ewi-ao----  12.00m  
+
+<span class="c">#lvextend --poolmetadatasize +{size} vg/thinpool </span>
+
+<span class="c">#lvs -a</span>
+   LV                VG Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+
+  thinlv             vg Vwi-aotz--  10.00g thinpool     82.70                
+  thinpool           vg twi-aotz--  10.00g              84.84  28.04         
+  <span class="o">[</span>thinpool_tdata]   vg Twi-ao----  10.00g                                   
+  <span class="o">[</span>thinpool_tmeta]   vg ewi-ao----  60.00m   
+</code></pre></div></div>
+
+<p> </p>
+
+<h4 id="4-메타데이터-장애-복구">4. 메타데이터 장애 복구</h4>
+
+<p>실제 이용 시에는 메타데이터의 용량이 가득 찬 경우나, 디스크 장애 등의 사례에서 메타데이터가 손실되는 경우도 있었습니다. LVM 에서는 각각의 디스크가 동일한 볼륨 풀을 사용하고 있다면, 동일한 메타데이터를 디스크에 복사하여 사용하기 때문에, 디스크에 할당된 정보(PV 정보 등)을 제외하고 복사한다면 손쉽게 복구할 수 있습니다. 메타데이터 영역 중 디스크 정보에 해당하는 656Byte를 제외하고 1024KB까지 복사하여 손상된 디스크의 메타데이터를 복구합니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 메타데이터 장애 로그</span>
+  Metadata location on /dev/sde at 109056 begins with invalid VG name.
+  Failed to <span class="nb">read </span>metadata summary from /dev/sde
+  Failed to scan VG from /dev/sde
+  Couldn<span class="s1">'t find device with uuid 3C36Fc-B9Fc-7LGH-EoAO-0r2c-ECrl-GuWorB.
+  Cannot restore Volume Group VGPB with 1 PVs marked as missing.
+  Restore failed.
+
+# 임시 파일 복사 (백업용)
+dd if=/dev/sde of=/root/temp bs=1020k count=1
+
+# LVM 메타데이터 복사
+dd if=/dev/sdd of=/dev/sde bs=1020k count=1 conv=notrunc
+
+# LVM PV Header만 다시 복사
+dd if=/root/temp of=/dev/sde bs=656 count=1 conv=notrunc
+</span></code></pre></div></div>
+
+<p> </p>
+
+<p>LVM 메타데이터에서는 어떤 데이터가 있는지 확인한다면, 조금 더 세부적인 이슈에 대응할 수도 있습니다. 한번 메타데이터에 대해서도 자세하게 살펴보겠습니다.</p>
+
+<p> </p>
+
+<h3 id="lvm-의-메타데이터">LVM 의 메타데이터</h3>
+
+<p><a href="####%204.%20%EB%A9%94%ED%83%80%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%9E%A5%EC%95%A0%20%EB%B3%B5%EA%B5%AC">4. 메타데이터 장애 복구</a> 에서도 한 번 언급했던 LVM 의 메타데이터는 같은 볼륨 그룹 안의 물리 볼륨에 동일하게 저장되어 있습니다. 이번 장에서는 LVM 메타데이터가 어떻게 저장되어 있는지 <a href="https://github.com/lvmteam/lvm2">LVM2의 소스코드</a>와 디스크 덤프를 비교하면서 상세하게 살펴보겠습니다.</p>
+
+<p>우선 덤프를 위해 샘플 메타데이터부터 위 글과 같이 <code class="language-plaintext highlighter-rouge">/dev/sdd</code>, <code class="language-plaintext highlighter-rouge">/dev/sde</code> 의 물리 볼륨을 가지는 볼륨 그룹 <code class="language-plaintext highlighter-rouge">thick</code> 과 논리 볼륨 <code class="language-plaintext highlighter-rouge">thick_vol</code>, 스냅샷 <code class="language-plaintext highlighter-rouge">thick_snap</code> 으로 구성해 보겠습니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># pvs</span>
+  PV         VG        Fmt  Attr PSize   PFree
+  /dev/sdd   thick     lvm2 a--  &lt;50.00g  48.98g
+  /dev/sde   thick     lvm2 a--  &lt;50.00g &lt;50.00g
+
+<span class="c"># vgs</span>
+  VG        <span class="c">#PV #LV #SN Attr   VSize  VFree</span>
+  thick       2   2   1 wz--n- 99.99g 98.98g
+
+<span class="c"># lvs</span>
+  LV         VG        Attr       LSize  Pool Origin    Data%  Meta%  Move Log Cpy%Sync Convert
+  thick_snap thick     swi-a-s--- 12.00m      thick_vol 0.00
+  thick_vol  thick     owi-a-s---  1.00g
+</code></pre></div></div>
+
+<p> </p>
+
+<p>우선 디스크 덤프 후 보기 편하게 16진수로 변경한 다음 전체 구성을 한번 살펴보겠습니다.</p>
+
+<p> </p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># cat sdd_hex</span>
+
+...
+0000200: 4c41 4245 4c4f 4e45 0100 0000 0000 0000  LABELONE........
+0000210: a982 7799 2000 0000 4c56 4d32 2030 3031  ..w. ...LVM2 001
+0000220: 4a6f 6c4f 5177 7833 4466 5033 756a 6e75  JolOQwx3DfP3ujnu
+0000230: 776e 6435 4342 4735 6230 6747 5975 3874  wnd5CBG5b0gGYu8t
+0000240: 0000 0080 0c00 0000 0000 1000 0000 0000  ................ 
+0000250: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000260: 0000 0000 0000 0000 0010 0000 0000 0000  ................
+0000270: 00f0 0f00 0000 0000 0000 0000 0000 0000  ................
+0000280: 0000 0000 0000 0000 0200 0000 0100 0000  ................
+0000290: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+
+...
+
+0001000: 2af4 634e 204c 564d 3220 785b 3541 2572  <span class="k">*</span>.cN LVM2 x[5A%r
+0001010: 304e 2a3e 0100 0000 0010 0000 0000 0000  0N<span class="k">*</span><span class="o">&gt;</span>............
+0001020: 00f0 0f00 0000 0000 00a0 0100 0000 0000  ................
+0001030: 0007 0000 0000 0000 a181 917c 0000 0000  ...........|....
+0001040: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0001050: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0001060: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0001070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0001080: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+
+...
+
+001b000: 7468 6963 6b20 7b0a 6964 203d 2022 3266  thick <span class="o">{</span>.id <span class="o">=</span> <span class="s2">"2f
+001b010: 7559 4431 2d48 5856 792d 315a 3275 2d76  uYD1-HXVy-1Z2u-v
+001b020: 797a 332d 7765 4530 2d6c 6553 4a2d 716e  yz3-weE0-leSJ-qn
+001b030: 6d79 784f 220a 7365 716e 6f20 3d20 3333  myxO"</span>.seqno <span class="o">=</span> 33
+001b040: 0a66 6f72 6d61 7420 3d20 226c 766d 3222  .format <span class="o">=</span> <span class="s2">"lvm2"</span>
+001b050: 0a73 7461 7475 7320 3d20 5b22 5245 5349  .status <span class="o">=</span> <span class="o">[</span><span class="s2">"RESI
+001b060: 5a45 4142 4c45 222c 2022 5245 4144 222c  ZEABLE"</span>, <span class="s2">"READ"</span>,
+001b070: 2022 5752 4954 4522 5d0a 666c 6167 7320   <span class="s2">"WRITE"</span><span class="o">]</span>.flags.
+001b080: 3d20 5b5d 0a65 7874 656e 745f 7369 7a65  <span class="o">=</span> <span class="o">[]</span>.extent_size
+
+...
+</code></pre></div></div>
+
+<p> </p>
+
+<p>메타데이터 정보가 여러 군데로 나눠서 저장되어 있는데, 크게 보자면 다음과 같이 구성되어 있는 것을 알 수 있습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/lvm_metadata1.png" alt="디스크 덤프로 살펴보는 메타데이터의 구조" width="700"></p>
+<center>&lt; 디스크 덤프로 살펴보는 메타데이터의 구조 &gt;</center>
+
+<p> </p>
+
+<p>가장 처음 부분부터 소스코드와 함께 살펴볼까요?</p>
+
+<p> </p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mo">0000200</span><span class="o">:</span> <span class="mi">4</span><span class="n">c41</span> <span class="mi">4245</span> <span class="mi">4</span><span class="n">c4f</span> <span class="mf">4e45</span> <span class="mo">0100</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="n">LABELONE</span><span class="p">........</span>
+<span class="mo">0000210</span><span class="o">:</span> <span class="n">a982</span> <span class="mi">7799</span> <span class="mi">2000</span> <span class="mo">0000</span> <span class="mi">4</span><span class="n">c56</span> <span class="mi">4</span><span class="n">d32</span> <span class="mi">2030</span> <span class="mi">3031</span>  <span class="p">..</span><span class="n">w</span><span class="p">.</span> <span class="p">...</span><span class="n">LVM2</span> <span class="mo">001</span>
+
+<span class="cp"># cat lib/label/label.h
+</span>
+<span class="mi">35</span> <span class="cm">/* On disk - 32 bytes */</span>
+<span class="mi">36</span> <span class="k">struct</span> <span class="n">label_header</span> <span class="p">{</span>
+<span class="mi">37</span>	<span class="kt">int8_t</span> <span class="n">id</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>		<span class="cm">/* LABELONE */</span>
+<span class="mi">38</span>	<span class="kt">uint64_t</span> <span class="n">sector_xl</span><span class="p">;</span>	<span class="cm">/* Sector number of this label */</span>
+<span class="mi">39</span>	<span class="kt">uint32_t</span> <span class="n">crc_xl</span><span class="p">;</span>	<span class="cm">/* From next field to end of sector */</span>
+<span class="mi">40</span>	<span class="kt">uint32_t</span> <span class="n">offset_xl</span><span class="p">;</span>	<span class="cm">/* Offset from start of struct to contents */</span>
+<span class="mi">41</span>	<span class="kt">int8_t</span> <span class="n">type</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>		<span class="cm">/* LVM2 001 */</span>
+<span class="mi">42</span> <span class="p">}</span> <span class="n">__attribute__</span> <span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p> </p>
+
+<p>맨 처음 부분은 <strong>Label Header</strong> 입니다. <strong>Label Header</strong> 에서는 다음과 같은 정보를 정의합니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/lvm_metadata_label.png" alt="Label Header" width="700"></p>
+<center>&lt; Label Header &gt;</center>
+
+<p> </p>
+
+<p>LVM 이 사용하는 디스크라고 설명해 주며 정보가 어디까지 저장되어 있는지 설명해 주는 라벨이라고 말할 수 있습니다.</p>
+
+<p>다음은 <strong>PV Header</strong> 입니다. <strong>PV Header</strong> 에서는 다음과 같은 정보를 정의합니다.</p>
+
+<p> </p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mo">0000220</span><span class="o">:</span> <span class="mi">4</span><span class="n">a6f</span> <span class="mi">6</span><span class="n">c4f</span> <span class="mi">5177</span> <span class="mi">7833</span> <span class="mi">4466</span> <span class="mi">5033</span> <span class="mi">756</span><span class="n">a</span> <span class="mf">6e75</span>  <span class="n">JolOQwx3DfP3ujnu</span>
+<span class="mo">0000230</span><span class="o">:</span> <span class="mi">776</span><span class="n">e</span> <span class="mi">6435</span> <span class="mi">4342</span> <span class="mi">4735</span> <span class="mi">6230</span> <span class="mi">6747</span> <span class="mi">5975</span> <span class="mi">3874</span>  <span class="n">wnd5CBG5b0gGYu8t</span>
+<span class="mo">0000240</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">00</span><span class="mi">80</span> <span class="mi">0</span><span class="n">c00</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mi">1000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span> 
+<span class="mo">0000250</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">0000260</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0010</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">0000270</span><span class="o">:</span> <span class="mo">00</span><span class="n">f0</span> <span class="mi">0</span><span class="n">f00</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">00002</span><span class="mi">80</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0200</span> <span class="mo">0000</span> <span class="mo">0100</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">00002</span><span class="mi">90</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+
+<span class="cp"># cat lib/format_text/layout.h
+</span>
+<span class="mi">40</span> <span class="cm">/* Fields with the suffix _xl should be xlate'd wherever they appear */</span>
+<span class="mi">41</span> <span class="cm">/* On disk */</span>
+<span class="mi">42</span> <span class="k">struct</span> <span class="n">pv_header</span> <span class="p">{</span>
+<span class="mi">43</span> 	<span class="kt">int8_t</span> <span class="n">pv_uuid</span><span class="p">[</span><span class="n">ID_LEN</span><span class="p">];</span>	<span class="cm">/* 32 Byte */</span>
+<span class="mi">44</span>
+<span class="mi">45</span> 	<span class="cm">/* This size can be overridden if PV belongs to a VG */</span>
+<span class="mi">46</span> 	<span class="kt">uint64_t</span> <span class="n">device_size_xl</span><span class="p">;</span>	<span class="cm">/* Bytes */</span>
+<span class="mi">47</span>
+<span class="mi">48</span> 	<span class="cm">/* NULL-terminated list of data areas followed by */</span>
+<span class="mi">49</span> 	<span class="cm">/* NULL-terminated list of metadata area headers */</span>
+<span class="mi">50</span> 	<span class="k">struct</span> <span class="n">disk_locn</span> <span class="n">disk_areas_xl</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>	<span class="cm">/* Two lists */</span>
+<span class="mi">51</span> <span class="p">}</span> <span class="n">__attribute__</span> <span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+<span class="cp"># cat lib/format_text/format-text.h
+</span>
+<span class="mi">67</span> <span class="cm">/* On disk */</span>
+<span class="mi">68</span> <span class="k">struct</span> <span class="n">disk_locn</span> <span class="p">{</span>
+<span class="mi">69</span> 	<span class="kt">uint64_t</span> <span class="n">offset</span><span class="p">;</span>	<span class="cm">/* Offset in bytes to start sector */</span>
+<span class="mi">70</span> 	<span class="kt">uint64_t</span> <span class="n">size</span><span class="p">;</span>		<span class="cm">/* Bytes */</span>
+<span class="mi">71</span> <span class="p">}</span> <span class="n">__attribute__</span> <span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p> </p>
+
+<p>비트단위로 저장되어 있어 일일이 의미를 파악하기 어려울 수도 있는데, <strong>PV Header</strong> 에서는 다음과 같은 정보를 포함하고 있습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/lvm_metadata_pv.png" alt="PV Header" width="700"></p>
+<center>&lt; PV Header &gt;</center>
+
+<p> </p>
+
+<p>디스크에 정의된 PV 를 식별하기 위한 정보와 그 외 메타데이터의 정보의 위치를 저장하고 있습니다. 위 설명을 토대로 메타데이터의 헤더 영역 정보를 계산해 보자면, 초록색으로 시작점을 알리는 offset, 과 그 길이인 size 를 확인할 수 있습니다.</p>
+
+<ul>
+  <li>
+<strong>Metadata Header Offset</strong> : <code class="language-plaintext highlighter-rouge">0010 0000 0000 0000</code>
+</li>
+  <li>
+<strong>Metadata Header Size</strong> : <code class="language-plaintext highlighter-rouge">00f0 0f00 0000 0000</code>
+</li>
+</ul>
+
+<p> </p>
+
+<blockquote>
+  <p><img class="emoji" title=":bulb:" alt=":bulb:" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20"> NOTE <br>
+bswap 을 사용하여 데이터를 저장하고 읽는 경우가 있습니다. 이는 byte 단위로 swap 해서 읽고 쓸 수 있는데, 예를 들어 metadata header offset 의 경우 <code class="language-plaintext highlighter-rouge">x0000 0000 0000 1000</code> 로 해석할 수 있습니다.</p>
+</blockquote>
+
+<p> </p>
+
+<p>이제 <strong>Metadata Header</strong> 를 살펴보겠습니다.</p>
+
+<p> </p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mo">0001000</span><span class="o">:</span> <span class="mi">2</span><span class="n">af4</span> <span class="mi">634</span><span class="n">e</span> <span class="mi">204</span><span class="n">c</span> <span class="mi">564</span><span class="n">d</span> <span class="mi">3220</span> <span class="mi">785</span><span class="n">b</span> <span class="mi">3541</span> <span class="mi">2572</span>  <span class="o">*</span><span class="p">.</span><span class="n">cN</span> <span class="n">LVM2</span> <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="n">A</span><span class="o">%</span><span class="n">r</span>
+<span class="mo">0001010</span><span class="o">:</span> <span class="mi">304</span><span class="n">e</span> <span class="mi">2</span><span class="n">a3e</span> <span class="mo">0100</span> <span class="mo">0000</span> <span class="mo">0010</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="mi">0</span><span class="n">N</span><span class="o">*&gt;</span><span class="p">............</span>
+<span class="mo">0001020</span><span class="o">:</span> <span class="mo">00</span><span class="n">f0</span> <span class="mi">0</span><span class="n">f00</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">00</span><span class="n">a0</span> <span class="mo">0100</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">0001030</span><span class="o">:</span> <span class="mo">0007</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="n">a181</span> <span class="mi">917</span><span class="n">c</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">...........</span><span class="o">|</span><span class="p">....</span>
+<span class="mo">0001040</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">0001050</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">0001060</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">0001070</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+<span class="mo">00010</span><span class="mi">80</span><span class="o">:</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span> <span class="mo">0000</span>  <span class="p">................</span>
+
+<span class="cp"># cat lib/format_text/layout.h
+</span>
+ <span class="mi">71</span> <span class="cm">/* On disk */</span>
+ <span class="mi">72</span> <span class="cm">/* Structure size limited to one sector */</span>
+ <span class="mi">73</span> <span class="k">struct</span> <span class="n">mda_header</span> <span class="p">{</span>
+ <span class="mi">74</span>		<span class="kt">uint32_t</span> <span class="n">checksum_xl</span><span class="p">;</span>	<span class="cm">/* Checksum of rest of mda_header */</span>
+ <span class="mi">75</span>		<span class="kt">int8_t</span> <span class="n">magic</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>	<span class="cm">/* To aid scans for metadata */</span>
+ <span class="mi">76</span>		<span class="kt">uint32_t</span> <span class="n">version</span><span class="p">;</span>
+ <span class="mi">77</span>		<span class="kt">uint64_t</span> <span class="n">start</span><span class="p">;</span>		<span class="cm">/* Absolute start byte of mda_header */</span>
+ <span class="mi">78</span>		<span class="kt">uint64_t</span> <span class="n">size</span><span class="p">;</span>		<span class="cm">/* Size of metadata area */</span>
+ <span class="mi">79</span>
+ <span class="mi">80</span> 	<span class="k">struct</span> <span class="n">raw_locn</span> <span class="n">raw_locns</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>	<span class="cm">/* NULL-terminated list */</span>
+ <span class="mi">81</span> <span class="p">}</span> <span class="n">__attribute__</span> <span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+ <span class="mi">60</span> <span class="cm">/* On disk */</span>
+ <span class="mi">61</span> <span class="k">struct</span> <span class="n">raw_locn</span> <span class="p">{</span>
+ <span class="mi">62</span> 	<span class="kt">uint64_t</span> <span class="n">offset</span><span class="p">;</span>	<span class="cm">/* Offset in bytes to start sector */</span>
+ <span class="mi">63</span> 	<span class="kt">uint64_t</span> <span class="n">size</span><span class="p">;</span>		<span class="cm">/* Bytes */</span>
+ <span class="mi">64</span> 	<span class="kt">uint32_t</span> <span class="n">checksum</span><span class="p">;</span>
+ <span class="mi">65</span> 	<span class="kt">uint32_t</span> <span class="n">flags</span><span class="p">;</span>
+ <span class="mi">66</span> <span class="p">}</span> <span class="n">__attribute__</span> <span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p> </p>
+
+<p><strong>Metadata Header</strong> 에서는 다음과 같은 정보를 포함하고 있습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/lvm_metadata_metadata.png" alt="Metadata Header" width="700"></p>
+<center>&lt; Metadata Header &gt;</center>
+
+<p> </p>
+
+<p>이제 앞서 <strong>PV Header</strong> 에서 <strong>Metadata Header</strong> 의 저장된 위치를 계산했던 것처럼, <strong>Metadata</strong> 의 위치를 이제 간단하게 계산해 볼 수 있습니다.</p>
+
+<ul>
+  <li>
+<strong>Metadata Offset</strong> : <code class="language-plaintext highlighter-rouge">x1000 + x1a000 = x1b000</code>
+</li>
+</ul>
+
+<p> </p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mo">001</span><span class="n">b000</span><span class="o">:</span> <span class="mi">7468</span> <span class="mi">6963</span> <span class="mi">6</span><span class="n">b20</span> <span class="mi">7</span><span class="n">b0a</span> <span class="mi">6964</span> <span class="mi">203</span><span class="n">d</span> <span class="mi">2022</span> <span class="mi">3266</span>  <span class="n">thick</span> <span class="p">{.</span><span class="n">id</span> <span class="o">=</span> <span class="s">"2f</span><span class="err">
+</span><span class="s">001b010: 7559 4431 2d48 5856 792d 315a 3275 2d76  uYD1-HXVy-1Z2u-v</span><span class="err">
+</span><span class="s">001b020: 797a 332d 7765 4530 2d6c 6553 4a2d 716e  yz3-weE0-leSJ-qn</span><span class="err">
+</span><span class="s">001b030: 6d79 784f 220a 7365 716e 6f20 3d20 3333  myxO"</span><span class="p">.</span><span class="n">seqno</span> <span class="o">=</span> <span class="mi">33</span>
+<span class="mo">001</span><span class="n">b040</span><span class="o">:</span> <span class="mi">0</span><span class="n">a66</span> <span class="mi">6</span><span class="n">f72</span> <span class="mi">6</span><span class="n">d61</span> <span class="mi">7420</span> <span class="mi">3</span><span class="n">d20</span> <span class="mi">226</span><span class="n">c</span> <span class="mi">766</span><span class="n">d</span> <span class="mi">3222</span>  <span class="p">.</span><span class="n">format</span> <span class="o">=</span> <span class="s">"lvm2"</span>
+<span class="mo">001</span><span class="n">b050</span><span class="o">:</span> <span class="mi">0</span><span class="n">a73</span> <span class="mi">7461</span> <span class="mi">7475</span> <span class="mi">7320</span> <span class="mi">3</span><span class="n">d20</span> <span class="mi">5</span><span class="n">b22</span> <span class="mi">5245</span> <span class="mi">5349</span>  <span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="p">[</span><span class="s">"RESI</span><span class="err">
+</span><span class="s">001b060: 5a45 4142 4c45 222c 2022 5245 4144 222c  ZEABLE"</span><span class="p">,</span> <span class="s">"READ"</span><span class="p">,</span>
+<span class="mo">001</span><span class="n">b070</span><span class="o">:</span> <span class="mi">2022</span> <span class="mi">5752</span> <span class="mi">4954</span> <span class="mi">4522</span> <span class="mi">5</span><span class="n">d0a</span> <span class="mi">666</span><span class="n">c</span> <span class="mi">6167</span> <span class="mi">7320</span>   <span class="s">"WRITE"</span><span class="p">].</span><span class="n">flags</span><span class="p">.</span>
+<span class="mo">001</span><span class="n">b080</span><span class="o">:</span> <span class="mi">3</span><span class="n">d20</span> <span class="mi">5</span><span class="n">b5d</span> <span class="mi">0</span><span class="n">a65</span> <span class="mi">7874</span> <span class="mi">656</span><span class="n">e</span> <span class="mi">745</span><span class="n">f</span> <span class="mi">7369</span> <span class="mi">7</span><span class="n">a65</span>  <span class="o">=</span> <span class="p">[].</span><span class="n">extent_size</span>
+</code></pre></div></div>
+
+<p> </p>
+
+<p>실제 메타데이터에서는 볼륨 그룹 객체를 기반으로 PV 정보와 LV 정보를 정의하여 LVM 을 관리하고 있었습니다. Thin 볼륨과 Thick 볼륨은 다음과 같이 메타데이터의 형태가 다릅니다. 메타데이터를 통해서 Thin 볼륨은 Thin 풀에서 정의되어 있는 PV 의 데이터를 활용할 수 있습니다.</p>
+
+<p> </p>
+
+<p><img src="/assets/lvm_metadata2.png" alt="Metadata" width="700"></p>
+<center>&lt; Thin, Thick 볼륨의 Metadata &gt;</center>
+
+<p> </p>
+
+<h3 id="마치며">마치며</h3>
+
+<p>이 외에도 스냅샷 서비스의 스펙을 결정하기 위해서 많은 고민이 있었고, 또 고도화를 위해서 많은 의견들이 있었습니다. 예를 들어 섀도 복제본(Shadow copy)을 통한 스냅샷의 Windows 클라이언트 노출, Gluster 볼륨의 스냅샷 제공, PV 의 메타데이터가 너무 작은 경우 스냅샷 생성 실패 사례, 여러 가지 장애 케이스(Thin 볼륨, 파일 시스템, PV, VG, Data LV 등의 각각의 장애 사례)에 대한 위험 관리의 다양한 측면으로 서비스를 더욱더 안정적으로 확장해 가도록 진행하고 있습니다.</p>
+
+<p> </p>
+
+<h3 id="참고">참고</h3>
+
+<ul>
+  <li><a href="https://man7.org/linux/man-pages/man7/lvmthin.7.html">lvmthin linux manual page</a></li>
+</ul>
+
+<h3 id="lvm-글-더보기">LVM 글 더보기</h3>
+
+<ul>
+  <li><a href="https://tech.gluesys.com/blog/2019/04/08/LVM.html">LVM Basic Architecture</a></li>
+  <li><a href="https://tech.gluesys.com/blog/2024/06/03/LVM-Plugin.html">LVM 스냅샷 관리 기능 개발 후기 (1)</a></li>
+</ul>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#%EC%8A%A4%EB%83%85%EC%83%B7">스냅샷</a>, <a href="/tags#%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80">스토리지</a>, <a href="/tags#LVM">LVM</a>, <a href="/tags#Thin+Provisioning">Thin Provisioning</a>, <a href="/tags#%EC%9E%A5%EC%95%A0">장애</a>, <a href="/tags#Storage">Storage</a>, <a href="/tags#Metadata">Metadata</a>, <a href="/tags#%EB%94%94%EC%8A%A4%ED%81%AC+%EB%8D%A4%ED%94%84">디스크 덤프</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js" repo="gluesys/tech-blog" issue-term="pathname" label="comment" theme="github-light" crossorigin="anonymous" async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/%EA%B0%9C%EC%9D%B8%EC%A0%95%EB%B3%B4%EC%B7%A8%EA%B8%89%EB%B0%A9%EC%B9%A8/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </li>
+</ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

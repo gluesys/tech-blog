@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>LVM Basic Architecture</title>
+  <meta name="description" content="LVM 기본 구조 정리">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="LVM 기본 구조 정리" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="LVM Basic Architecture" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/whole.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="LVM Basic Architecture">
+  <meta name="twitter:description" content="LVM 기본 구조 정리">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/whole.png">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2019/04/08/LVM.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/whole.png); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">LVM Basic Architecture</h1>
+      <p class="info">by <strong>권 진영 (gc757489@gmail.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">April 8, 2019</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="lvm-기본-구조-정리">LVM 기본 구조 정리</h2>
+
+<h4 id="lvmlogical-volume-management이란">LVM(Logical Volume Management)이란?</h4>
+
+<p>LVM 기능을 사용하지 않을 때는 파일시스템과 물리 저장소 사이를 직접 연결하였습니다.
+LVM은 그런 불편함을 제거하기 위한 기능으로 Linux 환경에서 파일 시스템과 물리 저장소 사이의 추상 레이어를 제공하여 볼륨을 손쉽고 유연하게 관리할 수 있는 기능을 제공합니다.</p>
+
+<p>LVM은 크게 PV(Physical Volume), VG(Volume Group), LV(Logical Volume) 파트로 구분되어 있습니다.</p>
+
+<h3 id="1-pv-physical-volume">1. PV (Physical Volume)</h3>
+
+<p><img src="/assets/PV_layout.png" alt="Alt text" width="350" /></p>
+
+<p>PV는 실제 물리 디스크를 LVM 용도로 초기화된 물리 디스크 또는 파티션입니다. 예를 들면 /dev/sda, /dev/sda1 이나 KVM 환경에서 /dev/vda 등이 PV입니다. 또한 PV는 PE (Physical Extent)라는 단위로 나누어져 있습니다. PE의 기본값은 4MB이고 PE의 값은 볼륨 그룹을 생성할 때 지정할 수 있습니다. 
+데이터의 크기가 큰 파일을 자주 사용하는 경우에는 큰 사이즈의 extent가 적합하지만 반대의 경우에는 작은 사이즈의 extent로 설정하는 것이 좋습니다.</p>
+
+<p>PV에서는 LVM Label과 LVM Metadata를 포함합니다.
+LVM Label은 물리 장치를 식별하고 순서대로 나열할 수 있도록 해줍니다. 또한 물리 볼륨의 UUID를 포함하고 블록 장치의 크기를 바이트 단위로 저장하며 LVM Metadata가 장치에 저장될 위치를 기록합니다.
+LVM Metadata는 LVM 볼륨 그룹에 대한 구성 정보를 포함합니다. Metadata는 ASCII로 저장됩니다.</p>
+
+<ul>
+  <li>PV command
+    <ul>
+      <li>pvscan : PV에 대한 디스크를 확인 후 이를 출력</li>
+      <li>pvcreate : 물리 디스크 를 PV로 초기화하기 위해 사용</li>
+      <li>pvdisplay : PV에 대한 세부 정보를 출력</li>
+      <li>pvremove : PV를 제거하기 위해 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="2-vg-volume-group">2. VG (Volume Group)</h3>
+
+<p><img src="/assets/volume_arc.png" alt="Alt text" width="350" /></p>
+
+<p>VG는 하나 이상의 PV를 가지고 만든 물리적 볼륨의 집합입니다. PV는 단 하나의 VG에만 포함될 수 있습니다.
+VG를 만든다는 건 논리적 볼륨을 할당할 수 있는 디스크 공간 풀 생성하는 것입니다.
+VG는 LE를 PE로 맵핑하는 역할을 합니다.</p>
+
+<h3 id="3-lv-logical-volume">3. LV (Logical Volume)</h3>
+
+<p>LV는 사용자가 직접 다루는 논리적인 볼륨 공간입니다. 간단하게 생각하여 Windows에서 제공하는 C드라이브, D드라이브를 Linux의 LV로 생각하시면 됩니다.
+LV에는 여러 종류가 존재하고 각각의 LV는 장단점이 존재합니다. PV를 PE로 나누듯이 LV는 LE(Logical Extent)로 나누어져 있습니다. LE의 사이즈는 PE와 동일하게 설정됩니다. 각 LE들은 LV마다 0번부터 시작하고 PE에 맵핑되게 됩니다.</p>
+
+<h4 id="linear-volume">linear volume</h4>
+<ul>
+  <li>VG에 할당된 PV를 하나의 LV로 모으거나 다수의 LV로 나누어 사용할 수 있도록 해줍니다.</li>
+  <li>가장 기본적인 LV로 특별한 장점도 단점도 없습니다</li>
+</ul>
+
+<h4 id="raid-volume">RAID volume</h4>
+<p>Raid Volume은 Raid 0,1,4,5,6,10 을 지원하고 MD 커널 드라이버를 활용합니다. Raid Volume은 스냅샷 기능을 사용할 수 있습니다.</p>
+
+<h4 id="striped-volume-raid0">striped volume [raid0]</h4>
+
+<p><img src="/assets/stripe_lv.png" alt="Alt text" width="350" /></p>
+
+<p>striped 논리 볼륨은 데이터를 기록할 때 라운드-라운드 방식으로 지정된 물리 볼륨에 데이터를 작성하여 성능을 향상시킵니다.
+I/O를 병렬로 실행할 수 있는 장점이 있고 상황에 따라 Linear volume에 가까운 성능 향상을 기대할 수 있습니다.
+단, striped 방식의 특성상 최소 2개 이상의 물리 볼륨이 필요합니다.</p>
+
+<h4 id="mirror-volume-raid1">mirror volume [raid1]</h4>
+
+<p><img src="/assets/mirror_lv_extent.png" alt="Alt text" width="700" /></p>
+
+<p>Mirror 논리 볼륨은 데이터의 안정성을 위하여 데이터를 다른 장치에 복사본을 저장합니다. 만약 한쪽의 장치에 장애가 발생할 경우 논리 볼륨은 다른 한쪽으로 선형 볼륨이 되어 액세스가 가능합니다.</p>
+
+<h4 id="thin-volume">thin volume</h4>
+
+<p><img src="/assets/thin_compare_linear.png" alt="Alt text" width="350" />
+<img src="/assets/thin_compare_thin.png" alt="Alt text" width="700" /></p>
+
+<p>Thin volume은 Thin porivisioning 기술을 이용한 볼륨입니다. Thin provision을 사용하면 가상 풀을 사용하여 효율적인 스토리지 공간 할당을 하기 때문에 사용 가능한 범위 보다 더 큰 논리 볼륨을 생성할 수 있습니다. 
+기존의 다른 LV들은 PV를 VG로 묶고 VG에 LV를 만들면 LE가 각각의 PE에 맵핑되어 실제로 사용하지 않고 있더라도 다른 LV로 생성할 수 없습니다.
+하지만 Thin provision을 사용한다면 Thin Pool이라는 가상 풀을 만들어서 VG에는 Thin Pool만큼만 차지하고 각각의 LV들은 실제 사용량 만큼만 공간을 차지하게 됩니다. Thin LV들은 다른 논리 볼륨과 다르게 Thin pool이라는 가상풀을 사용하기 때문에 PE에 직접 맵핑되지 않고 Virtual Extent라는 가상 extent에 맵핑되게 됩니다.
+Thin provision의 중요한 점은 Thin Pool이 실제로 꽉 차기 전에 사용자가 적절히 확장을 해주어야 한다는 부분입니다.</p>
+
+<h3 id="4-snapshot">4. Snapshot</h3>
+<p>스냅샷은 데이터를 백업하는 방법 중 하나로 용량이 큰 데이터를 완전히 백업할 때 많은 시간이 필요하기 때문에 스냅샷 생성을 기준으로
+데이터를 그대로 유지시키는 방법입니다. 기존의 데이터는 읽기 전용 복사본으로 고정시키고 프로그램에서는 데이터를 계속 쓸 수 있도록 해주는 방법입니다.
+아래는 스냅샷 방법 2가지를 설명합니다.</p>
+
+<h4 id="cow-copy-on-write">COW [Copy-on-Write]</h4>
+<p><img src="/assets/snapshot_cow.png" alt="Alt text" /></p>
+
+<p>COW 방식은 구성이 끝난 후 스냅샷 공간을 할당하기 어렵기 때문에 스토리지를 구성할 때 미리 스냅샷을 위한 공간을 할당합니다. 
+기존 데이터에서 스냅샷을 생성하면 스냅샷은 기존 데이터를 가리키게 됩니다. 그 후 데이터의 변경이 일어날 경우에 데이터를 스냅샷 공간으로
+데이터를 복사하고 스냅샷은 복사한 데이터를 가리키게 됩니다.</p>
+
+<ul>
+  <li>스토리지를 구성할 때 미리 스냅샷을 위해 1~20% 공간을 할당</li>
+  <li>구성이 끝난 후 스냅샷 공간을 할당하기 어려움</li>
+  <li>원본 데이터가 변경될 때는 I/O 성능이 떨어지는 문제</li>
+  <li>데이터가 변경되면 스냅샷 공간으로 원본 데이터를 복사</li>
+</ul>
+
+<h4 id="row-redirect-on-write">ROW [Redirect-on-Write]</h4>
+<p><img src="/assets/snapshot_row.png" alt="Alt text" /></p>
+
+<p>ROW 방식은 스냅샷을 위한 별도의 공간이 필요하지 않습니다. 이 방식에서 스냅샷을 생성하면 기존 데이터를 가리키는 것까지는 COW 방식과 차이가 없습니다.
+다만 데이터가 변경된 이후에 스냅샷은 기존 데이터를 프리징 시키고 변경하려고 하는 데이터를 새로운 스냅샷 공간에 작성합니다.</p>
+
+<ul>
+  <li>스냅샷을 위한 별도의 공간을 미리 확보하지 않아도 된다</li>
+  <li>데이터가 생성되면 스토리지 OS나 LUN 컨트롤러에서 데이터의 위치를 기록하고 관리</li>
+  <li>데이터가 변경되면 원본 데이터를 스냅샷 블록으로 사용하고 새로운 블록을 할당받아서 데이터를 관리</li>
+</ul>
+
+<h3 id="5-전체-기본-구조도">5. 전체 기본 구조도</h3>
+
+<p><img src="/assets/whole.png" alt="Alt text" /></p>
+
+<p>LVM의 전체 그림을 보면 물리 디스크를 PV로 만들고 각 PV들은 하나의 VG에 속하게 됩니다. LV는 VG를 통하여 각 LE를 PE에 용량이나 볼륨 타입에 맞게 맵핑 합니다.</p>
+
+<p>이상 LVM의 기본적인 구조, 개념에 대해 알아 보았습니다.
+차후에는 LVM이 실제 Linux Kernel에서 어떻게 동작 되는지 알아보도록 하겠습니다.</p>
+
+<hr />
+<p>참고</p>
+
+<p>Linux Kernel 코드 : https://www.kernel.org/</p>
+
+<p>LVM 코드 : https://sourceware.org/lvm2/</p>
+
+<p>LVM 기본 구조 : https://tech.cloud.nongshim.co.kr/2018/11/23/lvmlogical-volume-manager-1-%EA%B0%9C%EB%85%90/</p>
+
+<p>Redhat LVM Administration guide : https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/logical_volume_manager_administration/index</p>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#%EB%85%BC%EB%A6%AC+%EB%B3%BC%EB%A5%A8+%EA%B4%80%EB%A6%AC%EC%9E%90">논리 볼륨 관리자</a>,&nbsp;<a href="/tags#Logical+Volume+Manager">Logical Volume Manager</a>,&nbsp;<a href="/tags#LVM">LVM</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

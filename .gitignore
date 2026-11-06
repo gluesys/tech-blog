@@ -9,3 +9,13 @@ _site
 # Bundler
 .bundle/
 vendor/
+
+# Hugo redesign
+.superpowers/
+.omc/
+build/
+.bin/
+resources/_gen/
+.hugo_build.lock
+__pycache__/
+*.pyc

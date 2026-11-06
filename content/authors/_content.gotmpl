@@ -1,0 +1,29 @@
+{{- /* Every author in data/authors.yaml gets a page at /authors/<name>/ (picture, name, all their
+       posts), so the about page and bylines always have somewhere to link. An author who writes
+       a personal introduction (content/authors/<slug>.md with `email:`) gets that page instead. */ -}}
+{{- $written := slice -}}
+{{- range os.ReadDir "content/authors" -}}
+  {{- if and (not .IsDir) (strings.HasSuffix .Name ".md") (ne .Name "_index.md") -}}
+    {{- with findRESubmatch `(?m)^email:\s*["']?([^"'\s]+)` (os.ReadFile (printf "content/authors/%s" .Name)) 1 -}}
+      {{- $written = $written | append (lower (index (index . 0) 1)) -}}
+    {{- end -}}
+  {{- else if .IsDir -}}
+    {{- $f := printf "content/authors/%s/index.md" .Name -}}
+    {{- if os.FileExists $f -}}
+      {{- with findRESubmatch `(?m)^email:\s*["']?([^"'\s]+)` (os.ReadFile $f) 1 -}}
+        {{- $written = $written | append (lower (index (index . 0) 1)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range $email, $info := hugo.Data.authors -}}
+  {{- if not (in $written (lower $email)) -}}
+    {{- $.AddPage (dict
+      "kind" "page"
+      "path" $info.name
+      "title" $info.name
+      "params" (dict "email" $email)
+      "content" (dict "mediaType" "text/markdown" "value" "")
+    ) -}}
+  {{- end -}}
+{{- end -}}

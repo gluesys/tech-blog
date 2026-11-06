@@ -1,0 +1,15 @@
+{{- /* Markdown images. An author picks the alignment with a fragment on the path:
+       ![alt](/assets/x.png#center), #left or #right; it becomes an align-* class (prose.css).
+       An image alone in its paragraph (.IsBlock, see hugo.toml) is centred unless the fragment
+       says otherwise, and keeps its <p> wrapper. An image inside running text or next to another
+       image in the same paragraph stays inline, as Hugo would render it, unless it has a fragment. */ -}}
+{{- $src := .Destination -}}
+{{- $align := cond .IsBlock "center" "" -}}
+{{- with findRESubmatch `^(.*)#(left|right|center)$` .Destination -}}
+  {{- $src = index (index . 0) 1 -}}
+  {{- $align = index (index . 0) 2 -}}
+{{- end -}}
+{{- if .IsBlock }}<p>{{ end -}}
+<img src="{{ $src | safeURL }}" alt="{{ .PlainText }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ with $align }} class="align-{{ . }}"{{ end }}>
+{{- if .IsBlock }}</p>
+{{ end -}}

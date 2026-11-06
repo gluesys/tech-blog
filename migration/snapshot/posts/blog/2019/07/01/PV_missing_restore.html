@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>특수한 전원 장애 상황에서 PV missing 복구</title>
+  <meta name="description" content="특수한 상황에서 발생한 PV missing 복구">
+  
+  <meta name="author" content="gluesys">
+  <meta name="copyright" content="&copy; gluesys 2026">
+  
+
+  <!-- External libraries -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/monokai-sublime.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/index.css">
+ 
+  <!-- Favicon and other icons (made with http://www.favicon-generator.org/) 
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/assets/icons/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="57x57" href="/assets/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/assets/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/assets/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/assets/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/assets/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192"  href="/assets/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="manifest" href="/assets/icons/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/assets/icons/ms-icon-144x144.png">-->
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <!-- Facebook OGP cards -->
+  <meta property="og:description" content="특수한 상황에서 발생한 PV missing 복구" />
+  <meta property="og:url" content="https://tech.gluesys.com" />
+  <meta property="og:site_name" content="글루시스 기술 블로그" />
+  <meta property="og:title" content="특수한 전원 장애 상황에서 PV missing 복구" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://tech.gluesys.com/assets/missing.PNG" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="612" />
+  <meta property="og:image:height" content="605" />
+  
+
+  
+  <!-- Twitter: card tags -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="특수한 전원 장애 상황에서 PV missing 복구">
+  <meta name="twitter:description" content="특수한 상황에서 발생한 PV missing 복구">
+  <meta name="twitter:image" content="https://tech.gluesys.com/assets/missing.PNG">
+  <meta name="twitter:url" content="https://tech.gluesys.com">
+  
+
+  
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="https://tech.gluesys.com/blog/2019/07/01/PV_missing_restore.html">
+  <link rel="alternate" type="application/rss+xml" title="글루시스 기술 블로그" href="https://tech.gluesys.com/feed.xml" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Y6MG4Q2JR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-7Y6MG4Q2JR');
+  </script>
+</head>
+
+
+  <body>
+
+    <header class="navigation" role="banner">
+  <div class="navigation-wrapper">
+    <a href="/" class="logo">
+      
+      <img src="/assets/logo_header.png" alt="글루시스 기술 블로그">
+      
+    </a>
+    <a href="javascript:void(0)" class="navigation-menu-button" id="js-mobile-menu">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav role="navigation">
+      <ul id="js-navigation-menu" class="navigation-menu show">
+        
+		
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+          <li class="nav-link"><a href="/about/">소개</a>
+          
+        
+          
+          <li class="nav-link"><a href="/blog/">블로그</a>
+          
+        
+          
+          <li class="nav-link"><a href="/tags/">태그</a>
+          
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+        <div class="post">
+
+<div class="post-header-container has-cover" style="background-image: linear-gradient( rgba(0,0,0,0.5), rgba(0, 0, 0, 0.5) ), url(/assets/missing.PNG); margin-bottom: 45px;">
+  <div class="scrim has-cover">
+    <header class="post-header">
+      <h1 class="title">특수한 전원 장애 상황에서 PV missing 복구</h1>
+      <p class="info">by <strong>권 진영 (gc757489@gmail.com)</strong></p>
+    </header>
+  </div>
+</div>
+
+<div class="wrapper">
+
+
+
+<section class="post-meta">
+  <div class="post-date">July 1, 2019</div>
+  <div class="post-categories">
+  in 
+    
+    <a href="/blog">Blog</a>
+    
+  
+  </div>
+</section>
+
+<article class="post-content">
+  <h2 id="특수한-상황에서-발생한-pv-missing-복구">특수한 상황에서 발생한 PV missing 복구</h2>
+
+<h3 id="1-특수-상황의-전원-장애-발생">1. 특수 상황의 전원 장애 발생</h3>
+
+<p>UPS(Uninterruptible Power Supply)가 불안정한 상태에서 전원 점검 작업 시에 스토리지의 컨트롤러에 일시적인 오류가 발생하였습니다.
+후지쯔 스토리지가 일시적으로 다운되면서 NAS failover 과정 중 오류로 인하여 재부팅이 시작되었습니다.
+재부팅 이후 글러스터 볼륨의 상태가 비정상 상태인 것을 인지하고 pacemaker 상태를 확인하니 글러스터 볼륨 및 볼륨 그룹(Volume Group, 이하 VG) Resourceagent가 비정상상태였습니다.
+VG Resource agent가 비정상 상태인 원인을 파악하던 중 물리 볼륨(Physical Volume, 이하 PV)의 상태가 missing인 것을 확인하였습니다.
+재부팅 이후에 스토리지와 연결 과정에서 차후 추가된 스토리지의 PV에서만 missing이 발생하였고
+특수한 상황에서 비정상 종료된 스토리지가 늦게 연결되어서 발생한 문제로 생각되었습니다.
+이에 대해 복구하는 방법 및 재현 방법을 공유하고자 합니다.</p>
+
+<h3 id="2-상태-확인-및-해결-방법">2. 상태 확인 및 해결 방법</h3>
+
+<p>상황을 구체적으로 확인하기 위해서 처음으로 <code class="language-plaintext highlighter-rouge">lvs, vgs, pvs</code> 명령을 사용하였습니다</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pvs
+vgs
+lvs
+</code></pre></div></div>
+
+<p><img src="/assets/missing.PNG" alt="Alt text" width="900" /></p>
+
+<p>위 명령으로 확인했을 경우 누락된 PV에 연관되어 VG 및 논리 볼륨(Logical Volume, 이하 LV)이 partial 상태이고 PV는 missing임을 확인할 수 있습니다.
+관련 정보를 좀 더 얻기 위해서 <code class="language-plaintext highlighter-rouge">vgs, pvs, pvscan</code> 등의 명령에 <code class="language-plaintext highlighter-rouge">-v</code> 옵션을 추가하여 실행하면 되는데 그 중 <code class="language-plaintext highlighter-rouge">vgchange</code> 명령을 사용하여 확인하였습니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pvs <span class="nt">-v</span>
+vgs <span class="nt">-v</span>
+pvscan <span class="nt">-v</span>
+vgchange <span class="nt">-ay</span> <span class="nt">-v</span>
+</code></pre></div></div>
+
+<p><img src="/assets/vgchange_ay_v.PNG" alt="Alt text" width="900" /></p>
+
+<p>위 명령을 사용하여 누락된 PV들의 정보를 확인하였습니다.
+<code class="language-plaintext highlighter-rouge">-v</code> 옵션은 사용 개수에 따라 더 상세한 정보를 출력할 수 있으며, 최대 4개까지 사용할 수 있습니다.
+이후 PV의 정상 상태를 확인하기 위하여 <code class="language-plaintext highlighter-rouge">pvck</code> 명령을 사용하였습니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pvck <span class="nt">-v</span> &lt;물리 볼륨 이름&gt; 
+pvck <span class="nt">-vvvv</span> &lt;물리 볼륨 이름&gt;
+<span class="nb">echo</span> <span class="nv">$?</span>
+</code></pre></div></div>
+
+<p><img src="/assets/pvck_echo.PNG" alt="Alt text" width="900" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">pvck -v</code> 명령을 사용하여 PV의 상태를 확인하고 <code class="language-plaintext highlighter-rouge">echo $?</code> 명령을 사용하여 <code class="language-plaintext highlighter-rouge">pvck</code> 결과가 정상 종료되었는지 확인할 수 있습니다.
+이번 장애 상황에서는 PV를 인식하는 과정에서 문제가 발생하였을 뿐 LVM 메타데이터, UUID 등의 정보는 정상인 상황이었습니다.
+만약 <code class="language-plaintext highlighter-rouge">pvck</code> 명령 사용 후 LVM 메타데이터 등에 문제가 있다면 <code class="language-plaintext highlighter-rouge">/etc/lvm/backup/&lt;볼륨 그룹 이름&gt;</code> 을 이용하여 복구하는 방법이 있습니다.
+PV가 정상 상태임을 확인했으면 기존의 VG에 추가해주는 작업이 필요합니다</p>
+
+<p>vgextend 명령을 사용하여 missing된 PV를 VG에 추가해 주도록 합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vgextend <span class="nt">--restoremissing</span> &lt;볼륨 그룹 이름&gt; &lt;물리 볼륨 이름&gt;
+</code></pre></div></div>
+
+<p>PV가 비정상인 상황에서 vgreduce –removemissing 명령을 사용하기도 하는데, 해당 명령을 사용하면 VG에서 missing 상태인 PV를 제외합니다.
+PV가 제외된다면 PV에 담겨 있던 데이터는 접근할 수 없게 되어 유실되기 때문에 스토리지에서 데이터를 보존해야 한다면 사용하면 안 되는 명령입니다.
+missing 상태인 PV가 정상적으로 복구되었다면 lvs, vgs, pvs 등의 명령어를 사용할 때 missing 및 partial 상태가 사라진 것을 확인할 수 있습니다.</p>
+
+<h3 id="3-pv-강제-missing-상태-만드는-법">3. pv 강제 missing 상태 만드는 법</h3>
+
+<p>보통 문제가 발생하면 그 문제를 재현해서 검증하고 복구 혹은 patch를 위한 재현을 하는 경우가 있을 것이로 생각되어 재현 방법에 대해서도 공유합니다.
+LVM에서는 위 상황을 강제로 재현할 수 있는 기능을 제공하지 않기 때문에 기존 LVM 코드를 수정할 필요가 있습니다.
+yumdownloader 혹은 https://vault.centos.org 를 통하여 LVM 소스 코드를 다운로드받습니다.
+첫 번째로 LVM 코드의 <code class="language-plaintext highlighter-rouge">lib/format_text/archiver.c</code>를 수정해야 합니다.
+누락된 PV가 0개인 경우에만 <code class="language-plaintext highlighter-rouge">backup_restore_vg()</code>함수를 실행합니다.
+<code class="language-plaintext highlighter-rouge">backup_restore_vg()</code>함수에서는 PV 익스텐트나 fid 등을 검사하는데 검사 후 정상일 경우에는 복구를 실행하고 정상이 아닐 경우 복구를 실행하지 않고 오류 메시지를 출력합니다.
+누락된 PV 개수가 0개 이상일 경우에도 실행되야 하고 <code class="language-plaintext highlighter-rouge">backup_restore_vg()</code>함수에서 missing 상태임을 확인해야 강제로 PV missing 상태로 전환할 수 있습니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="p">(</span><span class="n">missing_pvs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">r</span><span class="o">=</span><span class="n">backup_restore_vg</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">vg</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>   <span class="c1">//하단부에</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">missing_pvs</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">){</span>                <span class="c1">//추가   //만약 테스트할 vg가 4개 이상이라면 수정이 필요합니다.</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">backup_restore_vg</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">vg</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">lib/metadata/metadata.c</code> 파일도 아래와 같이 수정합니다. 
+아랫부분은 <code class="language-plaintext highlighter-rouge">handles_missing_pvs</code> 값이 1로 고정된 부분입니다. 해당 부분을 0 으로 수정하여 missing된 개수와 다르게 변경하여 오류 출력 및 종료를 skip 할 수 있도록 하는 부분입니다.
+해당 부분을 수정하기 위해서 <code class="language-plaintext highlighter-rouge">vg-&gt;cmd-&gt;handles_missing_pvs</code> 앞부분에 <code class="language-plaintext highlighter-rouge">"!"</code>를 추가합니다.</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">vg_missing_pv_count</span><span class="p">(</span><span class="n">vg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">vg</span><span class="o">-&gt;</span><span class="n">cmd</span><span class="o">-&gt;</span><span class="n">handles_missing_pvs</span><span class="p">){</span>     <span class="c1">//vg-&gt;cmd-&gt;handles_missing_pvs 앞부분에 "!"를 추가합니다.</span>
+    <span class="n">log_error</span><span class="p">(</span><span class="s">"Cannot update Volume Group %s while physical "</span> 
+            <span class="s">"volumes are missing."</span><span class="p">,</span> <span class="n">vg</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>위 파일에서 2부분을 수정한 후 LVM RPM 패키지를 새로 빌드하도록 합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpmbuild <span class="nt">-ba</span> rpmbuild/SPECS/lvm2.spec
+
++ <span class="nb">umask </span>022
++ <span class="nb">cd</span> /root/rpmbuild/BUILD
++ <span class="nb">cd</span> /root/rpmbuild/BUILD
++ <span class="nb">rm</span> <span class="nt">-rf</span> boom-0.9
++ /usr/bin/gzip <span class="nt">-dc</span> /root/rpmbuild/SOURCES/LVM2.2.02.180.tgz
+
+...
+
+Wrote: /root/rpmbuild/RPMS/x86_64/device-mapper-devel-1.02.149-8.el7.x86_64.rpm
+Wrote: /root/rpmbuild/RPMS/x86_64/device-mapper-libs-1.02.149-8.el7.x86_64.rpm
+Wrote: /root/rpmbuild/RPMS/x86_64/device-mapper-event-1.02.149-8.el7.x86_64.rpm
+Wrote: /root/rpmbuild/RPMS/x86_64/device-mapper-event-libs-1.02.149-8.el7.x86_64.rpm
+Wrote: /root/rpmbuild/RPMS/x86_64/device-mapper-event-devel-1.02.149-8.el7.x86_64.rpm
+Wrote: /root/rpmbuild/RPMS/noarch/lvm2-python-boom-0.9-11.el7.noarch.rpm
+Executing<span class="o">(</span>%clean<span class="o">)</span>: /bin/sh <span class="nt">-e</span> /var/tmp/rpm-tmp.WCYNcY
++ <span class="nb">umask </span>022
++ <span class="nb">cd</span> /root/rpmbuild/BUILD
++ <span class="nb">cd </span>LVM2.2.02.180
++ <span class="nb">rm</span> <span class="nt">-rf</span> /root/rpmbuild/BUILDROOT/lvm2-2.02.180-8.el7.x86_64
++ <span class="nb">exit </span>0
+</code></pre></div></div>
+
+<p>rpmbuild 완료 후 특별한 오류가 출력이 되지 않는다면 정상 종료된 것을 확인할 수 있습니다.
+이제 rpm 업그레이드를 사용하여 기존에 설치된 LVM 패키지를 대체합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rpm <span class="nt">-Uvh</span> <span class="nt">--force</span> <span class="o">{</span>lvm2-2<span class="k">*</span>,lvm2-debuginfo<span class="k">*</span>,lvm2-libs<span class="k">*</span>,device-mapper<span class="k">*</span><span class="o">}</span>
+</code></pre></div></div>
+
+<p>rpm 업그레이드를 완료하였다면 bakcup파일 을 수정하여 PV 상태를 변경시키도록 합니다. 
+vgbackup 파일 생성 및 수정을 해야 하는데, 아래 명령을 사용하여 VG의 백업 파일을 생성합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vgcfgbackup &lt;볼륨 그룹 이름&gt; <span class="nt">-f</span> &lt;볼륨 그룹 이름&gt;.vg
+</code></pre></div></div>
+
+<p>PV를 강제로 missing 상태로 만들기 위해서는 PV 상태를 수정해야 합니다.
+<code class="language-plaintext highlighter-rouge">&lt;볼륨 그룹 이름&gt;.vg</code> 파일에서 관련 PV의 flags = [] 부분에 <code class="language-plaintext highlighter-rouge">"MISSING"</code>을 추가합니다.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">flags</span> <span class="o">=</span> <span class="p">[</span><span class="s">"MISSING"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">/etc/lvm/backup/&lt;볼륨 그룹 이름&gt;</code> 을 백업해두고 해당 파일을 수정해야 합니다.
+PV missing이 발생하면 자동으로 VG의 LVM 설정 백업 파일을 찾아서 복구하기 때문에 해당 파일도 <code class="language-plaintext highlighter-rouge">"MISSING"</code>을 추가하거나 이동해야 합니다.
+PV를 강제로 missing 상태로 변경하는 명령입니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vgcfgrestore &lt;볼륨 그룹 이름&gt; <span class="nt">-f</span> &lt;볼륨 그룹 이름&gt;.vg <span class="nt">--force</span> 
+</code></pre></div></div>
+
+<p>위 단계를 모두 마치면 PV가 일시적으로 missing 상태인 것을 확인할 수 있습니다.</p>
+
+<h3 id="4-pvs-vgs-lvs-의-일부-attributes-설명">4. pvs, vgs, lvs 의 일부 Attributes 설명</h3>
+
+<h4 id="pvs">pvs</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">normal status</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">feild 1 - (a)allocatable</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">abnormal or specific</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">field 1 - (d)uplicate</td>
+      <td>multipath로 구성된 디스크에서 path가 2개이상일 경우 LVM 에서 LVM 메타데이터에 대하여 중복된 데이터를 읽을 경우에 발생할 수 있습니다.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">field 3 - (m)issing</td>
+      <td>물리적 디스크가 제거되거나 /dev/sdx 를 지우거나 UUID, LVM 메타데이터가 잘못 매칭 되는 경우에 발생할 수 있습니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="vgs">vgs</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">normal status</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">field 1 - (w)riteable</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">field 2 - resi(z)able</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">field 5 - (n)ormal</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">abnormal or specific</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">field 4 - (p)artial</td>
+      <td>하나 이상의 PV가 누락되었음을 나타냅니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="lvs">lvs</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">normal status</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">field 2 - (w)riteable</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">field 3 - (i)nherited</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">field 5 - (a)ctive</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">field 6 - (o)pen</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">abnormal or specific</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">field 9 - (p)artial</td>
+      <td>하나 이상의 PV가 누락되었음을 나타냅니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<p>참고</p>
+<ol>
+  <li>pvs http://man7.org/linux/man-pages/man8/pvs.8.html</li>
+  <li>vgs https://linux.die.net/man/8/vgs</li>
+  <li>lvs http://man7.org/linux/man-pages/man8/lvs.8.html</li>
+</ol>
+
+</article>
+
+
+
+
+<section class="tags">
+  <strong>Tags:</strong> <a href="/tags#%EB%85%BC%EB%A6%AC+%EB%B3%BC%EB%A5%A8+%EA%B4%80%EB%A6%AC%EC%9E%90">논리 볼륨 관리자</a>,&nbsp;<a href="/tags#Logical+Volume+Manager">Logical Volume Manager</a>,&nbsp;<a href="/tags#LVM">LVM</a>,&nbsp;<a href="/tags#%EB%AC%B8%EC%A0%9C+%ED%95%B4%EA%B2%B0">문제 해결</a>,&nbsp;<a href="/tags#Troubleshooting">Troubleshooting</a>
+</section>
+
+
+
+<!--
+<section class="rss">
+  <p class="rss-subscribe text"><strong>Subscribe <a href="/feed.xml">via RSS</a></strong></p>
+</section>
+-->
+
+<!--
+<section class="share">
+  <span>Share: </span>
+  
+</section>
+-->
+
+
+
+<script src="https://utteranc.es/client.js"
+	repo="gluesys/tech-blog"
+	issue-term="pathname"
+	label="comment"
+	theme="github-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+
+<section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = 'gluesys-github-io';
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+</div>
+</div>
+<br><br>
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <img src="/assets/logo_footer.png">
+    <div class="site-navigation">
+      <ul class="pages">
+          <li class="nav-link">
+              <a href="http://gluesys.com/" target="_blank">Official</a> |
+              <a href="https://blog.naver.com/gluesys/" target="_blank">Blog</a> |
+              <a href="http://gluesys.com/개인정보취급방침/" target="_blank">Privacy</a> |
+              <a href="http://gluesys.com/company/location-4/" target="_blank">Contact</a>
+          </li>
+          <li class="nav-link">Copyright 2018. Gluesys Co., Ltd. All rights reserved.
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="/public/jquery.flexslider.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('.flexslider').flexslider({
+      animation: "fade",
+      directionNav: false,
+      slideshowSpeed: 5000,
+      animationSpeed: 600,
+      touch: false,
+      controlNav: false
+    });
+
+  // Default syntax highlighting
+  hljs.initHighlightingOnLoad();
+
+  // Header
+  var menuToggle = $('#js-mobile-menu').unbind();
+  $('#js-navigation-menu').removeClass("show");
+  menuToggle.on('click', function(e) {
+    e.preventDefault();
+    $('#js-navigation-menu').slideToggle(function(){
+      if($('#js-navigation-menu').is(':hidden')) {
+        $('#js-navigation-menu').removeAttr('style');
+      }
+    });
+  });
+});
+
+</script>
+
+
+
+
+  </body>
+
+</html>

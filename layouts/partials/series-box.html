@@ -1,0 +1,25 @@
+{{- /* Series navigation. Series membership and order come from data/series.yaml. */ -}}
+{{- $page := . -}}
+{{- with .Params.series -}}
+{{- $name := . -}}
+{{- $bySlug := dict -}}
+{{- range where site.RegularPages "Section" "blog" -}}
+  {{- $bySlug = merge $bySlug (dict (.File.ContentBaseName | replaceRE `^\d{4}-\d{2}-\d{2}-` "") .) -}}
+{{- end -}}
+{{- range hugo.Data.series -}}
+{{- if eq .name $name -}}
+{{- $total := len .posts -}}
+<section class="series-box" aria-label="시리즈">
+  <p class="series-title"><span class="hx"></span>시리즈 <b>{{ $name }}</b> <span class="n">{{ $total }}편</span></p>
+  <ol>
+  {{- range $i, $slug := .posts }}
+    {{- $p := index $bySlug $slug }}
+    {{- if $p }}
+    <li{{ if eq $p.Permalink $page.Permalink }} aria-current="true"{{ end }}>{{ if eq $p.Permalink $page.Permalink }}<span>{{ $p.Title }}</span>{{ else }}<a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>{{ end }}<span class="n">{{ add $i 1 }}/{{ $total }}</span></li>
+    {{- end }}
+  {{- end }}
+  </ol>
+</section>
+{{- end -}}
+{{- end -}}
+{{- end -}}

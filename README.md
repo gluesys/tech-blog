@@ -124,8 +124,8 @@
     - `categories`: 블로그 사이트의 상단 카테고리 부분으로, 현재로는 템플릿대로 놔두는 것을 권장합니다.  
     - `author`: 작성자를 말하며, 포맷은 `이름 (이메일 주소)` 입니다.  
     - `tags`: 포스트 내용과 관련된 태그를 말합니다. 태그는 한국어와 영어를 병행해 작성해야 하며, 포맷은 `[태그1, tag1, 태그2, tag2, ...]` 입니다. 영어 태그는 보통명사라도 첫 글자는 대문자로 써야 합니다.  
-    - `cover`: 블로그 첫 페이지에 표시되는 포스트의 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 포스트에 쓰일 이미지 위치는 `assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다.  
-    - `main`: 블로그 포스트의 상단에 위치하는 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 포스트에 쓰일 이미지 위치는 `assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다. 주로 `cover`와 같은 이미지를 쓰는 경우가 많습니다.  
+    - `cover`: 포스트 상단의 배너 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). 배너는 화면 폭 전체로 잘려 표시되고 그 위에 남색 막과 제목이 올라가므로, 가로로 긴 사진이나 추상 이미지가 잘 어울립니다. 링크 공유 미리보기 이미지로도 쓰입니다. 포스트에 쓰일 이미지 위치는 `static/assets` 폴더에 넣어야 하니 참고해 주시기 바랍니다. 넣지 않으면 배너 없이 표시됩니다.  
+    - `main`: 글 목록과 검색 결과에 표시되는 썸네일 이미지를 말하며, 큰따옴표("") 안에 이미지의 위치를 넣어야 합니다(예: "/assets/SPDK_maincover.jpg"). `cover`와는 별개이며, 넣지 않으면 썸네일 없이 표시됩니다. 같은 이미지를 써도 되지만, 배너용 이미지가 썸네일로 쓰기에 너무 넓거나 복잡하면 따로 잘라 만든 이미지를 넣습니다.  
  * 포스트 본문: 포스트의 주 내용을 말하며, `문서 정보` 아래에 위치합니다. 포스트 본문은 크게 제목, 내용, 첨부 이미지, 참고문헌, 각주 등으로 구성됩니다.  
     - 제목: 각 제목은 고유명사를 사용하는 것이 아닌 이상 한국어로 작성해 주시기 바랍니다. 최상위 제목은 `##`의 뎁스부터 시작하며, 특수문자 사용 시 [HTML 특수문자](http://kor.pe.kr/util/4/charmap2.htm) 를 써야 하니 참고해 주시기 바랍니다.  
     - 내용: 포스트의 내용은 구어체로 작성하되, 격식체를 유지해 주시기 바랍니다(예: ~입니다, ~습니다 등). 영어 약어나 내용에 핵심이 되는 고유명사에는 약어 또는 한국어 표기 단어 뒤에 괄호 안에 정식 영어 표기를 넣어야 합니다. 이후 영어 약어를 활용할 경우에는 괄호 안에 `이하 '영어 약어'`를 넣어야 합니다(예: 소프트웨어 정의 스토리지(Software Defined Storage, 이하 SDS)).  
@@ -161,7 +161,7 @@
 ### 4.2 깃허브에 올려 검토 요청하기
   
  위의 기본 세팅이 완료되었다면, 다음과 같은 과정으로 깃허브에 올려 주시기 바랍니다:  
- 1. 로컬 저장소의 내용 수정 및 업데이트: 작성한 마크다운 파일을 로컬 저장소의 `_post/blog` 경로에 올려 저장하고, `assets/<포스트명>/` 폴더에 커버 및 최상단 이미지, 첨부 이미지를 넣어 주시기 바랍니다.  
+ 1. 로컬 저장소의 내용 수정 및 업데이트: 작성한 마크다운 파일을 로컬 저장소의 `_posts/blog` 경로에 올려 저장하고, `static/assets/<포스트명>/` 폴더에 커버 및 최상단 이미지, 첨부 이미지를 넣어 주시기 바랍니다.  
  2. 원격 저장소에 수정 내용 푸시: 파일을 커밋 후 원격 저장소에 푸시해 주시기 바랍니다. 커밋 메시지는 반드시 작성해야 하며 영문으로 커밋 내용을 작성할 필요가 있습니다. 자세한 내용은 [링크](https://backlog.com/git-tutorial/kr/intro/intro2_4.html) 를 참고해 주시기 바랍니다.  
  3. 기술 블로그 저장소에 풀리퀘스트 작성: 원격 저장소에 푸시가 성공했다면 원격 저장소 페이지에 나타난 `Create pull request` 버튼을 클릭해 풀리퀘스트를 작성할 수 있습니다. 포스트 제목과 요약 내용을 작성해서 풀리퀘스트를 올려 주시기 바랍니다.  
  4. 피드백 요청: 매터모스트의 `시스템` > `리뷰` 에 풀리퀘스트 페이지의 URL과 함께 리뷰를 요청해 주시기 바랍니다.  
@@ -183,3 +183,69 @@
 
 이상으로 기술 블로그 포스트 작성과 관련하여 궁금하신 점이나 추가 의견이 있으신 분은 상기 기술 블로그 담당자나 가이드라인 작성자에 문의 바랍니다.
   
+
+-----
+
+# Development
+
+The site is built with Hugo (extended) and searched with Pagefind. No JavaScript package manager is used anywhere in this repository or its CI.
+
+## Tools and local preview
+
+```
+tools/install_tools.sh .bin     # downloads pinned Hugo and Pagefind into .bin/, verifies SHA-256
+.bin/hugo server                # live preview at http://localhost:1313/
+node --test assets/ts/tests/*_test.ts   # TypeScript tests (Node 22.18+ runs .ts directly)
+```
+
+Versions and checksums live in `tools/versions.env`. Search needs the index, so for the search page run `.bin/hugo --minify --environment development && .bin/pagefind --site build` and serve `build/`. A plain `hugo` build is the production build and emits the Google Analytics snippet, so use `--environment development` for local builds to keep test visits out of the production property.
+
+## Writing a post
+
+Until the cutover is verified (plan Task 16), new posts still go to `_posts/blog/` in the Jekyll format described above and are converted with `tools/convert_posts.py`. That script regenerates `content/blog/` from `_posts/` and fails on any `.md` there that has no source, so do not hand-add files to `content/blog/` yet.
+
+After `_posts/` is deleted, author posts directly as `content/blog/YYYY-MM-DD-slug.md`:
+
+```yaml
+---
+title: "..."
+author: "이름 (name@gluesys.com)"
+tags: ["NVMe", "스토리지"]
+cover: "/assets/slug/cover.jpg"
+main: "/assets/slug/cover.jpg"
+summary: "one sentence (optional)"
+series: "NVMe"        # optional, see below
+---
+```
+
+- Normally do not set `url`, `slug` or `date`. The date and the URL slug come from the file name: `content/blog/2026-12-01-new-post.md` is built as `/blog/2026/12/01/new-post.html` (a plain file, like Jekyll). If `date` is set, Hugo keeps the date prefix in the slug and `tools/verify_site.py` fails ("slug keeps the date prefix"); `slug` or `url` can override the slug when needed. Converted posts keep their explicit `url` and `date`.
+- Authors: `data/authors.yaml` holds one entry per email (name spelling, optional `avatar`, `github`, `gravatar: false`, `former: true` for people who have left). The picture is the first of: `avatar` in the personal page (a site path, or an image file next to it in a page bundle), `avatar` in `authors.yaml`, the GitHub picture of `github: <account>` (in either place), the author's Gravatar (not for former colleagues), else the first letter of the name. GitHub and Gravatar pictures are downloaded while the site builds and served from the site itself, so readers never contact those services; a change of picture shows up with the next deploy. Every author has a page at `/authors/<name>/` (picture, name, all their posts), generated by `content/authors/_content.gotmpl`; the about page cards and bylines link to it. A personal introduction is optional: create `content/authors/<name>.md` (use the same name so the address stays), set `email`, and write Markdown. It replaces the generated page, and its first paragraph also appears on the about page.
+- Use canonical tags from `data/tag_aliases.yaml`. `python3 tools/check_tags.py content/blog` warns about unknown or non-canonical tags.
+- A series is defined by `data/series.yaml`: add the post slug (file name without the date prefix) to the series list in reading order. Membership and order come from that file; `series_order` is not required. Also set `series: "<series name>"` in front matter so the post shows its series box.
+- Images go under `static/assets/` and are referenced as `/assets/...`. Images never grow past the 720px body column; one shown smaller than its file gets a magnifier on mouse hover and opens full-window on click. To align a Markdown image, end its path with `#left`, `#center` or `#right` (`![alt](/assets/x.png#center)`); an image alone in its paragraph is centred by default, while one inside running text or sharing a paragraph with another image stays inline. For diagrams with text, export at 1440px wide with text at least 28px tall so it stays readable (about 14px on screen).
+- Diagrams and math need no images:
+  - A ` ```mermaid ` code block is drawn by [pele](https://github.com/obsidianmd/pele) (Mermaid syntax) in the site colours, light and dark. The script loads only on posts that have one. pele is vendored as a single file in `static/third-party/pele-<version>/` (no npm); to upgrade, take `dist/pele.global.js` from the npm tarball after checking its `dist.integrity`, and update the path in `layouts/_default/baseof.html`.
+  - A ` ```plantuml ` code block is drawn as SVG by the public PlantUML server (www.plantuml.com), so its source leaves the site; do not put anything confidential in it.
+  - Math goes between `$...$` or `\(...\)` inline and `$$...$$` on its own lines. Hugo renders it to MathML at build time (KaTeX), so readers load nothing extra. A math error fails the build and names the file. Write a literal dollar sign as `\$`.
+- Code blocks can show line numbers: ```` ```bash {linenos=true} ```` numbers from 1, and ```` ```bash {linenos=true linenostart=120} ```` starts at 120. Numbers are off by default, and the copy button never copies them.
+- Do not add a hand-written table of contents: every post gets one from its h2/h3 headings (the sidebar on wide screens, a collapsed 목차 block on phones).
+
+## CI (`.github/workflows/pages.yml`)
+
+On pull requests and pushes to `master` the workflow installs the pinned tools, runs the Python tests (`unittest`) and the TypeScript tests (`node --test`, Node 26 runs `.ts` directly; no npm packages), builds with `hugo --minify --environment production`, builds the Pagefind index, then runs `verify_migration.py`, `verify_site.py` and `check_tags.py`. `verify_search.py` is a non-blocking report. `verify_migration.py` and the snapshot-based part of `verify_site.py` run only while `migration/snapshot` exists. Pull requests upload `build/` as an artifact; pushes to `master` and manual `workflow_dispatch` runs on `master` deploy to GitHub Pages.
+
+### Editing a migrated post
+
+Until the cutover, `verify_migration.py` compares the body text and headings of every migrated post with the live-site snapshot in `migration/snapshot`, so a typo fix in a migrated post fails CI. Add a narrow entry with a reason to `migration/allowlist.yaml` (see the existing entries) instead of loosening the checker. Such edits live only in `content/blog/`: `tools/convert_posts.py` pairs headings with the snapshot, so do not re-run it over an edited post (the allowlist entries would then go unused and the verifier fails, which is how CI catches it). New posts are not affected: the feed check only requires the 10 newest posts and unchanged links for the migrated items still in the feed.
+
+### After the cutover
+
+The snapshot and everything that depends on it are removed together (plan Task 16 step 6): delete `migration/snapshot/`, and the workflow then skips the "Verify migration" step and runs "Verify site (snapshot absent)" by itself (both are conditioned on `migration/snapshot/urls.txt`). Delete `tools/verify_migration.py`, its tests and the snapshot steps from `pages.yml` in the same change. The remaining checks (aliases, feed, post files, static files, tag map, links, images) do not need the snapshot.
+
+## Converter and verifiers
+
+- `tools/convert_posts.py`: Jekyll `_posts/blog` to `content/blog` (kramdown to Goldmark, front matter rewrite, tag canonicalization).
+- `tools/verify_migration.py`: compares each built post against the live-site snapshot in `migration/snapshot`.
+- `tools/verify_site.py`: checks URLs, feeds, redirects, sitemap and page structure of the built site.
+- `tools/verify_search.py`: runs the acceptance queries in `tools/search_cases.txt` against the index.
+- `tools/check_tags.py`: warns about tags missing from `data/tag_aliases.yaml`.

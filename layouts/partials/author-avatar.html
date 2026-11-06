@@ -1,0 +1,56 @@
+{{- /* An author's picture URL, or "" (callers then show the name's first letter in the hexagon).
+       Usage: partialCached "author-avatar.html" $email $email
+       First match wins:
+       1. a chosen image: `avatar` in the author's own page (content/authors/<slug>.md), as a site
+          path such as /assets/authors/me.jpg or the name of an image beside it in a page bundle;
+          then `avatar` in data/authors.yaml;
+       2. their GitHub picture, when the page or authors.yaml names the account (`github: user`);
+       3. their Gravatar, skipped for `former: true` (people who have left never agreed to a new
+          photo) and for `gravatar: false`.
+       GitHub and Gravatar pictures are fetched while the site builds and published as site files,
+       so readers' browsers never contact either service (no reader IP or page view leaves the site). A missing picture or
+       no network during the build just means the next choice. */ -}}
+{{- $email := lower (strings.TrimSpace (. | default "")) -}}
+{{- /* authors.yaml keys are matched without regard to case, so a post that spells the address
+       differently still gets that entry's settings (former, gravatar: false). */ -}}
+{{- $info := dict -}}
+{{- $known := false -}}
+{{- range $k, $v := hugo.Data.authors }}{{ if eq (lower $k) $email }}{{ $info = $v }}{{ $known = true }}{{ end }}{{ end -}}
+{{- $name := $info.name | default "author" -}}
+{{- $page := partial "author-page.html" $email -}}
+{{- $url := "" -}}
+{{- $github := $info.github -}}
+{{- $former := $info.former -}}
+{{- $gravatar := ne $info.gravatar false -}}
+{{- with $page -}}
+  {{- with .Params.github }}{{ $github = . }}{{ end -}}
+  {{- if .Params.former }}{{ $former = true }}{{ end -}}
+  {{- if eq .Params.gravatar false }}{{ $gravatar = false }}{{ end -}}
+  {{- with .Params.avatar -}}
+    {{- if hasPrefix . "/" }}{{ $url = . }}{{ else }}{{ with $page.Resources.Get . }}{{ $url = .RelPermalink }}{{ end }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $url }}{{ with $info.avatar }}{{ $url = . }}{{ end }}{{ end -}}
+
+{{- $remotes := slice -}}
+{{- with $github }}{{ $remotes = $remotes | append (printf "https://github.com/%s.png?size=128" (urlquery .)) }}{{ end -}}
+{{- /* fail closed: no Gravatar for an address that has no authors.yaml entry */ -}}
+{{- if and $known $email (not $former) $gravatar -}}
+  {{- $remotes = $remotes | append (printf "https://gravatar.com/avatar/%s?s=128&d=404" (sha256 $email)) -}}
+{{- end -}}
+{{- range $remotes -}}
+  {{- if not $url -}}
+    {{- with try (resources.GetRemote .) -}}
+      {{- with .Err -}}
+        {{- warnf "avatar for %s: %s" $name . -}}
+      {{- else with .Value -}}
+        {{- if eq .MediaType.MainType "image" -}}
+          {{- $ext := cond (eq .MediaType.SubType "png") "png" "jpg" -}}
+          {{- /* named after the picture's own bytes: unique per picture, and says nothing about the email */ -}}
+          {{- $url = (resources.Copy (printf "authors/avatar-%s.%s" (substr (sha256 .Content) 0 16) $ext) .).RelPermalink -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return (cond (ne $url "") ($url | relURL) "") -}}
