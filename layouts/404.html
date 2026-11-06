@@ -1,0 +1,22 @@
+{{ define "main" }}
+{{- /* GitHub Pages serves /404.html for any missing address, at that address, so every link
+       and asset here is root-relative. not-found.ts fills the search box from the address. */ -}}
+{{- $recent := first 5 (where site.RegularPages "Section" "blog").ByDate.Reverse -}}
+<div class="page-head"><h1 class="sec-title"><span class="hx"></span>페이지를 찾을 수 없습니다</h1></div>
+<div class="page-body page-text not-found">
+  <p>주소가 바뀌었거나 없는 페이지입니다. 찾으시던 글이 있다면 검색해 보세요.</p>
+  <form class="page-search" action="/search/" method="get" role="search" data-guess>
+    <input type="search" name="q" placeholder="파일 시스템, NVMe, CXL, 고가용성처럼 주제로 검색" aria-label="글 검색" autocomplete="off">
+    <button type="submit">검색</button>
+  </form>
+  <p class="not-found-links"><a href="/">홈으로 가기</a><a href="/posts/">전체 글 보기</a></p>
+  <section class="related" aria-label="최근 글">
+    <p class="series-title"><span class="hx"></span><b>최근 글</b></p>
+    <ul>
+      {{- range $recent }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006년 1월 2일" }}</time></li>
+      {{- end }}
+    </ul>
+  </section>
+</div>
+{{ end }}

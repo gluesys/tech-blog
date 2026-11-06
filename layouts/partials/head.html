@@ -8,8 +8,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $title }}</title>
 <meta name="description" content="{{ $desc }}">
-{{ if eq .Layout "search" }}<meta name="robots" content="noindex">
-{{ end }}<link rel="canonical" href="{{ .Permalink }}">
+{{ if or (eq .Layout "search") (eq .Kind "404") }}<meta name="robots" content="noindex">
+{{ end }}{{ if ne .Kind "404" }}<link rel="canonical" href="{{ .Permalink }}">
+{{ end }}
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ "feed.xml" | absURL }}">
 <meta property="og:site_name" content="{{ site.Title }}">
 <meta property="og:locale" content="ko_KR">

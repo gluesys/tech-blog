@@ -7,6 +7,7 @@ import { initGiscus } from "./giscus.ts";
 import { initImageZoom } from "./image-zoom.ts";
 import { initAboutSort } from "./about-sort.ts";
 import { initPlaceholderMarquee } from "./placeholder-marquee.ts";
+import { initNotFound } from "./not-found.ts";
 
 // Mobile menu: the button toggles the .open class on the header bar and aria-expanded.
 const menuBtn = document.querySelector<HTMLButtonElement>(".menu-btn");
@@ -40,3 +41,4 @@ initGiscus();
 initImageZoom();
 initAboutSort();
 initPlaceholderMarquee();
+initNotFound();
