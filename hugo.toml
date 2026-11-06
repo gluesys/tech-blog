@@ -98,13 +98,14 @@ page = ["html"]
 careersURL = "https://gluesys.com/company/recruit/"
 description = "소프트웨어로 스토리지를 만드는 개발자들의 이야기. 글루시스 기술 블로그 TECH-G"
 
-# giscus comments. The owner fills repoId and categoryId at cutover, after
-# enabling Discussions and installing the giscus app (see giscus.app). While
-# either is empty, no comment markup or script is rendered.
+# giscus comments on GitHub Discussions, category "Comments" (Announcement
+# format: only maintainers and the giscus app open threads). IDs come from
+# giscus.app or the GraphQL API. While either is empty, no comment markup or
+# script is rendered.
 [params.giscus]
 repo = "gluesys/tech-blog"
-repoId = ""
+repoId = "MDEwOlJlcG9zaXRvcnkxMTYzNjM5MDQ="
 category = "Comments"
-categoryId = ""
+categoryId = "DIC_kwDOBu-SgM4DKhs8"
 mapping = "pathname"
 lang = "ko"
