@@ -1,5 +1,6 @@
 {{- $pageTitle := .Title -}}
 {{- if eq .Kind "term" }}{{ $pageTitle = index (partialCached "tag-names.html" "all") (.Data.Term | lower) }}{{ end -}}
+{{- if eq .Kind "404" }}{{ $pageTitle = "페이지를 찾을 수 없습니다" }}{{ end -}}
 {{- $title := cond .IsHome site.Title (printf "%s | %s" $pageTitle site.Title) -}}
 {{- $desc := cond (ne .Description "") .Description (cond (ne .Summary "") (.Summary | plainify | truncate 160) site.Params.description) -}}
 {{- $ogImage := absURL "brand/og-default.png" -}}
